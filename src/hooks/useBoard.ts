@@ -188,7 +188,7 @@ export function useBoard() {
     // Initialize with seed data if no boards exist
     if (boards.length === 0) {
       const board = createBoard(seedData.board.name);
-      
+
       // Add members
       seedData.board.members.forEach((member) => {
         useBoardStore.getState().addMember(board.id, member);
@@ -197,10 +197,10 @@ export function useBoard() {
       // Create lists and cards
       seedData.lists.forEach((listData, index) => {
         const list = createList(board.id, listData.title, index);
-        
+
         listData.cards.forEach((cardData, cardIndex) => {
           const card = createCard(board.id, list.id, cardData.title, cardIndex);
-          
+
           // Update card with additional data
           useBoardStore.getState().updateCard(board.id, card.id, {
             description: cardData.description,
@@ -239,7 +239,7 @@ export function useBoard() {
         });
       });
     }
-  }, [boards, createBoard, createList, createCard]);
+  }, [boards.length, createBoard, createList, createCard]);
 
   const currentBoard = getCurrentBoard();
 
