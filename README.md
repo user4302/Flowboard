@@ -1,4 +1,4 @@
-# Flowboard v1.0.0
+# Flowboard v1.1.0
 
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
 
@@ -11,6 +11,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Real-time Search**: Filter cards by title, description, labels, and members
 - **Dark/Light Theme**: System preference detection with manual toggle
 - **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions
+- **Board Management**: Create, switch between, and delete boards with confirmation dialogs
 
 ### Data Model
 - **Boards**: Multiple boards with member management

@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, LayoutGrid, Users, Settings } from 'lucide-react';
+import { Plus, LayoutGrid, Users, Settings, Trash2 } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
-  const { boards, currentBoardId, createBoard, setCurrentBoard } = useBoardStore();
+  const { boards, currentBoardId, createBoard, setCurrentBoard, deleteBoard } = useBoardStore();
   const { sidebarOpen, setSidebarOpen } = useUIStore();
   const [isCreatingBoard, setIsCreatingBoard] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
@@ -17,6 +17,19 @@ export function Sidebar() {
       createBoard(newBoardName.trim());
       setNewBoardName('');
       setIsCreatingBoard(false);
+    }
+  };
+
+  const handleDeleteBoard = (boardId: string, boardName: string) => {
+    if (confirm(`Are you sure you want to delete "${boardName}"? This action cannot be undone.`)) {
+      deleteBoard(boardId);
+      if (currentBoardId === boardId) {
+        // Switch to another board if current board is deleted
+        const remainingBoards = boards.filter(b => b.id !== boardId);
+        if (remainingBoards.length > 0) {
+          setCurrentBoard(remainingBoards[0].id);
+        }
+      }
     }
   };
 
@@ -121,38 +134,61 @@ export function Sidebar() {
               {/* Boards List */}
               <div className="space-y-1">
                 {boards.map((board) => (
-                  <button
-                    key={board.id}
-                    onClick={() => {
-                      setCurrentBoard(board.id);
-                      setSidebarOpen(false);
-                    }}
-                    className={cn(
-                      'w-full rounded-lg px-3 py-2 text-left text-sm transition-colors',
-                      currentBoardId === board.id
-                        ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                        : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+                  <div key={board.id} className="relative group">
+                    <button
+                      onClick={() => {
+                        setCurrentBoard(board.id);
+                        setSidebarOpen(false);
+                      }}
+                      className={cn(
+                        'w-full rounded-lg px-3 py-2 text-left text-sm transition-colors',
+                        currentBoardId === board.id
+                          ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                          : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <LayoutGrid className="h-4 w-4" />
+                          <span className="truncate">{board.name}</span>
+                        </div>
+                        <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                          {board.lists.length} lists • {board.members.length} members
+                        </div>
+                      </div>
+                    </button>
+
+                    {/* Delete button - positioned outside the main button */}
+                    {boards.length > 1 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteBoard(board.id, board.name);
+                        }}
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700"
+                        title={`Delete ${board.name}`}
+                      >
+                        <Trash2 className="h-3 w-3 text-slate-400 hover:text-red-600" />
+                      </button>
                     )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <LayoutGrid className="h-4 w-4" />
-                      <span className="truncate">{board.name}</span>
-                    </div>
-                    <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                      {board.lists.length} lists • {board.members.length} members
-                    </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
 
             {/* Quick Actions */}
             <div className="space-y-1">
-              <button className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+              <button
+                onClick={() => alert('Team Members feature coming soon!')}
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
                 <Users className="h-4 w-4" />
                 <span>Team Members</span>
               </button>
-              <button className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">
+              <button
+                onClick={() => alert('Settings feature coming soon!')}
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+              >
                 <Settings className="h-4 w-4" />
                 <span>Settings</span>
               </button>

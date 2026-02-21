@@ -46,7 +46,7 @@ export default function Home() {
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
       <Sidebar />
 
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col lg:ml-64">
         <BoardHeader />
 
         <main className="flex-1 overflow-hidden">
