@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved timeline navigation with zoom-aware date controls
 - Added year selector with custom input for year view
 - Enhanced timeline date labeling and visual indicators
+- Simplified timeline view by removing redundant year selector controls
 
 ## [1.1.0] - 2025-02-22
 

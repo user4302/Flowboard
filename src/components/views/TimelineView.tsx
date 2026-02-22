@@ -19,7 +19,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | 'month' | 'quarter' | 'year'>('month');
-  const [year, setYear] = useState(new Date().getFullYear());
 
   // Generate date range based on zoom level and current date
   const dateRange = useMemo(() => {
@@ -243,31 +242,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
           </button>
         </div>
 
-        {/* Year selector for year view */}
-        {zoomLevel === 'year' && (
-          <div className="flex items-center gap-2 ml-4">
-            <button
-              onClick={() => setYear(year - 1)}
-              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
-              ←
-            </button>
-            <input
-              type="number"
-              value={year}
-              onChange={(e) => setYear(parseInt(e.target.value))}
-              className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-center text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-              min="2020"
-              max="2030"
-            />
-            <button
-              onClick={() => setYear(year + 1)}
-              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-            >
-              →
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Timeline */}
