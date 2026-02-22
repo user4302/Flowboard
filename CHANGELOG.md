@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplified timeline view by removing redundant year selector controls
 - Fixed timeline card positioning for cards outside visible date range
 - Added clickable timeline cards to open card details modal
+- Implemented card stacking system for overlapping timeline cards
+- Added dynamic timeline height calculation based on card stack levels
 
 ## [1.1.0] - 2025-02-22
 

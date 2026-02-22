@@ -10,6 +10,66 @@ interface TimelineViewProps {
   boardId: string;
 }
 
+// Helper function to calculate timeline height based on card stacking
+const calculateTimelineHeight = (cards: any[], dateRange: Date[]) => {
+  if (cards.length === 0) return 60;
+
+  const cardHeight = 32; // h-8 = 32px
+  const cardGap = 4; // gap between stacked cards
+  const padding = 16; // 8px top + 8px bottom
+
+  let maxStackLevel = 0;
+  const cardPositions: { [key: string]: number } = {}; // To store the assigned stack level for each card
+
+  cards.forEach((card) => {
+    const cardStartDate = card.startDate || new Date();
+    const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
+
+    let stackLevel = 0;
+    let positionFound = false;
+
+    // Try to find an available stack level
+    while (!positionFound) {
+      let overlap = false;
+      for (const existingCardId in cardPositions) {
+        const existingCard = cards.find(c => c.id === existingCardId);
+        if (!existingCard) continue;
+
+        const existingCardStartDate = existingCard.startDate || new Date();
+        const existingCardEndDate = existingCard.dueDate || addDays(existingCardStartDate, 7);
+
+        // Check for overlap in the current stack level
+        if (cardPositions[existingCardId] === stackLevel) {
+          // Check if the date ranges actually overlap within the timeline's dateRange
+          const cardStartIdx = dateRange.findIndex(date => isSameDay(date, cardStartDate));
+          const cardEndIdx = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+          const existingCardStartIdx = dateRange.findIndex(date => isSameDay(date, existingCardStartDate));
+          const existingCardEndIdx = dateRange.findIndex(date => isSameDay(date, existingCardEndDate));
+
+          const start = Math.max(cardStartIdx, existingCardStartIdx);
+          const end = Math.min(cardEndIdx, existingCardEndIdx);
+
+          if (start <= end) {
+            overlap = true;
+            break;
+          }
+        }
+      }
+
+      if (!overlap) {
+        cardPositions[card.id] = stackLevel;
+        positionFound = true;
+      } else {
+        stackLevel++;
+      }
+    }
+
+    maxStackLevel = Math.max(maxStackLevel, stackLevel);
+  });
+
+  return padding + ((maxStackLevel + 1) * (cardHeight + cardGap));
+};
+
 export function TimelineView({ boardId }: TimelineViewProps) {
   const { boards } = useBoardStore();
   const { searchTerm, openCardModal } = useUIStore();
@@ -69,7 +129,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   }, [board.lists, searchTerm]);
 
   // Calculate card position and width on timeline
-  const getCardPosition = (card: any) => {
+  const getCardPosition = (card: any, allCards: any[], cardIndex: number) => {
     const cardStartDate = card.startDate || new Date();
     const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
 
@@ -116,7 +176,73 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     const left = startIndex >= 0 ? (startIndex / dateRange.length) * 100 : 0;
     const width = endIndex >= 0 ? ((endIndex - startIndex + 1) / dateRange.length) * 100 : 5;
 
-    return { left: `${left}%`, width: `${Math.max(width, 2)}%` };
+    // Calculate vertical stacking position using the same logic as height calculation
+    let stackLevel = 0;
+    const cardHeight = 32; // h-8 = 32px
+    const cardGap = 4; // gap between stacked cards
+    const cardPositions: { [key: string]: number } = {}; // To store the assigned stack level for each card
+
+    // Calculate stack level for the current card
+    allCards.slice(0, cardIndex + 1).forEach((currentCard, currentIndex) => {
+      const currentCardStartDate = currentCard.startDate || new Date();
+      const currentCardEndDate = currentCard.dueDate || addDays(currentCardStartDate, 7);
+
+      let currentStackLevel = 0;
+      let positionFound = false;
+
+      // Try to find an available stack level
+      while (!positionFound) {
+        let overlap = false;
+        for (const existingCardId in cardPositions) {
+          const existingCard = allCards.find(c => c.id === existingCardId);
+          if (!existingCard) continue;
+
+          const existingCardStartDate = existingCard.startDate || new Date();
+          const existingCardEndDate = existingCard.dueDate || addDays(existingCardStartDate, 7);
+
+          // Check for overlap in the current stack level
+          if (cardPositions[existingCardId] === currentStackLevel) {
+            // Check if the date ranges actually overlap within the timeline's dateRange
+            const currentCardStartIdx = dateRange.findIndex(date => isSameDay(date, currentCardStartDate));
+            const currentCardEndIdx = dateRange.findIndex(date => isSameDay(date, currentCardEndDate));
+            const existingCardStartIdx = dateRange.findIndex(date => isSameDay(date, existingCardStartDate));
+            const existingCardEndIdx = dateRange.findIndex(date => isSameDay(date, existingCardEndDate));
+
+            // Handle out-of-range indices
+            const start1 = Math.max(0, currentCardStartIdx);
+            const end1 = Math.max(0, currentCardEndIdx);
+            const start2 = Math.max(0, existingCardStartIdx);
+            const end2 = Math.max(0, existingCardEndIdx);
+
+            const start = Math.max(start1, start2);
+            const end = Math.min(end1, end2);
+
+            if (start <= end) {
+              overlap = true;
+              break;
+            }
+          }
+        }
+
+        if (!overlap) {
+          cardPositions[currentCard.id] = currentStackLevel;
+          if (currentCard.id === card.id) {
+            stackLevel = currentStackLevel;
+          }
+          positionFound = true;
+        } else {
+          currentStackLevel++;
+        }
+      }
+    });
+
+    const top = 8 + (stackLevel * (cardHeight + cardGap)); // Start 8px from top, add card height + gap for each level
+
+    return {
+      left: `${left}%`,
+      width: `${Math.max(width, 2)}%`,
+      top: `${top}px`
+    };
   };
 
   const getCardColor = (card: any) => {
@@ -322,7 +448,12 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     </div>
 
                     {/* Timeline area */}
-                    <div className="flex-1 relative min-h-[60px]">
+                    <div
+                      className="flex-1 relative"
+                      style={{
+                        minHeight: `${calculateTimelineHeight(listCards, dateRange)}px`
+                      }}
+                    >
                       {/* Grid lines */}
                       {dateRange.map((date, index) => (
                         <div
@@ -340,15 +471,15 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                       ))}
 
                       {/* Cards */}
-                      {listCards.map((card) => {
-                        const position = getCardPosition(card);
+                      {listCards.map((card, cardIndex) => {
+                        const position = getCardPosition(card, listCards, cardIndex);
                         const color = getCardColor(card);
 
                         return (
                           <div
                             key={card.id}
                             className={cn(
-                              'absolute top-2 h-8 rounded-md px-2 py-1 text-xs font-medium text-white shadow-sm cursor-pointer transition-all hover:shadow-md hover:z-10',
+                              'absolute h-8 rounded-md px-2 py-1 text-xs font-medium text-white shadow-sm cursor-pointer transition-all hover:shadow-md hover:z-10',
                               `bg-${color}-500`
                             )}
                             style={position}
