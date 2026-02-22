@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useBoardStore } from '@/store';
+import { useSharingStore } from '@/store/sharingStore';
 import { generateId } from '@/lib/utils';
 import { Board, List, Card, User, Label } from '@/lib/types';
 
@@ -184,6 +185,8 @@ export function useBoard() {
     setCurrentBoard,
   } = useBoardStore();
 
+  const { setUserInfo } = useSharingStore();
+
   useEffect(() => {
     // Initialize with seed data if no boards exist
     if (boards.length === 0) {
@@ -239,7 +242,21 @@ export function useBoard() {
         });
       });
     }
-  }, [boards.length, createBoard, createList, createCard]);
+
+    // Set up sharing info for current user (owner)
+    if (boards.length > 0 && currentBoardId) {
+      const currentBoard = getCurrentBoard();
+      if (currentBoard) {
+        // Set current user as board owner
+        setUserInfo(
+          'owner-123', // Owner ID
+          'Board Owner', // Username
+          'owner@flowboard.app', // Email
+          true // Is owner
+        );
+      }
+    }
+  }, [boards.length, createBoard, createList, createCard, currentBoardId, getCurrentBoard, setUserInfo]);
 
   const currentBoard = getCurrentBoard();
 

@@ -1,14 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, LayoutGrid, Users, Settings, Trash2 } from 'lucide-react';
+import { Plus, LayoutGrid, Users, Settings, Trash2, Share2, UserPlus } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
+import { useSharingStore } from '@/store/sharingStore';
 import { Button } from '@/components/ui';
+import { InviteModal, MemberManagement } from '@/components/sharing';
 import { cn } from '@/lib/utils';
 
 export function Sidebar() {
   const { boards, currentBoardId, createBoard, setCurrentBoard, deleteBoard } = useBoardStore();
   const { sidebarOpen, setSidebarOpen } = useUIStore();
+  const {
+    showInviteModal,
+    showMemberManagement,
+    isOwner,
+    setShowInviteModal,
+    setShowMemberManagement
+  } = useSharingStore();
   const [isCreatingBoard, setIsCreatingBoard] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
 
@@ -178,6 +187,24 @@ export function Sidebar() {
 
             {/* Quick Actions */}
             <div className="space-y-1">
+              {isOwner && (
+                <>
+                  <button
+                    onClick={() => setShowInviteModal(true)}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                  >
+                    <Share2 className="h-4 w-4" />
+                    <span>Invite Members</span>
+                  </button>
+                  <button
+                    onClick={() => setShowMemberManagement(true)}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    <span>Member Management</span>
+                  </button>
+                </>
+              )}
               <button
                 onClick={() => alert('Team Members feature coming soon!')}
                 className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
@@ -203,6 +230,16 @@ export function Sidebar() {
           </div>
         </div>
       </div>
+
+      {/* Sharing Modals */}
+      <InviteModal
+        isOpen={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+      />
+      <MemberManagement
+        isOpen={showMemberManagement}
+        onClose={() => setShowMemberManagement(false)}
+      />
     </>
   );
 }

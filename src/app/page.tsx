@@ -1,19 +1,31 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Sidebar } from '@/components/board/Sidebar';
 import { BoardHeader } from '@/components/board/BoardHeader';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
 import { CardModal } from '@/components/card';
+import { JoinBoardModal } from '@/components/sharing';
 import { useBoard, useUIStore } from '@/hooks';
+import { useSharingStore } from '@/store/sharingStore';
 
 export default function Home() {
   const { currentBoard, currentBoardId } = useBoard();
   const { currentView, initializeTheme } = useUIStore();
+  const { showJoinModal, setShowJoinModal } = useSharingStore();
+  const [inviteId, setInviteId] = useState<string | null>(null);
 
   useEffect(() => {
     initializeTheme();
-  }, [initializeTheme]);
+
+    // Check for invitation in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const invite = urlParams.get('invite');
+    if (invite) {
+      setInviteId(invite);
+      setShowJoinModal(true);
+    }
+  }, [initializeTheme, setShowJoinModal]);
 
   if (!currentBoard || !currentBoardId) {
     return (
@@ -55,6 +67,11 @@ export default function Home() {
       </div>
 
       <CardModal />
+      <JoinBoardModal
+        isOpen={showJoinModal}
+        onClose={() => setShowJoinModal(false)}
+        inviteId={inviteId || undefined}
+      />
     </div>
   );
 }
