@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added truncation to prevent board title overflow on small screens
 - Made search bar responsive and visible on all screen sizes
 - Enhanced view tab centering and layout stability
+- Fixed timeline view scrolling to contain within its container
 
 ## [1.1.0] - 2025-02-22
 

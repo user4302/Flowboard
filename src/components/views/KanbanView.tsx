@@ -131,10 +131,10 @@ export function KanbanView({ boardId }: KanbanViewProps) {
 
   const getActiveCard = () => {
     if (!activeId) return null;
-    
+
     for (const list of board.lists) {
       const card = list.cards.find((c) => c.id === activeId);
-      if (card) return { ...card, members: board.members };
+      if (card) return card;
     }
     return null;
   };
@@ -146,143 +146,147 @@ export function KanbanView({ boardId }: KanbanViewProps) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex h-full gap-4 overflow-x-auto p-4 lg:p-6">
-        <SortableContext items={board.lists.map((l) => l.id)} strategy={verticalListSortingStrategy}>
-          {board.lists.map((list) => (
-            <div
-              key={list.id}
-              className="flex w-80 flex-shrink-0 flex-col gap-3"
-            >
-              {/* List header */}
-              <div className="flex items-center justify-between">
-                <h3 className="font-medium text-slate-900 dark:text-slate-100">
-                  {list.title}
-                </h3>
-                <span className="text-sm text-slate-500 dark:text-slate-400">
-                  {filterCards(list.cards).length}
-                </span>
-              </div>
-
-              {/* Cards */}
-              <div className="flex flex-1 flex-col gap-2">
-                <SortableContext items={filterCards(list.cards).map((c) => c.id)} strategy={verticalListSortingStrategy}>
-                  {filterCards(list.cards).map((card) => (
-                    <Card
-                      key={card.id}
-                      card={card}
-                      members={board.members}
-                      onClick={() => {}}
-                    />
-                  ))}
-                </SortableContext>
-
-                {/* Add card button/input */}
-                {showNewCardInputs[list.id] ? (
-                  <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
-                    <Input
-                      placeholder="Enter card title..."
-                      value={newCardTitles[list.id] || ''}
-                      onChange={(e) =>
-                        setNewCardTitles({ ...newCardTitles, [list.id]: e.target.value })
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleCreateCard(list.id);
-                        } else if (e.key === 'Escape') {
-                          setShowNewCardInputs({ ...showNewCardInputs, [list.id]: false });
-                          setNewCardTitles({ ...newCardTitles, [list.id]: '' });
-                        }
-                      }}
-                      onBlur={() => {
-                        setTimeout(() => {
-                          setShowNewCardInputs({ ...showNewCardInputs, [list.id]: false });
-                          setNewCardTitles({ ...newCardTitles, [list.id]: '' });
-                        }, 200);
-                      }}
-                      className="mb-2"
-                      autoFocus
-                    />
-                    <div className="flex gap-2">
-                      <Button size="sm" onClick={() => handleCreateCard(list.id)}>
-                        Add card
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setShowNewCardInputs({ ...showNewCardInputs, [list.id]: false });
-                          setNewCardTitles({ ...newCardTitles, [list.id]: '' });
-                        }}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <button
-                    className="flex items-center gap-2 rounded-xl p-3 text-left text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300"
-                    onClick={() => setShowNewCardInputs({ ...showNewCardInputs, [list.id]: true })}
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>Add a card</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </SortableContext>
-
-        {/* Add list button/input */}
-        {showNewListInput ? (
-          <div className="w-80 flex-shrink-0">
-            <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
-              <Input
-                placeholder="Enter list title..."
-                value={newListTitle}
-                onChange={(e) => setNewListTitle(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleCreateList();
-                  } else if (e.key === 'Escape') {
-                    setShowNewListInput(false);
-                    setNewListTitle('');
-                  }
-                }}
-                onBlur={() => {
-                  setTimeout(() => {
-                    setShowNewListInput(false);
-                    setNewListTitle('');
-                  }, 200);
-                }}
-                className="mb-2"
-                autoFocus
-              />
-              <div className="flex gap-2">
-                <Button size="sm" onClick={handleCreateList}>
-                  Add list
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setShowNewListInput(false);
-                    setNewListTitle('');
-                  }}
+      <div className="flex h-full flex-col max-w-full">
+        <div className="flex-1 overflow-hidden relative">
+          <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0 max-w-full">
+            <SortableContext items={board.lists.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+              {board.lists.map((list) => (
+                <div
+                  key={list.id}
+                  className="flex w-80 flex-shrink-0 flex-col gap-3 h-full"
                 >
-                  <X className="h-4 w-4" />
-                </Button>
+                  {/* List header */}
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                      {list.title}
+                    </h3>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">
+                      {filterCards(list.cards).length}
+                    </span>
+                  </div>
+
+                  {/* Cards */}
+                  <div className="flex flex-1 flex-col gap-2">
+                    <SortableContext items={filterCards(list.cards).map((c) => c.id)} strategy={verticalListSortingStrategy}>
+                      {filterCards(list.cards).map((card) => (
+                        <Card
+                          key={card.id}
+                          card={card}
+                          members={board.members}
+                          onClick={() => { }}
+                        />
+                      ))}
+                    </SortableContext>
+
+                    {/* Add card button/input */}
+                    {showNewCardInputs[list.id] ? (
+                      <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
+                        <Input
+                          placeholder="Enter card title..."
+                          value={newCardTitles[list.id] || ''}
+                          onChange={(e) =>
+                            setNewCardTitles({ ...newCardTitles, [list.id]: e.target.value })
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleCreateCard(list.id);
+                            } else if (e.key === 'Escape') {
+                              setShowNewCardInputs({ ...showNewCardInputs, [list.id]: false });
+                              setNewCardTitles({ ...newCardTitles, [list.id]: '' });
+                            }
+                          }}
+                          onBlur={() => {
+                            setTimeout(() => {
+                              setShowNewCardInputs({ ...showNewCardInputs, [list.id]: false });
+                              setNewCardTitles({ ...newCardTitles, [list.id]: '' });
+                            }, 200);
+                          }}
+                          className="mb-2"
+                          autoFocus
+                        />
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={() => handleCreateCard(list.id)}>
+                            Add card
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setShowNewCardInputs({ ...showNewCardInputs, [list.id]: false });
+                              setNewCardTitles({ ...newCardTitles, [list.id]: '' });
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        className="flex items-center gap-2 rounded-xl p-3 text-left text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+                        onClick={() => setShowNewCardInputs({ ...showNewCardInputs, [list.id]: true })}
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span>Add a card</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </SortableContext>
+
+            {/* Add list button/input */}
+            {showNewListInput ? (
+              <div className="w-80 flex-shrink-0">
+                <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
+                  <Input
+                    placeholder="Enter list title..."
+                    value={newListTitle}
+                    onChange={(e) => setNewListTitle(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCreateList();
+                      } else if (e.key === 'Escape') {
+                        setShowNewListInput(false);
+                        setNewListTitle('');
+                      }
+                    }}
+                    onBlur={() => {
+                      setTimeout(() => {
+                        setShowNewListInput(false);
+                        setNewListTitle('');
+                      }, 200);
+                    }}
+                    className="mb-2"
+                    autoFocus
+                  />
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={handleCreateList}>
+                      Add list
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setShowNewListInput(false);
+                        setNewListTitle('');
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <button
+                className="flex h-fit w-80 flex-shrink-0 items-center gap-2 rounded-xl p-3 text-left text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+                onClick={() => setShowNewListInput(true)}
+              >
+                <Plus className="h-4 w-4" />
+                <span>Add another list</span>
+              </button>
+            )}
           </div>
-        ) : (
-          <button
-            className="flex h-fit w-80 flex-shrink-0 items-center gap-2 rounded-xl p-3 text-left text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300"
-            onClick={() => setShowNewListInput(true)}
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add another list</span>
-          </button>
-        )}
+        </div>
       </div>
 
       <DragOverlay>
@@ -291,7 +295,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
             <Card
               card={getActiveCard()!}
               members={board.members}
-              onClick={() => {}}
+              onClick={() => { }}
             />
           </div>
         ) : null}
