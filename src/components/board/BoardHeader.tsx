@@ -56,9 +56,9 @@ export function BoardHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/80">
-      <div className="flex h-16 items-center justify-between px-4 lg:px-6">
+      <div className="flex h-16 items-center px-4 lg:px-6">
         {/* Left side */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-shrink-0 w-1/5">
           {/* Menu button */}
           <Button
             variant="ghost"
@@ -70,7 +70,7 @@ export function BoardHeader() {
           </Button>
 
           {/* Board title */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 truncate">
             {isEditingTitle ? (
               <input
                 type="text"
@@ -83,7 +83,7 @@ export function BoardHeader() {
               />
             ) : (
               <h1
-                className="cursor-pointer text-lg font-semibold text-slate-900 hover:text-slate-700 dark:text-slate-100 dark:hover:text-slate-300"
+                className="cursor-pointer text-lg font-semibold text-slate-900 hover:text-slate-700 dark:text-slate-100 dark:hover:text-slate-300 truncate"
                 onClick={handleTitleEdit}
               >
                 {currentBoard.name}
@@ -93,38 +93,40 @@ export function BoardHeader() {
         </div>
 
         {/* Center - View tabs */}
-        <div className="hidden md:flex items-center gap-1">
-          {VIEWS.map((view) => {
-            const Icon = require('lucide-react')[view.icon];
-            return (
-              <button
-                key={view.id}
-                onClick={() => setCurrentView(view.id as any)}
-                className={cn(
-                  'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                  currentView === view.id
-                    ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                <span>{view.name}</span>
-              </button>
-            );
-          })}
+        <div className="flex items-center justify-center w-3/5">
+          <div className="hidden md:flex items-center gap-1">
+            {VIEWS.map((view) => {
+              const Icon = require('lucide-react')[view.icon];
+              return (
+                <button
+                  key={view.id}
+                  onClick={() => setCurrentView(view.id as any)}
+                  className={cn(
+                    'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    currentView === view.id
+                      ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                      : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span>{view.name}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Right side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-end gap-3 flex-shrink-0 w-1/5">
           {/* Search */}
-          <div className="relative hidden sm:block">
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
               type="text"
               placeholder="Search cards..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-64 pl-10"
+              className="w-32 pl-10 sm:w-48 lg:w-64"
             />
           </div>
 

@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive sharing store with Zustand for state management
 - URL parameter support for direct board invitation access
 
+### Changed
+- Improved board header responsive layout with fixed 3-column structure
+- Added truncation to prevent board title overflow on small screens
+- Made search bar responsive and visible on all screen sizes
+- Enhanced view tab centering and layout stability
+
 ## [1.1.0] - 2025-02-22
 
 ### Added
