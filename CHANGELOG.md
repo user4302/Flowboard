@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added year selector with custom input for year view
 - Enhanced timeline date labeling and visual indicators
 - Simplified timeline view by removing redundant year selector controls
+- Fixed timeline card positioning for cards outside visible date range
 
 ## [1.1.0] - 2025-02-22
 

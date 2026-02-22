@@ -88,6 +88,29 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       if (cardEndDate > dayEnd) {
         endIndex = dateRange.length - 1;
       }
+    } else {
+      // For other zoom levels, handle cards outside the visible range
+      const rangeStart = dateRange[0];
+      const rangeEnd = dateRange[dateRange.length - 1];
+
+      // If card is entirely before the visible range (in the past), collect on left edge
+      if (cardEndDate < rangeStart) {
+        startIndex = 0;
+        endIndex = 0;
+      }
+      // If card is entirely after the visible range (in the future), collect on right edge
+      else if (cardStartDate > rangeEnd) {
+        startIndex = dateRange.length - 1;
+        endIndex = dateRange.length - 1;
+      }
+      // If card starts before but ends within range, start at left edge
+      else if (cardStartDate < rangeStart && endIndex >= 0) {
+        startIndex = 0;
+      }
+      // If card starts within range but ends after, end at right edge
+      else if (cardEndDate > rangeEnd && startIndex >= 0) {
+        endIndex = dateRange.length - 1;
+      }
     }
 
     const left = startIndex >= 0 ? (startIndex / dateRange.length) * 100 : 0;
