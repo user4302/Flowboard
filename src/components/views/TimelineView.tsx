@@ -12,7 +12,7 @@ interface TimelineViewProps {
 
 export function TimelineView({ boardId }: TimelineViewProps) {
   const { boards } = useBoardStore();
-  const { searchTerm } = useUIStore();
+  const { searchTerm, openCardModal } = useUIStore();
 
   const board = boards.find((b) => b.id === boardId);
   if (!board) return null;
@@ -353,6 +353,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                             )}
                             style={position}
                             title={card.title}
+                            onClick={() => openCardModal(card.id)}
                           >
                             <div className="truncate">{card.title}</div>
                           </div>
