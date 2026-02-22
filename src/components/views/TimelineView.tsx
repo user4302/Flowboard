@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { format, eachDayOfInterval, startOfMonth, endOfMonth, addMonths, isSameDay, isWithinInterval } from 'date-fns';
+import { format, eachDayOfInterval, startOfYear, endOfYear, isSameDay, isWithinInterval, addDays, addWeeks, addMonths, addYears, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
+import { Calendar, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 interface TimelineViewProps {
   boardId: string;
@@ -16,14 +17,43 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   const board = boards.find((b) => b.id === boardId);
   if (!board) return null;
 
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | 'month' | 'quarter' | 'year'>('month');
+  const [year, setYear] = useState(new Date().getFullYear());
 
-  // Generate date range for the current month + next 2 months
+  // Generate date range based on zoom level and current date
   const dateRange = useMemo(() => {
-    const start = startOfMonth(currentMonth);
-    const end = endOfMonth(addMonths(currentMonth, 2));
+    let start: Date;
+    let end: Date;
+
+    switch (zoomLevel) {
+      case 'day':
+        start = startOfDay(currentDate);
+        end = endOfDay(currentDate);
+        break;
+      case 'week':
+        start = startOfWeek(currentDate);
+        end = endOfWeek(currentDate);
+        break;
+      case 'month':
+        start = startOfMonth(currentDate);
+        end = endOfMonth(currentDate);
+        break;
+      case 'quarter':
+        start = new Date(currentDate.getFullYear(), Math.floor(currentDate.getMonth() / 3) * 3, 1);
+        end = new Date(currentDate.getFullYear(), Math.floor(currentDate.getMonth() / 3) * 3 + 3, 0);
+        break;
+      case 'year':
+        start = startOfYear(currentDate);
+        end = endOfYear(currentDate);
+        break;
+      default:
+        start = startOfMonth(currentDate);
+        end = endOfMonth(currentDate);
+    }
+
     return eachDayOfInterval({ start, end });
-  }, [currentMonth]);
+  }, [currentDate, zoomLevel]);
 
   // Filter cards that have dates
   const cardsWithDates = useMemo(() => {
@@ -35,16 +65,31 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       )
       : allCards;
 
+    // Show all cards with dates (revert to original behavior)
     return filtered.filter(card => card.startDate || card.dueDate);
   }, [board.lists, searchTerm]);
 
   // Calculate card position and width on timeline
   const getCardPosition = (card: any) => {
-    const startDate = card.startDate || new Date(); // Default to today if no start date
-    const dueDate = card.dueDate || addMonths(startDate, 1); // Default to 1 month if no due date
+    const cardStartDate = card.startDate || new Date();
+    const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
 
-    const startIndex = dateRange.findIndex(date => isSameDay(date, startDate));
-    const endIndex = dateRange.findIndex(date => isSameDay(date, dueDate));
+    let startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
+    let endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+
+    // For day view, constrain cards within day boundary
+    if (zoomLevel === 'day') {
+      const dayStart = startOfDay(currentDate);
+      const dayEnd = endOfDay(currentDate);
+
+      // If card spans beyond the day, constrain it
+      if (cardStartDate < dayStart) {
+        startIndex = 0;
+      }
+      if (cardEndDate > dayEnd) {
+        endIndex = dateRange.length - 1;
+      }
+    }
 
     const left = startIndex >= 0 ? (startIndex / dateRange.length) * 100 : 0;
     const width = endIndex >= 0 ? ((endIndex - startIndex + 1) / dateRange.length) * 100 : 5;
@@ -59,37 +104,170 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     return 'slate';
   };
 
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    setCurrentMonth(prev => addMonths(prev, direction === 'next' ? 1 : -1));
+  const navigateDate = (direction: 'prev' | 'next') => {
+    switch (zoomLevel) {
+      case 'day':
+        setCurrentDate(prev => addDays(prev, direction === 'next' ? 1 : -1));
+        break;
+      case 'week':
+        setCurrentDate(prev => addWeeks(prev, direction === 'next' ? 1 : -1));
+        break;
+      case 'month':
+        setCurrentDate(prev => addMonths(prev, direction === 'next' ? 1 : -1));
+        break;
+      case 'quarter':
+        setCurrentDate(prev => addMonths(prev, direction === 'next' ? 3 : -3));
+        break;
+      case 'year':
+        setCurrentDate(prev => addYears(prev, direction === 'next' ? 1 : -1));
+        break;
+    }
+  };
+
+  const getZoomLabel = () => {
+    switch (zoomLevel) {
+      case 'day': return 'Day';
+      case 'week': return 'Week';
+      case 'month': return 'Month';
+      case 'quarter': return 'Quarter';
+      case 'year': return 'Year';
+      default: return 'Month';
+    }
+  };
+
+  const getDateLabel = (date: Date) => {
+    switch (zoomLevel) {
+      case 'day':
+        return format(date, 'MMM d, yyyy');
+      case 'week':
+        return format(date, 'MMM d, yyyy');
+      case 'month':
+        return format(date, 'MMM d');
+      case 'quarter':
+        return format(date, 'MMM yyyy');
+      case 'year':
+        return format(date, 'yyyy');
+      default:
+        return format(date, 'MMM d');
+    }
   };
 
   return (
     <div className="flex h-full flex-col">
-      {/* Header with month navigation */}
+      {/* Header with zoom controls */}
       <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between w-96">
           <button
-            onClick={() => navigateMonth('prev')}
+            onClick={() => navigateDate('prev')}
             className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
           >
             ←
           </button>
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            {format(currentMonth, 'MMMM yyyy')} - {format(addMonths(currentMonth, 2), 'MMMM yyyy')}
-          </h2>
+
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+              {format(currentDate, zoomLevel === 'year' ? 'yyyy' : zoomLevel === 'quarter' ? 'QQQ yyyy' : 'MMMM yyyy')}
+            </h2>
+            <button
+              onClick={() => setCurrentDate(new Date())}
+              className="rounded-lg px-3 py-1 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+            >
+              Today
+            </button>
+          </div>
+
           <button
-            onClick={() => navigateMonth('next')}
+            onClick={() => navigateDate('next')}
             className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
           >
             →
           </button>
         </div>
-        <button
-          onClick={() => setCurrentMonth(new Date())}
-          className="rounded-lg px-3 py-1 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-        >
-          Today
-        </button>
+
+        {/* Zoom controls */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setZoomLevel('day')}
+            className={cn(
+              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
+              zoomLevel === 'day'
+                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+            )}
+          >
+            Day
+          </button>
+          <button
+            onClick={() => setZoomLevel('week')}
+            className={cn(
+              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
+              zoomLevel === 'week'
+                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+            )}
+          >
+            Week
+          </button>
+          <button
+            onClick={() => setZoomLevel('month')}
+            className={cn(
+              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
+              zoomLevel === 'month'
+                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+            )}
+          >
+            Month
+          </button>
+          <button
+            onClick={() => setZoomLevel('quarter')}
+            className={cn(
+              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
+              zoomLevel === 'quarter'
+                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+            )}
+          >
+            Quarter
+          </button>
+          <button
+            onClick={() => setZoomLevel('year')}
+            className={cn(
+              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
+              zoomLevel === 'year'
+                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+            )}
+          >
+            Year
+          </button>
+        </div>
+
+        {/* Year selector for year view */}
+        {zoomLevel === 'year' && (
+          <div className="flex items-center gap-2 ml-4">
+            <button
+              onClick={() => setYear(year - 1)}
+              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              ←
+            </button>
+            <input
+              type="number"
+              value={year}
+              onChange={(e) => setYear(parseInt(e.target.value))}
+              className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-center text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              min="2020"
+              max="2030"
+            />
+            <button
+              onClick={() => setYear(year + 1)}
+              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+            >
+              →
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Timeline */}
@@ -99,7 +277,10 @@ export function TimelineView({ boardId }: TimelineViewProps) {
             {/* Date headers */}
             <div className="sticky top-0 z-10 flex border-b-2 border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
               <div className="w-48 flex-shrink-0 p-2 text-sm font-medium text-slate-600 dark:text-slate-400">
-                Lists / Cards
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  {getZoomLabel()}
+                </div>
               </div>
               <div className="flex-1 flex">
                 {dateRange.map((date, index) => (
@@ -112,11 +293,11 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     )}
                   >
                     <div className="text-slate-500 dark:text-slate-400">
-                      {format(date, 'd')}
+                      {getDateLabel(date)}
                     </div>
                     {index % 7 === 0 && (
                       <div className="text-slate-400 dark:text-slate-500">
-                        {format(date, 'MMM')}
+                        {format(date, zoomLevel === 'year' ? 'yyyy' : 'MMM')}
                       </div>
                     )}
                   </div>
@@ -151,10 +332,13 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                           key={date.toISOString()}
                           className={cn(
                             'absolute top-0 bottom-0 border-l border-slate-100',
-                            index % 7 === 0 && 'border-l border-slate-200',
+                            index % 7 === 0 && 'border-l-2 border-slate-200',
                             'dark:border-slate-800 dark:border-l-slate-700'
                           )}
-                          style={{ left: `${(index / dateRange.length) * 100}%`, width: `${100 / dateRange.length}%` }}
+                          style={{
+                            left: `${(index / dateRange.length) * 100}%`,
+                            width: `${100 / dateRange.length}%`
+                          }}
                         />
                       ))}
 

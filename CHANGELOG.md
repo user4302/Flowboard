@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Made search bar responsive and visible on all screen sizes
 - Enhanced view tab centering and layout stability
 - Fixed timeline view scrolling to contain within its container
+- Enhanced TimelineView with multi-level zoom functionality (Day, Week, Month, Quarter, Year)
+- Improved timeline navigation with zoom-aware date controls
+- Added year selector with custom input for year view
+- Enhanced timeline date labeling and visual indicators
 
 ## [1.1.0] - 2025-02-22
 
