@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added clickable timeline cards to open card details modal
 - Implemented card stacking system for overlapping timeline cards
 - Added dynamic timeline height calculation based on card stack levels
+- Simplified timeline card positioning logic with direct calculations
+- Enhanced day view with improved edge collection for out-of-range cards
 
 ## [1.1.0] - 2025-02-22
 

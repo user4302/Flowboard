@@ -136,45 +136,60 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     let startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
     let endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
 
-    // For day view, constrain cards within day boundary
-    if (zoomLevel === 'day') {
-      const dayStart = startOfDay(currentDate);
-      const dayEnd = endOfDay(currentDate);
+    // Handle cards outside the visible range for all zoom levels
+    const rangeStart = dateRange[0];
+    const rangeEnd = dateRange[dateRange.length - 1];
 
-      // If card spans beyond the day, constrain it
-      if (cardStartDate < dayStart) {
-        startIndex = 0;
+    let left = 0;
+    let width = 5;
+
+    // Special handling for day view - opposite edge collection
+    if (zoomLevel === 'day') {
+      // If card is entirely before the current day (in the past), collect on left edge
+      if (cardEndDate < rangeStart) {
+        left = 0; // Position at the left edge
       }
-      if (cardEndDate > dayEnd) {
-        endIndex = dateRange.length - 1;
+      // If card is entirely after the current day (in the future), collect on right edge
+      else if (cardStartDate > rangeEnd) {
+        left = 95; // Position near the right edge (95% from left)
+      }
+
+      // Adjust width for 'day' view: full width if current day is within card's duration, else a small indicator
+      const today = dateRange[0]; // In day view, dateRange[0] is always the current day
+      // Check if today is within the card's date range (inclusive)
+      if (today >= cardStartDate && today <= cardEndDate) {
+        // If the current day is within the card's duration, make it full width
+        width = 100;
+      } else {
+        // Otherwise, make it a small indicator
+        width = 5;
       }
     } else {
-      // For other zoom levels, handle cards outside the visible range
-      const rangeStart = dateRange[0];
-      const rangeEnd = dateRange[dateRange.length - 1];
-
+      // Logic for all views: past cards on left edge, future cards on right edge
       // If card is entirely before the visible range (in the past), collect on left edge
       if (cardEndDate < rangeStart) {
-        startIndex = 0;
-        endIndex = 0;
+        left = 0; // Left edge
+        width = 5;
       }
       // If card is entirely after the visible range (in the future), collect on right edge
       else if (cardStartDate > rangeEnd) {
-        startIndex = dateRange.length - 1;
-        endIndex = dateRange.length - 1;
+        left = ((dateRange.length - 1) / dateRange.length) * 100; // Right edge
+        width = 5;
       }
       // If card starts before but ends within range, start at left edge
       else if (cardStartDate < rangeStart && endIndex >= 0) {
-        startIndex = 0;
+        left = 0; // Left edge
       }
       // If card starts within range but ends after, end at right edge
       else if (cardEndDate > rangeEnd && startIndex >= 0) {
-        endIndex = dateRange.length - 1;
+        left = (startIndex / dateRange.length) * 100; // Normal positioning
+        width = ((endIndex - startIndex + 1) / dateRange.length) * 100; // Normal width
+      } else {
+        // Normal positioning for cards within range
+        left = (startIndex / dateRange.length) * 100;
+        width = ((endIndex - startIndex + 1) / dateRange.length) * 100;
       }
     }
-
-    const left = startIndex >= 0 ? (startIndex / dateRange.length) * 100 : 0;
-    const width = endIndex >= 0 ? ((endIndex - startIndex + 1) / dateRange.length) * 100 : 5;
 
     // Calculate vertical stacking position using the same logic as height calculation
     let stackLevel = 0;
