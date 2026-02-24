@@ -189,14 +189,6 @@ export function useBoard() {
   const { setUserInfo } = useSharingStore();
 
   useEffect(() => {
-    // Initialize with empty board if no boards exist
-    if (boards.length === 0) {
-      const board = createBoard('New Board');
-      setCurrentBoard(board.id);
-    }
-  }, [boards.length, createBoard, setCurrentBoard]);
-
-  useEffect(() => {
     // Set up sharing info for current user (owner)
     if (boards.length > 0 && currentBoardId) {
       const currentBoard = getCurrentBoard();
@@ -219,5 +211,8 @@ export function useBoard() {
     currentBoard,
     currentBoardId,
     setCurrentBoard,
+    createBoard,
+    createList,
+    createCard,
   };
 }

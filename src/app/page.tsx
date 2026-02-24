@@ -10,7 +10,7 @@ import { useBoard, useUIStore } from '@/hooks';
 import { useSharingStore } from '@/store/sharingStore';
 
 export default function Home() {
-  const { currentBoard, currentBoardId } = useBoard();
+  const { currentBoard, currentBoardId, createBoard, boards } = useBoard();
   const { currentView, initializeTheme } = useUIStore();
   const { showJoinModal, setShowJoinModal } = useSharingStore();
   const [inviteId, setInviteId] = useState<string | null>(null);
@@ -27,13 +27,41 @@ export default function Home() {
     }
   }, [initializeTheme, setShowJoinModal]);
 
+  const handleCreateBoard = () => {
+    const board = createBoard('New Board');
+    // The board store will automatically set this as current board
+  };
+
   if (!currentBoard || !currentBoardId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <div className="text-center">
-          <div className="mb-4 text-lg font-medium text-slate-600 dark:text-slate-400">
-            Loading board...
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+              Welcome to Flowboard
+            </h1>
+            <p className="text-lg text-slate-600 dark:text-slate-400">
+              {boards.length === 0
+                ? "Create your first board to get started"
+                : "Select a board from the sidebar or create a new one"
+              }
+            </p>
           </div>
+
+          {boards.length === 0 && (
+            <button
+              onClick={handleCreateBoard}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+            >
+              Create Your First Board
+            </button>
+          )}
+
+          {boards.length > 0 && (
+            <div className="text-sm text-slate-500 dark:text-slate-400">
+              Please select a board from the sidebar
+            </div>
+          )}
         </div>
       </div>
     );
