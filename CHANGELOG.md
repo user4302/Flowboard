@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced month view with daily granularity and improved date labeling
 - Fixed card stacking logic for out-of-range cards in timeline view
 - Added hidden cards indicator and expandable list for out-of-range timeline cards
+- Fixed day view card overlapping issue with proper vertical stacking
+- Created HiddenCardsIndicator component with dual-side directional indicators
+- Added useDateRange and useHiddenCards hooks for better component separation
+- Enhanced hidden cards UX with before/after directional indicators
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
