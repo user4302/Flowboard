@@ -20,7 +20,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { format, eachDayOfInterval, startOfYear, endOfYear, isSameDay, isSameWeek, isSameMonth, isWithinInterval, addDays, addWeeks, addMonths, addYears, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
-import { cn } from '@/lib/utils';
+import { cn, formatDate } from '@/lib/utils';
 import { Calendar, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 interface TimelineViewProps {
@@ -96,6 +96,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | '2weeks' | 'month' | 'year'>('week');
+  const [hoveredHiddenGroup, setHoveredHiddenGroup] = useState<string | null>(null);
 
   // Generate date range based on zoom level and current date
   const dateRange = useMemo(() => {
@@ -607,7 +608,18 @@ export function TimelineView({ boardId }: TimelineViewProps) {
               {board.lists.map((list, listIndex) => {
                 const listCards = cardsWithDates.filter(card => card.listId === list.id);
 
-                if (listCards.length === 0) return null;
+                if (listCards.length === 0) {
+                  return null;
+                }
+
+                // Calculate hidden cards for this specific list
+                const rangeStart = dateRange[0];
+                const rangeEnd = dateRange[dateRange.length - 1];
+                const hiddenCards = listCards.filter(card => {
+                  const cardStart = card.startDate || new Date();
+                  const cardEnd = card.dueDate || addDays(cardStart, 7);
+                  return cardEnd < rangeStart || cardStart > rangeEnd;
+                });
 
                 return (
                   <div key={list.id} className="flex border-b border-slate-100 dark:border-slate-800">
@@ -628,6 +640,56 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                         minHeight: `${calculateTimelineHeight(listCards, dateRange)}px`
                       }}
                     >
+                      {/* Hidden cards indicator for this swimlane */}
+                      {hiddenCards.length > 0 && (
+                        <div className="absolute top-2 right-2 z-20">
+                          <div
+                            className="relative"
+                            onMouseEnter={() => setHoveredHiddenGroup(list.id)}
+                            onMouseLeave={() => setHoveredHiddenGroup(null)}
+                          >
+                            <div className="bg-indigo-600 text-white text-xs px-2 py-1 rounded-md cursor-pointer shadow-lg">
+                              +{hiddenCards.length} hidden
+                            </div>
+
+                            {/* Expandable hidden cards list for this swimlane */}
+                            {hoveredHiddenGroup === list.id && (
+                              <div
+                                className="absolute top-0 right-0 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-30"
+                                onMouseEnter={() => setHoveredHiddenGroup(list.id)}
+                                onMouseLeave={() => setHoveredHiddenGroup(null)}
+                              >
+                                <div className="p-3 max-h-48 overflow-y-auto">
+                                  <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-2 text-sm">
+                                    Hidden Cards ({hiddenCards.length})
+                                  </h4>
+                                  <div className="space-y-2">
+                                    {hiddenCards.map(card => (
+                                      <div
+                                        key={card.id}
+                                        className="p-2 bg-slate-50 dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600"
+                                        onClick={() => openCardModal(card.id)}
+                                      >
+                                        <div className="font-medium text-slate-900 dark:text-slate-100">
+                                          {card.title}
+                                        </div>
+                                        <div className="text-slate-500 dark:text-slate-400 mt-1">
+                                          {card.startDate && `${formatDate(card.startDate)} - ${card.dueDate && formatDate(card.dueDate)}`}
+                                        </div>
+                                        <div className="text-slate-400 dark:text-slate-500 mt-1">
+                                          {card.description && card.description.length > 50
+                                            ? card.description.substring(0, 50) + '...'
+                                            : card.description}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       {/* Grid lines */}
                       {dateRange.map((date, index) => (
                         <div
@@ -684,6 +746,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
