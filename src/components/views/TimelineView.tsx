@@ -22,7 +22,8 @@ import { isSameDay, isSameWeek, isSameMonth, addDays, startOfDay } from 'date-fn
 import { useBoardStore, useUIStore } from '@/store';
 import { TimelineHeader } from './timeline/components/TimelineHeader';
 import { TimelineGrid } from './timeline/components/TimelineGrid';
-import { TimelineSwimlane } from './timeline/components/TimelineSwimlane';
+import { IndividualCardSwimlane } from './timeline/components/IndividualCardSwimlane';
+import { SubCardSwimlane } from './timeline/components/SubCardSwimlane';
 import { useDateRange } from './timeline/hooks/useDateRange';
 import { useTimelineKeyboardShortcuts } from './timeline/hooks/useTimelineKeyboardShortcuts';
 import { calculateTimelineHeight, getCardPosition, getCardColor } from './timeline/utils/timelineUtils';
@@ -71,7 +72,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     });
   }, [board.lists, searchTerm, dateRange]);
 
-  // Create wrapper function for getCardPosition to match TimelineSwimlane expected signature
+  // Create wrapper function for getCardPosition to match IndividualCardSwimlane expected signature
   const getCardPositionWrapper = useMemo(() => {
     return (card: any, allCards: any[], cardIndex: number) => {
       return getCardPosition(card, allCards, cardIndex, dateRange, zoomLevel);
@@ -100,21 +101,44 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
             {/* Lists and cards */}
             <div className="relative">
+              {/* Main swimlanes */}
               {board.lists.map((list) => {
                 const listCards = cardsWithDates.filter(card => card.listId === list.id);
 
                 return (
-                  <TimelineSwimlane
-                    key={list.id}
-                    list={list}
-                    listCards={listCards}
-                    dateRange={dateRange}
-                    zoomLevel={zoomLevel}
-                    onOpenCardModal={openCardModal}
-                    getCardPosition={getCardPositionWrapper}
-                    getCardColor={getCardColor}
-                    calculateTimelineHeight={calculateTimelineHeight}
-                  />
+                  <div key={list.id} className="flex border-b border-slate-100 dark:border-slate-800">
+                    {/* List name */}
+                    <div className="w-48 flex-shrink-0 p-3">
+                      <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                        {list.title}
+                      </h3>
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        {listCards.length} cards
+                      </div>
+                    </div>
+
+                    {/* Timeline area with sub-card swimlanes */}
+                    <div
+                      className="flex-1 relative"
+                      style={{
+                        minHeight: `${calculateTimelineHeight(listCards, dateRange)}px`
+                      }}
+                    >
+                      {/* Individual cards within this main swimlane */}
+                      {listCards.map((card, cardIndex) => (
+                        <SubCardSwimlane
+                          key={card.id}
+                          card={card}
+                          dateRange={dateRange}
+                          zoomLevel={zoomLevel}
+                          onOpenCardModal={openCardModal}
+                          getCardPosition={getCardPositionWrapper}
+                          getCardColor={getCardColor}
+                          calculateTimelineHeight={calculateTimelineHeight}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 );
               })}
             </div>
