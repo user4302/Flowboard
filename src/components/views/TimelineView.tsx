@@ -116,13 +116,13 @@ export function TimelineView({ boardId }: TimelineViewProps) {
         }
         break;
       case 'month':
-        // For month view, show weeks in the month
+        // For month view, show all individual days in the month
         const monthStart = startOfMonth(currentDate);
         const monthEnd = endOfMonth(currentDate);
-        let currentWeek = startOfWeek(monthStart, { weekStartsOn: 1 }); // 1 = Monday
-        while (currentWeek <= monthEnd) {
-          dates.push(currentWeek);
-          currentWeek = addWeeks(currentWeek, 1);
+        let currentDay = monthStart;
+        while (currentDay <= monthEnd) {
+          dates.push(currentDay);
+          currentDay = addDays(currentDay, 1);
         }
         break;
       case '2weeks':
@@ -569,9 +569,15 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     )}
                   >
                     <div className="text-slate-500 dark:text-slate-400">
-                      {getDateLabel(date)}
+                      {zoomLevel === 'month' ? format(date, 'd') : getDateLabel(date)}
                     </div>
-                    {index % 7 === 0 && (
+                    {/* Show month name only on first day of month */}
+                    {zoomLevel === 'month' && format(date, 'd') === '1' && (
+                      <div className="text-slate-400 dark:text-slate-500">
+                        {format(date, 'MMM')}
+                      </div>
+                    )}
+                    {zoomLevel !== 'month' && index % 7 === 0 && (
                       <div className="text-slate-400 dark:text-slate-500">
                         {format(date, zoomLevel === 'year' ? 'yyyy' : 'MMM')}
                       </div>

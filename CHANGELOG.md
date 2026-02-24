@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 2 weeks zoom level replacing quarter view for better practicality
 - Quarter markers (Q1-Q4) in timeline year view for better orientation
 - Enhanced timeline UI styling with improved button contrast and active states
+- Enhanced month view with daily granularity and improved date labeling
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
