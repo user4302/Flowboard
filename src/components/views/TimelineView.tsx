@@ -23,6 +23,7 @@ import { useBoardStore, useUIStore } from '@/store';
 import { cn, formatDate } from '@/lib/utils';
 import { Calendar, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { TimelineHeader } from './timeline/components/TimelineHeader';
+import { TimelineGrid } from './timeline/components/TimelineGrid';
 import { HiddenCardsIndicator } from './timeline/components/HiddenCardsIndicator';
 
 interface TimelineViewProps {
@@ -455,48 +456,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full overflow-auto p-4 absolute inset-0">
           <div className="min-w-[1200px]">
-            {/* Date headers */}
-            <div className="sticky top-0 z-10 flex border-b-2 border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
-              <div className="w-48 flex-shrink-0 p-2 text-sm font-medium text-slate-600 dark:text-slate-400">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {getZoomLabel()}
-                </div>
-              </div>
-              <div className="flex-1 flex">
-                {dateRange.map((date, index) => (
-                  <div
-                    key={date.toISOString()}
-                    className={cn(
-                      'flex-1 border-l border-slate-200 p-2 text-center text-xs',
-                      index % 7 === 0 && 'border-l-2 border-slate-300',
-                      'dark:border-slate-700 dark:border-l-slate-600'
-                    )}
-                  >
-                    <div className="text-slate-500 dark:text-slate-400">
-                      {zoomLevel === 'month' ? format(date, 'd') : getDateLabel(date)}
-                    </div>
-                    {/* Show month name only on first day of month */}
-                    {zoomLevel === 'month' && format(date, 'd') === '1' && (
-                      <div className="text-slate-400 dark:text-slate-500">
-                        {format(date, 'MMM')}
-                      </div>
-                    )}
-                    {zoomLevel !== 'month' && index % 7 === 0 && (
-                      <div className="text-slate-400 dark:text-slate-500">
-                        {format(date, zoomLevel === 'year' ? 'yyyy' : 'MMM')}
-                      </div>
-                    )}
-                    {/* Add quarter markers for year view */}
-                    {zoomLevel === 'year' && index % 3 === 0 && (
-                      <div className="text-xs text-slate-300 dark:text-slate-600 font-medium">
-                        Q{Math.floor(index / 3) + 1}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Date headers and grid lines */}
+            <TimelineGrid dateRange={dateRange} zoomLevel={zoomLevel} />
 
             {/* Lists and cards */}
             <div className="relative">
@@ -545,21 +506,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                         hiddenCardsAfter={hiddenCardsAfter}
                         onOpenCardModal={openCardModal}
                       />
-                      {/* Grid lines */}
-                      {dateRange.map((date, index) => (
-                        <div
-                          key={date.toISOString()}
-                          className={cn(
-                            'absolute top-0 bottom-0 border-l border-slate-100',
-                            index % 7 === 0 && 'border-l-2 border-slate-200',
-                            'dark:border-slate-800 dark:border-l-slate-700'
-                          )}
-                          style={{
-                            left: `${(index / dateRange.length) * 100}%`,
-                            width: `${100 / dateRange.length}%`
-                          }}
-                        />
-                      ))}
 
                       {/* Cards */}
                       {listCards.map((card, cardIndex) => {
