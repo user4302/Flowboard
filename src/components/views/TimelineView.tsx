@@ -41,6 +41,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | '2weeks' | 'month' | 'year'>('week');
+  const [collapsedLanes, setCollapsedLanes] = useState<Set<string>>(new Set());
 
   // Generate date range based on zoom level and current date
   const dateRange = useDateRange(currentDate, zoomLevel);
@@ -79,6 +80,19 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     };
   }, [dateRange, zoomLevel]);
 
+  // Toggle collapse state for a lane
+  const toggleLaneCollapse = (listId: string) => {
+    setCollapsedLanes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(listId)) {
+        newSet.delete(listId);
+      } else {
+        newSet.add(listId);
+      }
+      return newSet;
+    });
+  };
+
   // Add keyboard shortcuts for zoom levels
   useTimelineKeyboardShortcuts(setZoomLevel, setCurrentDate, zoomLevel);
 
@@ -104,19 +118,30 @@ export function TimelineView({ boardId }: TimelineViewProps) {
               {/* Main swimlanes */}
               {board.lists.map((list) => {
                 const listCards = cardsWithDates.filter(card => card.listId === list.id);
+                const isCollapsed = collapsedLanes.has(list.id);
 
                 return (
                   <div key={list.id} className="border-2 border-slate-200 dark:border-slate-700 rounded-lg mb-4 overflow-hidden">
-                    {/* Main swimlane header - visually distinct */}
-                    <div className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                    {/* Main swimlane header - visually distinct with collapse toggle */}
+                    <div
+                      className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                      onClick={() => toggleLaneCollapse(list.id)}
+                    >
                       <div className="flex">
-                        {/* List name */}
+                        {/* List name with collapse chevron */}
                         <div className="w-48 flex-shrink-0 p-3">
-                          <h3 className="font-semibold text-slate-900 dark:text-slate-100">
-                            {list.title}
-                          </h3>
-                          <div className="text-xs text-slate-500 dark:text-slate-400">
-                            {listCards.length} cards
+                          <div className="flex items-center gap-2">
+                            <div className={`transform transition-transform duration-200 ${isCollapsed ? 'rotate-0' : 'rotate-90'}`}>
+                              ▶
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+                                {list.title}
+                              </h3>
+                              <div className="text-xs text-slate-500 dark:text-slate-400">
+                                {listCards.length} cards
+                              </div>
+                            </div>
                           </div>
                         </div>
 
@@ -127,21 +152,23 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                       </div>
                     </div>
 
-                    {/* Sub-card swimlanes within this parent container */}
-                    <div className="bg-white dark:bg-slate-900">
-                      {listCards.map((card, cardIndex) => (
-                        <SubCardSwimlane
-                          key={card.id}
-                          card={card}
-                          dateRange={dateRange}
-                          zoomLevel={zoomLevel}
-                          onOpenCardModal={openCardModal}
-                          getCardPosition={getCardPositionWrapper}
-                          getCardColor={getCardColor}
-                          calculateTimelineHeight={calculateTimelineHeight}
-                        />
-                      ))}
-                    </div>
+                    {/* Sub-card swimlanes within this parent container - collapsible */}
+                    {!isCollapsed && (
+                      <div className="bg-white dark:bg-slate-900">
+                        {listCards.map((card, cardIndex) => (
+                          <SubCardSwimlane
+                            key={card.id}
+                            card={card}
+                            dateRange={dateRange}
+                            zoomLevel={zoomLevel}
+                            onOpenCardModal={openCardModal}
+                            getCardPosition={getCardPositionWrapper}
+                            getCardColor={getCardColor}
+                            calculateTimelineHeight={calculateTimelineHeight}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}
