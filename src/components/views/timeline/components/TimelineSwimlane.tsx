@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { addDays } from 'date-fns';
 import { HiddenCardsIndicator } from './HiddenCardsIndicator';
 import { TimelineCard } from './TimelineCard';
+import { useHiddenCards } from '../hooks/useHiddenCards';
 
 interface TimelineSwimlaneProps {
   list: any;
@@ -24,17 +25,8 @@ export function TimelineSwimlane({
   getCardColor,
   calculateTimelineHeight
 }: TimelineSwimlaneProps) {
-  // Calculate hidden cards for this specific list and determine position
-  const rangeStart = dateRange[0];
-  const rangeEnd = dateRange[dateRange.length - 1];
-  const hiddenCardsBefore = listCards.filter(card => {
-    const cardEnd = card.dueDate || addDays(card.startDate || new Date(), 7);
-    return cardEnd < rangeStart;
-  });
-  const hiddenCardsAfter = listCards.filter(card => {
-    const cardStart = card.startDate || new Date();
-    return cardStart > rangeEnd;
-  });
+  // Use the useHiddenCards hook to calculate hidden cards for this specific list
+  const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(listCards, dateRange);
 
   return (
     <div key={list.id} className="flex border-b border-slate-100 dark:border-slate-800">

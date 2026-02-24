@@ -28,6 +28,7 @@ import { TimelineCard } from './timeline/components/TimelineCard';
 import { TimelineSwimlane } from './timeline/components/TimelineSwimlane';
 import { HiddenCardsIndicator } from './timeline/components/HiddenCardsIndicator';
 import { useDateRange } from './timeline/hooks/useDateRange';
+import { useHiddenCards } from './timeline/hooks/useHiddenCards';
 
 interface TimelineViewProps {
   boardId: string;
