@@ -325,18 +325,27 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                 break;
             }
 
-            // Handle out-of-range indices
-            const start1 = Math.max(0, currentCardStartIdx);
-            const end1 = Math.max(0, currentCardEndIdx);
-            const start2 = Math.max(0, existingCardStartIdx);
-            const end2 = Math.max(0, existingCardEndIdx);
+            // Handle out-of-range indices - cards completely outside range should not overlap
+            const start1 = currentCardStartIdx;
+            const end1 = currentCardEndIdx;
+            const start2 = existingCardStartIdx;
+            const end2 = existingCardEndIdx;
 
-            const start = Math.max(start1, start2);
-            const end = Math.min(end1, end2);
+            // Only check for overlap if both cards have valid indices within the visible range
+            // Cards with -1 indices are outside the visible range and shouldn't overlap with each other
+            let shouldCheckOverlap = true;
+            if (start1 < 0 || end1 < 0 || start2 < 0 || end2 < 0) {
+              // At least one card is outside visible range - don't check overlap
+              shouldCheckOverlap = false;
+            }
 
-            if (start <= end) {
-              overlap = true;
-              break;
+            if (shouldCheckOverlap) {
+              const start = Math.max(start1, start2);
+              const end = Math.min(end1, end2);
+
+              if (start <= end) {
+                overlap = true;
+              }
             }
           }
         }

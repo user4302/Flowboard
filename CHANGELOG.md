@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Quarter markers (Q1-Q4) in timeline year view for better orientation
 - Enhanced timeline UI styling with improved button contrast and active states
 - Enhanced month view with daily granularity and improved date labeling
+- Fixed card stacking logic for out-of-range cards in timeline view
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
