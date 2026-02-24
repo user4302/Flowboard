@@ -5,6 +5,7 @@ import { Users, Check, X, Clock, Shield } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useSharingStore } from '@/store/sharingStore';
 import { JoinRequest } from '@/lib/invitation-utils';
+import { request } from 'http';
 
 interface MemberManagementProps {
   /** Whether the modal is currently open */
@@ -115,54 +116,54 @@ export function MemberManagement({ isOpen, onClose }: MemberManagementProps) {
                     No pending join requests
                   </p>
                 </div>
-              {/* List of pending join requests */}
+
+                // List of pending join requests 
               ) : (
                 pendingRequests.map((request: JoinRequest) => (
-              <div
-                key={request.id}
-                className="rounded-lg border border-slate-200 p-4 dark:border-slate-700"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                      <span className="text-sm font-medium text-indigo-600">
-                        {request.username.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="font-medium text-slate-900 dark:text-slate-100">
-                        {request.username}
-                      </p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        {request.email}
-                      </p>
-                      <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
-                        <Clock className="h-3 w-3" />
-                        {new Date(request.createdAt).toLocaleDateString()}
+                  <div
+                    key={request.id}
+                    className="rounded-lg border border-slate-200 p-4 dark:border-slate-700"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <span className="text-sm font-medium text-indigo-600">
+                            {request.username.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-900 dark:text-slate-100">
+                            {request.username}
+                          </p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            {request.email}
+                          </p>
+                          <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                            <Clock className="h-3 w-3" />
+                            {new Date(request.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleReject(request.id)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleApprove(request.id)}
+                          className="text-green-600 hover:text-green-700"
+                        >
+                          <Check className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
                   </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleReject(request.id)}
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => handleApprove(request.id)}
-                      className="text-green-600 hover:text-green-700"
-                    >
-                      <Check className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-              ))
+                ))
               )}
             </div>
           )}
