@@ -65,6 +65,10 @@ export const getCardPosition = (card: any, allCards: any[], cardIndex: number, d
   const cardStartDate = card.startDate || new Date();
   const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
 
+  // Debug: Log the date range and card dates
+  console.log('Card:', card.title, 'Start:', cardStartDate, 'End:', cardEndDate);
+  console.log('Date Range:', dateRange.map(d => d.toISOString().split('T')[0]));
+
   let startIndex = -1;
   let endIndex = -1;
 
@@ -91,6 +95,9 @@ export const getCardPosition = (card: any, allCards: any[], cardIndex: number, d
       endIndex = dateRange.findIndex(date => isSameMonth(date, cardEndDate));
       break;
   }
+
+  // Debug: Log the indices found
+  console.log('Indices:', startIndex, endIndex);
 
   // Handle cards outside the visible range for all zoom levels
   const rangeStart = dateRange[0];
@@ -153,6 +160,9 @@ export const getCardPosition = (card: any, allCards: any[], cardIndex: number, d
       width = ((endIndex - startIndex + 1) / dateRange.length) * 100;
     }
   }
+
+  // Debug: Log the calculated position
+  console.log('Position:', { left, width });
 
   // Calculate vertical stacking position using the same logic as height calculation
   let stackLevel = 0;
