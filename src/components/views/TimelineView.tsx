@@ -170,8 +170,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                           {/* This ensures timeline lines extend properly */}
                         </div>
 
-                        {/* Right-side empty space for consistency */}
-                        <div className="w-48 flex-shrink-0 border-l border-slate-100 dark:border-slate-700">
+                        {/* Right-side empty space without horizontal border */}
+                        <div className="w-48 flex-shrink-0 border-l border-slate-200 dark:border-slate-700">
                           {/* Empty space for consistency with child lanes */}
                         </div>
                       </div>

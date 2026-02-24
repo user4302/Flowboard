@@ -24,7 +24,7 @@ export function SubCardSwimlane({
   hiddenCardsAfter
 }: SubCardSwimlaneProps) {
   return (
-    <div className="flex border-b border-slate-50 dark:border-slate-700">
+    <div className="flex">
       {/* Left-side empty space for hidden cards indicator */}
       <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
         {/* Hidden cards indicator for cards before current range */}
@@ -37,7 +37,7 @@ export function SubCardSwimlane({
 
       {/* Timeline area with the card */}
       <div
-        className="flex-1 relative"
+        className="flex-1 relative border-b border-slate-50 dark:border-slate-700"
         style={{
           minHeight: `${calculateTimelineHeight([card], dateRange)}px`
         }}
