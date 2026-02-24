@@ -28,6 +28,26 @@ import { useDateRange } from './timeline/hooks/useDateRange';
 import { useTimelineKeyboardShortcuts } from './timeline/hooks/useTimelineKeyboardShortcuts';
 import { calculateTimelineHeight, getCardPosition, getCardColor } from './timeline/utils/timelineUtils';
 
+// Helper function to calculate hidden cards for a specific card
+const calculateHiddenCards = (allCards: any[], currentCard: any, dateRange: Date[]) => {
+  const rangeStart = dateRange[0];
+  const rangeEnd = dateRange[dateRange.length - 1];
+
+  const hiddenBefore = allCards.filter(card => {
+    if (card.id === currentCard.id) return false;
+    const cardEnd = card.dueDate || addDays(card.startDate || new Date(), 7);
+    return cardEnd < rangeStart;
+  });
+
+  const hiddenAfter = allCards.filter(card => {
+    if (card.id === currentCard.id) return false;
+    const cardStart = card.startDate || new Date();
+    return cardStart > rangeEnd;
+  });
+
+  return { hiddenBefore, hiddenAfter };
+};
+
 interface TimelineViewProps {
   boardId: string;
 }
@@ -149,24 +169,34 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                         <div className="flex-1 relative" style={{ minHeight: '48px' }}>
                           {/* This ensures timeline lines extend properly */}
                         </div>
+
+                        {/* Right-side empty space for consistency */}
+                        <div className="w-48 flex-shrink-0 border-l border-slate-100 dark:border-slate-700">
+                          {/* Empty space for consistency with child lanes */}
+                        </div>
                       </div>
                     </div>
 
                     {/* Sub-card swimlanes within this parent container - collapsible */}
                     {!isCollapsed && (
                       <div className="bg-white dark:bg-slate-900">
-                        {listCards.map((card, cardIndex) => (
-                          <SubCardSwimlane
-                            key={card.id}
-                            card={card}
-                            dateRange={dateRange}
-                            zoomLevel={zoomLevel}
-                            onOpenCardModal={openCardModal}
-                            getCardPosition={getCardPositionWrapper}
-                            getCardColor={getCardColor}
-                            calculateTimelineHeight={calculateTimelineHeight}
-                          />
-                        ))}
+                        {listCards.map((card, cardIndex) => {
+                          const { hiddenBefore, hiddenAfter } = calculateHiddenCards(cardsWithDates, card, dateRange);
+                          return (
+                            <SubCardSwimlane
+                              key={card.id}
+                              card={card}
+                              dateRange={dateRange}
+                              zoomLevel={zoomLevel}
+                              onOpenCardModal={openCardModal}
+                              getCardPosition={getCardPositionWrapper}
+                              getCardColor={getCardColor}
+                              calculateTimelineHeight={calculateTimelineHeight}
+                              hiddenCardsBefore={hiddenBefore}
+                              hiddenCardsAfter={hiddenAfter}
+                            />
+                          );
+                        })}
                       </div>
                     )}
                   </div>

@@ -8,6 +8,8 @@ interface SubCardSwimlaneProps {
   getCardPosition: (card: any, allCards: any[], cardIndex: number) => any;
   getCardColor: (card: any) => string;
   calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
+  hiddenCardsBefore: any[];
+  hiddenCardsAfter: any[];
 }
 
 export function SubCardSwimlane({
@@ -17,13 +19,20 @@ export function SubCardSwimlane({
   onOpenCardModal,
   getCardPosition,
   getCardColor,
-  calculateTimelineHeight
+  calculateTimelineHeight,
+  hiddenCardsBefore,
+  hiddenCardsAfter
 }: SubCardSwimlaneProps) {
   return (
     <div className="flex border-b border-slate-50 dark:border-slate-700">
-      {/* Empty space for main swimlane alignment */}
-      <div className="w-48 flex-shrink-0 p-3">
-        {/* This aligns with main swimlane header */}
+      {/* Left-side empty space for hidden cards indicator */}
+      <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
+        {/* Hidden cards indicator for cards before current range */}
+        {hiddenCardsBefore.length > 0 && (
+          <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
+            ←{hiddenCardsBefore.length}
+          </div>
+        )}
       </div>
 
       {/* Timeline area with the card */}
@@ -43,6 +52,16 @@ export function SubCardSwimlane({
           getCardPosition={getCardPosition}
           getCardColor={getCardColor}
         />
+      </div>
+
+      {/* Right-side empty space for hidden cards indicator */}
+      <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
+        {/* Hidden cards indicator for cards after current range */}
+        {hiddenCardsAfter.length > 0 && (
+          <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
+            +{hiddenCardsAfter.length}
+          </div>
+        )}
       </div>
     </div>
   );
