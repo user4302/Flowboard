@@ -8,9 +8,9 @@ interface TimelineSwimlaneProps {
   dateRange: Date[];
   zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
   onOpenCardModal: (cardId: string) => void;
-  getCardPosition: (card: any, allCards: any[], cardIndex: number) => any;
   getCardColor: (card: any) => string;
   calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
+  children?: React.ReactNode;
 }
 
 export function TimelineSwimlane({
@@ -19,9 +19,9 @@ export function TimelineSwimlane({
   dateRange,
   zoomLevel,
   onOpenCardModal,
-  getCardPosition,
   getCardColor,
-  calculateTimelineHeight
+  calculateTimelineHeight,
+  children
 }: TimelineSwimlaneProps) {
   // Calculate hidden cards for this specific list and determine position
   const rangeStart = dateRange[0];
@@ -63,19 +63,7 @@ export function TimelineSwimlane({
         />
 
         {/* Cards */}
-        {listCards.map((card, cardIndex) => (
-          <TimelineCard
-            key={card.id}
-            card={card}
-            allCards={listCards}
-            cardIndex={cardIndex}
-            dateRange={dateRange}
-            zoomLevel={zoomLevel}
-            onOpenCardModal={onOpenCardModal}
-            getCardPosition={getCardPosition}
-            getCardColor={getCardColor}
-          />
-        ))}
+        {children}
       </div>
     </div>
   );

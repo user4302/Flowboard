@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { addDays } from 'date-fns';
+import { useTimelinePositioning } from '../hooks/useTimelinePositioning';
 
 interface TimelineCardProps {
   card: any;
@@ -8,7 +9,6 @@ interface TimelineCardProps {
   dateRange: Date[];
   zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
   onOpenCardModal: (cardId: string) => void;
-  getCardPosition: (card: any, allCards: any[], cardIndex: number) => any;
   getCardColor: (card: any) => string;
 }
 
@@ -19,9 +19,12 @@ export function TimelineCard({
   dateRange,
   zoomLevel,
   onOpenCardModal,
-  getCardPosition,
   getCardColor
 }: TimelineCardProps) {
+  // Use the useTimelinePositioning hook to get position
+  const position = useTimelinePositioning(card, allCards, cardIndex, dateRange, zoomLevel);
+  const color = getCardColor(card);
+
   // Only render cards that are at least partially visible in the timeline
   const cardStart = card.startDate || new Date();
   const cardEnd = card.dueDate || addDays(cardStart, 7);
@@ -32,9 +35,6 @@ export function TimelineCard({
   if (cardEnd < rangeStart || cardStart > rangeEnd) {
     return null;
   }
-
-  const position = getCardPosition(card, allCards, cardIndex);
-  const color = getCardColor(card);
 
   return (
     <div
