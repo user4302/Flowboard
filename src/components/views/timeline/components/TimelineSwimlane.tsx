@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { addDays } from 'date-fns';
 import { HiddenCardsIndicator } from './HiddenCardsIndicator';
 import { TimelineCard } from './TimelineCard';
 
@@ -8,9 +9,9 @@ interface TimelineSwimlaneProps {
   dateRange: Date[];
   zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
   onOpenCardModal: (cardId: string) => void;
+  getCardPosition: (card: any, allCards: any[], cardIndex: number) => any;
   getCardColor: (card: any) => string;
   calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
-  children?: React.ReactNode;
 }
 
 export function TimelineSwimlane({
@@ -19,15 +20,15 @@ export function TimelineSwimlane({
   dateRange,
   zoomLevel,
   onOpenCardModal,
+  getCardPosition,
   getCardColor,
-  calculateTimelineHeight,
-  children
+  calculateTimelineHeight
 }: TimelineSwimlaneProps) {
   // Calculate hidden cards for this specific list and determine position
   const rangeStart = dateRange[0];
   const rangeEnd = dateRange[dateRange.length - 1];
   const hiddenCardsBefore = listCards.filter(card => {
-    const cardEnd = card.dueDate || require('date-fns').addDays(card.startDate || new Date(), 7);
+    const cardEnd = card.dueDate || addDays(card.startDate || new Date(), 7);
     return cardEnd < rangeStart;
   });
   const hiddenCardsAfter = listCards.filter(card => {
@@ -63,7 +64,19 @@ export function TimelineSwimlane({
         />
 
         {/* Cards */}
-        {children}
+        {listCards.map((card, cardIndex) => (
+          <TimelineCard
+            key={card.id}
+            card={card}
+            allCards={listCards}
+            cardIndex={cardIndex}
+            dateRange={dateRange}
+            zoomLevel={zoomLevel}
+            onOpenCardModal={onOpenCardModal}
+            getCardPosition={getCardPosition}
+            getCardColor={getCardColor}
+          />
+        ))}
       </div>
     </div>
   );
