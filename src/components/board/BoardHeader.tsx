@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Menu, Sun, Moon, Users, Plus } from 'lucide-react';
+import { Search, Menu, Sun, Moon, Users, Plus, Download, Upload } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { Button, Input } from '@/components/ui';
 import { VIEWS } from '@/lib/constants';
@@ -50,6 +50,97 @@ export function BoardHeader() {
 
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const handleExportBoard = () => {
+    if (currentBoard) {
+      const boardData = {
+        name: currentBoard.name,
+        exportDate: new Date().toISOString(),
+        lists: currentBoard.lists.map(list => ({
+          title: list.title,
+          cards: list.cards.map(card => ({
+            title: card.title,
+            description: card.description,
+            startDate: card.startDate,
+            dueDate: card.dueDate,
+            labels: card.labels,
+            members: card.members,
+            checklist: card.checklist,
+            createdAt: card.createdAt,
+            updatedAt: card.updatedAt
+          }))
+        }))
+      };
+
+      const filename = `${currentBoard.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+      const dataStr = JSON.stringify(boardData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  };
+
+  const handleImportBoard = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type === 'application/json') {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const boardData = JSON.parse(e.target?.result as string);
+          if (boardData.name && boardData.lists) {
+            // Create new board from imported data
+            const newBoard = useBoardStore.getState().createBoard(boardData.name);
+
+            // Import lists and cards
+            boardData.lists.forEach((listData: any, listIndex: number) => {
+              const list = useBoardStore.getState().createList(newBoard.id, listData.title, listIndex);
+
+              listData.cards.forEach((cardData: any, cardIndex: number) => {
+                const card = useBoardStore.getState().createCard(newBoard.id, list.id, cardData.title, cardIndex);
+
+                // Update card with additional data
+                useBoardStore.getState().updateCard(newBoard.id, card.id, {
+                  description: cardData.description,
+                  startDate: cardData.startDate ? new Date(cardData.startDate) : undefined,
+                  dueDate: cardData.dueDate ? new Date(cardData.dueDate) : undefined,
+                });
+
+                // Add labels
+                cardData.labels?.forEach((label: any) => {
+                  useBoardStore.getState().addLabel(newBoard.id, card.id, label);
+                });
+
+                // Add members
+                cardData.members?.forEach((memberId: string) => {
+                  useBoardStore.getState().updateCard(newBoard.id, card.id, {
+                    members: [...card.members, memberId]
+                  });
+                });
+
+                // Add checklist items
+                cardData.checklist?.forEach((item: any) => {
+                  useBoardStore.getState().addChecklistItem(newBoard.id, card.id, item.text);
+                  if (item.done) {
+                    useBoardStore.getState().updateChecklistItem(newBoard.id, card.id, item.id, { done: true });
+                  }
+                });
+              });
+            });
+          }
+        } catch (error) {
+          console.error('Error importing board:', error);
+          alert('Error importing board. Please check the file format.');
+        }
+      };
+      reader.readAsText(file);
+    }
   };
 
   if (!currentBoard) return null;
@@ -118,6 +209,33 @@ export function BoardHeader() {
 
         {/* Right side */}
         <div className="flex items-center justify-end gap-3 flex-shrink-0 w-1/5">
+          {/* Export/Import buttons */}
+          <div className="flex items-center gap-2">
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportBoard}
+              className="hidden"
+              id="board-import"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => document.getElementById('board-import')?.click()}
+              title="Import board from JSON"
+            >
+              <Upload className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleExportBoard}
+              title="Export board to JSON"
+            >
+              <Download className="h-4 w-4" />
+            </Button>
+          </div>
+
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
