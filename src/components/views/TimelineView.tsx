@@ -204,7 +204,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                           list.cards.length > 0 ? (
                             // Show empty swimlane if list has cards but none in current range
                             <div className="flex border-b border-slate-50 dark:border-slate-700">
-                              {/* Left-side space for hidden cards indicator */}
+                              {/* Left-side space for past hidden cards */}
                               <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
                                 <div className="flex flex-wrap gap-1">
                                   {list.cards.map((card) => {
@@ -213,24 +213,13 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                     const rangeStart = dateRange[0];
                                     const rangeEnd = dateRange[dateRange.length - 1];
 
-                                    // Show card in left side if it's before current range
+                                    // Show card in left side only if it's before current range
                                     if (cardEnd < rangeStart) {
                                       return (
                                         <div
                                           key={card.id}
                                           className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500`}
                                           title={`${card.title} (Before current view)`}
-                                          onClick={() => openCardModal(card.id)}
-                                        />
-                                      );
-                                    }
-                                    // Show card in right side if it's after current range
-                                    else if (cardStart > rangeEnd) {
-                                      return (
-                                        <div
-                                          key={card.id}
-                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500`}
-                                          title={`${card.title} (After current view)`}
                                           onClick={() => openCardModal(card.id)}
                                         />
                                       );
@@ -250,9 +239,29 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                 </div>
                               </div>
 
-                              {/* Right-side space for hidden cards indicator */}
+                              {/* Right-side space for future hidden cards */}
                               <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
-                                {/* Cards shown in left side above */}
+                                <div className="flex flex-wrap gap-1">
+                                  {list.cards.map((card) => {
+                                    const cardStart = card.startDate || new Date();
+                                    const cardEnd = card.dueDate || addDays(cardStart, 7);
+                                    const rangeStart = dateRange[0];
+                                    const rangeEnd = dateRange[dateRange.length - 1];
+
+                                    // Show card in right side only if it's after current range
+                                    if (cardStart > rangeEnd) {
+                                      return (
+                                        <div
+                                          key={card.id}
+                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500`}
+                                          title={`${card.title} (After current view)`}
+                                          onClick={() => openCardModal(card.id)}
+                                        />
+                                      );
+                                    }
+                                    return null;
+                                  })}
+                                </div>
                               </div>
                             </div>
                           ) : (
