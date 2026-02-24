@@ -27,6 +27,7 @@ import { TimelineGrid } from './timeline/components/TimelineGrid';
 import { TimelineCard } from './timeline/components/TimelineCard';
 import { TimelineSwimlane } from './timeline/components/TimelineSwimlane';
 import { HiddenCardsIndicator } from './timeline/components/HiddenCardsIndicator';
+import { useDateRange } from './timeline/hooks/useDateRange';
 
 interface TimelineViewProps {
   boardId: string;
@@ -103,59 +104,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | '2weeks' | 'month' | 'year'>('week');
 
   // Generate date range based on zoom level and current date
-  const dateRange = useMemo(() => {
-    let dates: Date[] = [];
-
-    switch (zoomLevel) {
-      case 'day':
-        dates = eachDayOfInterval({
-          start: startOfDay(currentDate),
-          end: endOfDay(currentDate)
-        });
-        break;
-      case 'week':
-        // For week view, show the 7 days of the week starting Monday
-        const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // 1 = Monday
-        for (let i = 0; i < 7; i++) {
-          dates.push(addDays(weekStart, i));
-        }
-        break;
-      case 'month':
-        // For month view, show all individual days in the month
-        const monthStart = startOfMonth(currentDate);
-        const monthEnd = endOfMonth(currentDate);
-        let currentDay = monthStart;
-        while (currentDay <= monthEnd) {
-          dates.push(currentDay);
-          currentDay = addDays(currentDay, 1);
-        }
-        break;
-      case '2weeks':
-        // For 2 weeks view, show 14 days side by side
-        const twoWeeksStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // 1 = Monday
-        for (let i = 0; i < 14; i++) {
-          dates.push(addDays(twoWeeksStart, i));
-        }
-        break;
-      case 'year':
-        // For year view, show all 12 months
-        for (let i = 0; i < 12; i++) {
-          dates.push(new Date(currentDate.getFullYear(), i, 1));
-        }
-        break;
-      default:
-        // Default to month view
-        const defaultMonthStart = startOfMonth(currentDate);
-        const defaultMonthEnd = endOfMonth(currentDate);
-        let defaultWeek = startOfWeek(defaultMonthStart);
-        while (defaultWeek <= defaultMonthEnd) {
-          dates.push(defaultWeek);
-          defaultWeek = addWeeks(defaultWeek, 1);
-        }
-    }
-
-    return dates;
-  }, [currentDate, zoomLevel]);
+  const dateRange = useDateRange(currentDate, zoomLevel);
 
   // Filter cards that have dates
   const cardsWithDates = useMemo(() => {
