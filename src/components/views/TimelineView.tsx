@@ -106,38 +106,38 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                 const listCards = cardsWithDates.filter(card => card.listId === list.id);
 
                 return (
-                  <div key={list.id} className="flex border-b border-slate-100 dark:border-slate-800">
-                    {/* List name */}
-                    <div className="w-48 flex-shrink-0 p-3">
-                      <h3 className="font-medium text-slate-900 dark:text-slate-100">
-                        {list.title}
-                      </h3>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">
-                        {listCards.length} cards
+                  <div key={list.id}>
+                    {/* Main swimlane header */}
+                    <div className="flex border-b border-slate-100 dark:border-slate-800">
+                      {/* List name */}
+                      <div className="w-48 flex-shrink-0 p-3">
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                          {list.title}
+                        </h3>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          {listCards.length} cards
+                        </div>
+                      </div>
+
+                      {/* Timeline area header (empty, just for alignment) */}
+                      <div className="flex-1 relative" style={{ minHeight: '48px' }}>
+                        {/* This ensures timeline lines extend properly */}
                       </div>
                     </div>
 
-                    {/* Timeline area with sub-card swimlanes */}
-                    <div
-                      className="flex-1 relative"
-                      style={{
-                        minHeight: `${calculateTimelineHeight(listCards, dateRange)}px`
-                      }}
-                    >
-                      {/* Individual cards within this main swimlane */}
-                      {listCards.map((card, cardIndex) => (
-                        <SubCardSwimlane
-                          key={card.id}
-                          card={card}
-                          dateRange={dateRange}
-                          zoomLevel={zoomLevel}
-                          onOpenCardModal={openCardModal}
-                          getCardPosition={getCardPositionWrapper}
-                          getCardColor={getCardColor}
-                          calculateTimelineHeight={calculateTimelineHeight}
-                        />
-                      ))}
-                    </div>
+                    {/* Sub-card swimlanes */}
+                    {listCards.map((card, cardIndex) => (
+                      <SubCardSwimlane
+                        key={card.id}
+                        card={card}
+                        dateRange={dateRange}
+                        zoomLevel={zoomLevel}
+                        onOpenCardModal={openCardModal}
+                        getCardPosition={getCardPositionWrapper}
+                        getCardColor={getCardColor}
+                        calculateTimelineHeight={calculateTimelineHeight}
+                      />
+                    ))}
                   </div>
                 );
               })}

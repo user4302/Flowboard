@@ -1,4 +1,4 @@
-import { IndividualCardSwimlane } from './IndividualCardSwimlane';
+import { TimelineCard } from './TimelineCard';
 
 interface SubCardSwimlaneProps {
   card: any;
@@ -21,17 +21,27 @@ export function SubCardSwimlane({
 }: SubCardSwimlaneProps) {
   return (
     <div className="flex border-b border-slate-50 dark:border-slate-700">
-      {/* Indent to show this is a sub-card within a main swimlane */}
-      <div className="ml-12">
-        {/* Individual card swimlane */}
-        <IndividualCardSwimlane
+      {/* Empty space for main swimlane alignment */}
+      <div className="w-48 flex-shrink-0 p-3">
+        {/* This aligns with main swimlane header */}
+      </div>
+
+      {/* Timeline area with the card */}
+      <div
+        className="flex-1 relative"
+        style={{
+          minHeight: `${calculateTimelineHeight([card], dateRange)}px`
+        }}
+      >
+        <TimelineCard
           card={card}
+          allCards={[card]}
+          cardIndex={0}
           dateRange={dateRange}
           zoomLevel={zoomLevel}
           onOpenCardModal={onOpenCardModal}
           getCardPosition={getCardPosition}
           getCardColor={getCardColor}
-          calculateTimelineHeight={calculateTimelineHeight}
         />
       </div>
     </div>
