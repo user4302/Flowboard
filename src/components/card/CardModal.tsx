@@ -14,6 +14,8 @@ import { Card } from '@/lib/types';
 const cardSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
+  startDate: z.string().optional(),
+  dueDate: z.string().optional(),
 });
 
 type CardFormData = z.infer<typeof cardSchema>;
@@ -36,6 +38,8 @@ export function CardModal() {
     defaultValues: {
       title: foundCard?.title || '',
       description: foundCard?.description || '',
+      startDate: foundCard?.startDate ? new Date(foundCard.startDate).toISOString().split('T')[0] : '',
+      dueDate: foundCard?.dueDate ? new Date(foundCard.dueDate).toISOString().split('T')[0] : '',
     },
   });
 
@@ -47,6 +51,8 @@ export function CardModal() {
       reset({
         title: foundCard.title,
         description: foundCard.description || '',
+        startDate: foundCard.startDate ? new Date(foundCard.startDate).toISOString().split('T')[0] : '',
+        dueDate: foundCard.dueDate ? new Date(foundCard.dueDate).toISOString().split('T')[0] : '',
       });
     }
   }, [foundCard, reset]);
@@ -59,7 +65,20 @@ export function CardModal() {
 
   // Handler functions - defined inside conditional to ensure card and currentBoard are available
   const handleSave = (data: CardFormData) => {
-    updateCard(currentBoardId, foundCard.id, data);
+    const updateData: any = {
+      title: data.title,
+      description: data.description,
+    };
+
+    if (data.startDate) {
+      updateData.startDate = new Date(data.startDate);
+    }
+
+    if (data.dueDate) {
+      updateData.dueDate = new Date(data.dueDate);
+    }
+
+    updateCard(currentBoardId, foundCard.id, updateData);
     closeCardModal();
   };
 
@@ -234,19 +253,23 @@ export function CardModal() {
               <Calendar className="mr-1 inline h-4 w-4" />
               Dates
             </label>
-            <div className="space-y-2 text-sm">
-              {foundCard.startDate && (
-                <div>
-                  <span className="text-slate-500 dark:text-slate-400">Start: </span>
-                  <span className="text-slate-700 dark:text-slate-300">{formatDate(foundCard.startDate)}</span>
-                </div>
-              )}
-              {foundCard.dueDate && (
-                <div>
-                  <span className="text-slate-500 dark:text-slate-400">Due: </span>
-                  <span className="text-slate-700 dark:text-slate-300">{formatDate(foundCard.dueDate)}</span>
-                </div>
-              )}
+            <div className="space-y-2">
+              <div>
+                <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Start Date</label>
+                <input
+                  type="date"
+                  {...register('startDate')}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Due Date</label>
+                <input
+                  type="date"
+                  {...register('dueDate')}
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+                />
+              </div>
             </div>
           </div>
 

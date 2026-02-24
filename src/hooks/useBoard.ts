@@ -189,61 +189,14 @@ export function useBoard() {
   const { setUserInfo } = useSharingStore();
 
   useEffect(() => {
-    // Initialize with seed data if no boards exist
+    // Initialize with empty board if no boards exist
     if (boards.length === 0) {
-      const board = createBoard(seedData.board.name);
-
-      // Add members
-      seedData.board.members.forEach((member) => {
-        useBoardStore.getState().addMember(board.id, member);
-      });
-
-      // Create lists and cards
-      seedData.lists.forEach((listData, index) => {
-        const list = createList(board.id, listData.title, index);
-
-        listData.cards.forEach((cardData, cardIndex) => {
-          const card = createCard(board.id, list.id, cardData.title, cardIndex);
-
-          // Update card with additional data
-          useBoardStore.getState().updateCard(board.id, card.id, {
-            description: cardData.description,
-            startDate: cardData.startDate,
-            dueDate: cardData.dueDate,
-          });
-
-          // Add labels
-          cardData.labels.forEach((label) => {
-            useBoardStore.getState().addLabel(board.id, card.id, label);
-          });
-
-          // Add members
-          cardData.members.forEach((memberId) => {
-            const currentCard = useBoardStore.getState().getCard(board.id, card.id);
-            if (currentCard) {
-              useBoardStore.getState().updateCard(board.id, card.id, {
-                members: [...currentCard.members, memberId],
-              });
-            }
-          });
-
-          // Add checklist items
-          cardData.checklist.forEach((item) => {
-            useBoardStore.getState().addChecklistItem(board.id, card.id, item.text);
-            if (item.done) {
-              const currentCard = useBoardStore.getState().getCard(board.id, card.id);
-              if (currentCard) {
-                const checklistItem = currentCard.checklist[currentCard.checklist.length - 1];
-                useBoardStore.getState().updateChecklistItem(board.id, card.id, checklistItem.id, {
-                  done: true,
-                });
-              }
-            }
-          });
-        });
-      });
+      const board = createBoard('New Board');
+      setCurrentBoard(board.id);
     }
+  }, [boards.length, createBoard, setCurrentBoard]);
 
+  useEffect(() => {
     // Set up sharing info for current user (owner)
     if (boards.length > 0 && currentBoardId) {
       const currentBoard = getCurrentBoard();
@@ -257,7 +210,7 @@ export function useBoard() {
         );
       }
     }
-  }, [boards.length, createBoard, createList, createCard, currentBoardId, getCurrentBoard, setUserInfo]);
+  }, [boards.length, currentBoardId, getCurrentBoard, setUserInfo]);
 
   const currentBoard = getCurrentBoard();
 
