@@ -1,4 +1,5 @@
 import { TimelineCard } from './TimelineCard';
+import { getCardColor } from '../utils/timelineUtils';
 
 interface SubCardSwimlaneProps {
   card: any;
@@ -25,14 +26,18 @@ export function SubCardSwimlane({
 }: SubCardSwimlaneProps) {
   return (
     <div className="flex">
-      {/* Left-side empty space for hidden cards indicator */}
+      {/* Left-side space for past hidden cards */}
       <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
-        {/* Hidden cards indicator for cards before current range */}
-        {hiddenCardsBefore.length > 0 && (
-          <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
-            ←{hiddenCardsBefore.length}
-          </div>
-        )}
+        <div className="flex flex-wrap gap-1">
+          {hiddenCardsBefore.map((hiddenCard) => (
+            <div
+              key={hiddenCard.id}
+              className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(hiddenCard)}-500`}
+              title={`${hiddenCard.title} (Before current view)`}
+              onClick={() => onOpenCardModal(hiddenCard.id)}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Timeline area with the card */}
@@ -54,14 +59,18 @@ export function SubCardSwimlane({
         />
       </div>
 
-      {/* Right-side empty space for hidden cards indicator */}
+      {/* Right-side space for future hidden cards */}
       <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
-        {/* Hidden cards indicator for cards after current range */}
-        {hiddenCardsAfter.length > 0 && (
-          <div className="text-xs text-slate-500 dark:text-slate-400 text-center">
-            +{hiddenCardsAfter.length}
-          </div>
-        )}
+        <div className="flex flex-wrap gap-1">
+          {hiddenCardsAfter.map((hiddenCard) => (
+            <div
+              key={hiddenCard.id}
+              className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(hiddenCard)}-500`}
+              title={`${hiddenCard.title} (After current view)`}
+              onClick={() => onOpenCardModal(hiddenCard.id)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
