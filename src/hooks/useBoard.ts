@@ -56,13 +56,14 @@ const seedData = {
             { text: 'High Priority', color: 'bg-red-500' },
           ],
           members: ['1', '3'],
-          startDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // Started 2 days ago
-          dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // Due in 3 days
+          startDate: new Date('2026-02-22T20:45:34.773Z'), // Feb 22, 2026 at 8:45 PM
+          dueDate: new Date('2026-02-27T20:45:34.773Z'), // Feb 27, 2026 at 8:45 PM
           checklist: [
             { text: 'Create wireframes', done: true },
             { text: 'Design high-fidelity mockups', done: true },
             { text: 'Build responsive prototype', done: false },
-            { text: 'User testing', done: false },
+            { text: 'Test conversion rates', done: false },
+            { text: 'Deploy to staging', done: false },
           ],
         },
         {
@@ -70,8 +71,8 @@ const seedData = {
           description: 'Improve page load times and Core Web Vitals',
           labels: [{ text: 'Development', color: 'bg-green-500' }],
           members: ['3'],
-          startDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-          dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
+          startDate: new Date('2026-02-22T20:45:34.773Z'), // Feb 22, 2026 at 8:45 PM
+          dueDate: new Date('2026-02-27T20:45:34.773Z'), // Feb 27, 2026 at 8:45 PM
           checklist: [
             { text: 'Audit current performance', done: true },
             { text: 'Optimize images', done: false },

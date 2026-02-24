@@ -18,7 +18,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { isSameDay, isSameWeek, isSameMonth, addDays } from 'date-fns';
+import { isSameDay, isSameWeek, isSameMonth, addDays, startOfDay } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
 import { TimelineHeader } from './timeline/components/TimelineHeader';
 import { TimelineGrid } from './timeline/components/TimelineGrid';
@@ -44,9 +44,11 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   // Generate date range based on zoom level and current date
   const dateRange = useDateRange(currentDate, zoomLevel);
 
-  // Filter cards that have dates
+  // Filter cards that have dates AND overlap with current date range
   const cardsWithDates = useMemo(() => {
     const allCards = board.lists.flatMap(list => list.cards);
+
+    // First filter by search term
     const filtered = searchTerm
       ? allCards.filter(card =>
         card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -54,14 +56,27 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       )
       : allCards;
 
-    // Show all cards with dates (revert to original behavior)
-    return filtered.filter(card => card.startDate || card.dueDate);
-  }, [board.lists, searchTerm]);
+    // Then filter to only show cards that overlap with current date range
+    return filtered.filter(card => {
+      const hasDates = card.startDate || card.dueDate;
+      if (!hasDates) return false;
+
+      const cardStart = startOfDay(card.startDate || new Date());
+      const cardEnd = startOfDay(card.dueDate || addDays(cardStart, 7));
+      const rangeStart = startOfDay(dateRange[0]);
+      const rangeEnd = startOfDay(dateRange[dateRange.length - 1]);
+
+      // Card overlaps if it starts before or during range AND ends after or during range
+      return cardStart <= rangeEnd && cardEnd >= rangeStart;
+    });
+  }, [board.lists, searchTerm, dateRange]);
 
   // Create wrapper function for getCardPosition to match TimelineSwimlane expected signature
-  const getCardPositionWrapper = (card: any, allCards: any[], cardIndex: number) => {
-    return getCardPosition(card, allCards, cardIndex, dateRange, zoomLevel);
-  };
+  const getCardPositionWrapper = useMemo(() => {
+    return (card: any, allCards: any[], cardIndex: number) => {
+      return getCardPosition(card, allCards, cardIndex, dateRange, zoomLevel);
+    };
+  }, [dateRange, zoomLevel]);
 
   // Add keyboard shortcuts for zoom levels
   useTimelineKeyboardShortcuts(setZoomLevel, setCurrentDate, zoomLevel);
@@ -87,10 +102,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
             <div className="relative">
               {board.lists.map((list) => {
                 const listCards = cardsWithDates.filter(card => card.listId === list.id);
-
-                if (listCards.length === 0) {
-                  return null;
-                }
 
                 return (
                   <TimelineSwimlane

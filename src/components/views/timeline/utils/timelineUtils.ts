@@ -96,9 +96,6 @@ export const getCardPosition = (card: any, allCards: any[], cardIndex: number, d
       break;
   }
 
-  // Debug: Log the indices found
-  console.log('Indices:', startIndex, endIndex);
-
   // Handle cards outside the visible range for all zoom levels
   const rangeStart = dateRange[0];
   const rangeEnd = dateRange[dateRange.length - 1];
