@@ -24,6 +24,7 @@ import { cn, formatDate } from '@/lib/utils';
 import { Calendar, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { TimelineHeader } from './timeline/components/TimelineHeader';
 import { TimelineGrid } from './timeline/components/TimelineGrid';
+import { TimelineCard } from './timeline/components/TimelineCard';
 import { HiddenCardsIndicator } from './timeline/components/HiddenCardsIndicator';
 
 interface TimelineViewProps {
@@ -508,25 +509,19 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                       />
 
                       {/* Cards */}
-                      {listCards.map((card, cardIndex) => {
-                        const position = getCardPosition(card, listCards, cardIndex);
-                        const color = getCardColor(card);
-
-                        return (
-                          <div
-                            key={card.id}
-                            className={cn(
-                              'absolute h-8 rounded-md px-2 py-1 text-xs font-medium text-white shadow-sm cursor-pointer transition-all hover:shadow-md hover:z-10',
-                              `bg-${color}-500`
-                            )}
-                            style={position}
-                            title={card.title}
-                            onClick={() => openCardModal(card.id)}
-                          >
-                            <div className="truncate">{card.title}</div>
-                          </div>
-                        );
-                      })}
+                      {listCards.map((card, cardIndex) => (
+                        <TimelineCard
+                          key={card.id}
+                          card={card}
+                          allCards={listCards}
+                          cardIndex={cardIndex}
+                          dateRange={dateRange}
+                          zoomLevel={zoomLevel}
+                          onOpenCardModal={openCardModal}
+                          getCardPosition={getCardPosition}
+                          getCardColor={getCardColor}
+                        />
+                      ))}
                     </div>
                   </div>
                 );
