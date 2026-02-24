@@ -206,25 +206,26 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     let left = 0;
     let width = 5;
 
-    // Special handling for day view - opposite edge collection
+    // Special handling for day view - cards should stack vertically, not overlap horizontally
     if (zoomLevel === 'day') {
-      // If card is entirely before the current day (in the past), collect on left edge
-      if (cardEndDate < rangeStart) {
-        left = 0; // Position at the left edge
-      }
-      // If card is entirely after the current day (in the future), collect on right edge
-      else if (cardStartDate > rangeEnd) {
-        left = 95; // Position near the right edge (95% from left)
-      }
-
-      // Adjust width for 'day' view: full width if current day is within card's duration, else a small indicator
       const today = dateRange[0]; // In day view, dateRange[0] is always the current day
-      // Check if today is within the card's date range (inclusive)
+      // For day view, all cards that include today should be positioned at the same horizontal position
+      // but stacked vertically using the stacking logic below
       if (today >= cardStartDate && today <= cardEndDate) {
-        // If the current day is within the card's duration, make it full width
+        // Cards that include today get full width and normal positioning
+        left = 0;
         width = 100;
+      } else if (cardEndDate < rangeStart) {
+        // Cards entirely before today go on left edge as small indicators
+        left = 0;
+        width = 5;
+      } else if (cardStartDate > rangeEnd) {
+        // Cards entirely after today go on right edge as small indicators
+        left = 95;
+        width = 5;
       } else {
-        // Otherwise, make it a small indicator
+        // Fallback - small indicator
+        left = 0;
         width = 5;
       }
     } else {
