@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { format, isSameDay, isSameWeek, isSameMonth, addDays } from 'date-fns';
+import { isSameDay, isSameWeek, isSameMonth, addDays } from 'date-fns';
 
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 

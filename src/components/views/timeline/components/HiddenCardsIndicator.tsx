@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { formatDate } from '@/lib/utils';
-import { cn } from '@/lib/utils';
 
 interface HiddenCardsIndicatorProps {
   listId: string;

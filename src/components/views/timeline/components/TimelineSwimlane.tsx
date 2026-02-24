@@ -1,5 +1,3 @@
-import { cn } from '@/lib/utils';
-import { addDays } from 'date-fns';
 import { HiddenCardsIndicator } from './HiddenCardsIndicator';
 import { TimelineCard } from './TimelineCard';
 import { useHiddenCards } from '../hooks/useHiddenCards';

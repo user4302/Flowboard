@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { format, addDays, addWeeks, addMonths, addYears } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Calendar, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 
