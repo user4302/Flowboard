@@ -48,6 +48,51 @@ const calculateHiddenCards = (allCards: any[], currentCard: any, dateRange: Date
   return { hiddenBefore, hiddenAfter };
 };
 
+// Styled tooltip component
+const MiniCardTooltip = ({ card, position }: { card: any; position: 'before' | 'after' }) => {
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    }).format(date);
+  };
+
+  return (
+    <div className="absolute z-50 bg-slate-900 text-white p-3 rounded-lg shadow-xl border border-slate-700 min-w-[200px] pointer-events-none">
+      <div className="font-medium text-sm mb-1">{card.title}</div>
+      {card.description && (
+        <div className="text-xs text-slate-300 mb-2 line-clamp-2">
+          {card.description.length > 60 ? card.description.substring(0, 60) + '...' : card.description}
+        </div>
+      )}
+      <div className="text-xs text-slate-400 space-y-1">
+        {card.startDate && (
+          <div>Start: {formatDate(new Date(card.startDate))}</div>
+        )}
+        {card.dueDate && (
+          <div>Due: {formatDate(new Date(card.dueDate))}</div>
+        )}
+        <div className="text-xs italic text-slate-500">
+          {position === 'before' ? 'Before current view' : 'After current view'}
+        </div>
+      </div>
+      {card.labels && card.labels.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {card.labels.map((label: any, index: number) => (
+            <span
+              key={index}
+              className={`text-xs px-2 py-1 rounded-full ${label.color}`}
+            >
+              {label.text}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 interface TimelineViewProps {
   boardId: string;
 }
@@ -62,6 +107,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | '2weeks' | 'month' | 'year'>('week');
   const [collapsedLanes, setCollapsedLanes] = useState<Set<string>>(new Set());
+  const [hoveredCard, setHoveredCard] = useState<{ card: any; position: 'before' | 'after'; x: number; y: number } | null>(null);
 
   // Generate date range based on zoom level and current date
   const dateRange = useDateRange(currentDate, zoomLevel);
@@ -218,9 +264,19 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                       return (
                                         <div
                                           key={card.id}
-                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500`}
+                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500 relative`}
                                           title={`${card.title} (Before current view)`}
                                           onClick={() => openCardModal(card.id)}
+                                          onMouseEnter={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            setHoveredCard({
+                                              card,
+                                              position: 'before',
+                                              x: rect.left + rect.width / 2,
+                                              y: rect.bottom + 8
+                                            });
+                                          }}
+                                          onMouseLeave={() => setHoveredCard(null)}
                                         />
                                       );
                                     }
@@ -253,9 +309,19 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                       return (
                                         <div
                                           key={card.id}
-                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500`}
+                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500 relative`}
                                           title={`${card.title} (After current view)`}
                                           onClick={() => openCardModal(card.id)}
+                                          onMouseEnter={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            setHoveredCard({
+                                              card,
+                                              position: 'after',
+                                              x: rect.left + rect.width / 2,
+                                              y: rect.bottom + 8
+                                            });
+                                          }}
+                                          onMouseLeave={() => setHoveredCard(null)}
                                         />
                                       );
                                     }
@@ -312,6 +378,20 @@ export function TimelineView({ boardId }: TimelineViewProps) {
           </div>
         </div>
       </div>
+
+      {/* Tooltip rendering */}
+      {hoveredCard && (
+        <div
+          className="fixed z-50 pointer-events-none"
+          style={{
+            left: hoveredCard.x - 100, // Center the tooltip
+            top: hoveredCard.y,
+            transform: 'translateX(0)'
+          }}
+        >
+          <MiniCardTooltip card={hoveredCard.card} position={hoveredCard.position} />
+        </div>
+      )}
     </div >
   );
 }
