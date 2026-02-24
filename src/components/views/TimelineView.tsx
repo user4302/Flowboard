@@ -180,23 +180,108 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     {/* Sub-card swimlanes within this parent container - collapsible */}
                     {!isCollapsed && (
                       <div className="bg-white dark:bg-slate-900">
-                        {listCards.map((card, cardIndex) => {
-                          const { hiddenBefore, hiddenAfter } = calculateHiddenCards(cardsWithDates, card, dateRange);
-                          return (
-                            <SubCardSwimlane
-                              key={card.id}
-                              card={card}
-                              dateRange={dateRange}
-                              zoomLevel={zoomLevel}
-                              onOpenCardModal={openCardModal}
-                              getCardPosition={getCardPositionWrapper}
-                              getCardColor={getCardColor}
-                              calculateTimelineHeight={calculateTimelineHeight}
-                              hiddenCardsBefore={hiddenBefore}
-                              hiddenCardsAfter={hiddenAfter}
-                            />
-                          );
-                        })}
+                        {listCards.length > 0 ? (
+                          // Show actual cards if they exist in current range
+                          listCards.map((card, cardIndex) => {
+                            const { hiddenBefore, hiddenAfter } = calculateHiddenCards(cardsWithDates, card, dateRange);
+                            return (
+                              <SubCardSwimlane
+                                key={card.id}
+                                card={card}
+                                dateRange={dateRange}
+                                zoomLevel={zoomLevel}
+                                onOpenCardModal={openCardModal}
+                                getCardPosition={getCardPositionWrapper}
+                                getCardColor={getCardColor}
+                                calculateTimelineHeight={calculateTimelineHeight}
+                                hiddenCardsBefore={hiddenBefore}
+                                hiddenCardsAfter={hiddenAfter}
+                              />
+                            );
+                          })
+                        ) : (
+                          // Check if the original list has any cards at all
+                          list.cards.length > 0 ? (
+                            // Show empty swimlane if list has cards but none in current range
+                            <div className="flex border-b border-slate-50 dark:border-slate-700">
+                              {/* Left-side space for hidden cards indicator */}
+                              <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
+                                <div className="flex flex-wrap gap-1">
+                                  {list.cards.map((card) => {
+                                    const cardStart = card.startDate || new Date();
+                                    const cardEnd = card.dueDate || addDays(cardStart, 7);
+                                    const rangeStart = dateRange[0];
+                                    const rangeEnd = dateRange[dateRange.length - 1];
+
+                                    // Show card in left side if it's before current range
+                                    if (cardEnd < rangeStart) {
+                                      return (
+                                        <div
+                                          key={card.id}
+                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500`}
+                                          title={`${card.title} (Before current view)`}
+                                          onClick={() => openCardModal(card.id)}
+                                        />
+                                      );
+                                    }
+                                    // Show card in right side if it's after current range
+                                    else if (cardStart > rangeEnd) {
+                                      return (
+                                        <div
+                                          key={card.id}
+                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500`}
+                                          title={`${card.title} (After current view)`}
+                                          onClick={() => openCardModal(card.id)}
+                                        />
+                                      );
+                                    }
+                                    return null;
+                                  })}
+                                </div>
+                              </div>
+
+                              {/* Empty timeline area */}
+                              <div
+                                className="flex-1 relative border-b border-slate-50 dark:border-slate-700 flex items-center justify-center"
+                                style={{ minHeight: '60px' }}
+                              >
+                                <div className="text-slate-400 dark:text-slate-500 text-sm italic">
+                                  All cards are outside current date range
+                                </div>
+                              </div>
+
+                              {/* Right-side space for hidden cards indicator */}
+                              <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
+                                {/* Cards shown in left side above */}
+                              </div>
+                            </div>
+                          ) : (
+                            // Show truly empty swimlane if list has no cards at all
+                            <div className="flex border-b border-slate-50 dark:border-slate-700">
+                              {/* Left-side space */}
+                              <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
+                                <div className="text-xs text-slate-400 dark:text-slate-500 text-center italic">
+                                  No cards in list
+                                </div>
+                              </div>
+
+                              {/* Empty timeline area */}
+                              <div
+                                className="flex-1 relative border-b border-slate-50 dark:border-slate-700 flex items-center justify-center"
+                                style={{ minHeight: '60px' }}
+                              >
+                                <div className="text-slate-400 dark:text-slate-500 text-sm italic">
+                                  Add cards to this list to see them here
+                                </div>
+                              </div>
+
+                              {/* Right-side space */}
+                              <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
+                                {/* Empty */}
+                              </div>
+                            </div>
+                          )
+                        )}
                       </div>
                     )}
                   </div>
