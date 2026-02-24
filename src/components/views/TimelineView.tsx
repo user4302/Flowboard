@@ -18,10 +18,9 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { format, eachDayOfInterval, startOfYear, endOfYear, isSameDay, isSameWeek, isSameMonth, isWithinInterval, addDays, addWeeks, addMonths, addYears, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import { format, isSameDay, isSameWeek, isSameMonth, addDays } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
 import { cn, formatDate } from '@/lib/utils';
-import { Calendar, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { TimelineHeader } from './timeline/components/TimelineHeader';
 import { TimelineGrid } from './timeline/components/TimelineGrid';
 import { TimelineCard } from './timeline/components/TimelineCard';
@@ -364,35 +363,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
-
-
-  const getZoomLabel = () => {
-    switch (zoomLevel) {
-      case 'day': return 'Day';
-      case 'week': return 'Week';
-      case '2weeks': return '2 Weeks';
-      case 'month': return 'Month';
-      case 'year': return 'Year';
-      default: return 'Week';
-    }
-  };
-
-  const getDateLabel = (date: Date) => {
-    switch (zoomLevel) {
-      case 'day':
-        return format(date, 'MMM d, yyyy');
-      case 'week':
-        return format(date, 'EEE d'); // Shows day name and date
-      case '2weeks':
-        return format(date, 'EEE d'); // Shows day name and date
-      case 'month':
-        return format(date, 'MMM d');
-      case 'year':
-        return format(date, 'MMM');
-      default:
-        return format(date, 'MMM d');
-    }
-  };
 
   return (
     <div className="flex h-full flex-col">
