@@ -612,14 +612,18 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                   return null;
                 }
 
-                // Calculate hidden cards for this specific list
+                // Calculate hidden cards for this specific list and determine position
                 const rangeStart = dateRange[0];
                 const rangeEnd = dateRange[dateRange.length - 1];
-                const hiddenCards = listCards.filter(card => {
-                  const cardStart = card.startDate || new Date();
-                  const cardEnd = card.dueDate || addDays(cardStart, 7);
-                  return cardEnd < rangeStart || cardStart > rangeEnd;
+                const hiddenCardsBefore = listCards.filter(card => {
+                  const cardEnd = card.dueDate || addDays(card.startDate || new Date(), 7);
+                  return cardEnd < rangeStart;
                 });
+                const hiddenCardsAfter = listCards.filter(card => {
+                  const cardStart = card.startDate || new Date();
+                  return cardStart > rangeEnd;
+                });
+                const allHiddenCards = [...hiddenCardsBefore, ...hiddenCardsAfter];
 
                 return (
                   <div key={list.id} className="flex border-b border-slate-100 dark:border-slate-800">
@@ -641,30 +645,83 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                       }}
                     >
                       {/* Hidden cards indicator for this swimlane */}
-                      {hiddenCards.length > 0 && (
-                        <div className="absolute top-2 right-2 z-20">
+
+                      {/* Left side indicator for cards hidden before range */}
+                      {hiddenCardsBefore.length > 0 && (
+                        <div className="absolute top-2 left-2 z-20">
                           <div
                             className="relative"
-                            onMouseEnter={() => setHoveredHiddenGroup(list.id)}
+                            onMouseEnter={() => setHoveredHiddenGroup(`${list.id}-before`)}
                             onMouseLeave={() => setHoveredHiddenGroup(null)}
                           >
                             <div className="bg-indigo-600 text-white text-xs px-2 py-1 rounded-md cursor-pointer shadow-lg">
-                              +{hiddenCards.length} hidden
+                              ←{hiddenCardsBefore.length} hidden
                             </div>
 
-                            {/* Expandable hidden cards list for this swimlane */}
-                            {hoveredHiddenGroup === list.id && (
+                            {/* Expandable hidden cards list for cards before range */}
+                            {hoveredHiddenGroup === `${list.id}-before` && (
                               <div
-                                className="absolute top-0 right-0 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-30"
-                                onMouseEnter={() => setHoveredHiddenGroup(list.id)}
+                                className="absolute top-0 left-0 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-30"
+                                onMouseEnter={() => setHoveredHiddenGroup(`${list.id}-before`)}
                                 onMouseLeave={() => setHoveredHiddenGroup(null)}
                               >
                                 <div className="p-3 max-h-48 overflow-y-auto">
                                   <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-2 text-sm">
-                                    Hidden Cards ({hiddenCards.length})
+                                    ← Before Current View ({hiddenCardsBefore.length})
                                   </h4>
                                   <div className="space-y-2">
-                                    {hiddenCards.map(card => (
+                                    {hiddenCardsBefore.map(card => (
+                                      <div
+                                        key={card.id}
+                                        className="p-2 bg-slate-50 dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600"
+                                        onClick={() => openCardModal(card.id)}
+                                      >
+                                        <div className="font-medium text-slate-900 dark:text-slate-100">
+                                          {card.title}
+                                        </div>
+                                        <div className="text-slate-500 dark:text-slate-400 mt-1">
+                                          {card.startDate && `${formatDate(card.startDate)} - ${card.dueDate && formatDate(card.dueDate)}`}
+                                        </div>
+                                        <div className="text-slate-400 dark:text-slate-500 mt-1">
+                                          {card.description && card.description.length > 50
+                                            ? card.description.substring(0, 50) + '...'
+                                            : card.description}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Right side indicator for cards hidden after range */}
+                      {hiddenCardsAfter.length > 0 && (
+                        <div className="absolute top-2 right-2 z-20">
+                          <div
+                            className="relative"
+                            onMouseEnter={() => setHoveredHiddenGroup(`${list.id}-after`)}
+                            onMouseLeave={() => setHoveredHiddenGroup(null)}
+                          >
+                            <div className="bg-indigo-600 text-white text-xs px-2 py-1 rounded-md cursor-pointer shadow-lg">
+                              {hiddenCardsAfter.length} hidden→
+                            </div>
+
+                            {/* Expandable hidden cards list for cards after range */}
+                            {hoveredHiddenGroup === `${list.id}-after` && (
+                              <div
+                                className="absolute top-0 right-0 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 z-30"
+                                onMouseEnter={() => setHoveredHiddenGroup(`${list.id}-after`)}
+                                onMouseLeave={() => setHoveredHiddenGroup(null)}
+                              >
+                                <div className="p-3 max-h-48 overflow-y-auto">
+                                  <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-2 text-sm">
+                                    After Current View → ({hiddenCardsAfter.length})
+                                  </h4>
+                                  <div className="space-y-2">
+                                    {hiddenCardsAfter.map(card => (
                                       <div
                                         key={card.id}
                                         className="p-2 bg-slate-50 dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600"
@@ -708,6 +765,17 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
                       {/* Cards */}
                       {listCards.map((card, cardIndex) => {
+                        // Only render cards that are at least partially visible in the timeline
+                        const cardStart = card.startDate || new Date();
+                        const cardEnd = card.dueDate || addDays(cardStart, 7);
+                        const rangeStart = dateRange[0];
+                        const rangeEnd = dateRange[dateRange.length - 1];
+
+                        // Skip cards that are completely outside the visible range
+                        if (cardEnd < rangeStart || cardStart > rangeEnd) {
+                          return null;
+                        }
+
                         const position = getCardPosition(card, listCards, cardIndex);
                         const color = getCardColor(card);
 
@@ -725,7 +793,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                             <div className="truncate">{card.title}</div>
                           </div>
                         );
-                      })}
+                      }).filter(Boolean)}
                     </div>
                   </div>
                 );
