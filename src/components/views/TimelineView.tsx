@@ -22,6 +22,7 @@ import { format, eachDayOfInterval, startOfYear, endOfYear, isSameDay, isSameWee
 import { useBoardStore, useUIStore } from '@/store';
 import { cn, formatDate } from '@/lib/utils';
 import { Calendar, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { TimelineHeader } from './timeline/components/TimelineHeader';
 import { HiddenCardsIndicator } from './timeline/components/HiddenCardsIndicator';
 
 interface TimelineViewProps {
@@ -411,25 +412,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
 
-  const navigateDate = (direction: 'prev' | 'next') => {
-    switch (zoomLevel) {
-      case 'day':
-        setCurrentDate(prev => addDays(prev, direction === 'next' ? 1 : -1));
-        break;
-      case 'week':
-        setCurrentDate(prev => addWeeks(prev, direction === 'next' ? 1 : -1));
-        break;
-      case 'month':
-        setCurrentDate(prev => addMonths(prev, direction === 'next' ? 1 : -1));
-        break;
-      case '2weeks':
-        setCurrentDate(prev => addWeeks(prev, direction === 'next' ? 2 : -2));
-        break;
-      case 'year':
-        setCurrentDate(prev => addYears(prev, direction === 'next' ? 1 : -1));
-        break;
-    }
-  };
 
   const getZoomLabel = () => {
     switch (zoomLevel) {
@@ -462,100 +444,12 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Header with zoom controls */}
-      <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
-        <div className="flex items-center justify-between w-96">
-          <button
-            onClick={() => navigateDate('prev')}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            ←
-          </button>
-
-          <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-              {format(currentDate, zoomLevel === 'year' ? 'yyyy' : 'MMMM yyyy')}
-            </h2>
-            <button
-              onClick={() => setCurrentDate(new Date())}
-              className="rounded-lg px-3 py-1 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
-            >
-              Today
-            </button>
-          </div>
-
-          <button
-            onClick={() => navigateDate('next')}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            →
-          </button>
-        </div>
-
-        {/* Zoom controls */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setZoomLevel('day')}
-            className={cn(
-              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
-              zoomLevel === 'day'
-                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
-                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-            )}
-            title="Day (Press 1)"
-          >
-            Day
-          </button>
-          <button
-            onClick={() => setZoomLevel('week')}
-            className={cn(
-              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
-              zoomLevel === 'week'
-                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
-                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-            )}
-            title="Week (Press 2)"
-          >
-            Week
-          </button>
-          <button
-            onClick={() => setZoomLevel('2weeks')}
-            className={cn(
-              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
-              zoomLevel === '2weeks'
-                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
-                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-            )}
-            title="2 Weeks (Press 3)"
-          >
-            2 Weeks
-          </button>
-          <button
-            onClick={() => setZoomLevel('month')}
-            className={cn(
-              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
-              zoomLevel === 'month'
-                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
-                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-            )}
-            title="Month (Press 4)"
-          >
-            Month
-          </button>
-          <button
-            onClick={() => setZoomLevel('year')}
-            className={cn(
-              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
-              zoomLevel === 'year'
-                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
-                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-            )}
-            title="Year (Press 5)"
-          >
-            Year
-          </button>
-        </div>
-
-      </div>
+      <TimelineHeader
+        currentDate={currentDate}
+        zoomLevel={zoomLevel}
+        onDateChange={setCurrentDate}
+        onZoomChange={setZoomLevel}
+      />
 
       {/* Timeline */}
       <div className="flex-1 overflow-hidden relative">
