@@ -21,18 +21,28 @@ interface InviteModalProps {
  * @returns The invite modal component or null if not open
  */
 export function InviteModal({ isOpen, onClose }: InviteModalProps) {
+  // Store hooks for board and sharing functionality
   const { getCurrentBoard } = useBoardStore();
   const { createInvitation } = useSharingStore();
+
+  // Local state for invitation expiration time (default: 1 week in hours)
   const [expiresIn, setExpiresIn] = useState(168); // 1 week in hours
 
+  // Get current board data
   const currentBoard = getCurrentBoard();
 
+  // Early return if modal is closed or no board is available
   if (!isOpen || !currentBoard) return null;
 
+  /**
+   * Handles creation of a new invitation link
+   * Creates invitation with current board ID and name
+   */
   const handleCreateInvite = async () => {
     await createInvitation(currentBoard.id, currentBoard.name);
   };
 
+  // Configuration options for invitation link expiration
   const expiryOptions = [
     { value: 24, label: '24 hours' },
     { value: 168, label: '1 week' },
@@ -40,7 +50,9 @@ export function InviteModal({ isOpen, onClose }: InviteModalProps) {
   ];
 
   return (
+    // Modal overlay with backdrop
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      {/* Modal content container */}
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-slate-800">
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
@@ -68,6 +80,7 @@ export function InviteModal({ isOpen, onClose }: InviteModalProps) {
           </select>
         </div>
 
+        {/* Information section about invitation features */}
         <div className="mb-6 space-y-3">
           <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
             <Users className="h-4 w-4" />
@@ -83,6 +96,7 @@ export function InviteModal({ isOpen, onClose }: InviteModalProps) {
           </div>
         </div>
 
+        {/* Action buttons for cancel and create */}
         <div className="flex gap-3">
           <Button
             variant="outline"

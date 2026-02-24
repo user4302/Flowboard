@@ -8,7 +8,13 @@ import { Button } from '@/components/ui';
 import { InviteModal, MemberManagement } from '@/components/sharing';
 import { cn } from '@/lib/utils';
 
+/**
+ * Sidebar component - Main navigation sidebar for the Flowboard application
+ * Provides access to boards, sharing features, and quick actions
+ * Features responsive design with mobile backdrop and collapsible navigation
+ */
 export function Sidebar() {
+  // Store hooks for state management
   const { boards, currentBoardId, createBoard, setCurrentBoard, deleteBoard } = useBoardStore();
   const { sidebarOpen, setSidebarOpen } = useUIStore();
   const {
@@ -18,9 +24,15 @@ export function Sidebar() {
     setShowInviteModal,
     setShowMemberManagement
   } = useSharingStore();
+
+  // Local state for board creation
   const [isCreatingBoard, setIsCreatingBoard] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
 
+  /**
+   * Handles the creation of a new board
+   * Validates input, creates board, and resets form state
+   */
   const handleCreateBoard = () => {
     if (newBoardName.trim()) {
       createBoard(newBoardName.trim());
@@ -29,6 +41,12 @@ export function Sidebar() {
     }
   };
 
+  /**
+   * Handles board deletion with confirmation
+   * Prevents deletion of the last board and switches to another board if current is deleted
+   * @param boardId - ID of the board to delete
+   * @param boardName - Name of the board for confirmation dialog
+   */
   const handleDeleteBoard = (boardId: string, boardName: string) => {
     if (confirm(`Are you sure you want to delete "${boardName}"? This action cannot be undone.`)) {
       deleteBoard(boardId);
@@ -42,6 +60,11 @@ export function Sidebar() {
     }
   };
 
+  /**
+   * Handles keyboard events for the board creation input
+   * Enter to submit, Escape to cancel
+   * @param e - Keyboard event
+   */
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleCreateBoard();
@@ -53,7 +76,7 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile backdrop */}
+      {/* Mobile backdrop - closes sidebar when clicked */}
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/50 lg:hidden"
@@ -61,7 +84,7 @@ export function Sidebar() {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Fixed positioning with responsive behavior */}
       <div
         className={cn(
           'fixed left-0 top-0 z-50 h-screen w-64 transform border-r border-slate-200 bg-white transition-transform duration-300 dark:border-slate-700 dark:bg-slate-900 lg:translate-x-0',
@@ -69,7 +92,7 @@ export function Sidebar() {
         )}
       >
         <div className="flex h-full flex-col">
-          {/* Header */}
+          {/* Header - App branding and mobile close button */}
           <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-2">
               <LayoutGrid className="h-6 w-6 text-indigo-600" />
@@ -87,7 +110,7 @@ export function Sidebar() {
             </Button>
           </div>
 
-          {/* Boards Section */}
+          {/* Boards Section - Board list and creation */}
           <div className="flex-1 overflow-y-auto p-4">
             <div className="mb-4">
               <div className="mb-3 flex items-center justify-between">
@@ -104,7 +127,7 @@ export function Sidebar() {
                 </Button>
               </div>
 
-              {/* New Board Input */}
+              {/* New Board Input - Inline form for creating new boards */}
               {isCreatingBoard && (
                 <div className="mb-3 rounded-lg border border-slate-200 p-2 dark:border-slate-700">
                   <input
@@ -140,7 +163,7 @@ export function Sidebar() {
                 </div>
               )}
 
-              {/* Boards List */}
+              {/* Boards List - Interactive list of all boards */}
               <div className="space-y-1">
                 {boards.map((board) => (
                   <div key={board.id} className="relative group">
@@ -167,7 +190,7 @@ export function Sidebar() {
                       </div>
                     </button>
 
-                    {/* Delete button - positioned outside the main button */}
+                    {/* Delete button - Positioned outside the main button, shows on hover */}
                     {boards.length > 1 && (
                       <button
                         onClick={(e) => {
@@ -185,7 +208,7 @@ export function Sidebar() {
               </div>
             </div>
 
-            {/* Quick Actions */}
+            {/* Quick Actions - Sharing and management options */}
             <div className="space-y-1">
               {isOwner && (
                 <>
@@ -222,7 +245,7 @@ export function Sidebar() {
             </div>
           </div>
 
-          {/* Footer */}
+          {/* Footer - App version information */}
           <div className="border-t border-slate-200 p-4 dark:border-slate-700">
             <div className="text-xs text-slate-500 dark:text-slate-400">
               Flowboard v1.0.0
@@ -231,7 +254,7 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Sharing Modals */}
+      {/* Sharing Modals - Invite and member management modals */}
       <InviteModal
         isOpen={showInviteModal}
         onClose={() => setShowInviteModal(false)}

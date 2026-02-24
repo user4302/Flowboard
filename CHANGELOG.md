@@ -27,14 +27,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed day view card overlapping issue with proper vertical stacking
 - Created HiddenCardsIndicator component with dual-side directional indicators
 - Added useDateRange and useHiddenCards hooks for better component separation
-- Enhanced hidden cards UX with before/after directional indicators
+- Enhanced hidden cards with directional indicators (before/after) and performance optimizations
+- Added comprehensive JSDoc comments and documentation to all components and utilities
 - Created useTimelinePositioning hook with full card positioning logic
 - Created TimelineCard component for individual card rendering
 - Created TimelineHeader component with zoom controls and navigation
 - Created TimelineGrid component for date headers and grid lines
-- ✅ Phase 5 COMPLETE: Main container refactor with component integration
 - TimelineView reduced from ~750 lines to 548 lines (27% reduction)
 - All functionality preserved with cleaner component separation
+- Export and Import board data functionality
+- Styled tooltips for mini cards with enhanced visual design
+- Visual squares for hidden cards indicator
+- Collapsible parent swimlanes with expand/collapse functionality
+- Keyboard shortcuts for timeline navigation (dedicated hook)
+- IndividualCardSwimlane component for better card organization
+- SubCardSwimlane component for nested card management
+- Timeline utilities for enhanced positioning and layout calculations
+- MiniCardTooltip dedicated component for improved UX
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
@@ -59,11 +68,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved type safety and form handling in CardModal
 - Updated timeline zoom controls with keyboard shortcut hints
 - Enhanced visual feedback for active zoom levels
+- Made date inputs side by side in CardModal for better layout
+- Enhanced timeline layout with main swimlanes and sub-card swimlanes
+- Improved swimlane visual distinction for parent swimlanes
+- Major refactoring: TimelineView reduced from 422 to 123 lines (71% reduction)
+- Enhanced hidden cards placement in empty swimlanes
+- Improved timeline header alignment with right-side space
+- Equal width distribution for left and right side spaces
+- Always show swimlanes even when empty in current range
+- Removed horizontal borders from side spaces for cleaner look
 
 ### Fixed
 - CardModal label creation with proper ID generation
 - TypeScript type casting issues in select elements
 - Form state management robustness in card editing
+- Stop automatic board creation on page refresh
+- Remove mock data and enable proper date editing for cards
+- Correct hidden cards placement in empty swimlanes
+- Timeline layout and card positioning issues
+- Hardcoded mock data for Homepage redesign card
+- Card positioning and date calculation issues
+
+### Refactoring
+- Extracted MiniCardTooltip to dedicated component
+- Major refactor: Main swimlanes with sub-card swimlanes architecture
+- TimelineView component breakdown into smaller, focused components
+- Improved code organization with dedicated hooks and utilities
+- Enhanced component separation for better maintainability
 
 ## [1.1.0] - 2025-02-22
 

@@ -1,14 +1,31 @@
 import { useEffect } from 'react';
 import { addDays, addWeeks, addMonths, addYears } from 'date-fns';
 
+/**
+ * Timeline zoom level type
+ * Defines the different zoom levels available for timeline view
+ */
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 
+/**
+ * useTimelineKeyboardShortcuts hook - Handles keyboard shortcuts for timeline navigation
+ * Provides number keys for zoom levels and arrow keys for date navigation
+ * Automatically cleans up event listeners on unmount
+ * 
+ * @param setZoomLevel - Function to change zoom level
+ * @param setCurrentDate - Function to change current date
+ * @param zoomLevel - Current zoom level
+ */
 export function useTimelineKeyboardShortcuts(
   setZoomLevel: (level: ZoomLevel) => void,
   setCurrentDate: (date: Date | ((prev: Date) => Date)) => void,
   zoomLevel: ZoomLevel
 ) {
   useEffect(() => {
+    /**
+     * Handles keyboard press events for timeline navigation
+     * @param event - Keyboard event
+     */
     const handleKeyPress = (event: KeyboardEvent) => {
       // Only handle number keys when not typing in input fields
       if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
@@ -16,6 +33,7 @@ export function useTimelineKeyboardShortcuts(
       }
 
       switch (event.key) {
+        // Number keys 1-5 for zoom levels
         case '1':
           setZoomLevel('day');
           break;
@@ -31,6 +49,7 @@ export function useTimelineKeyboardShortcuts(
         case '5':
           setZoomLevel('year');
           break;
+        // Arrow keys for date navigation
         case 'ArrowLeft':
           setCurrentDate((prev: Date) => {
             switch (zoomLevel) {
@@ -70,6 +89,7 @@ export function useTimelineKeyboardShortcuts(
       }
     };
 
+    // Add event listener and return cleanup function
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [setZoomLevel, setCurrentDate, zoomLevel]);

@@ -19,22 +19,41 @@ import { Card } from '@/components/card';
 import { Button, Input } from '@/components/ui';
 import { cn } from '@/lib/utils';
 
+/**
+ * KanbanView component props interface
+ * Defines the props for the kanban board view component
+ */
 interface KanbanViewProps {
+  // ID of the board to display
   boardId: string;
 }
 
+/**
+ * KanbanView component - Displays board in traditional kanban format
+ * Provides drag-and-drop functionality for cards between lists
+ * Supports creating new lists and cards with inline editing
+ */
 export function KanbanView({ boardId }: KanbanViewProps) {
+  // Store hooks for board operations and UI state
   const { boards, createList, createCard } = useBoardStore();
   const { searchTerm } = useUIStore();
+
+  // Local state for drag and drop operations
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  // Local state for new list creation
   const [newListTitle, setNewListTitle] = useState('');
-  const [newCardTitles, setNewCardTitles] = useState<Record<string, string>>({});
   const [showNewListInput, setShowNewListInput] = useState(false);
+
+  // Local state for new card creation per list
+  const [newCardTitles, setNewCardTitles] = useState<Record<string, string>>({});
   const [showNewCardInputs, setShowNewCardInputs] = useState<Record<string, boolean>>({});
 
+  // Find the current board
   const board = boards.find((b) => b.id === boardId);
   if (!board) return null;
 
+  // Configure drag and drop sensors for pointer and keyboard interactions
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -42,10 +61,20 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     })
   );
 
+  /**
+   * Handle drag start event
+   * Sets the active dragged item ID
+   * @param event - Drag start event
+   */
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
   };
 
+  /**
+   * Handle drag end event
+   * Moves cards between lists or reorders within the same list
+   * @param event - Drag end event
+   */
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -104,6 +133,10 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     setActiveId(null);
   };
 
+  /**
+   * Handle creating a new list
+   * Validates input and creates list through store
+   */
   const handleCreateList = () => {
     if (newListTitle.trim()) {
       createList(boardId, newListTitle.trim());
@@ -112,6 +145,11 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     }
   };
 
+  /**
+   * Handle creating a new card in a specific list
+   * Validates input and creates card through store
+   * @param listId - ID of the list to add card to
+   */
   const handleCreateCard = (listId: string) => {
     const title = newCardTitles[listId];
     if (title?.trim()) {
@@ -121,6 +159,12 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     }
   };
 
+  /**
+   * Filter cards based on search term
+   * Searches in card titles and descriptions
+   * @param cards - Array of cards to filter
+   * @returns Filtered array of cards
+   */
   const filterCards = (cards: any[]) => {
     if (!searchTerm) return cards;
     return cards.filter((card) =>
@@ -129,6 +173,10 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     );
   };
 
+  /**
+   * Get the currently active dragged card
+   * @returns The active card object or null
+   */
   const getActiveCard = () => {
     if (!activeId) return null;
 
@@ -155,7 +203,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                   key={list.id}
                   className="flex w-80 flex-shrink-0 flex-col gap-3 h-full"
                 >
-                  {/* List header */}
+                  {/* List header with title and card count */}
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium text-slate-900 dark:text-slate-100">
                       {list.title}
@@ -165,7 +213,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                     </span>
                   </div>
 
-                  {/* Cards */}
+                  {/* Cards container with sortable context */}
                   <div className="flex flex-1 flex-col gap-2">
                     <SortableContext items={filterCards(list.cards).map((c) => c.id)} strategy={verticalListSortingStrategy}>
                       {filterCards(list.cards).map((card) => (
@@ -289,6 +337,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
         </div>
       </div>
 
+      {/* Drag overlay for visual feedback during drag operations */}
       <DragOverlay>
         {activeId ? (
           <div className="rotate-2 transform opacity-90">

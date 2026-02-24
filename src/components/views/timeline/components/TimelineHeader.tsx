@@ -1,21 +1,42 @@
 import { format, addDays, addWeeks, addMonths, addYears } from 'date-fns';
 import { cn } from '@/lib/utils';
 
+/**
+ * Timeline zoom level type
+ * Defines the different zoom levels available for timeline view
+ */
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 
+/**
+ * TimelineHeader component props interface
+ * Defines the props for the timeline header controls
+ */
 interface TimelineHeaderProps {
+  // Current date being displayed in timeline
   currentDate: Date;
+  // Current zoom level
   zoomLevel: ZoomLevel;
+  // Function to handle date changes
   onDateChange: (date: Date) => void;
+  // Function to handle zoom level changes
   onZoomChange: (level: ZoomLevel) => void;
 }
 
+/**
+ * TimelineHeader component - Header controls for timeline view
+ * Provides navigation, date display, and zoom controls
+ * Supports keyboard shortcuts for quick zoom level changes
+ */
 export function TimelineHeader({
   currentDate,
   zoomLevel,
   onDateChange,
   onZoomChange
 }: TimelineHeaderProps) {
+  /**
+   * Handles date navigation based on current zoom level
+   * @param direction - Navigation direction ('prev' or 'next')
+   */
   const navigateDate = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
     switch (zoomLevel) {
@@ -39,7 +60,9 @@ export function TimelineHeader({
 
   return (
     <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
+      {/* Date navigation controls */}
       <div className="flex items-center justify-between w-96">
+        {/* Previous date button */}
         <button
           onClick={() => navigateDate('prev')}
           className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -47,6 +70,7 @@ export function TimelineHeader({
           ←
         </button>
 
+        {/* Current date display with today button */}
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
             {format(currentDate, zoomLevel === 'year' ? 'yyyy' : 'MMMM yyyy')}
@@ -59,6 +83,7 @@ export function TimelineHeader({
           </button>
         </div>
 
+        {/* Next date button */}
         <button
           onClick={() => navigateDate('next')}
           className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -67,7 +92,7 @@ export function TimelineHeader({
         </button>
       </div>
 
-      {/* Zoom controls */}
+      {/* Zoom level controls */}
       <div className="flex items-center gap-2">
         <button
           onClick={() => onZoomChange('day')}

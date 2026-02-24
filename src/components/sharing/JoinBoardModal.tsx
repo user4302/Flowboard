@@ -22,14 +22,22 @@ interface JoinBoardModalProps {
  * @returns The join board modal component or null if not open
  */
 export function JoinBoardModal({ isOpen, onClose, inviteId }: JoinBoardModalProps) {
+  // Store hook for sharing functionality
   const { joinBoard } = useSharingStore();
+
+  // Form state for user registration
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Early return if modal is closed
   if (!isOpen) return null;
 
+  /**
+   * Handles the board joining process
+   * Validates form inputs and calls the joinBoard function
+   */
   const handleJoin = async () => {
     if (!inviteId || !email || !username || !password) {
       alert('Please fill in all fields');
@@ -47,6 +55,11 @@ export function JoinBoardModal({ isOpen, onClose, inviteId }: JoinBoardModalProp
     }
   };
 
+  /**
+   * Handles keyboard events for form submission
+   * Allows Enter key to submit the form
+   * @param e - Keyboard event
+   */
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleJoin();
@@ -54,8 +67,11 @@ export function JoinBoardModal({ isOpen, onClose, inviteId }: JoinBoardModalProp
   };
 
   return (
+    // Modal overlay with backdrop
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      {/* Modal content container */}
       <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl dark:bg-slate-800">
+        {/* Modal header */}
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Join Board
@@ -65,6 +81,7 @@ export function JoinBoardModal({ isOpen, onClose, inviteId }: JoinBoardModalProp
           </p>
         </div>
 
+        {/* Form inputs for user registration */}
         <div className="mb-4 space-y-4">
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -118,6 +135,7 @@ export function JoinBoardModal({ isOpen, onClose, inviteId }: JoinBoardModalProp
           </div>
         </div>
 
+        {/* Important information alert */}
         <div className="mb-4 rounded-lg bg-amber-50 p-3 dark:bg-amber-900/20">
           <div className="flex items-start gap-2">
             <AlertCircle className="mt-0.5 h-4 w-4 text-amber-600 dark:text-amber-400" />
@@ -132,6 +150,7 @@ export function JoinBoardModal({ isOpen, onClose, inviteId }: JoinBoardModalProp
           </div>
         </div>
 
+        {/* Action buttons */}
         <div className="flex gap-3">
           <Button
             variant="outline"

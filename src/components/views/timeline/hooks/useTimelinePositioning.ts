@@ -1,14 +1,37 @@
 import { useMemo } from 'react';
 import { isSameDay, isSameWeek, isSameMonth, addDays } from 'date-fns';
 
+/**
+ * Timeline zoom level type
+ * Defines the different zoom levels available for timeline view
+ */
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 
+/**
+ * Card position interface
+ * Defines the position and dimensions of a card in the timeline
+ */
 interface CardPosition {
+  // Horizontal position as percentage
   left: number;
+  // Width as percentage
   width: number;
+  // Vertical position in pixels
   top: number;
 }
 
+/**
+ * useTimelinePositioning hook - Calculates card positioning in timeline view
+ * Handles horizontal positioning, width calculation, and vertical stacking
+ * Prevents card overlaps and manages cards outside visible range
+ * 
+ * @param card - Card to position
+ * @param allCards - All cards in the list for overlap detection
+ * @param cardIndex - Index of the current card
+ * @param dateRange - Current visible date range
+ * @param zoomLevel - Current zoom level
+ * @returns Card position with left, width, and top values
+ */
 export function useTimelinePositioning(
   card: any,
   allCards: any[],
@@ -17,9 +40,11 @@ export function useTimelinePositioning(
   zoomLevel: ZoomLevel
 ): CardPosition {
   return useMemo(() => {
+    // Get card start and end dates with fallbacks
     const cardStartDate = card.startDate || new Date();
     const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
 
+    // Find indices in date range for positioning
     let startIndex = -1;
     let endIndex = -1;
 
@@ -47,15 +72,22 @@ export function useTimelinePositioning(
         break;
     }
 
-    // Handle cards outside the visible range for all zoom levels
+    /**
+     * Handle cards outside the visible range for all zoom levels
+     */
     const rangeStart = dateRange[0];
     const rangeEnd = dateRange[dateRange.length - 1];
 
+    /**
+     * Initialize positioning values
+     */
     let left = 0;
     let width = 5;
     let top = 0;
 
-    // Special handling for day view - cards should stack vertically, not overlap horizontally
+    /**
+     * Special handling for day view - cards should stack vertically, not overlap horizontally
+     */
     if (zoomLevel === 'day') {
       const today = dateRange[0]; // In day view, dateRange[0] is always the current day
       // For day view, all cards that include today should be positioned at the same horizontal position
@@ -78,7 +110,9 @@ export function useTimelinePositioning(
         width = 5;
       }
     } else {
-      // Logic for all views: past cards on left edge, future cards on right edge
+      /**
+       * Logic for all other views: past cards on left edge, future cards on right edge
+       */
       // If card is entirely before the visible range (in the past), collect on left edge
       if (cardEndDate < rangeStart) {
         left = 0; // Left edge
@@ -110,13 +144,17 @@ export function useTimelinePositioning(
       }
     }
 
-    // Calculate vertical stacking position
+    /**
+     * Calculate vertical stacking position to prevent card overlaps
+     */
     let stackLevel = 0;
     const cardHeight = 32; // h-8 = 32px
     const cardGap = 4; // gap between stacked cards
     const cardPositions: { [key: string]: number } = {}; // To store the assigned stack level for each card
 
-    // Calculate stack level for the current card
+    /**
+     * Calculate stack level for the current card by checking overlaps with previous cards
+     */
     allCards.slice(0, cardIndex + 1).forEach((currentCard, currentIndex) => {
       const currentCardStartDate = currentCard.startDate || new Date();
       const currentCardEndDate = currentCard.dueDate || addDays(currentCardStartDate, 7);
@@ -124,7 +162,9 @@ export function useTimelinePositioning(
       let currentStackLevel = 0;
       let positionFound = false;
 
-      // Try to find an available stack level
+      /**
+       * Try to find an available stack level that doesn't overlap
+       */
       while (!positionFound) {
         let overlap = false;
         for (const existingCardId in cardPositions) {
@@ -134,15 +174,21 @@ export function useTimelinePositioning(
           const existingCardStartDate = existingCard.startDate || new Date();
           const existingCardEndDate = existingCard.dueDate || addDays(existingCardStartDate, 7);
 
-          // Check for overlap in the current stack level
+          /**
+           * Check for overlap in the current stack level
+           */
           if (cardPositions[existingCardId] === currentStackLevel) {
-            // Check if the date ranges actually overlap within the timeline's dateRange
+            /**
+             * Check if the date ranges actually overlap within the timeline's dateRange
+             */
             let currentCardStartIdx = -1;
             let currentCardEndIdx = -1;
             let existingCardStartIdx = -1;
             let existingCardEndIdx = -1;
 
-            // Find indices based on zoom level
+            /**
+             * Find indices based on zoom level
+             */
             switch (zoomLevel) {
               case 'day':
                 currentCardStartIdx = dateRange.findIndex(date => isSameDay(date, currentCardStartDate));
@@ -176,14 +222,18 @@ export function useTimelinePositioning(
                 break;
             }
 
-            // Handle out-of-range indices - cards completely outside range should not overlap
+            /**
+             * Handle out-of-range indices - cards completely outside range should not overlap with each other
+             */
             const start1 = currentCardStartIdx;
             const end1 = currentCardEndIdx;
             const start2 = existingCardStartIdx;
             const end2 = existingCardEndIdx;
 
-            // Only check for overlap if both cards have valid indices within the visible range
-            // Cards with -1 indices are outside the visible range and shouldn't overlap with each other
+            /**
+             * Only check for overlap if both cards have valid indices within the visible range
+             * Cards with -1 indices are outside the visible range and shouldn't overlap with each other
+             */
             let shouldCheckOverlap = true;
             if (start1 < 0 || end1 < 0 || start2 < 0 || end2 < 0) {
               // At least one card is outside visible range - don't check overlap
@@ -214,6 +264,9 @@ export function useTimelinePositioning(
       }
     });
 
+    /**
+     * Calculate the final vertical position based on stack level
+     */
     top = stackLevel * (cardHeight + cardGap);
 
     return { left, width, top };

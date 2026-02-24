@@ -29,7 +29,18 @@ import { useDateRange } from './timeline/hooks/useDateRange';
 import { useTimelineKeyboardShortcuts } from './timeline/hooks/useTimelineKeyboardShortcuts';
 import { calculateTimelineHeight, getCardPosition, getCardColor } from './timeline/utils/timelineUtils';
 
-// Helper function to calculate hidden cards for a specific card
+/**
+ * Helper function to calculate hidden cards for a specific card
+ * 
+ * This function determines which cards are hidden before or after the current
+ * date range for a given card. It's used to show contextual hidden cards
+ * in the timeline swimlanes.
+ * 
+ * @param allCards - Array of all cards in the board
+ * @param currentCard - The card for which to calculate hidden cards
+ * @param dateRange - Current visible date range
+ * @returns Object containing arrays of hidden cards before and after the range
+ */
 const calculateHiddenCards = (allCards: any[], currentCard: any, dateRange: Date[]) => {
   const rangeStart = dateRange[0];
   const rangeEnd = dateRange[dateRange.length - 1];
@@ -49,10 +60,30 @@ const calculateHiddenCards = (allCards: any[], currentCard: any, dateRange: Date
   return { hiddenBefore, hiddenAfter };
 };
 
+/**
+ * Props interface for TimelineView component
+ */
 interface TimelineViewProps {
+  /** ID of the board to display */
   boardId: string;
 }
 
+/**
+ * TimelineView Component
+ * 
+ * A comprehensive timeline visualization component that displays cards from a board
+ * on a horizontal timeline with multiple zoom levels and advanced features.
+ * 
+ * Features:
+ * - Multiple zoom levels (Day, Week, 2 Weeks, Month, Year)
+ * - Collapsible swimlanes for each list
+ * - Hidden cards indicators for out-of-range cards
+ * - Card positioning with stacking for overlapping cards
+ * - Keyboard shortcuts for navigation
+ * - Responsive design with tooltips
+ * 
+ * @param boardId - ID of the board to display
+ */
 export function TimelineView({ boardId }: TimelineViewProps) {
   const { boards } = useBoardStore();
   const { searchTerm, openCardModal } = useUIStore();
@@ -60,19 +91,28 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   const board = boards.find((b) => b.id === boardId);
   if (!board) return null;
 
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | '2weeks' | 'month' | 'year'>('week');
-  const [collapsedLanes, setCollapsedLanes] = useState<Set<string>>(new Set());
-  const [hoveredCard, setHoveredCard] = useState<{ card: any; position: 'before' | 'after'; x: number; y: number } | null>(null);
+  // Component state
+  const [currentDate, setCurrentDate] = useState(new Date()); // Currently focused date
+  const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | '2weeks' | 'month' | 'year'>('week'); // Current zoom level
+  const [collapsedLanes, setCollapsedLanes] = useState<Set<string>>(new Set()); // Track collapsed swimlanes
+  const [hoveredCard, setHoveredCard] = useState<{ card: any; position: 'before' | 'after'; x: number; y: number } | null>(null); // Track hovered card for tooltip
 
-  // Generate date range based on zoom level and current date
+  // Generate date range based on zoom level and current date using custom hook
   const dateRange = useDateRange(currentDate, zoomLevel);
 
-  // Filter cards that have dates AND overlap with current date range
+  /**
+   * Filter and process cards for timeline display
+   * 
+   * This memoized function filters cards based on:
+   * 1. Search term (title and description)
+   * 2. Date requirements (must have start or due date)
+   * 3. Overlap with current date range
+   */
   const cardsWithDates = useMemo(() => {
+    // Get all cards from all lists in the board
     const allCards = board.lists.flatMap(list => list.cards);
 
-    // First filter by search term
+    // First apply search filter if search term exists
     const filtered = searchTerm
       ? allCards.filter(card =>
         card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,10 +121,13 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       : allCards;
 
     // Then filter to only show cards that overlap with current date range
+    // A card overlaps if it starts before or during range AND ends after or during range
     return filtered.filter(card => {
+      // Check if card has any date information
       const hasDates = card.startDate || card.dueDate;
       if (!hasDates) return false;
 
+      // Normalize dates to start of day for consistent comparison
       const cardStart = startOfDay(card.startDate || new Date());
       const cardEnd = startOfDay(card.dueDate || addDays(cardStart, 7));
       const rangeStart = startOfDay(dateRange[0]);
@@ -95,14 +138,24 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     });
   }, [board.lists, searchTerm, dateRange]);
 
-  // Create wrapper function for getCardPosition to match IndividualCardSwimlane expected signature
+  /**
+   * Create wrapper function for getCardPosition to match expected signature
+   * 
+   * This memoized wrapper ensures the getCardPosition function receives
+   * the current dateRange and zoomLevel parameters while maintaining
+   * the expected signature for child components.
+   */
   const getCardPositionWrapper = useMemo(() => {
     return (card: any, allCards: any[], cardIndex: number) => {
       return getCardPosition(card, allCards, cardIndex, dateRange, zoomLevel);
     };
   }, [dateRange, zoomLevel]);
 
-  // Toggle collapse state for a lane
+  /**
+   * Toggle collapse state for a swimlane
+   * 
+   * @param listId - ID of the list to toggle
+   */
   const toggleLaneCollapse = (listId: string) => {
     setCollapsedLanes(prev => {
       const newSet = new Set(prev);
@@ -115,7 +168,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     });
   };
 
-  // Add keyboard shortcuts for zoom levels
+  // Initialize keyboard shortcuts for timeline navigation
   useTimelineKeyboardShortcuts(setZoomLevel, setCurrentDate, zoomLevel);
 
   return (
@@ -128,18 +181,20 @@ export function TimelineView({ boardId }: TimelineViewProps) {
         onZoomChange={setZoomLevel}
       />
 
-      {/* Timeline */}
+      {/* Timeline container with scroll */}
       <div className="flex-1 overflow-hidden relative">
         <div className="h-full overflow-auto p-4 absolute inset-0">
           <div className="min-w-[1200px]">
             {/* Date headers and grid lines */}
             <TimelineGrid dateRange={dateRange} zoomLevel={zoomLevel} />
 
-            {/* Lists and cards */}
+            {/* Lists and cards container */}
             <div className="relative">
-              {/* Main swimlanes */}
+              {/* Main swimlanes - one for each list */}
               {board.lists.map((list) => {
+                // Get cards that belong to this list and are in current date range
                 const listCards = cardsWithDates.filter(card => card.listId === list.id);
+                // Check if this swimlane is collapsed
                 const isCollapsed = collapsedLanes.has(list.id);
 
                 return (
@@ -154,7 +209,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                         <div className="w-48 flex-shrink-0 p-3">
                           <div className="flex items-center gap-2">
                             <div className={`transform transition-transform duration-200 ${isCollapsed ? 'rotate-0' : 'rotate-90'}`}>
-                              ▶
+                              ▶ {/* Chevron indicator */}
                             </div>
                             <div>
                               <h3 className="font-semibold text-slate-900 dark:text-slate-100">
@@ -185,6 +240,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                         {listCards.length > 0 ? (
                           // Show actual cards if they exist in current range
                           listCards.map((card, cardIndex) => {
+                            // Calculate hidden cards for this specific card
                             const { hiddenBefore, hiddenAfter } = calculateHiddenCards(cardsWithDates, card, dateRange);
                             return (
                               <SubCardSwimlane
@@ -210,6 +266,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                               <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
                                 <div className="flex flex-wrap gap-1">
                                   {list.cards.map((card) => {
+                                    // Calculate card date boundaries
                                     const cardStart = card.startDate || new Date();
                                     const cardEnd = card.dueDate || addDays(cardStart, 7);
                                     const rangeStart = dateRange[0];
@@ -224,6 +281,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                           title={`${card.title} (Before current view)`}
                                           onClick={() => openCardModal(card.id)}
                                           onMouseEnter={(e) => {
+                                            // Calculate tooltip position relative to card element
                                             const rect = e.currentTarget.getBoundingClientRect();
                                             setHoveredCard({
                                               card,
@@ -255,6 +313,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                               <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
                                 <div className="flex flex-wrap gap-1">
                                   {list.cards.map((card) => {
+                                    // Calculate card date boundaries
                                     const cardStart = card.startDate || new Date();
                                     const cardEnd = card.dueDate || addDays(cardStart, 7);
                                     const rangeStart = dateRange[0];
@@ -269,6 +328,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                           title={`${card.title} (After current view)`}
                                           onClick={() => openCardModal(card.id)}
                                           onMouseEnter={(e) => {
+                                            // Calculate tooltip position relative to card element
                                             const rect = e.currentTarget.getBoundingClientRect();
                                             setHoveredCard({
                                               card,
@@ -320,7 +380,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
               })}
             </div>
 
-            {/* Empty state */}
+            {/* Empty state when no cards with dates are found */}
             {cardsWithDates.length === 0 && (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="text-lg font-medium text-slate-600 dark:text-slate-400">
@@ -335,12 +395,12 @@ export function TimelineView({ boardId }: TimelineViewProps) {
         </div>
       </div>
 
-      {/* Tooltip rendering */}
+      {/* Tooltip rendering for hovered mini cards */}
       {hoveredCard && (
         <div
           className="fixed z-50 pointer-events-none"
           style={{
-            left: hoveredCard.x - 100, // Center the tooltip
+            left: hoveredCard.x - 100, // Center the tooltip horizontally
             top: hoveredCard.y,
             transform: 'translateX(0)'
           }}

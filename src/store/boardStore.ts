@@ -4,60 +4,80 @@ import { Board, List, Card, Label, User, ChecklistItem } from '@/lib/types';
 import { generateId } from '@/lib/utils';
 import { STORAGE_KEYS } from '@/lib/constants';
 
+/**
+ * Board state interface - Defines the shape of board store state and actions
+ * Contains all board-related data and CRUD operations
+ */
 interface BoardState {
+  // State
   boards: Board[];
   currentBoardId: string | null;
   isLoading: boolean;
   error: string | null;
-  
-  // Actions
+
+  // Board actions
   setCurrentBoard: (boardId: string) => void;
   createBoard: (name: string) => Board;
   updateBoard: (boardId: string, updates: Partial<Board>) => void;
   deleteBoard: (boardId: string) => void;
-  
+
   // List actions
   createList: (boardId: string, title: string, position?: number) => List;
   updateList: (boardId: string, listId: string, updates: Partial<List>) => void;
   deleteList: (boardId: string, listId: string) => void;
   reorderLists: (boardId: string, fromIndex: number, toIndex: number) => void;
-  
+
   // Card actions
   createCard: (boardId: string, listId: string, title: string, position?: number) => Card;
   updateCard: (boardId: string, cardId: string, updates: Partial<Card>) => void;
   deleteCard: (boardId: string, cardId: string) => void;
   moveCard: (boardId: string, cardId: string, fromListId: string, toListId: string, position: number) => void;
   reorderCards: (boardId: string, listId: string, fromIndex: number, toIndex: number) => void;
-  
+
   // Label actions
   addLabel: (boardId: string, cardId: string, label: Label) => void;
   removeLabel: (boardId: string, cardId: string, labelId: string) => void;
-  
+
   // Member actions
   addMember: (boardId: string, user: User) => void;
   removeMember: (boardId: string, userId: string) => void;
-  
+
   // Checklist actions
   addChecklistItem: (boardId: string, cardId: string, text: string) => void;
   updateChecklistItem: (boardId: string, cardId: string, itemId: string, updates: Partial<ChecklistItem>) => void;
   removeChecklistItem: (boardId: string, cardId: string, itemId: string) => void;
-  
-  // Utility
+
+  // Utility functions
   getCurrentBoard: () => Board | null;
   getCard: (boardId: string, cardId: string) => Card | null;
   getList: (boardId: string, listId: string) => List | null;
 }
 
+/**
+ * Board store - Zustand store for board state management
+ * Handles all board, list, card, label, member, and checklist operations
+ * Persists data to localStorage for offline functionality
+ */
 export const useBoardStore = create<BoardState>()(
   persist(
     (set, get) => ({
+      // Initial state
       boards: [],
       currentBoardId: null,
       isLoading: false,
       error: null,
 
+      /**
+       * Set the current active board
+       * @param boardId - ID of the board to set as current
+       */
       setCurrentBoard: (boardId) => set({ currentBoardId: boardId }),
 
+      /**
+       * Create a new board
+       * @param name - Name of the new board
+       * @returns The created board object
+       */
       createBoard: (name) => {
         const newBoard: Board = {
           id: generateId(),
@@ -76,6 +96,11 @@ export const useBoardStore = create<BoardState>()(
         return newBoard;
       },
 
+      /**
+       * Update an existing board
+       * @param boardId - ID of the board to update
+       * @param updates - Partial board updates
+       */
       updateBoard: (boardId, updates) => {
         set((state) => ({
           boards: state.boards.map((board) =>
@@ -86,6 +111,10 @@ export const useBoardStore = create<BoardState>()(
         }));
       },
 
+      /**
+       * Delete a board
+       * @param boardId - ID of the board to delete
+       */
       deleteBoard: (boardId) => {
         set((state) => ({
           boards: state.boards.filter((board) => board.id !== boardId),
@@ -93,6 +122,13 @@ export const useBoardStore = create<BoardState>()(
         }));
       },
 
+      /**
+       * Create a new list in a board
+       * @param boardId - ID of the board to add list to
+       * @param title - Title of the new list
+       * @param position - Optional position index (defaults to end)
+       * @returns The created list object
+       */
       createList: (boardId, title, position) => {
         const state = get();
         const board = state.boards.find((b) => b.id === boardId);
@@ -116,45 +152,62 @@ export const useBoardStore = create<BoardState>()(
         return newList;
       },
 
+      /**
+       * Update an existing list
+       * @param boardId - ID of the board containing the list
+       * @param listId - ID of the list to update
+       * @param updates - Partial list updates
+       */
       updateList: (boardId, listId, updates) => {
         set((state) => ({
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) =>
-                    list.id === listId ? { ...list, ...updates } : list
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.id === listId ? { ...list, ...updates } : list
+                ),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
       },
 
+      /**
+       * Delete a list from a board
+       * @param boardId - ID of the board containing the list
+       * @param listId - ID of the list to delete
+       */
       deleteList: (boardId, listId) => {
         set((state) => ({
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.filter((list) => list.id !== listId),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.filter((list) => list.id !== listId),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
       },
 
+      /**
+       * Reorder lists within a board
+       * @param boardId - ID of the board to reorder lists in
+       * @param fromIndex - Source index
+       * @param toIndex - Target index
+       */
       reorderLists: (boardId, fromIndex, toIndex) => {
         set((state) => ({
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: reorderArray(board.lists, fromIndex, toIndex),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: reorderArray(board.lists, fromIndex, toIndex),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -182,14 +235,14 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((b) =>
             b.id === boardId
               ? {
-                  ...b,
-                  lists: b.lists.map((l) =>
-                    l.id === listId
-                      ? { ...l, cards: [...l.cards, newCard] }
-                      : l
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...b,
+                lists: b.lists.map((l) =>
+                  l.id === listId
+                    ? { ...l, cards: [...l.cards, newCard] }
+                    : l
+                ),
+                updatedAt: new Date(),
+              }
               : b
           ),
         }));
@@ -202,21 +255,21 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) =>
-                    list.id === updates.listId || list.cards.some((c) => c.id === cardId)
-                      ? {
-                          ...list,
-                          cards: list.cards.map((card) =>
-                            card.id === cardId
-                              ? { ...card, ...updates, updatedAt: new Date() }
-                              : card
-                          ),
-                        }
-                      : list
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.id === updates.listId || list.cards.some((c) => c.id === cardId)
+                    ? {
+                      ...list,
+                      cards: list.cards.map((card) =>
+                        card.id === cardId
+                          ? { ...card, ...updates, updatedAt: new Date() }
+                          : card
+                      ),
+                    }
+                    : list
+                ),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -227,13 +280,13 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) => ({
-                    ...list,
-                    cards: list.cards.filter((card) => card.id !== cardId),
-                  })),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) => ({
+                  ...list,
+                  cards: list.cards.filter((card) => card.id !== cardId),
+                })),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -274,19 +327,19 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) =>
-                    list.id === listId
-                      ? {
-                          ...list,
-                          cards: reorderArray(list.cards, fromIndex, toIndex).map(
-                            (card, index) => ({ ...card, position: index })
-                          ),
-                        }
-                      : list
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.id === listId
+                    ? {
+                      ...list,
+                      cards: reorderArray(list.cards, fromIndex, toIndex).map(
+                        (card, index) => ({ ...card, position: index })
+                      ),
+                    }
+                    : list
+                ),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -297,25 +350,25 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) =>
-                    list.cards.some((c) => c.id === cardId)
-                      ? {
-                          ...list,
-                          cards: list.cards.map((card) =>
-                            card.id === cardId
-                              ? {
-                                  ...card,
-                                  labels: [...card.labels, { ...label, id: generateId() }],
-                                  updatedAt: new Date(),
-                                }
-                              : card
-                          ),
-                        }
-                      : list
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.cards.some((c) => c.id === cardId)
+                    ? {
+                      ...list,
+                      cards: list.cards.map((card) =>
+                        card.id === cardId
+                          ? {
+                            ...card,
+                            labels: [...card.labels, { ...label, id: generateId() }],
+                            updatedAt: new Date(),
+                          }
+                          : card
+                      ),
+                    }
+                    : list
+                ),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -326,25 +379,25 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) =>
-                    list.cards.some((c) => c.id === cardId)
-                      ? {
-                          ...list,
-                          cards: list.cards.map((card) =>
-                            card.id === cardId
-                              ? {
-                                  ...card,
-                                  labels: card.labels.filter((l) => l.id !== labelId),
-                                  updatedAt: new Date(),
-                                }
-                              : card
-                          ),
-                        }
-                      : list
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.cards.some((c) => c.id === cardId)
+                    ? {
+                      ...list,
+                      cards: list.cards.map((card) =>
+                        card.id === cardId
+                          ? {
+                            ...card,
+                            labels: card.labels.filter((l) => l.id !== labelId),
+                            updatedAt: new Date(),
+                          }
+                          : card
+                      ),
+                    }
+                    : list
+                ),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -355,10 +408,10 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  members: [...board.members, { ...user, id: generateId() }],
-                  updatedAt: new Date(),
-                }
+                ...board,
+                members: [...board.members, { ...user, id: generateId() }],
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -369,10 +422,10 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  members: board.members.filter((member) => member.id !== userId),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                members: board.members.filter((member) => member.id !== userId),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -383,28 +436,28 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) =>
-                    list.cards.some((c) => c.id === cardId)
-                      ? {
-                          ...list,
-                          cards: list.cards.map((card) =>
-                            card.id === cardId
-                              ? {
-                                  ...card,
-                                  checklist: [
-                                    ...card.checklist,
-                                    { id: generateId(), text, done: false },
-                                  ],
-                                  updatedAt: new Date(),
-                                }
-                              : card
-                          ),
-                        }
-                      : list
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.cards.some((c) => c.id === cardId)
+                    ? {
+                      ...list,
+                      cards: list.cards.map((card) =>
+                        card.id === cardId
+                          ? {
+                            ...card,
+                            checklist: [
+                              ...card.checklist,
+                              { id: generateId(), text, done: false },
+                            ],
+                            updatedAt: new Date(),
+                          }
+                          : card
+                      ),
+                    }
+                    : list
+                ),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -415,27 +468,27 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) =>
-                    list.cards.some((c) => c.id === cardId)
-                      ? {
-                          ...list,
-                          cards: list.cards.map((card) =>
-                            card.id === cardId
-                              ? {
-                                  ...card,
-                                  checklist: card.checklist.map((item) =>
-                                    item.id === itemId ? { ...item, ...updates } : item
-                                  ),
-                                  updatedAt: new Date(),
-                                }
-                              : card
-                          ),
-                        }
-                      : list
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.cards.some((c) => c.id === cardId)
+                    ? {
+                      ...list,
+                      cards: list.cards.map((card) =>
+                        card.id === cardId
+                          ? {
+                            ...card,
+                            checklist: card.checklist.map((item) =>
+                              item.id === itemId ? { ...item, ...updates } : item
+                            ),
+                            updatedAt: new Date(),
+                          }
+                          : card
+                      ),
+                    }
+                    : list
+                ),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -446,27 +499,27 @@ export const useBoardStore = create<BoardState>()(
           boards: state.boards.map((board) =>
             board.id === boardId
               ? {
-                  ...board,
-                  lists: board.lists.map((list) =>
-                    list.cards.some((c) => c.id === cardId)
-                      ? {
-                          ...list,
-                          cards: list.cards.map((card) =>
-                            card.id === cardId
-                              ? {
-                                  ...card,
-                                  checklist: card.checklist.filter(
-                                    (item) => item.id !== itemId
-                                  ),
-                                  updatedAt: new Date(),
-                                }
-                              : card
-                          ),
-                        }
-                      : list
-                  ),
-                  updatedAt: new Date(),
-                }
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.cards.some((c) => c.id === cardId)
+                    ? {
+                      ...list,
+                      cards: list.cards.map((card) =>
+                        card.id === cardId
+                          ? {
+                            ...card,
+                            checklist: card.checklist.filter(
+                              (item) => item.id !== itemId
+                            ),
+                            updatedAt: new Date(),
+                          }
+                          : card
+                      ),
+                    }
+                    : list
+                ),
+                updatedAt: new Date(),
+              }
               : board
           ),
         }));
@@ -481,7 +534,7 @@ export const useBoardStore = create<BoardState>()(
         const state = get();
         const board = state.boards.find((b) => b.id === boardId);
         if (!board) return null;
-        
+
         for (const list of board.lists) {
           const card = list.cards.find((c) => c.id === cardId);
           if (card) return card;

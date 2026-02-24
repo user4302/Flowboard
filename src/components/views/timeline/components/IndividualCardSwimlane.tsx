@@ -1,16 +1,49 @@
 import { TimelineCard } from './TimelineCard';
 import { getCardColor } from '../utils/timelineUtils';
 
+/**
+ * IndividualCardSwimlane Component
+ * 
+ * A swimlane component that displays a single card as its own swimlane.
+ * This component is used for individual card visualization within the timeline.
+ * 
+ * Features:
+ * - Displays card title as swimlane header
+ * - Renders the card in the timeline area
+ * - Responsive layout with fixed left panel
+ * - Click interactions for card modal
+ * 
+ * @param card - The card to display
+ * @param dateRange - Current visible date range
+ * @param zoomLevel - Current timeline zoom level
+ * @param onOpenCardModal - Function to open card modal
+ * @param getCardPosition - Function to calculate card positioning
+ * @param getCardColor - Function to get card color from labels
+ * @param calculateTimelineHeight - Function to calculate timeline height
+ */
 interface IndividualCardSwimlaneProps {
+  /** The card to display */
   card: any;
+  /** Current visible date range */
   dateRange: Date[];
+  /** Current timeline zoom level */
   zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
+  /** Function to open card modal */
   onOpenCardModal: (cardId: string) => void;
+  /** Function to calculate card positioning */
   getCardPosition: (card: any, allCards: any[], cardIndex: number) => any;
+  /** Function to get card color from labels */
   getCardColor: (card: any) => string;
+  /** Function to calculate timeline height */
   calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
 }
 
+/**
+ * IndividualCardSwimlane Component
+ * 
+ * Renders a single card as its own swimlane with the card title
+ * as the header and the card positioned in the timeline area.
+ */
 export function IndividualCardSwimlane({
   card,
   dateRange,
@@ -20,7 +53,8 @@ export function IndividualCardSwimlane({
   getCardColor,
   calculateTimelineHeight
 }: IndividualCardSwimlaneProps) {
-  const position = getCardPosition(card, [card], 0, dateRange, zoomLevel);
+  // Calculate card position and color
+  const position = getCardPosition(card, [card], 0);
   const color = getCardColor(card);
 
   return (
@@ -35,9 +69,9 @@ export function IndividualCardSwimlane({
         </div>
       </div>
 
-      {/* Timeline area for this single card */}
+      {/* Timeline area with the card */}
       <div
-        className="flex-1 relative"
+        className="flex-1 relative border-b border-slate-50 dark:border-slate-700"
         style={{
           minHeight: `${calculateTimelineHeight([card], dateRange)}px`
         }}

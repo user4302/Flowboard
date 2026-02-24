@@ -1,9 +1,26 @@
 import { useBoardStore } from '@/store';
 import { DragItem } from '@/lib/types';
 
+/**
+ * useDragAndDrop hook - Handles drag and drop operations for cards and lists
+ * Provides functions to handle card movement between lists and list reordering
+ * Integrates with board store to persist drag and drop changes
+ * 
+ * @param boardId - ID of the board to perform drag and drop operations on
+ * @returns Object with drag and drop handler functions
+ */
 export function useDragAndDrop(boardId: string) {
+  // Get board store methods for moving and reordering
   const { moveCard, reorderCards, reorderLists } = useBoardStore();
 
+  /**
+   * Handle card drop operation
+   * Moves cards between lists or reorders within the same list
+   * @param cardId - ID of the card being moved
+   * @param fromListId - ID of the source list
+   * @param toListId - ID of the target list
+   * @param position - Target position index
+   */
   const handleCardDrop = (
     cardId: string,
     fromListId: string,
@@ -28,6 +45,12 @@ export function useDragAndDrop(boardId: string) {
     }
   };
 
+  /**
+   * Handle list drop operation
+   * Reorders lists within the board
+   * @param fromIndex - Source list index
+   * @param toIndex - Target list index
+   */
   const handleListDrop = (fromIndex: number, toIndex: number) => {
     reorderLists(boardId, fromIndex, toIndex);
   };

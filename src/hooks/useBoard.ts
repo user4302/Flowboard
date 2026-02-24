@@ -4,6 +4,10 @@ import { useSharingStore } from '@/store/sharingStore';
 import { generateId } from '@/lib/utils';
 import { Board, List, Card, User, Label } from '@/lib/types';
 
+/**
+ * Seed data for initial board setup
+ * Provides sample data for demonstration purposes
+ */
 const seedData = {
   board: {
     name: 'Website Redesign',
@@ -175,7 +179,15 @@ const seedData = {
   }>,
 };
 
+/**
+ * useBoard hook - Main hook for board operations and state management
+ * Handles board initialization, user info setup, and provides board-related operations
+ * Integrates with board store and sharing store for comprehensive board functionality
+ * 
+ * @returns Object with board data and operations
+ */
 export function useBoard() {
+  // Destructure board store methods and state
   const {
     boards,
     currentBoardId,
@@ -186,8 +198,13 @@ export function useBoard() {
     setCurrentBoard,
   } = useBoardStore();
 
+  // Get sharing store method for user info
   const { setUserInfo } = useSharingStore();
 
+  /**
+   * Effect to set up sharing info for current user (owner)
+   * Automatically sets the current user as board owner when board is loaded
+   */
   useEffect(() => {
     // Set up sharing info for current user (owner)
     if (boards.length > 0 && currentBoardId) {
@@ -204,6 +221,7 @@ export function useBoard() {
     }
   }, [boards.length, currentBoardId, getCurrentBoard, setUserInfo]);
 
+  // Get current board for easy access
   const currentBoard = getCurrentBoard();
 
   return {

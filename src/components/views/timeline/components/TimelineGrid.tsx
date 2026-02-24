@@ -2,14 +2,33 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Calendar } from 'lucide-react';
 
+/**
+ * Timeline zoom level type
+ * Defines the different zoom levels available for timeline view
+ */
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 
+/**
+ * TimelineGrid component props interface
+ * Defines the props for rendering the timeline grid
+ */
 interface TimelineGridProps {
+  // Array of dates to display in the timeline
   dateRange: Date[];
+  // Current zoom level for the timeline
   zoomLevel: ZoomLevel;
 }
 
+/**
+ * TimelineGrid component - Renders the grid structure for timeline view
+ * Displays date headers and grid lines based on zoom level
+ * Provides visual structure for timeline navigation
+ */
 export function TimelineGrid({ dateRange, zoomLevel }: TimelineGridProps) {
+  /**
+   * Returns the display label for the current zoom level
+   * @returns Human-readable zoom level name
+   */
   const getZoomLabel = () => {
     switch (zoomLevel) {
       case 'day': return 'Day';
@@ -21,6 +40,11 @@ export function TimelineGrid({ dateRange, zoomLevel }: TimelineGridProps) {
     }
   };
 
+  /**
+   * Returns the formatted date label based on zoom level
+   * @param date - Date to format
+   * @returns Formatted date string
+   */
   const getDateLabel = (date: Date) => {
     switch (zoomLevel) {
       case 'day':
@@ -40,7 +64,7 @@ export function TimelineGrid({ dateRange, zoomLevel }: TimelineGridProps) {
 
   return (
     <>
-      {/* Date headers */}
+      {/* Date headers with zoom level indicator */}
       <div className="sticky top-0 z-10 flex border-b-2 border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
         <div className="w-48 flex-shrink-0 p-2 text-sm font-medium text-slate-600 dark:text-slate-400">
           <div className="flex items-center gap-2">
@@ -87,7 +111,7 @@ export function TimelineGrid({ dateRange, zoomLevel }: TimelineGridProps) {
         </div>
       </div>
 
-      {/* Grid lines */}
+      {/* Vertical grid lines for timeline structure */}
       <div className="relative">
         {dateRange.map((date, index) => (
           <div

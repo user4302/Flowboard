@@ -43,9 +43,9 @@ interface SharingState {
 }
 
 /**
- * Zustand store for managing board sharing and collaboration features.
- * Provides state management for invitations, peer connections, and user authentication.
- * Uses persistence to maintain user session and invitation data across page reloads.
+ * Sharing store - Zustand store for board sharing and collaboration features
+ * Provides state management for invitations, peer connections, and user authentication
+ * Uses persistence to maintain user session and invitation data across page reloads
  */
 export const useSharingStore = create<SharingState>()(
   persist(
@@ -64,7 +64,11 @@ export const useSharingStore = create<SharingState>()(
       showJoinModal: false,
       showMemberManagement: false,
 
-      // Actions
+      /**
+       * Create a new invitation for board sharing
+       * @param boardId - ID of the board to share
+       * @param boardName - Name of the board for display
+       */
       createInvitation: async (boardId: string, boardName: string) => {
         try {
           const { createInvite } = await import('@/lib/invitation-utils');
@@ -86,6 +90,13 @@ export const useSharingStore = create<SharingState>()(
         }
       },
 
+      /**
+       * Join a board using an invitation
+       * @param inviteId - ID of the invitation to use
+       * @param email - User's email address
+       * @param username - User's chosen username
+       * @param password - User's password
+       */
       joinBoard: async (inviteId: string, email: string, username: string, password: string) => {
         try {
           const { joinBoard } = await import('@/lib/invitation-utils');
@@ -115,6 +126,10 @@ export const useSharingStore = create<SharingState>()(
         }
       },
 
+      /**
+       * Approve a join request
+       * @param requestId - ID of the request to approve
+       */
       approveJoinRequest: (requestId: string) => {
         const { updateJoinRequestStatus } = require('@/lib/invitation-utils');
         updateJoinRequestStatus(requestId, 'approved');
@@ -129,6 +144,10 @@ export const useSharingStore = create<SharingState>()(
         alert('Join request approved!');
       },
 
+      /**
+       * Reject a join request
+       * @param requestId - ID of the request to reject
+       */
       rejectJoinRequest: (requestId: string) => {
         const { updateJoinRequestStatus } = require('@/lib/invitation-utils');
         updateJoinRequestStatus(requestId, 'rejected');
@@ -142,6 +161,10 @@ export const useSharingStore = create<SharingState>()(
         alert('Join request rejected');
       },
 
+      /**
+       * Connect to peers for real-time collaboration
+       * @param boardId - ID of the board to connect to
+       */
       connectToPeers: async (boardId: string) => {
         set({ isConnecting: true });
 
@@ -182,6 +205,9 @@ export const useSharingStore = create<SharingState>()(
         }
       },
 
+      /**
+       * Disconnect from all peers
+       */
       disconnectFromPeers: () => {
         p2pManager.disconnectAll();
         set({
@@ -190,29 +216,52 @@ export const useSharingStore = create<SharingState>()(
         });
       },
 
+      /**
+       * Send board update to all connected peers
+       * @param message - Sync message to broadcast
+       */
       sendBoardUpdate: (message: SyncMessage) => {
         p2pManager.broadcastMessage(message);
       },
 
+      /**
+       * Set user information
+       * @param userId - User ID
+       * @param username - Username
+       * @param email - Email address
+       * @param isOwner - Whether user is board owner
+       */
       setUserInfo: (userId: string, username: string, email: string, isOwner: boolean) => {
         set({ userId, username, email, isOwner });
       },
 
+      /**
+       * Show/hide invite modal
+       * @param show - Whether to show the modal
+       */
       setShowInviteModal: (show: boolean) => {
         set({ showInviteModal: show });
       },
 
+      /**
+       * Show/hide join modal
+       * @param show - Whether to show the modal
+       */
       setShowJoinModal: (show: boolean) => {
         set({ showJoinModal: show });
       },
 
+      /**
+       * Show/hide member management modal
+       * @param show - Whether to show the modal
+       */
       setShowMemberManagement: (show: boolean) => {
         set({ showMemberManagement: show });
       },
     }),
     {
       name: 'flowboard-sharing',
-      partialize: (state) => ({
+      partialize: (state: SharingState) => ({
         userId: state.userId,
         username: state.username,
         email: state.email,

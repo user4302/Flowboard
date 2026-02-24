@@ -11,6 +11,10 @@ import { LABEL_COLORS } from '@/lib/constants';
 import { cn, formatDate, generateId } from '@/lib/utils';
 import { Card } from '@/lib/types';
 
+/**
+ * Zod schema for card form validation
+ * Defines the structure and validation rules for card data
+ */
 const cardSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
@@ -18,21 +22,34 @@ const cardSchema = z.object({
   dueDate: z.string().optional(),
 });
 
+/**
+ * Type inference from the card schema
+ * Provides TypeScript types for form data
+ */
 type CardFormData = z.infer<typeof cardSchema>;
 
+/**
+ * CardModal component - Modal for editing card details
+ * Provides comprehensive card editing including title, description, labels, members, dates, and checklists
+ * Uses react-hook-form with zod validation for form management
+ */
 export function CardModal() {
+  // Store hooks for state management
   const { cardModalOpen, selectedCardId, closeCardModal } = useUIStore();
   const { boards, currentBoardId, updateCard, addLabel, removeLabel, addChecklistItem, updateChecklistItem, removeChecklistItem } = useBoardStore();
 
+  // Local state for dynamic form elements
   const [newLabelText, setNewLabelText] = useState('');
   const [newLabelColor, setNewLabelColor] = useState(LABEL_COLORS[0]);
   const [newChecklistItem, setNewChecklistItem] = useState('');
   const [showNewLabelInput, setShowNewLabelInput] = useState(false);
   const [showNewChecklistInput, setShowNewChecklistInput] = useState(false);
 
+  // Find current board and selected card
   const currentBoard = boards.find(b => b.id === currentBoardId);
   const foundCard = currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId);
 
+  // React Hook Form setup with zod validation
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CardFormData>({
     resolver: zodResolver(cardSchema),
     defaultValues: {
@@ -46,6 +63,7 @@ export function CardModal() {
   // Explicitly type as Card since we've confirmed it exists
   // const card = foundCard; // Removed - use foundCard directly
 
+  // Reset form when card changes
   useEffect(() => {
     if (foundCard) {
       reset({
@@ -57,13 +75,21 @@ export function CardModal() {
     }
   }, [foundCard, reset]);
 
+  // Filter members assigned to this card
   const cardMembers = currentBoard?.members.filter(member => foundCard?.members.includes(member.id)) || [];
 
+  // Early return if card data is not available
   if (!foundCard || !currentBoard || !currentBoardId) {
     return null;
   }
 
   // Handler functions - defined inside conditional to ensure card and currentBoard are available
+
+  /**
+   * Handles form submission to save card changes
+   * Updates card with form data including dates
+   * @param data - Form data from react-hook-form
+   */
   const handleSave = (data: CardFormData) => {
     const updateData: any = {
       title: data.title,
@@ -82,6 +108,10 @@ export function CardModal() {
     closeCardModal();
   };
 
+  /**
+   * Handles adding a new label to the card
+   * Creates label with unique ID and selected color
+   */
   const handleAddLabel = () => {
     if (newLabelText.trim()) {
       addLabel(currentBoardId, foundCard.id, {
@@ -94,6 +124,10 @@ export function CardModal() {
     }
   };
 
+  /**
+   * Handles adding a new checklist item
+   * Creates checklist item with default unchecked state
+   */
   const handleAddChecklistItem = () => {
     if (newChecklistItem.trim()) {
       addChecklistItem(currentBoardId, foundCard.id, newChecklistItem.trim());
@@ -102,10 +136,19 @@ export function CardModal() {
     }
   };
 
+  /**
+   * Handles toggling checklist item completion status
+   * @param itemId - ID of the checklist item to update
+   * @param done - New completion status
+   */
   const handleToggleChecklistItem = (itemId: string, done: boolean) => {
     updateChecklistItem(currentBoardId, foundCard.id, itemId, { done });
   };
 
+  /**
+   * Handles deletion of checklist items
+   * @param itemId - ID of the checklist item to delete
+   */
   const handleDeleteChecklistItem = (itemId: string) => {
     removeChecklistItem(currentBoardId, foundCard.id, itemId);
   };
@@ -124,7 +167,7 @@ export function CardModal() {
 
       <form onSubmit={handleSubmit(handleSave)}>
         <ModalBody className="space-y-6">
-          {/* Title */}
+          {/* Title - Required field with validation */}
           <div>
             <Input
               {...register('title')}
@@ -136,7 +179,7 @@ export function CardModal() {
             )}
           </div>
 
-          {/* Description */}
+          {/* Description - Optional rich text area */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               Description
@@ -149,7 +192,7 @@ export function CardModal() {
             />
           </div>
 
-          {/* Labels */}
+          {/* Labels - Color-coded tags for categorization */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               <Tag className="mr-1 inline h-4 w-4" />
@@ -224,7 +267,7 @@ export function CardModal() {
             )}
           </div>
 
-          {/* Members */}
+          {/* Members - Display assigned team members */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               <User className="mr-1 inline h-4 w-4" />
@@ -247,7 +290,7 @@ export function CardModal() {
             </div>
           </div>
 
-          {/* Dates */}
+          {/* Dates - Start and due date pickers */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               <Calendar className="mr-1 inline h-4 w-4" />
@@ -273,7 +316,7 @@ export function CardModal() {
             </div>
           </div>
 
-          {/* Checklist */}
+          {/* Checklist - Task items with completion tracking */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               <CheckSquare className="mr-1 inline h-4 w-4" />

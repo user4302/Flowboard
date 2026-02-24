@@ -7,7 +7,28 @@ import { Button, Input } from '@/components/ui';
 import { VIEWS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
+/**
+ * BoardHeader Component
+ * 
+ * The main header component for the board interface that provides:
+ * - Board title editing functionality
+ * - View switching between different board views
+ * - Search functionality for cards
+ * - Theme toggling (light/dark mode)
+ * - Board export/import functionality
+ * - Member display and management
+ * - Responsive design for mobile and desktop
+ * 
+ * Features:
+ * - Inline board title editing with keyboard shortcuts
+ * - Export board data to JSON file
+ * - Import board data from JSON file
+ * - Search across all card titles and descriptions
+ * - Visual member avatars with overflow indicator
+ * - Mobile-responsive view tabs
+ */
 export function BoardHeader() {
+  // Store hooks for board and UI state management
   const { boards, currentBoardId, updateBoard } = useBoardStore();
   const {
     currentView,
@@ -19,11 +40,19 @@ export function BoardHeader() {
     searchTerm,
     setSearchTerm,
   } = useUIStore();
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [tempTitle, setTempTitle] = useState('');
 
+  // Local state for board title editing
+  const [isEditingTitle, setIsEditingTitle] = useState(false); // Track if title is being edited
+  const [tempTitle, setTempTitle] = useState(''); // Temporary storage for edited title
+
+  // Find the current board from the boards array
   const currentBoard = boards.find(board => board.id === currentBoardId);
 
+  /**
+   * Handle board title editing initiation
+   * 
+   * Sets up the editing state and copies the current title to temp storage
+   */
   const handleTitleEdit = () => {
     if (currentBoard) {
       setTempTitle(currentBoard.name);
@@ -31,6 +60,12 @@ export function BoardHeader() {
     }
   };
 
+  /**
+   * Handle board title save
+   * 
+   * Saves the edited title if it's different from the original and not empty.
+   * Updates the board state and exits editing mode.
+   */
   const handleTitleSave = () => {
     if (currentBoard && tempTitle.trim() && tempTitle !== currentBoard.name) {
       useBoardStore.getState().updateBoard(currentBoard.id, { name: tempTitle.trim() });
@@ -39,6 +74,13 @@ export function BoardHeader() {
     setTempTitle('');
   };
 
+  /**
+   * Handle keyboard events during title editing
+   * 
+   * @param e - Keyboard event
+   * - Enter: Save the title
+   * - Escape: Cancel editing and revert to original title
+   */
   const handleTitleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleTitleSave();
@@ -48,12 +90,26 @@ export function BoardHeader() {
     }
   };
 
+  /**
+   * Toggle between light and dark themes
+   */
   const toggleTheme = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
+  /**
+   * Export board data to JSON file
+   * 
+   * Creates a downloadable JSON file containing:
+   * - Board name and export timestamp
+   * - All lists with their cards
+   * - Complete card data including labels, members, dates, etc.
+   * 
+   * The filename includes the board name and current date for easy identification.
+   */
   const handleExportBoard = () => {
     if (currentBoard) {
+      // Structure the board data for export
       const boardData = {
         name: currentBoard.name,
         exportDate: new Date().toISOString(),
@@ -73,7 +129,10 @@ export function BoardHeader() {
         }))
       };
 
+      // Generate filename with board name and current date
       const filename = `${currentBoard.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+
+      // Create and trigger download
       const dataStr = JSON.stringify(boardData, null, 2);
       const blob = new Blob([dataStr], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -83,10 +142,21 @@ export function BoardHeader() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url); // Clean up object URL
     }
   };
 
+  /**
+   * Import board data from JSON file
+   * 
+   * Handles the complete import process:
+   * - Validates JSON file format
+   * - Creates new board from imported data
+   * - Recreates all lists and cards
+   * - Preserves card properties (dates, labels, members, checklists)
+   * 
+   * @param event - File input change event
+   */
   const handleImportBoard = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && file.type === 'application/json') {
@@ -98,7 +168,7 @@ export function BoardHeader() {
             // Create new board from imported data
             const newBoard = useBoardStore.getState().createBoard(boardData.name);
 
-            // Import lists and cards
+            // Import lists and cards with their properties
             boardData.lists.forEach((listData: any, listIndex: number) => {
               const list = useBoardStore.getState().createList(newBoard.id, listData.title, listIndex);
 
@@ -112,19 +182,19 @@ export function BoardHeader() {
                   dueDate: cardData.dueDate ? new Date(cardData.dueDate) : undefined,
                 });
 
-                // Add labels
+                // Add labels to the card
                 cardData.labels?.forEach((label: any) => {
                   useBoardStore.getState().addLabel(newBoard.id, card.id, label);
                 });
 
-                // Add members
+                // Add members to the card
                 cardData.members?.forEach((memberId: string) => {
                   useBoardStore.getState().updateCard(newBoard.id, card.id, {
                     members: [...card.members, memberId]
                   });
                 });
 
-                // Add checklist items
+                // Add checklist items and their completion status
                 cardData.checklist?.forEach((item: any) => {
                   useBoardStore.getState().addChecklistItem(newBoard.id, card.id, item.text);
                   if (item.done) {
@@ -143,14 +213,15 @@ export function BoardHeader() {
     }
   };
 
+  // Return null if no current board is found
   if (!currentBoard) return null;
 
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/80">
       <div className="flex h-16 items-center px-4 lg:px-6">
-        {/* Left side */}
+        {/* Left side - Menu button and board title */}
         <div className="flex items-center gap-4 flex-shrink-0 w-1/5">
-          {/* Menu button */}
+          {/* Mobile menu button - hidden on larger screens */}
           <Button
             variant="ghost"
             size="icon"
@@ -160,7 +231,7 @@ export function BoardHeader() {
             <Menu className="h-5 w-5" />
           </Button>
 
-          {/* Board title */}
+          {/* Board title with inline editing capability */}
           <div className="flex items-center gap-2 truncate">
             {isEditingTitle ? (
               <input
@@ -170,7 +241,7 @@ export function BoardHeader() {
                 onBlur={handleTitleSave}
                 onKeyDown={handleTitleKeyPress}
                 className="rounded-lg border border-slate-300 px-2 py-1 text-lg font-semibold focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-                autoFocus
+                autoFocus // Auto-focus when entering edit mode
               />
             ) : (
               <h1
@@ -183,7 +254,7 @@ export function BoardHeader() {
           </div>
         </div>
 
-        {/* Center - View tabs */}
+        {/* Center - View navigation tabs */}
         <div className="flex items-center justify-center w-3/5">
           <div className="hidden md:flex items-center gap-1">
             {VIEWS.map((view) => {
@@ -207,7 +278,7 @@ export function BoardHeader() {
           </div>
         </div>
 
-        {/* Right side */}
+        {/* Right side - Export/import, search, members, theme toggle */}
         <div className="flex items-center justify-end gap-3 flex-shrink-0 w-1/5">
           {/* Export/Import buttons */}
           <div className="flex items-center gap-2">
@@ -215,7 +286,7 @@ export function BoardHeader() {
               type="file"
               accept=".json"
               onChange={handleImportBoard}
-              className="hidden"
+              className="hidden" // Hidden file input
               id="board-import"
             />
             <Button
@@ -236,7 +307,7 @@ export function BoardHeader() {
             </Button>
           </div>
 
-          {/* Search */}
+          {/* Search input with icon */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
@@ -248,22 +319,23 @@ export function BoardHeader() {
             />
           </div>
 
-          {/* Members */}
+          {/* Members section with avatars and add button */}
           <div className="flex items-center">
-            <div className="flex -space-x-2">
+            <div className="flex -space-x-2"> {/* Overlapping avatars */}
               {currentBoard.members.slice(0, 3).map((member: any, index: number) => (
                 <div
                   key={member.id}
                   className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-indigo-500 text-xs font-medium text-white dark:border-slate-900"
-                  style={{ zIndex: 3 - index }}
+                  style={{ zIndex: 3 - index }} // Stack avatars with proper z-index
                 >
                   {member.name
                     .split(' ')
-                    .map((n: string) => n[0])
+                    .map((n: string) => n[0]) // Get initials
                     .join('')
                     .toUpperCase()}
                 </div>
               ))}
+              {/* Overflow indicator for more than 3 members */}
               {currentBoard.members.length > 3 && (
                 <div
                   className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-slate-300 text-xs font-medium text-slate-600 dark:border-slate-900 dark:bg-slate-600 dark:text-slate-300"
@@ -278,7 +350,7 @@ export function BoardHeader() {
             </Button>
           </div>
 
-          {/* Theme toggle */}
+          {/* Theme toggle button */}
           <Button variant="ghost" size="icon" onClick={toggleTheme}>
             {theme === 'light' ? (
               <Moon className="h-5 w-5" />
@@ -289,7 +361,7 @@ export function BoardHeader() {
         </div>
       </div>
 
-      {/* Mobile view tabs */}
+      {/* Mobile view tabs - hidden on desktop */}
       <div className="flex overflow-x-auto border-t border-slate-200 px-2 py-2 dark:border-slate-700 md:hidden">
         {VIEWS.map((view) => {
           const Icon = require('lucide-react')[view.icon];
