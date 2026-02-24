@@ -27,6 +27,7 @@ import { SubCardSwimlane } from './timeline/components/SubCardSwimlane';
 import { MiniCardTooltip } from './timeline/components/MiniCardTooltip';
 import { useDateRange } from './timeline/hooks/useDateRange';
 import { useTimelineKeyboardShortcuts } from './timeline/hooks/useTimelineKeyboardShortcuts';
+import { useHiddenCards } from './timeline/hooks/useHiddenCards';
 import { calculateTimelineHeight, getCardPosition, getCardColor } from './timeline/utils/timelineUtils';
 
 /**
@@ -207,9 +208,10 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     {!isCollapsed && (
                       <div className="bg-white dark:bg-slate-900">
                         {listCards.length > 0 ? (
-                          // Show actual cards if they exist in current range
-                          listCards.map((card, cardIndex) => {
-                            return (
+                          // Calculate hidden cards once for the entire list
+                          (() => {
+                            const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(list.cards, dateRange);
+                            return listCards.map((card, cardIndex) => (
                               <SubCardSwimlane
                                 key={card.id}
                                 card={card}
@@ -219,10 +221,11 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                 getCardPosition={getCardPositionWrapper}
                                 getCardColor={getCardColor}
                                 calculateTimelineHeight={calculateTimelineHeight}
-                                allListCards={listCards}
+                                hiddenCardsBefore={hiddenCardsBefore}
+                                hiddenCardsAfter={hiddenCardsAfter}
                               />
-                            );
-                          })
+                            ));
+                          })()
                         ) : (
                           // Check if the original list has any cards at all
                           list.cards.length > 0 ? (

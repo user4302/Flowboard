@@ -40,8 +40,10 @@ interface SubCardSwimlaneProps {
   getCardColor: (card: any) => string;
   /** Function to calculate timeline height */
   calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
-  /** All cards from the same list for proper hidden cards calculation */
-  allListCards: any[];
+  /** Array of cards hidden before the date range */
+  hiddenCardsBefore: any[];
+  /** Array of cards hidden after the date range */
+  hiddenCardsAfter: any[];
 }
 
 /**
@@ -59,11 +61,9 @@ export function SubCardSwimlane({
   getCardPosition,
   getCardColor,
   calculateTimelineHeight,
-  allListCards
+  hiddenCardsBefore,
+  hiddenCardsAfter
 }: SubCardSwimlaneProps) {
-  // Use the same useHiddenCards hook as TimelineSwimlane for consistency
-  const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(allListCards, dateRange);
-
   return (
     <div className="flex">
       {/* Left-side space for past hidden cards */}
