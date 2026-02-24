@@ -1,6 +1,11 @@
-# Flowboard v1.2.0
+# Flowboard v1.1.0
 
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
+
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-green.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
 
 ## Features
 
@@ -12,6 +17,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Dark/Light Theme**: System preference detection with manual toggle
 - **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions
 - **Board Management**: Create, switch between, and delete boards with confirmation dialogs
+- **Board Export/Import**: Save and load board data as JSON files for backup and sharing
 
 ### Data Model
 - **Boards**: Multiple boards with member management
@@ -19,17 +25,24 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Cards**: Rich cards with metadata (labels, members, dates, checklists)
 - **Persistence**: Local storage with easy migration path to cloud services
 
-### UI/UX Features
-- **Modern Design**: Indigo/teal color scheme with glassmorphic elements
-- **Smooth Animations**: Framer Motion powered transitions and micro-interactions
-- **Accessibility**: ARIA labels, keyboard navigation, screen reader support
-- **Seed Data**: Pre-populated with realistic "Website Redesign" project data
+### Timeline Enhancements 🚀
+- **Advanced Zoom Levels**: Day, Week, 2 Weeks, Month, and Year views with keyboard shortcuts (1-5)
+- **Hidden Cards Indicators**: Visual indicators for cards outside the current date range
+- **Interactive Tooltips**: Hover over hidden cards to see detailed information
+- **Collapsible Swimlanes**: Expand/collapse parent swimlanes for better organization
+- **Smart Card Positioning**: Automatic vertical stacking to prevent overlaps
+- **Performance Optimized**: Efficient rendering for large datasets
 
-## Tech Stack
+## Tech Stack / Built With 🛠️
 
-- **Framework**: Next.js 14 with App Router
-- **Language**: TypeScript for type safety
-- **Styling**: Tailwind CSS with custom design system
+![React](https://img.shields.io/badge/React-19.2.3-blue.svg)
+![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC.svg)
+
+- **Framework**: Next.js 16 with App Router
+- **Language**: TypeScript for full type safety
+- **Styling**: Tailwind CSS 4 with custom design system
 - **State Management**: Zustand for lightweight state management
 - **Drag & Drop**: @dnd-kit for advanced interactions
 - **Forms**: React Hook Form with Zod validation
@@ -47,7 +60,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://gitlab.com/user4302_Projects/coding/next-js/flowboard.git
 cd flowboard
 ```
 
@@ -93,12 +106,19 @@ flowboard/
 └── README.md
 ```
 
-## Usage
+## Usage / Quick Start ⚡
 
 ### Basic Navigation
 1. **Sidebar**: Navigate between boards and create new ones
-2. **Header**: Switch views, search cards, manage theme and members
+2. **Header**: Switch views, search cards, manage theme and members, export/import boards
 3. **Main Area**: Interact with the current view (Kanban, Timeline, Calendar, or Table)
+
+### Timeline View Features
+- **Keyboard Shortcuts**: Press 1-5 to quickly switch between zoom levels
+- **Hidden Cards**: Small colored squares indicate cards outside the current date range
+- **Interactive Tooltips**: Hover over hidden cards to see details without clicking
+- **Collapsible Swimlanes**: Click the arrow to expand/collapse parent swimlanes
+- **Smart Navigation**: Use the header controls to navigate dates and zoom levels
 
 ### Kanban View
 - Drag cards between lists to reorganize
@@ -106,6 +126,10 @@ flowboard/
 - Click "Add another list" to create new lists
 - Click on cards to open detailed editing modal
 
+### Board Management
+- **Export Boards**: Click the download icon in the header to save board data as JSON
+- **Import Boards**: Click the upload icon to load board data from a JSON file
+- **Inline Title Editing**: Click the board title to edit it directly
 ### Card Editing
 - **Title & Description**: Inline editing with validation
 - **Labels**: Color-coded labels for categorization
@@ -114,7 +138,6 @@ flowboard/
 - **Checklist**: Add progress tracking items
 
 ### Other Views
-- **Timeline**: Gantt-style visualization with improved zoom levels (Day, Week, 2 Weeks, Month, Year) and keyboard shortcuts (1-5)
 - **Calendar**: Monthly grid view showing due dates
 - **Table**: Sortable data table with all card properties
 
@@ -207,6 +230,8 @@ npm run lint
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## Support
+## Support & Contact 👋
 
-For questions, issues, or feature requests, please open an issue on the GitHub repository.
+For any questions, bug reports, feature requests, or security concerns, please open an issue on GitLab: https://gitlab.com/user4302_Projects/coding/next-js/flowboard/-/issues
+
+No email or direct messaging support is available.

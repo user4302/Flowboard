@@ -30,37 +30,6 @@ import { useTimelineKeyboardShortcuts } from './timeline/hooks/useTimelineKeyboa
 import { calculateTimelineHeight, getCardPosition, getCardColor } from './timeline/utils/timelineUtils';
 
 /**
- * Helper function to calculate hidden cards for a specific card
- * 
- * This function determines which cards are hidden before or after the current
- * date range for a given card. It's used to show contextual hidden cards
- * in the timeline swimlanes.
- * 
- * @param allCards - Array of all cards in the board
- * @param currentCard - The card for which to calculate hidden cards
- * @param dateRange - Current visible date range
- * @returns Object containing arrays of hidden cards before and after the range
- */
-const calculateHiddenCards = (allCards: any[], currentCard: any, dateRange: Date[]) => {
-  const rangeStart = dateRange[0];
-  const rangeEnd = dateRange[dateRange.length - 1];
-
-  const hiddenBefore = allCards.filter(card => {
-    if (card.id === currentCard.id) return false;
-    const cardEnd = card.dueDate || addDays(card.startDate || new Date(), 7);
-    return cardEnd < rangeStart;
-  });
-
-  const hiddenAfter = allCards.filter(card => {
-    if (card.id === currentCard.id) return false;
-    const cardStart = card.startDate || new Date();
-    return cardStart > rangeEnd;
-  });
-
-  return { hiddenBefore, hiddenAfter };
-};
-
-/**
  * Props interface for TimelineView component
  */
 interface TimelineViewProps {
@@ -240,8 +209,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                         {listCards.length > 0 ? (
                           // Show actual cards if they exist in current range
                           listCards.map((card, cardIndex) => {
-                            // Calculate hidden cards for this specific card
-                            const { hiddenBefore, hiddenAfter } = calculateHiddenCards(cardsWithDates, card, dateRange);
                             return (
                               <SubCardSwimlane
                                 key={card.id}
@@ -252,8 +219,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                 getCardPosition={getCardPositionWrapper}
                                 getCardColor={getCardColor}
                                 calculateTimelineHeight={calculateTimelineHeight}
-                                hiddenCardsBefore={hiddenBefore}
-                                hiddenCardsAfter={hiddenAfter}
+                                allListCards={listCards}
                               />
                             );
                           })

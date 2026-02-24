@@ -1,5 +1,7 @@
 import { TimelineCard } from './TimelineCard';
 import { getCardColor } from '../utils/timelineUtils';
+import { useHiddenCards } from '../hooks/useHiddenCards';
+import { MiniCardTooltip } from './MiniCardTooltip';
 
 /**
  * SubCardSwimlane Component
@@ -21,8 +23,7 @@ import { getCardColor } from '../utils/timelineUtils';
  * @param getCardPosition - Function to calculate card positioning
  * @param getCardColor - Function to get card color from labels
  * @param calculateTimelineHeight - Function to calculate timeline height
- * @param hiddenCardsBefore - Array of cards hidden before the date range
- * @param hiddenCardsAfter - Array of cards hidden after the date range
+ * @param allListCards - All cards from the same list for proper hidden cards calculation
  */
 interface SubCardSwimlaneProps {
   /** The main card to display in the timeline */
@@ -39,10 +40,8 @@ interface SubCardSwimlaneProps {
   getCardColor: (card: any) => string;
   /** Function to calculate timeline height */
   calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
-  /** Array of cards hidden before the date range */
-  hiddenCardsBefore: any[];
-  /** Array of cards hidden after the date range */
-  hiddenCardsAfter: any[];
+  /** All cards from the same list for proper hidden cards calculation */
+  allListCards: any[];
 }
 
 /**
@@ -60,21 +59,29 @@ export function SubCardSwimlane({
   getCardPosition,
   getCardColor,
   calculateTimelineHeight,
-  hiddenCardsBefore,
-  hiddenCardsAfter
+  allListCards
 }: SubCardSwimlaneProps) {
+  // Use the same useHiddenCards hook as TimelineSwimlane for consistency
+  const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(allListCards, dateRange);
+
   return (
     <div className="flex">
       {/* Left-side space for past hidden cards */}
       <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
         <div className="flex flex-wrap gap-1">
-          {hiddenCardsBefore.map((hiddenCard) => (
+          {hiddenCardsBefore.map((hiddenCard: any) => (
             <div
               key={hiddenCard.id}
-              className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(hiddenCard)}-500`}
-              title={`${hiddenCard.title} (Before current view)`}
-              onClick={() => onOpenCardModal(hiddenCard.id)}
-            />
+              className="relative group"
+            >
+              <div
+                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(hiddenCard)}-500`}
+                onClick={() => onOpenCardModal(hiddenCard.id)}
+              />
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                <MiniCardTooltip card={hiddenCard} position="before" />
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -101,13 +108,19 @@ export function SubCardSwimlane({
       {/* Right-side space for future hidden cards */}
       <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
         <div className="flex flex-wrap gap-1">
-          {hiddenCardsAfter.map((hiddenCard) => (
+          {hiddenCardsAfter.map((hiddenCard: any) => (
             <div
               key={hiddenCard.id}
-              className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(hiddenCard)}-500`}
-              title={`${hiddenCard.title} (After current view)`}
-              onClick={() => onOpenCardModal(hiddenCard.id)}
-            />
+              className="relative group"
+            >
+              <div
+                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(hiddenCard)}-500`}
+                onClick={() => onOpenCardModal(hiddenCard.id)}
+              />
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                <MiniCardTooltip card={hiddenCard} position="after" />
+              </div>
+            </div>
           ))}
         </div>
       </div>
