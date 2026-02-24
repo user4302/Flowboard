@@ -8,7 +8,8 @@ import { z } from 'zod';
 import { useBoardStore, useUIStore } from '@/store';
 import { Button, Input, Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@/components/ui';
 import { LABEL_COLORS } from '@/lib/constants';
-import { cn, formatDate } from '@/lib/utils';
+import { cn, formatDate, generateId } from '@/lib/utils';
+import { Card } from '@/lib/types';
 
 const cardSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -20,7 +21,7 @@ type CardFormData = z.infer<typeof cardSchema>;
 export function CardModal() {
   const { cardModalOpen, selectedCardId, closeCardModal } = useUIStore();
   const { boards, currentBoardId, updateCard, addLabel, removeLabel, addChecklistItem, updateChecklistItem, removeChecklistItem } = useBoardStore();
-  
+
   const [newLabelText, setNewLabelText] = useState('');
   const [newLabelColor, setNewLabelColor] = useState(LABEL_COLORS[0]);
   const [newChecklistItem, setNewChecklistItem] = useState('');
@@ -28,35 +29,44 @@ export function CardModal() {
   const [showNewChecklistInput, setShowNewChecklistInput] = useState(false);
 
   const currentBoard = boards.find(b => b.id === currentBoardId);
-  const card = currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId);
+  const foundCard = currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<CardFormData>({
     resolver: zodResolver(cardSchema),
     defaultValues: {
-      title: card?.title || '',
-      description: card?.description || '',
+      title: foundCard?.title || '',
+      description: foundCard?.description || '',
     },
   });
 
+  // Explicitly type as Card since we've confirmed it exists
+  // const card = foundCard; // Removed - use foundCard directly
+
   useEffect(() => {
-    if (card) {
+    if (foundCard) {
       reset({
-        title: card.title,
-        description: card.description || '',
+        title: foundCard.title,
+        description: foundCard.description || '',
       });
     }
-  }, [card, reset]);
+  }, [foundCard, reset]);
 
-  if (!card || !currentBoard) return null;
+  const cardMembers = currentBoard?.members.filter(member => foundCard?.members.includes(member.id)) || [];
 
+  if (!foundCard || !currentBoard || !currentBoardId) {
+    return null;
+  }
+
+  // Handler functions - defined inside conditional to ensure card and currentBoard are available
   const handleSave = (data: CardFormData) => {
-    updateCard(currentBoardId, card.id, data);
+    updateCard(currentBoardId, foundCard.id, data);
     closeCardModal();
   };
 
   const handleAddLabel = () => {
     if (newLabelText.trim()) {
-      addLabel(currentBoardId, card.id, {
+      addLabel(currentBoardId, foundCard.id, {
+        id: generateId(),
         text: newLabelText.trim(),
         color: newLabelColor,
       });
@@ -67,21 +77,19 @@ export function CardModal() {
 
   const handleAddChecklistItem = () => {
     if (newChecklistItem.trim()) {
-      addChecklistItem(currentBoardId, card.id, newChecklistItem.trim());
+      addChecklistItem(currentBoardId, foundCard.id, newChecklistItem.trim());
       setNewChecklistItem('');
       setShowNewChecklistInput(false);
     }
   };
 
   const handleToggleChecklistItem = (itemId: string, done: boolean) => {
-    updateChecklistItem(currentBoardId, card.id, itemId, { done });
+    updateChecklistItem(currentBoardId, foundCard.id, itemId, { done });
   };
 
   const handleDeleteChecklistItem = (itemId: string) => {
-    removeChecklistItem(currentBoardId, card.id, itemId);
+    removeChecklistItem(currentBoardId, foundCard.id, itemId);
   };
-
-  const cardMembers = currentBoard.members.filter(member => card.members.includes(member.id));
 
   return (
     <Modal open={cardModalOpen} onClose={closeCardModal}>
@@ -129,7 +137,7 @@ export function CardModal() {
               Labels
             </label>
             <div className="flex flex-wrap gap-2 mb-2">
-              {card.labels.map((label) => (
+              {foundCard.labels.map((label) => (
                 <span
                   key={label.id}
                   className={cn(
@@ -140,7 +148,9 @@ export function CardModal() {
                   {label.text}
                   <button
                     type="button"
-                    onClick={() => removeLabel(currentBoardId, card.id, label.id)}
+                    onClick={() => {
+                      removeLabel(currentBoardId, foundCard.id, label.id);
+                    }}
                     className="hover:bg-white/20 rounded-full p-0.5"
                   >
                     <X className="h-3 w-3" />
@@ -159,7 +169,7 @@ export function CardModal() {
                 />
                 <select
                   value={newLabelColor}
-                  onChange={(e) => setNewLabelColor(e.target.value)}
+                  onChange={(e) => setNewLabelColor(e.target.value as any)}
                   className="rounded-lg border border-slate-300 px-2 py-1 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
                 >
                   {LABEL_COLORS.map((color) => (
@@ -225,16 +235,16 @@ export function CardModal() {
               Dates
             </label>
             <div className="space-y-2 text-sm">
-              {card.startDate && (
+              {foundCard.startDate && (
                 <div>
                   <span className="text-slate-500 dark:text-slate-400">Start: </span>
-                  <span className="text-slate-700 dark:text-slate-300">{formatDate(card.startDate)}</span>
+                  <span className="text-slate-700 dark:text-slate-300">{formatDate(foundCard.startDate)}</span>
                 </div>
               )}
-              {card.dueDate && (
+              {foundCard.dueDate && (
                 <div>
                   <span className="text-slate-500 dark:text-slate-400">Due: </span>
-                  <span className="text-slate-700 dark:text-slate-300">{formatDate(card.dueDate)}</span>
+                  <span className="text-slate-700 dark:text-slate-300">{formatDate(foundCard.dueDate)}</span>
                 </div>
               )}
             </div>
@@ -247,7 +257,7 @@ export function CardModal() {
               Checklist
             </label>
             <div className="space-y-2">
-              {card.checklist.map((item) => (
+              {foundCard.checklist.map((item) => (
                 <div key={item.id} className="flex items-center gap-2">
                   <input
                     type="checkbox"

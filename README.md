@@ -1,4 +1,4 @@
-# Flowboard v1.1.0
+# Flowboard v1.2.0
 
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
 
@@ -114,7 +114,7 @@ flowboard/
 - **Checklist**: Add progress tracking items
 
 ### Other Views
-- **Timeline**: Gantt-style visualization with date-based card positioning
+- **Timeline**: Gantt-style visualization with improved zoom levels (Day, Week, 2 Weeks, Month, Year) and keyboard shortcuts (1-5)
 - **Calendar**: Monthly grid view showing due dates
 - **Table**: Sortable data table with all card properties
 

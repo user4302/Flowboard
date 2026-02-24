@@ -1,7 +1,24 @@
+/*
+ * Zoom Level Selection Rationale:
+ * 
+ * Previous zoom levels (Day, Week, Month, Quarter, Year) had awkward jumps
+ * and Quarter was rarely useful for day-to-day project management.
+ * 
+ * New zoom levels provide better granularity progression:
+ * - Day: Detailed hourly view for daily planning
+ * - Week: 7-day view for weekly sprints and planning
+ * - 2 Weeks: Bi-weekly view for two-week sprints (common in agile)
+ * - Month: Monthly view for milestone tracking
+ * - Year: High-level yearly roadmap with quarter markers
+ * 
+ * This progression offers more useful intermediate steps while maintaining
+ * the same overall range from detailed daily work to strategic yearly planning.
+ */
+
 'use client';
 
-import { useState, useMemo } from 'react';
-import { format, eachDayOfInterval, startOfYear, endOfYear, isSameDay, isWithinInterval, addDays, addWeeks, addMonths, addYears, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
+import { useState, useMemo, useEffect } from 'react';
+import { format, eachDayOfInterval, startOfYear, endOfYear, isSameDay, isSameWeek, isSameMonth, isWithinInterval, addDays, addWeeks, addMonths, addYears, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
 import { Calendar, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
@@ -78,40 +95,61 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   if (!board) return null;
 
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | 'month' | 'quarter' | 'year'>('month');
+  const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | '2weeks' | 'month' | 'year'>('week');
 
   // Generate date range based on zoom level and current date
   const dateRange = useMemo(() => {
-    let start: Date;
-    let end: Date;
+    let dates: Date[] = [];
 
     switch (zoomLevel) {
       case 'day':
-        start = startOfDay(currentDate);
-        end = endOfDay(currentDate);
+        dates = eachDayOfInterval({
+          start: startOfDay(currentDate),
+          end: endOfDay(currentDate)
+        });
         break;
       case 'week':
-        start = startOfWeek(currentDate);
-        end = endOfWeek(currentDate);
+        // For week view, show the 7 days of the week starting Monday
+        const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // 1 = Monday
+        for (let i = 0; i < 7; i++) {
+          dates.push(addDays(weekStart, i));
+        }
         break;
       case 'month':
-        start = startOfMonth(currentDate);
-        end = endOfMonth(currentDate);
+        // For month view, show weeks in the month
+        const monthStart = startOfMonth(currentDate);
+        const monthEnd = endOfMonth(currentDate);
+        let currentWeek = startOfWeek(monthStart, { weekStartsOn: 1 }); // 1 = Monday
+        while (currentWeek <= monthEnd) {
+          dates.push(currentWeek);
+          currentWeek = addWeeks(currentWeek, 1);
+        }
         break;
-      case 'quarter':
-        start = new Date(currentDate.getFullYear(), Math.floor(currentDate.getMonth() / 3) * 3, 1);
-        end = new Date(currentDate.getFullYear(), Math.floor(currentDate.getMonth() / 3) * 3 + 3, 0);
+      case '2weeks':
+        // For 2 weeks view, show 14 days side by side
+        const twoWeeksStart = startOfWeek(currentDate, { weekStartsOn: 1 }); // 1 = Monday
+        for (let i = 0; i < 14; i++) {
+          dates.push(addDays(twoWeeksStart, i));
+        }
         break;
       case 'year':
-        start = startOfYear(currentDate);
-        end = endOfYear(currentDate);
+        // For year view, show all 12 months
+        for (let i = 0; i < 12; i++) {
+          dates.push(new Date(currentDate.getFullYear(), i, 1));
+        }
         break;
       default:
-        start = startOfMonth(currentDate);
-        end = endOfMonth(currentDate);
+        // Default to month view
+        const defaultMonthStart = startOfMonth(currentDate);
+        const defaultMonthEnd = endOfMonth(currentDate);
+        let defaultWeek = startOfWeek(defaultMonthStart);
+        while (defaultWeek <= defaultMonthEnd) {
+          dates.push(defaultWeek);
+          defaultWeek = addWeeks(defaultWeek, 1);
+        }
     }
 
-    return eachDayOfInterval({ start, end });
+    return dates;
   }, [currentDate, zoomLevel]);
 
   // Filter cards that have dates
@@ -133,8 +171,32 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     const cardStartDate = card.startDate || new Date();
     const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
 
-    let startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
-    let endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+    let startIndex = -1;
+    let endIndex = -1;
+
+    // Find start and end indices based on zoom level
+    switch (zoomLevel) {
+      case 'day':
+        startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
+        endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+        break;
+      case 'week':
+        startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
+        endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+        break;
+      case 'month':
+        startIndex = dateRange.findIndex(date => isSameWeek(date, cardStartDate));
+        endIndex = dateRange.findIndex(date => isSameWeek(date, cardEndDate));
+        break;
+      case '2weeks':
+        startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
+        endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+        break;
+      case 'year':
+        startIndex = dateRange.findIndex(date => isSameMonth(date, cardStartDate));
+        endIndex = dateRange.findIndex(date => isSameMonth(date, cardEndDate));
+        break;
+    }
 
     // Handle cards outside the visible range for all zoom levels
     const rangeStart = dateRange[0];
@@ -176,14 +238,20 @@ export function TimelineView({ boardId }: TimelineViewProps) {
         left = ((dateRange.length - 1) / dateRange.length) * 100; // Right edge
         width = 5;
       }
-      // If card starts before but ends within range, start at left edge
+      // If card starts before but ends within range, start at left edge and span to end position
       else if (cardStartDate < rangeStart && endIndex >= 0) {
         left = 0; // Left edge
+        width = ((endIndex + 1) / dateRange.length) * 100; // Span from start to end position
       }
-      // If card starts within range but ends after, end at right edge
+      // If card starts within range but ends after, start at start position and span to right edge
       else if (cardEndDate > rangeEnd && startIndex >= 0) {
         left = (startIndex / dateRange.length) * 100; // Normal positioning
-        width = ((endIndex - startIndex + 1) / dateRange.length) * 100; // Normal width
+        width = ((dateRange.length - startIndex) / dateRange.length) * 100; // Span to right edge
+      }
+      // If card spans the entire visible range (starts before, ends after)
+      else if (cardStartDate < rangeStart && cardEndDate > rangeEnd) {
+        left = 0; // Left edge
+        width = 100; // Full width
       } else {
         // Normal positioning for cards within range
         left = (startIndex / dateRange.length) * 100;
@@ -218,10 +286,44 @@ export function TimelineView({ boardId }: TimelineViewProps) {
           // Check for overlap in the current stack level
           if (cardPositions[existingCardId] === currentStackLevel) {
             // Check if the date ranges actually overlap within the timeline's dateRange
-            const currentCardStartIdx = dateRange.findIndex(date => isSameDay(date, currentCardStartDate));
-            const currentCardEndIdx = dateRange.findIndex(date => isSameDay(date, currentCardEndDate));
-            const existingCardStartIdx = dateRange.findIndex(date => isSameDay(date, existingCardStartDate));
-            const existingCardEndIdx = dateRange.findIndex(date => isSameDay(date, existingCardEndDate));
+            let currentCardStartIdx = -1;
+            let currentCardEndIdx = -1;
+            let existingCardStartIdx = -1;
+            let existingCardEndIdx = -1;
+
+            // Find indices based on zoom level
+            switch (zoomLevel) {
+              case 'day':
+                currentCardStartIdx = dateRange.findIndex(date => isSameDay(date, currentCardStartDate));
+                currentCardEndIdx = dateRange.findIndex(date => isSameDay(date, currentCardEndDate));
+                existingCardStartIdx = dateRange.findIndex(date => isSameDay(date, existingCardStartDate));
+                existingCardEndIdx = dateRange.findIndex(date => isSameDay(date, existingCardEndDate));
+                break;
+              case 'week':
+                currentCardStartIdx = dateRange.findIndex(date => isSameDay(date, currentCardStartDate));
+                currentCardEndIdx = dateRange.findIndex(date => isSameDay(date, currentCardEndDate));
+                existingCardStartIdx = dateRange.findIndex(date => isSameDay(date, existingCardStartDate));
+                existingCardEndIdx = dateRange.findIndex(date => isSameDay(date, existingCardEndDate));
+                break;
+              case 'month':
+                currentCardStartIdx = dateRange.findIndex(date => isSameWeek(date, currentCardStartDate));
+                currentCardEndIdx = dateRange.findIndex(date => isSameWeek(date, currentCardEndDate));
+                existingCardStartIdx = dateRange.findIndex(date => isSameWeek(date, existingCardStartDate));
+                existingCardEndIdx = dateRange.findIndex(date => isSameWeek(date, existingCardEndDate));
+                break;
+              case '2weeks':
+                currentCardStartIdx = dateRange.findIndex(date => isSameDay(date, currentCardStartDate));
+                currentCardEndIdx = dateRange.findIndex(date => isSameDay(date, currentCardEndDate));
+                existingCardStartIdx = dateRange.findIndex(date => isSameDay(date, existingCardStartDate));
+                existingCardEndIdx = dateRange.findIndex(date => isSameDay(date, existingCardEndDate));
+                break;
+              case 'year':
+                currentCardStartIdx = dateRange.findIndex(date => isSameMonth(date, currentCardStartDate));
+                currentCardEndIdx = dateRange.findIndex(date => isSameMonth(date, currentCardEndDate));
+                existingCardStartIdx = dateRange.findIndex(date => isSameMonth(date, existingCardStartDate));
+                existingCardEndIdx = dateRange.findIndex(date => isSameMonth(date, existingCardEndDate));
+                break;
+            }
 
             // Handle out-of-range indices
             const start1 = Math.max(0, currentCardStartIdx);
@@ -267,6 +369,37 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     return 'slate';
   };
 
+  // Add keyboard shortcuts for zoom levels
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      // Only handle number keys when not typing in input fields
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (event.key) {
+        case '1':
+          setZoomLevel('day');
+          break;
+        case '2':
+          setZoomLevel('week');
+          break;
+        case '3':
+          setZoomLevel('2weeks');
+          break;
+        case '4':
+          setZoomLevel('month');
+          break;
+        case '5':
+          setZoomLevel('year');
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
+
   const navigateDate = (direction: 'prev' | 'next') => {
     switch (zoomLevel) {
       case 'day':
@@ -278,8 +411,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       case 'month':
         setCurrentDate(prev => addMonths(prev, direction === 'next' ? 1 : -1));
         break;
-      case 'quarter':
-        setCurrentDate(prev => addMonths(prev, direction === 'next' ? 3 : -3));
+      case '2weeks':
+        setCurrentDate(prev => addWeeks(prev, direction === 'next' ? 2 : -2));
         break;
       case 'year':
         setCurrentDate(prev => addYears(prev, direction === 'next' ? 1 : -1));
@@ -291,10 +424,10 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     switch (zoomLevel) {
       case 'day': return 'Day';
       case 'week': return 'Week';
+      case '2weeks': return '2 Weeks';
       case 'month': return 'Month';
-      case 'quarter': return 'Quarter';
       case 'year': return 'Year';
-      default: return 'Month';
+      default: return 'Week';
     }
   };
 
@@ -303,13 +436,13 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       case 'day':
         return format(date, 'MMM d, yyyy');
       case 'week':
-        return format(date, 'MMM d, yyyy');
+        return format(date, 'EEE d'); // Shows day name and date
+      case '2weeks':
+        return format(date, 'EEE d'); // Shows day name and date
       case 'month':
         return format(date, 'MMM d');
-      case 'quarter':
-        return format(date, 'MMM yyyy');
       case 'year':
-        return format(date, 'yyyy');
+        return format(date, 'MMM');
       default:
         return format(date, 'MMM d');
     }
@@ -329,7 +462,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
           <div className="flex items-center gap-2">
             <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-              {format(currentDate, zoomLevel === 'year' ? 'yyyy' : zoomLevel === 'quarter' ? 'QQQ yyyy' : 'MMMM yyyy')}
+              {format(currentDate, zoomLevel === 'year' ? 'yyyy' : 'MMMM yyyy')}
             </h2>
             <button
               onClick={() => setCurrentDate(new Date())}
@@ -354,9 +487,10 @@ export function TimelineView({ boardId }: TimelineViewProps) {
             className={cn(
               'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
               zoomLevel === 'day'
-                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
                 : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
             )}
+            title="Day (Press 1)"
           >
             Day
           </button>
@@ -365,42 +499,46 @@ export function TimelineView({ boardId }: TimelineViewProps) {
             className={cn(
               'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
               zoomLevel === 'week'
-                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
                 : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
             )}
+            title="Week (Press 2)"
           >
             Week
+          </button>
+          <button
+            onClick={() => setZoomLevel('2weeks')}
+            className={cn(
+              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
+              zoomLevel === '2weeks'
+                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
+                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+            )}
+            title="2 Weeks (Press 3)"
+          >
+            2 Weeks
           </button>
           <button
             onClick={() => setZoomLevel('month')}
             className={cn(
               'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
               zoomLevel === 'month'
-                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
                 : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
             )}
+            title="Month (Press 4)"
           >
             Month
-          </button>
-          <button
-            onClick={() => setZoomLevel('quarter')}
-            className={cn(
-              'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
-              zoomLevel === 'quarter'
-                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-            )}
-          >
-            Quarter
           </button>
           <button
             onClick={() => setZoomLevel('year')}
             className={cn(
               'rounded-lg px-3 py-1 text-sm font-medium transition-colors',
               zoomLevel === 'year'
-                ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                ? 'bg-indigo-600 text-white dark:bg-indigo-600 dark:text-white'
                 : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
             )}
+            title="Year (Press 5)"
           >
             Year
           </button>
@@ -436,6 +574,12 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     {index % 7 === 0 && (
                       <div className="text-slate-400 dark:text-slate-500">
                         {format(date, zoomLevel === 'year' ? 'yyyy' : 'MMM')}
+                      </div>
+                    )}
+                    {/* Add quarter markers for year view */}
+                    {zoomLevel === 'year' && index % 3 === 0 && (
+                      <div className="text-xs text-slate-300 dark:text-slate-600 font-medium">
+                        Q{Math.floor(index / 3) + 1}
                       </div>
                     )}
                   </div>

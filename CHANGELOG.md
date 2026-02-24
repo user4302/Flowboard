@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sharing controls in sidebar for board owners
 - Comprehensive sharing store with Zustand for state management
 - URL parameter support for direct board invitation access
+- Keyboard shortcuts (1-5) for quick timeline zoom level switching
+- 2 weeks zoom level replacing quarter view for better practicality
+- Quarter markers (Q1-Q4) in timeline year view for better orientation
+- Enhanced timeline UI styling with improved button contrast and active states
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
@@ -35,6 +39,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added dynamic timeline height calculation based on card stack levels
 - Simplified timeline card positioning logic with direct calculations
 - Enhanced day view with improved edge collection for out-of-range cards
+- Improved date formatting for different timeline zoom levels
+- Enhanced timeline navigation logic for new zoom levels
+- Fixed label ID generation in CardModal for proper data integrity
+- Improved type safety and form handling in CardModal
+- Updated timeline zoom controls with keyboard shortcut hints
+- Enhanced visual feedback for active zoom levels
+
+### Fixed
+- CardModal label creation with proper ID generation
+- TypeScript type casting issues in select elements
+- Form state management robustness in card editing
 
 ## [1.1.0] - 2025-02-22
 
