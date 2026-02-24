@@ -81,6 +81,10 @@ export function TimelineGrid({ dateRange, zoomLevel }: TimelineGridProps) {
             </div>
           ))}
         </div>
+        {/* Right-side empty space to match swimlane layout */}
+        <div className="w-48 flex-shrink-0 border-l border-slate-200 dark:border-slate-700">
+          {/* Empty space for consistency with swimlanes */}
+        </div>
       </div>
 
       {/* Grid lines */}
