@@ -253,7 +253,7 @@ export function CardModal() {
               <Calendar className="mr-1 inline h-4 w-4" />
               Dates
             </label>
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Start Date</label>
                 <input
