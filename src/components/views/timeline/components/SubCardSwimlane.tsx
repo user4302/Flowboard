@@ -67,7 +67,7 @@ export function SubCardSwimlane({
   return (
     <div className="flex">
       {/* Left-side space for past hidden cards */}
-      <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
+      <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700 overflow-visible">
         <div className="flex flex-wrap gap-1">
           {hiddenCardsBefore.map((hiddenCard: any) => (
             <div
@@ -77,8 +77,9 @@ export function SubCardSwimlane({
               <div
                 className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(hiddenCard)}-500`}
                 onClick={() => onOpenCardModal(hiddenCard.id)}
+                title=""  // Remove browser tooltip
               />
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
                 <MiniCardTooltip card={hiddenCard} position="before" />
               </div>
             </div>
@@ -106,7 +107,7 @@ export function SubCardSwimlane({
       </div>
 
       {/* Right-side space for future hidden cards */}
-      <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
+      <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700 overflow-visible">
         <div className="flex flex-wrap gap-1">
           {hiddenCardsAfter.map((hiddenCard: any) => (
             <div
@@ -116,8 +117,9 @@ export function SubCardSwimlane({
               <div
                 className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(hiddenCard)}-500`}
                 onClick={() => onOpenCardModal(hiddenCard.id)}
+                title=""  // Remove browser tooltip
               />
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
                 <MiniCardTooltip card={hiddenCard} position="after" />
               </div>
             </div>

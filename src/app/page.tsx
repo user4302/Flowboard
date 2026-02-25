@@ -14,9 +14,15 @@ export default function Home() {
   const { currentView, initializeTheme } = useUIStore();
   const { showJoinModal, setShowJoinModal } = useSharingStore();
   const [inviteId, setInviteId] = useState<string | null>(null);
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
 
   useEffect(() => {
     initializeTheme();
+
+    // Auto-hide welcome screen after 2 seconds
+    const timer = setTimeout(() => {
+      setShowWelcomeScreen(false);
+    }, 500);
 
     // Check for invitation in URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -25,6 +31,8 @@ export default function Home() {
       setInviteId(invite);
       setShowJoinModal(true);
     }
+
+    return () => clearTimeout(timer);
   }, [initializeTheme, setShowJoinModal]);
 
   const handleCreateBoard = () => {
@@ -34,51 +42,51 @@ export default function Home() {
 
   if (!currentBoard || !currentBoardId) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <div className="text-center max-w-md mx-auto p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
-              Welcome to Flowboard
-            </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-400">
-              {boards.length === 0
-                ? "Create your first board to get started"
-                : "Select a board from the sidebar or create a new one"
-              }
-            </p>
-          </div>
-
-          {boards.length === 0 && (
-            <button
-              onClick={handleCreateBoard}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
-            >
-              Create Your First Board
-            </button>
-          )}
-
-          {boards.length > 0 && (
-            <div className="text-sm text-slate-500 dark:text-slate-400">
-              Please select a board from the sidebar
+      <>
+        {/* Welcome screen overlay - truly fullscreen */}
+        <div className={`fixed inset-0 flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 z-50 ${showWelcomeScreen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className="text-center max-w-md mx-auto p-8">
+            <div className="mb-8">
+              <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+                Flowboard
+              </h1>
             </div>
-          )}
+          </div>
         </div>
-      </div>
+
+        {/* Main app interface - only visible when welcome screen is hidden */}
+        <div className={`flex h-screen bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ${showWelcomeScreen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <Sidebar />
+          <div className="flex flex-1 flex-col lg:ml-64">
+            <BoardHeader />
+            <main className="flex-1 overflow-hidden flex items-center justify-center">
+              <div className="text-center">
+                <h2 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
+                  No Board Selected
+                </h2>
+                <p className="text-slate-500 dark:text-slate-500">
+                  Select a board from the sidebar or create a new one
+                </p>
+              </div>
+            </main>
+          </div>
+        </div>
+      </>
     );
   }
 
   const renderCurrentView = () => {
     switch (currentView) {
       case 'kanban':
-        return <KanbanView boardId={currentBoardId} />;
+        return <KanbanView boardId={currentBoardId!} />;
       case 'timeline':
-        return <TimelineView boardId={currentBoardId} />;
+        return <TimelineView boardId={currentBoardId!} />;
       case 'calendar':
-        return <CalendarView boardId={currentBoardId} />;
+        return <CalendarView boardId={currentBoardId!} />;
       case 'table':
-        return <TableView boardId={currentBoardId} />;
+        return <TableView boardId={currentBoardId!} />;
       default:
-        return <KanbanView boardId={currentBoardId} />;
+        return <KanbanView boardId={currentBoardId!} />;
     }
   };
 

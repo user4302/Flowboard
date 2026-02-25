@@ -191,18 +191,16 @@ export function Sidebar() {
                     </button>
 
                     {/* Delete button - Positioned outside the main button, shows on hover */}
-                    {boards.length > 1 && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteBoard(board.id, board.name);
-                        }}
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700"
-                        title={`Delete ${board.name}`}
-                      >
-                        <Trash2 className="h-3 w-3 text-slate-400 hover:text-red-600" />
-                      </button>
-                    )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteBoard(board.id, board.name);
+                      }}
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700"
+                      title={`Delete ${board.name}`}
+                    >
+                      <Trash2 className="h-3 w-3 text-slate-400 hover:text-red-600" />
+                    </button>
                   </div>
                 ))}
               </div>

@@ -47,6 +47,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SubCardSwimlane component for nested card management
 - Timeline utilities for enhanced positioning and layout calculations
 - MiniCardTooltip dedicated component for improved UX
+- Reduced welcome screen display time from 2 seconds to 500ms for faster app loading
+- Fixed tooltip z-index issues by increasing to z-[9999] for proper layering
+- Added comprehensive timeline state management with per-board persistence
+- Enhanced timeline positioning with debug logging for troubleshooting
+- Improved TypeScript type safety in UI store functions
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

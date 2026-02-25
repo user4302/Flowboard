@@ -12,11 +12,26 @@ interface UIState extends ViewState, FilterState {
   cardModalOpen: boolean;
   selectedCardId: string | null;
 
+  // Timeline state (per board)
+  timelineState: Record<string, {
+    currentDate: string;
+    zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
+    collapsedLanes: string[];
+  }>;
+
   // View actions
   setCurrentView: (view: ViewState['currentView']) => void;
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
   setTheme: (theme: ViewState['theme']) => void;
+
+  // Timeline actions
+  setTimelineCurrentDate: (boardId: string, date: string) => void;
+  setTimelineZoomLevel: (boardId: string, level: 'day' | 'week' | '2weeks' | 'month' | 'year') => void;
+  setTimelineCollapsedLanes: (boardId: string, lanes: string[]) => void;
+  toggleTimelineLane: (boardId: string, laneId: string) => void;
+  getTimelineState: (boardId: string) => { currentDate: string; zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year'; collapsedLanes: string[]; };
+  clearTimelineState: (boardId: string) => void;
 
   // Filter actions
   setSearchTerm: (term: string) => void;
@@ -56,6 +71,9 @@ export const useUIStore = create<UIState>()(
       cardModalOpen: false,
       selectedCardId: null,
 
+      // Initial timeline state (per board)
+      timelineState: {},
+
       /**
        * Set the current view mode
        * @param view - View mode to set
@@ -65,7 +83,70 @@ export const useUIStore = create<UIState>()(
       /**
        * Toggle sidebar visibility
        */
-      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+      toggleSidebar: () => set((state: UIState) => ({ sidebarOpen: !state.sidebarOpen })),
+
+      /**
+       * Timeline state actions
+       */
+      setTimelineCurrentDate: (boardId: string, date: string) => set((state: UIState) => ({
+        timelineState: {
+          ...state.timelineState,
+          [boardId]: {
+            ...state.timelineState[boardId],
+            currentDate: date
+          }
+        }
+      })),
+      setTimelineZoomLevel: (boardId: string, level: 'day' | 'week' | '2weeks' | 'month' | 'year') => set((state: UIState) => ({
+        timelineState: {
+          ...state.timelineState,
+          [boardId]: {
+            ...state.timelineState[boardId],
+            zoomLevel: level
+          }
+        }
+      })),
+      setTimelineCollapsedLanes: (boardId: string, lanes: string[]) => set((state: UIState) => ({
+        timelineState: {
+          ...state.timelineState,
+          [boardId]: {
+            ...state.timelineState[boardId],
+            collapsedLanes: lanes
+          }
+        }
+      })),
+      toggleTimelineLane: (boardId: string, laneId: string) => set((state: UIState) => {
+        const currentBoardState = state.timelineState[boardId] || {
+          currentDate: new Date().toISOString(),
+          zoomLevel: 'week',
+          collapsedLanes: []
+        };
+        const isCollapsed = currentBoardState.collapsedLanes.includes(laneId);
+        return {
+          timelineState: {
+            ...state.timelineState,
+            [boardId]: {
+              ...currentBoardState,
+              collapsedLanes: isCollapsed
+                ? currentBoardState.collapsedLanes.filter((id: string) => id !== laneId)
+                : [...currentBoardState.collapsedLanes, laneId]
+            }
+          }
+        };
+      }),
+      getTimelineState: (boardId: string) => {
+        const state = get();
+        return state.timelineState[boardId] || {
+          currentDate: new Date().toISOString(),
+          zoomLevel: 'week',
+          collapsedLanes: []
+        };
+      },
+      clearTimelineState: (boardId: string) => set((state: UIState) => {
+        const newTimelineState = { ...state.timelineState };
+        delete newTimelineState[boardId];
+        return { timelineState: newTimelineState };
+      }),
 
       /**
        * Set sidebar visibility
@@ -168,6 +249,7 @@ export const useUIStore = create<UIState>()(
         selectedLabels: state.selectedLabels,
         selectedMembers: state.selectedMembers,
         showOverdue: state.showOverdue,
+        timelineState: state.timelineState,
       }),
     }
   )

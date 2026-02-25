@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Menu, Sun, Moon, Users, Plus, Download, Upload } from 'lucide-react';
+import { Search, Menu, Sun, Moon, Users, Plus, Download, Upload, UserPlus, MoreHorizontal, Menu as MenuIcon } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { Button, Input } from '@/components/ui';
 import { VIEWS } from '@/lib/constants';
@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
  */
 export function BoardHeader() {
   // Store hooks for board and UI state management
-  const { boards, currentBoardId, updateBoard } = useBoardStore();
+  const { boards, currentBoardId, updateBoard, setCurrentBoard } = useBoardStore();
   const {
     currentView,
     sidebarOpen,
@@ -41,9 +41,10 @@ export function BoardHeader() {
     setSearchTerm,
   } = useUIStore();
 
-  // Local state for board title editing
+  // Local state for board title editing and menu
   const [isEditingTitle, setIsEditingTitle] = useState(false); // Track if title is being edited
   const [tempTitle, setTempTitle] = useState(''); // Temporary storage for edited title
+  const [showActionMenu, setShowActionMenu] = useState(false); // Track hamburger menu state
 
   // Find the current board from the boards array
   const currentBoard = boards.find(board => board.id === currentBoardId);
@@ -203,6 +204,9 @@ export function BoardHeader() {
                 });
               });
             });
+
+            // Force UI update by switching to the new board
+            setCurrentBoard(newBoard.id);
           }
         } catch (error) {
           console.error('Error importing board:', error);
@@ -213,9 +217,7 @@ export function BoardHeader() {
     }
   };
 
-  // Return null if no current board is found
-  if (!currentBoard) return null;
-
+  // Always show header, even when no board is selected
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/80">
       <div className="flex h-16 items-center px-4 lg:px-6">
@@ -248,7 +250,7 @@ export function BoardHeader() {
                 className="cursor-pointer text-lg font-semibold text-slate-900 hover:text-slate-700 dark:text-slate-100 dark:hover:text-slate-300 truncate"
                 onClick={handleTitleEdit}
               >
-                {currentBoard.name}
+                {currentBoard ? currentBoard.name : null}
               </h1>
             )}
           </div>
@@ -256,131 +258,89 @@ export function BoardHeader() {
 
         {/* Center - View navigation tabs */}
         <div className="flex items-center justify-center w-3/5">
-          <div className="hidden md:flex items-center gap-1">
-            {VIEWS.map((view) => {
-              const Icon = require('lucide-react')[view.icon];
-              return (
-                <button
-                  key={view.id}
-                  onClick={() => setCurrentView(view.id as any)}
-                  className={cn(
-                    'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    currentView === view.id
-                      ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                      : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{view.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Right side - Export/import, search, members, theme toggle */}
-        <div className="flex items-center justify-end gap-3 flex-shrink-0 w-1/5">
-          {/* Export/Import buttons */}
-          <div className="flex items-center gap-2">
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleImportBoard}
-              className="hidden" // Hidden file input
-              id="board-import"
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => document.getElementById('board-import')?.click()}
-              title="Import board from JSON"
-            >
-              <Upload className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleExportBoard}
-              title="Export board to JSON"
-            >
-              <Download className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Search input with icon */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              type="text"
-              placeholder="Search cards..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-32 pl-10 sm:w-48 lg:w-64"
-            />
-          </div>
-
-          {/* Members section with avatars and add button */}
-          <div className="flex items-center">
-            <div className="flex -space-x-2"> {/* Overlapping avatars */}
-              {currentBoard.members.slice(0, 3).map((member: any, index: number) => (
-                <div
-                  key={member.id}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-indigo-500 text-xs font-medium text-white dark:border-slate-900"
-                  style={{ zIndex: 3 - index }} // Stack avatars with proper z-index
-                >
-                  {member.name
-                    .split(' ')
-                    .map((n: string) => n[0]) // Get initials
-                    .join('')
-                    .toUpperCase()}
-                </div>
-              ))}
-              {/* Overflow indicator for more than 3 members */}
-              {currentBoard.members.length > 3 && (
-                <div
-                  className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-slate-300 text-xs font-medium text-slate-600 dark:border-slate-900 dark:bg-slate-600 dark:text-slate-300"
-                  style={{ zIndex: 0 }}
-                >
-                  +{currentBoard.members.length - 3}
-                </div>
-              )}
+          {currentBoard && (
+            <div className="flex items-center gap-2">
+              {VIEWS.map((view) => {
+                const Icon = require('lucide-react')[view.icon];
+                return (
+                  <button
+                    key={view.id}
+                    onClick={() => setCurrentView(view.id as any)}
+                    className={cn(
+                      'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                      currentView === view.id
+                        ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                        : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{view.name}</span>
+                  </button>
+                );
+              })}
             </div>
-            <Button variant="ghost" size="icon" className="ml-2">
-              <Plus className="h-4 w-4" />
+          )}
+        </div>
+
+        {/* Right side - Hamburger menu and theme toggle */}
+        <div className="flex items-center justify-end gap-3 flex-shrink-0 w-1/5">
+          {/* Hamburger menu for actions */}
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowActionMenu(!showActionMenu)}
+              title="Actions"
+            >
+              <MenuIcon className="h-5 w-5" />
             </Button>
+
+            {/* Action menu dropdown */}
+            {showActionMenu && (
+              <div className="absolute right-0 top-8 bg-white border border-slate-200 rounded-lg shadow-lg p-2 z-50 dark:bg-slate-800 dark:border-slate-600 w-48">
+                <div className="space-y-1">
+                  <button
+                    onClick={() => {
+                      document.getElementById('board-import')?.click();
+                      setShowActionMenu(false);
+                    }}
+                    className="w-full flex items-center px-3 py-2.5 text-sm font-medium text-slate-700 rounded-md hover:bg-slate-100 hover:text-slate-900 transition-colors duration-150 ease-in-out dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+                  >
+                    <Upload className="h-4 w-4 mr-3 flex-shrink-0" />
+                    <span>Import Board</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (currentBoard) {
+                        handleExportBoard();
+                      }
+                      setShowActionMenu(false);
+                    }}
+                    disabled={!currentBoard}
+                    className={cn(
+                      "w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-md transition-colors duration-150 ease-in-out",
+                      currentBoard
+                        ? "text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-slate-100"
+                        : "text-slate-400 cursor-not-allowed dark:text-slate-600"
+                    )}
+                  >
+                    <Download className="h-4 w-4 mr-3 flex-shrink-0" />
+                    <span>Export Board</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Theme toggle button */}
-          <Button variant="ghost" size="icon" onClick={toggleTheme}>
-            {theme === 'light' ? (
-              <Moon className="h-5 w-5" />
-            ) : (
-              <Sun className="h-5 w-5" />
-            )}
-          </Button>
+          {/* Hidden file input for import */}
+          <input
+            type="file"
+            accept=".json"
+            onChange={handleImportBoard}
+            className="hidden"
+            id="board-import"
+          />
         </div>
-      </div>
-
-      {/* Mobile view tabs - hidden on desktop */}
-      <div className="flex overflow-x-auto border-t border-slate-200 px-2 py-2 dark:border-slate-700 md:hidden">
-        {VIEWS.map((view) => {
-          const Icon = require('lucide-react')[view.icon];
-          return (
-            <button
-              key={view.id}
-              onClick={() => setCurrentView(view.id as any)}
-              className={cn(
-                'flex flex-col items-center gap-1 rounded-lg px-3 py-2 text-xs font-medium transition-colors whitespace-nowrap',
-                currentView === view.id
-                  ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                  : 'text-slate-600 dark:text-slate-400'
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              <span>{view.name}</span>
-            </button>
-          );
-        })}
       </div>
     </header>
   );

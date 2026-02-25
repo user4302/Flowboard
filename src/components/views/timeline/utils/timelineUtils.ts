@@ -127,34 +127,54 @@ export const getCardPosition = (card: any, allCards: any[], cardIndex: number, d
     }
   } else {
     // Logic for all views: past cards on left edge, future cards on right edge
-    // If card is entirely before the visible range (in the past), collect on left edge
-    if (cardEndDate < rangeStart) {
-      left = 0; // Left edge
-      width = 5;
-    }
+
+    console.log('Card positioning debug:', {
+      cardStartDate,
+      cardEndDate,
+      rangeStart,
+      rangeEnd,
+      startIndex,
+      endIndex,
+      condition1: cardStartDate > rangeEnd,
+      condition2: cardEndDate < rangeStart,
+      condition3: cardStartDate < rangeStart && endIndex >= 0,
+      condition4: cardEndDate > rangeEnd && startIndex >= 0
+    });
+
     // If card is entirely after the visible range (in the future), collect on right edge
-    else if (cardStartDate > rangeEnd) {
+    if (cardStartDate > rangeEnd) {
       left = ((dateRange.length - 1) / dateRange.length) * 100; // Right edge
       width = 5;
+      console.log('Using condition 1: entirely after range');
+    }
+    // If card is entirely before the visible range (in the past), collect on left edge
+    else if (cardEndDate < rangeStart) {
+      left = 0; // Left edge
+      width = 5;
+      console.log('Using condition 2: entirely before range');
     }
     // If card starts before but ends within range, start at left edge and span to end position
     else if (cardStartDate < rangeStart && endIndex >= 0) {
       left = 0; // Left edge
       width = ((endIndex + 1) / dateRange.length) * 100; // Span from start to end position
+      console.log('Using condition 3: starts before, ends within range');
     }
     // If card starts within range but ends after, start at start position and span to right edge
     else if (cardEndDate > rangeEnd && startIndex >= 0) {
       left = (startIndex / dateRange.length) * 100; // Normal positioning
       width = ((dateRange.length - startIndex) / dateRange.length) * 100; // Span to right edge
+      console.log('Using condition 4: starts within, ends after range');
     }
     // If card spans the entire visible range (starts before, ends after)
     else if (cardStartDate < rangeStart && cardEndDate > rangeEnd) {
       left = 0; // Left edge
       width = 100; // Full width
+      console.log('Using condition 5: spans entire range');
     } else {
       // Normal positioning for cards within range
       left = (startIndex / dateRange.length) * 100;
       width = ((endIndex - startIndex + 1) / dateRange.length) * 100;
+      console.log('Using fallback: normal positioning');
     }
   }
 

@@ -56,15 +56,19 @@ interface TimelineViewProps {
  */
 export function TimelineView({ boardId }: TimelineViewProps) {
   const { boards } = useBoardStore();
-  const { searchTerm, openCardModal } = useUIStore();
+  const { searchTerm, openCardModal, getTimelineState, setTimelineCurrentDate, setTimelineZoomLevel, toggleTimelineLane } = useUIStore();
+
+  // Get timeline state for this specific board
+  const timelineState = getTimelineState(boardId);
+  const { currentDate: timelineCurrentDate, zoomLevel: timelineZoomLevel, collapsedLanes: timelineCollapsedLanes } = timelineState;
 
   const board = boards.find((b) => b.id === boardId);
   if (!board) return null;
 
-  // Component state
-  const [currentDate, setCurrentDate] = useState(new Date()); // Currently focused date
-  const [zoomLevel, setZoomLevel] = useState<'day' | 'week' | '2weeks' | 'month' | 'year'>('week'); // Current zoom level
-  const [collapsedLanes, setCollapsedLanes] = useState<Set<string>>(new Set()); // Track collapsed swimlanes
+  // Component state - use persisted state directly from store
+  const currentDate = useMemo(() => new Date(timelineCurrentDate), [timelineCurrentDate]);
+  const zoomLevel = timelineZoomLevel;
+  const collapsedLanes = useMemo(() => new Set(timelineCollapsedLanes), [timelineCollapsedLanes]);
   const [hoveredCard, setHoveredCard] = useState<{ card: any; position: 'before' | 'after'; x: number; y: number } | null>(null); // Track hovered card for tooltip
 
   // Generate date range based on zoom level and current date using custom hook
@@ -127,19 +131,26 @@ export function TimelineView({ boardId }: TimelineViewProps) {
    * @param listId - ID of the list to toggle
    */
   const toggleLaneCollapse = (listId: string) => {
-    setCollapsedLanes(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(listId)) {
-        newSet.delete(listId);
-      } else {
-        newSet.add(listId);
-      }
-      return newSet;
-    });
+    toggleTimelineLane(boardId, listId);
+  };
+
+  // Update store state when timeline state changes
+  const handleDateChange = (date: Date | ((prev: Date) => Date)) => {
+    if (date instanceof Date) {
+      setTimelineCurrentDate(boardId, date.toISOString());
+    } else {
+      // Handle functional update: apply function to current date
+      const newDate = date(new Date(timelineCurrentDate));
+      setTimelineCurrentDate(boardId, newDate.toISOString());
+    }
+  };
+
+  const handleZoomChange = (level: 'day' | 'week' | '2weeks' | 'month' | 'year') => {
+    setTimelineZoomLevel(boardId, level);
   };
 
   // Initialize keyboard shortcuts for timeline navigation
-  useTimelineKeyboardShortcuts(setZoomLevel, setCurrentDate, zoomLevel);
+  useTimelineKeyboardShortcuts(handleZoomChange, handleDateChange, zoomLevel);
 
   return (
     <div className="flex h-full flex-col">
@@ -147,8 +158,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       <TimelineHeader
         currentDate={currentDate}
         zoomLevel={zoomLevel}
-        onDateChange={setCurrentDate}
-        onZoomChange={setZoomLevel}
+        onDateChange={handleDateChange}
+        onZoomChange={handleZoomChange}
       />
 
       {/* Timeline container with scroll */}
@@ -168,7 +179,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                 const isCollapsed = collapsedLanes.has(list.id);
 
                 return (
-                  <div key={list.id} className="border-2 border-slate-200 dark:border-slate-700 rounded-lg mb-4 overflow-hidden">
+                  <div key={list.id} className="border-2 border-slate-200 dark:border-slate-700 rounded-lg mb-4 overflow-visible">
                     {/* Main swimlane header - visually distinct with collapse toggle */}
                     <div
                       className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"

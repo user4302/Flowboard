@@ -38,7 +38,7 @@ export function MiniCardTooltip({ card, position }: MiniCardTooltipProps) {
   };
 
   return (
-    <div className="absolute z-50 bg-slate-900 text-white p-3 rounded-lg shadow-xl border border-slate-700 min-w-[200px] pointer-events-none">
+    <div className="absolute z-[9999] bg-slate-900 text-white p-3 rounded-lg shadow-xl border border-slate-700 min-w-[200px] pointer-events-none">
       {/* Card title */}
       <div className="font-medium text-sm mb-1">{card.title}</div>
 
@@ -55,9 +55,6 @@ export function MiniCardTooltip({ card, position }: MiniCardTooltipProps) {
         {card.dueDate && (
           <div>Due: {formatDate(new Date(card.dueDate))}</div>
         )}
-        <div className="text-xs italic text-slate-500">
-          {position === 'before' ? 'Before current view' : 'After current view'}
-        </div>
       </div>
       {card.labels && card.labels.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
