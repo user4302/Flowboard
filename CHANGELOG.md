@@ -71,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed timeline hooks and utils for cleaner architecture
 - Refactored timeline components from card to task terminology
 - Consolidated getTaskPosition function for simpler structure
+- Implemented modular architecture for timeline task positioning
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

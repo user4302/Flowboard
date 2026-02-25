@@ -61,51 +61,50 @@ export const calculateTimelineHeight = (cards: any[], dateRange: Date[]) => {
   return padding + ((maxStackLevel + 1) * (cardHeight + cardGap));
 };
 
-// Calculate card position and width on timeline
-export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => {
-  // Use normalizeForDisplay to ensure dates are properly handled
-  const cardStartDate = normalizeForDisplay(card.startDate) || new Date();
-  const cardEndDate = normalizeForDisplay(card.dueDate) || addDays(cardStartDate, 7);
-  // Validate dates - be more permissive
-  if (isNaN(cardStartDate.getTime())) {
-    console.warn('Invalid card start date detected, using fallback:', card.startDate);
-    return { left: 0, width: 100 }; // Fallback position
-  }
+// Helper function to find date indices for day view
+const findDayIndices = (dateRange: Date[], cardStartDate: Date, cardEndDate: Date) => {
+  const startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
+  const endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+  return { startIndex, endIndex };
+};
 
-  if (isNaN(cardEndDate.getTime())) {
-    console.warn('Invalid card end date detected, using fallback:', card.dueDate);
-    return { left: 0, width: 100 }; // Fallback position
-  }
+// Helper function to find date indices for week view
+const findWeekIndices = (dateRange: Date[], cardStartDate: Date, cardEndDate: Date) => {
+  const startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
+  const endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+  return { startIndex, endIndex };
+};
 
-  // Debug: Log the date range and card dates
-  let startIndex = -1;
-  let endIndex = -1;
+// Helper function to find date indices for 2-week view
+const findTwoWeekIndices = (dateRange: Date[], cardStartDate: Date, cardEndDate: Date) => {
+  const startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
+  const endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
+  return { startIndex, endIndex };
+};
 
-  // Find start and end indices based on zoom level
-  switch (zoomLevel) {
-    case 'day':
-      startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
-      endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
-      break;
-    case 'week':
-      startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
-      endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
-      break;
-    case 'month':
-      startIndex = dateRange.findIndex(date => isSameWeek(date, cardStartDate));
-      endIndex = dateRange.findIndex(date => isSameWeek(date, cardEndDate));
-      break;
-    case '2weeks':
-      startIndex = dateRange.findIndex(date => isSameDay(date, cardStartDate));
-      endIndex = dateRange.findIndex(date => isSameDay(date, cardEndDate));
-      break;
-    case 'year':
-      startIndex = dateRange.findIndex(date => isSameMonth(date, cardStartDate));
-      endIndex = dateRange.findIndex(date => isSameMonth(date, cardEndDate));
-      break;
-  }
+// Helper function to find date indices for month view
+const findMonthIndices = (dateRange: Date[], cardStartDate: Date, cardEndDate: Date) => {
+  const startIndex = dateRange.findIndex(date => isSameWeek(date, cardStartDate));
+  const endIndex = dateRange.findIndex(date => isSameWeek(date, cardEndDate));
+  return { startIndex, endIndex };
+};
 
-  // Handle cards outside the visible range for all zoom levels
+// Helper function to find date indices for year view
+const findYearIndices = (dateRange: Date[], cardStartDate: Date, cardEndDate: Date) => {
+  const startIndex = dateRange.findIndex(date => isSameMonth(date, cardStartDate));
+  const endIndex = dateRange.findIndex(date => isSameMonth(date, cardEndDate));
+  return { startIndex, endIndex };
+};
+
+// Helper function to calculate horizontal position and width
+const calculateHorizontalPosition = (
+  cardStartDate: Date,
+  cardEndDate: Date,
+  dateRange: Date[],
+  startIndex: number,
+  endIndex: number,
+  zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year'
+) => {
   const rangeStart = dateRange[0];
   const rangeEnd = dateRange[dateRange.length - 1];
 
@@ -114,15 +113,16 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
 
   // Special handling for day view - cards should stack vertically, not overlap horizontally
   if (zoomLevel === 'day') {
-    const today = dateRange[0]; // In day view, dateRange[0] is always the current day
     left = 0;
     width = 100;
   } else {
+    // Logic for all views: past cards on left edge, future cards on right edge
+
     // If card is entirely after the visible range (in the future), collect on right edge
     if (cardEndDate > rangeEnd && startIndex >= 0) {
       left = (startIndex / dateRange.length) * 100; // Normal positioning
       // If endIndex is -1 (not found), calculate width based on days from start to range end
-      let daysSpanned
+      let daysSpanned;
       if (endIndex === -1) {
         // Card ends beyond visible range, span to end of range
         daysSpanned = dateRange.length - startIndex;
@@ -184,7 +184,17 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
     }
   }
 
-  // Calculate vertical stacking position using the same logic as height calculation
+  return { left, width };
+};
+
+// Helper function to calculate vertical stacking position
+const calculateVerticalPosition = (
+  card: any,
+  allCards: any[],
+  cardIndex: number,
+  dateRange: Date[],
+  zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year'
+) => {
   let stackLevel = 0;
   const cardHeight = 32; // h-8 = 32px
   const cardGap = 4; // gap between stacked cards
@@ -251,26 +261,16 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
           }
 
           // Handle out-of-range indices - cards completely outside range should not overlap
-          const start1 = currentCardStartIdx;
-          const end1 = currentCardEndIdx;
-          const start2 = existingCardStartIdx;
-          const end2 = existingCardEndIdx;
-
-          // Only check for overlap if both cards have valid indices within the visible range
-          // Cards with -1 indices are outside the visible range and shouldn't overlap with each other
-          let shouldCheckOverlap = true;
-          if (start1 < 0 || end1 < 0 || start2 < 0 || end2 < 0) {
-            // At least one card is outside visible range - don't check overlap
-            shouldCheckOverlap = false;
+          if (currentCardStartIdx === -1 || currentCardEndIdx === -1 || existingCardStartIdx === -1 || existingCardEndIdx === -1) {
+            continue;
           }
 
-          if (shouldCheckOverlap) {
-            const start = Math.max(start1, start2);
-            const end = Math.min(end1, end2);
+          const start = Math.max(currentCardStartIdx, existingCardStartIdx);
+          const end = Math.min(currentCardEndIdx, existingCardEndIdx);
 
-            if (start <= end) {
-              overlap = true;
-            }
+          if (start <= end) {
+            overlap = true;
+            break;
           }
         }
       }
@@ -288,12 +288,142 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
   });
 
   const top = 8 + (stackLevel * (cardHeight + cardGap)); // Start 8px from top, add card height + gap for each level
+  return top;
+};
+
+// Calculate day view task positioning
+const calculateDayPosition = (
+  card: any,
+  allCards: any[],
+  cardIndex: number,
+  dateRange: Date[],
+  cardStartDate: Date,
+  cardEndDate: Date
+) => {
+  const { startIndex, endIndex } = findDayIndices(dateRange, cardStartDate, cardEndDate);
+  const { left, width } = calculateHorizontalPosition(cardStartDate, cardEndDate, dateRange, startIndex, endIndex, 'day');
+  const top = calculateVerticalPosition(card, allCards, cardIndex, dateRange, 'day');
 
   return {
     left: `${left}%`,
     width: `${Math.max(width, 2)}%`,
     top: `${top}px`
   };
+};
+
+// Calculate week view task positioning
+const calculateWeekPosition = (
+  card: any,
+  allCards: any[],
+  cardIndex: number,
+  dateRange: Date[],
+  cardStartDate: Date,
+  cardEndDate: Date
+) => {
+  const { startIndex, endIndex } = findWeekIndices(dateRange, cardStartDate, cardEndDate);
+  const { left, width } = calculateHorizontalPosition(cardStartDate, cardEndDate, dateRange, startIndex, endIndex, 'week');
+  const top = calculateVerticalPosition(card, allCards, cardIndex, dateRange, 'week');
+
+  return {
+    left: `${left}%`,
+    width: `${Math.max(width, 2)}%`,
+    top: `${top}px`
+  };
+};
+
+// Calculate 2-week view task positioning
+const calculateTwoWeekPosition = (
+  card: any,
+  allCards: any[],
+  cardIndex: number,
+  dateRange: Date[],
+  cardStartDate: Date,
+  cardEndDate: Date
+) => {
+  const { startIndex, endIndex } = findTwoWeekIndices(dateRange, cardStartDate, cardEndDate);
+  const { left, width } = calculateHorizontalPosition(cardStartDate, cardEndDate, dateRange, startIndex, endIndex, '2weeks');
+  const top = calculateVerticalPosition(card, allCards, cardIndex, dateRange, '2weeks');
+
+  return {
+    left: `${left}%`,
+    width: `${Math.max(width, 2)}%`,
+    top: `${top}px`
+  };
+};
+
+// Calculate month view task positioning
+const calculateMonthPosition = (
+  card: any,
+  allCards: any[],
+  cardIndex: number,
+  dateRange: Date[],
+  cardStartDate: Date,
+  cardEndDate: Date
+) => {
+  const { startIndex, endIndex } = findMonthIndices(dateRange, cardStartDate, cardEndDate);
+  const { left, width } = calculateHorizontalPosition(cardStartDate, cardEndDate, dateRange, startIndex, endIndex, 'month');
+  const top = calculateVerticalPosition(card, allCards, cardIndex, dateRange, 'month');
+
+  return {
+    left: `${left}%`,
+    width: `${Math.max(width, 2)}%`,
+    top: `${top}px`
+  };
+};
+
+// Calculate year view task positioning
+const calculateYearPosition = (
+  card: any,
+  allCards: any[],
+  cardIndex: number,
+  dateRange: Date[],
+  cardStartDate: Date,
+  cardEndDate: Date
+) => {
+  const { startIndex, endIndex } = findYearIndices(dateRange, cardStartDate, cardEndDate);
+  const { left, width } = calculateHorizontalPosition(cardStartDate, cardEndDate, dateRange, startIndex, endIndex, 'year');
+  const top = calculateVerticalPosition(card, allCards, cardIndex, dateRange, 'year');
+
+  return {
+    left: `${left}%`,
+    width: `${Math.max(width, 2)}%`,
+    top: `${top}px`
+  };
+};
+
+// Calculate card position and width on timeline
+export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => {
+  // Use normalizeForDisplay to ensure dates are properly handled
+  const cardStartDate = normalizeForDisplay(card.startDate) || new Date();
+  const cardEndDate = normalizeForDisplay(card.dueDate) || addDays(cardStartDate, 7);
+
+  // Validate dates - be more permissive
+  if (isNaN(cardStartDate.getTime())) {
+    console.warn('Invalid card start date detected, using fallback:', card.startDate);
+    return { left: '0%', width: '100%', top: '8px' }; // Fallback position
+  }
+
+  if (isNaN(cardEndDate.getTime())) {
+    console.warn('Invalid card end date detected, using fallback:', card.dueDate);
+    return { left: '0%', width: '100%', top: '8px' }; // Fallback position
+  }
+
+  // Delegate to the appropriate handler based on zoom level
+  switch (zoomLevel) {
+    case 'day':
+      return calculateDayPosition(card, allCards, cardIndex, dateRange, cardStartDate, cardEndDate);
+    case 'week':
+      return calculateWeekPosition(card, allCards, cardIndex, dateRange, cardStartDate, cardEndDate);
+    case '2weeks':
+      return calculateTwoWeekPosition(card, allCards, cardIndex, dateRange, cardStartDate, cardEndDate);
+    case 'month':
+      return calculateMonthPosition(card, allCards, cardIndex, dateRange, cardStartDate, cardEndDate);
+    case 'year':
+      return calculateYearPosition(card, allCards, cardIndex, dateRange, cardStartDate, cardEndDate);
+    default:
+      // Fallback to day view if zoom level is unrecognized
+      return calculateDayPosition(card, allCards, cardIndex, dateRange, cardStartDate, cardEndDate);
+  }
 };
 
 // Get card color based on labels
