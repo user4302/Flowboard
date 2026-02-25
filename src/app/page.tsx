@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Sidebar } from '@/components/board/Sidebar';
-import { BoardHeader } from '@/components/board/BoardHeader';
+import { Header } from '@/components/board/Header';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
 import { CardModal } from '@/components/card';
 import { JoinBoardModal } from '@/components/sharing';
@@ -58,7 +58,7 @@ export default function Home() {
         <div className={`flex h-screen bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ${showWelcomeScreen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <Sidebar />
           <div className="flex flex-1 flex-col lg:ml-64">
-            <BoardHeader />
+            <Header />
             <main className="flex-1 overflow-hidden flex items-center justify-center">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
@@ -95,7 +95,7 @@ export default function Home() {
       <Sidebar />
 
       <div className="flex flex-1 flex-col lg:ml-64">
-        <BoardHeader />
+        <Header />
 
         <main className="flex-1 overflow-hidden">
           {renderCurrentView()}

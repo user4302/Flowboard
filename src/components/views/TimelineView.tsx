@@ -22,7 +22,6 @@ import { isSameDay, isSameWeek, isSameMonth, addDays, startOfDay } from 'date-fn
 import { useBoardStore, useUIStore } from '@/store';
 import { TimelineHeader } from './timeline/components/TimelineHeader';
 import { TimelineGrid } from './timeline/components/TimelineGrid';
-import { IndividualCardSwimlane } from './timeline/components/IndividualCardSwimlane';
 import { SubCardSwimlane } from './timeline/components/SubCardSwimlane';
 import { MiniCardTooltip } from './timeline/components/MiniCardTooltip';
 import { useDateRange } from './timeline/hooks/useDateRange';
@@ -66,7 +65,24 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   if (!board) return null;
 
   // Component state - use persisted state directly from store
-  const currentDate = useMemo(() => new Date(timelineCurrentDate), [timelineCurrentDate]);
+  const currentDate = useMemo(() => {
+    try {
+      const date = new Date(timelineCurrentDate);
+      // Check if date is valid
+      if (isNaN(date.getTime())) {
+        console.warn('Invalid timeline date detected, using current date:', timelineCurrentDate);
+        // Reset timeline state with valid date
+        setTimelineCurrentDate(boardId, new Date().toISOString());
+        return new Date();
+      }
+      return date;
+    } catch (error) {
+      console.error('Error parsing timeline date:', error, timelineCurrentDate);
+      // Reset timeline state with valid date
+      setTimelineCurrentDate(boardId, new Date().toISOString());
+      return new Date();
+    }
+  }, [timelineCurrentDate, boardId, setTimelineCurrentDate]);
   const zoomLevel = timelineZoomLevel;
   const collapsedLanes = useMemo(() => new Set(timelineCollapsedLanes), [timelineCollapsedLanes]);
   const [hoveredCard, setHoveredCard] = useState<{ card: any; position: 'before' | 'after'; x: number; y: number } | null>(null); // Track hovered card for tooltip

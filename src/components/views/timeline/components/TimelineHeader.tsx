@@ -38,6 +38,11 @@ export function TimelineHeader({
    * @param direction - Navigation direction ('prev' or 'next')
    */
   const navigateDate = (direction: 'prev' | 'next') => {
+    if (!currentDate || isNaN(currentDate.getTime())) {
+      console.warn('Cannot navigate: Invalid current date');
+      return;
+    }
+
     const newDate = new Date(currentDate);
     switch (zoomLevel) {
       case 'day':
@@ -73,7 +78,10 @@ export function TimelineHeader({
         {/* Current date display with today button */}
         <div className="flex items-center gap-2">
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-            {format(currentDate, zoomLevel === 'year' ? 'yyyy' : 'MMMM yyyy')}
+            {currentDate && !isNaN(currentDate.getTime())
+              ? format(currentDate, zoomLevel === 'year' ? 'yyyy' : 'MMMM yyyy')
+              : 'Invalid Date'
+            }
           </h2>
           <button
             onClick={() => onDateChange(new Date())}

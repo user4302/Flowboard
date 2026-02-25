@@ -52,6 +52,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added comprehensive timeline state management with per-board persistence
 - Enhanced timeline positioning with debug logging for troubleshooting
 - Improved TypeScript type safety in UI store functions
+- Major UI restructuring: migrated sidebar management buttons to header hamburger menu
+- Renamed BoardHeader component to Header with enhanced sharing functionality
+- Added robust timeline date validation and error handling with automatic recovery
+- Removed IndividualCardSwimlane component to simplify timeline architecture
+- Enhanced TimelineHeader with invalid date detection and navigation safety
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
@@ -104,22 +109,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved code organization with dedicated hooks and utilities
 - Enhanced component separation for better maintainability
 
-## [1.1.0] - 2025-02-22
+## [1.1.0] - 2026-02-25
 
-### Added
-- Board deletion functionality with confirmation dialog
-- Proper sidebar layout spacing on large screens
-- Interactive placeholder actions for Team Members and Settings
-- Complete Flowboard project management application
-- Four switchable views: Kanban, Timeline, Calendar, and Table
-- Drag-and-drop functionality using @dnd-kit
-- Rich card management with labels, members, dates, and checklists
+### 🎯 **Major UI Restructuring: Sidebar to Hamburger Menu Migration**
+
+#### ✅ **New Features**
+- **Centralized Action Menu**: Moved all management buttons from sidebar to header hamburger menu
+- **Cleaner Sidebar**: Now focused purely on board navigation and management
+- **Enhanced Hamburger Menu**: Added 4 new buttons with proper hover effects and styling
+
+#### 🔄 **Changes Made**
+
+**BoardHeader Component:**
+- **Added Sharing Store Integration**: Imported `useSharingStore` for modal management
+- **Added Modal Components**: Moved `InviteModal` and `MemberManagement` to header
+- **Enhanced Hamburger Menu**: 
+  - Invite Members (Share2 icon) - Owner only
+  - Member Management (UserPlus icon) - Owner only  
+  - Team Members (Users icon) - Placeholder
+  - Settings (Settings icon) - Placeholder
+- **Improved Styling**: Added hover effects, proper spacing, and visual divider
+- **Conditional Rendering**: Owner-only buttons properly gated by `isOwner` state
+
+**Sidebar Component:**
+- **Removed Quick Actions Section**: Eliminated entire management button section
+- **Removed Sharing Dependencies**: No longer imports or uses sharing store
+- **Cleaned Up Imports**: Removed unused icon imports
+- **Focused Functionality**: Now purely board-centric navigation
+
+#### 🎨 **UI/UX Improvements**
+- **Better Organization**: All management functions centralized in header
+- **Cleaner Interface**: Sidebar reduced to essential board navigation
+- **Consistent Styling**: Hover effects match existing design patterns
+- **Mobile Friendly**: Easier access to all functions from header hamburger menu
+
+#### 🐛 **Technical Details**
+- **State Management**: Proper sharing store integration in header component
+- **Modal Handling**: Invite and member management modals moved to header
+- **Icon Consistency**: All buttons use appropriate Lucide icons
+- **Responsive Design**: Maintained mobile-first approach
+
+## [1.0.0] - 2026-02-24
+
+### 🎯 **Initial Release**
+
+#### ✅ **Core Features**
+- **Board Management**: Create, edit, delete boards
+- **Multiple Views**: Kanban, Calendar, Timeline, Table views
+- **Dark/Light Theme**: System-wide theme switching
+- **Import/Export**: JSON board data import/export functionality
+- **Responsive Design**: Mobile and desktop optimized interface
+
+#### 🎨 **UI Components**
+- **Sidebar Navigation**: Board list with quick actions
+- **Header Controls**: Search, view switching, member management
+- **Interactive Cards**: Drag-and-drop functionality
+- **Modal System**: Invite members and manage permissions with labels, members, dates, and checklists
 - Real-time search and filtering capabilities
 - Dark/light theme support with system preference detection
 - Responsive design for mobile, tablet, and desktop
 - Local storage data persistence
 - Comprehensive TypeScript type definitions
-- Modern UI with indigo/teal color scheme
 - Glassmorphic design elements
 - Accessibility features (ARIA labels, keyboard navigation)
 - Seed data with realistic "Website Redesign" project
