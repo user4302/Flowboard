@@ -66,11 +66,6 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
   // Use normalizeForDisplay to ensure dates are properly handled
   const cardStartDate = normalizeForDisplay(card.startDate) || new Date();
   const cardEndDate = normalizeForDisplay(card.dueDate) || addDays(cardStartDate, 7);
-
-  console.log(`[utils.ts] getTaskPosition - Card: "${card.title}"`);
-  console.log(`[utils.ts] getTaskPosition - Card Start: ${cardStartDate?.toISOString().split('T')[0]}, End: ${cardEndDate?.toISOString().split('T')[0]}`);
-  console.log(`[utils.ts] getTaskPosition - Date Range: [${dateRange.map(d => d.toISOString().split('T')[0]).join(', ')}]`);
-
   // Validate dates - be more permissive
   if (isNaN(cardStartDate.getTime())) {
     console.warn('Invalid card start date detected, using fallback:', card.startDate);
@@ -83,10 +78,6 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
   }
 
   // Debug: Log the date range and card dates
-  console.log('Card:', card.title, 'Start:', cardStartDate, 'End:', cardEndDate);
-  console.log('Date Range:', dateRange.map(d => d.toISOString().split('T')[0]));
-  console.log('Card data:', card);
-
   let startIndex = -1;
   let endIndex = -1;
 
@@ -124,52 +115,32 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
   // Special handling for day view - cards should stack vertically, not overlap horizontally
   if (zoomLevel === 'day') {
     const today = dateRange[0]; // In day view, dateRange[0] is always the current day
-    // For day view, all cards that include today should be positioned at the same horizontal position
-    // but stacked vertically using the stacking logic below
-    if (today >= cardStartDate && today <= cardEndDate) {
-      // Cards that include today get full width and normal positioning
-      left = 0;
-      width = 100;
-    } else if (cardEndDate < rangeStart) {
-      // Cards entirely before today go on left edge as small indicators
-      left = 0;
-      width = 5;
-    } else if (cardStartDate > rangeEnd) {
-      // Cards entirely after today go on right edge as small indicators
-      left = 95;
-      width = 5;
-    } else {
-      // Fallback - small indicator
-      left = 0;
-      width = 5;
-    }
+    left = 0;
+    width = 100;
   } else {
-    // Logic for all views: past cards on left edge, future cards on right edge
-
-    console.log('Card positioning debug:', {
-      cardStartDate,
-      cardEndDate,
-      rangeStart,
-      rangeEnd,
-      startIndex,
-      endIndex,
-      condition1: cardStartDate > rangeEnd,
-      condition2: cardEndDate < rangeStart,
-      condition3: cardStartDate < rangeStart && endIndex >= 0,
-      condition4: cardEndDate > rangeEnd && startIndex >= 0
-    });
-
     // If card is entirely after the visible range (in the future), collect on right edge
-    if (cardStartDate > rangeEnd) {
+    if (cardEndDate > rangeEnd && startIndex >= 0) {
+      left = (startIndex / dateRange.length) * 100; // Normal positioning
+      // If endIndex is -1 (not found), calculate width based on days from start to range end
+      let daysSpanned
+      if (endIndex === -1) {
+        // Card ends beyond visible range, span to end of range
+        daysSpanned = dateRange.length - startIndex;
+      } else {
+        daysSpanned = endIndex - startIndex + 1;
+      }
+      left = (startIndex / dateRange.length) * 100;
+      width = (daysSpanned / dateRange.length) * 100;
+    }
+    // If card is entirely after the visible range (in the future), collect on right edge
+    else if (cardStartDate > rangeEnd) {
       left = ((dateRange.length - 1) / dateRange.length) * 100; // Right edge
       width = 5;
-      console.log('Using condition 1: entirely after range');
     }
     // If card is entirely before the visible range (in the past), collect on left edge
     else if (cardEndDate < rangeStart) {
       left = 0; // Left edge
       width = 5;
-      console.log('Using condition 2: entirely before range');
     }
     // If card starts before but ends within range, start at left edge and span to end position
     else if (cardStartDate < rangeStart && endIndex >= 0) {
@@ -178,8 +149,6 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
       const cardDuration = Math.ceil((cardEndDate.getTime() - cardStartDate.getTime()) / (1000 * 60 * 60 * 24));
       const dayWidth = 100 / dateRange.length; // Width of one day in percentage
       width = Math.min(cardDuration * dayWidth, ((endIndex + 1) / dateRange.length) * 100);
-      console.log('Using condition 3: starts before, ends within range');
-      console.log('Card duration (days):', cardDuration, 'Calculated width:', width);
     }
     // If card starts within range but ends after, start at start position and span to right edge
     else if (cardEndDate > rangeEnd && startIndex >= 0) {
@@ -190,23 +159,16 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
         const daysSpanned = dateRange.length - startIndex;
         left = (startIndex / dateRange.length) * 100;
         width = (daysSpanned / dateRange.length) * 100;
-        console.log('Using condition 4: starts within, ends after range');
-        console.log('Days spanned:', daysSpanned, 'Start index:', startIndex, 'End index:', endIndex, 'Date range length:', dateRange.length);
-        console.log('Calculated width:', width, '%');
       } else {
         const daysSpanned = endIndex - startIndex + 1;
         left = (startIndex / dateRange.length) * 100;
         width = (daysSpanned / dateRange.length) * 100;
-        console.log('Using condition 4: starts within, ends after range');
-        console.log('Days spanned:', daysSpanned, 'Start index:', startIndex, 'End index:', endIndex, 'Date range length:', dateRange.length);
-        console.log('Calculated width:', width, '%');
       }
     }
     // If card spans the entire visible range (starts before, ends after)
     else if (cardStartDate < rangeStart && cardEndDate > rangeEnd) {
       left = 0; // Left edge
       width = 100; // Full width
-      console.log('Using condition 5: spans entire range');
     } else {
       // Normal positioning for cards within range
       let daysSpanned;
@@ -219,14 +181,8 @@ export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, d
 
       left = (startIndex / dateRange.length) * 100;
       width = (daysSpanned / dateRange.length) * 100;
-      console.log('Using fallback: normal positioning');
-      console.log('Days spanned:', daysSpanned, 'Start index:', startIndex, 'End index:', endIndex, 'Date range length:', dateRange.length);
-      console.log('Calculated width:', width, '%');
     }
   }
-
-  // Debug: Log the calculated position
-  console.log('Position:', { left, width });
 
   // Calculate vertical stacking position using the same logic as height calculation
   let stackLevel = 0;
