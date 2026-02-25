@@ -20,7 +20,11 @@ export function useDateRange(currentDate: Date, zoomLevel: ZoomLevel) {
   return useMemo(() => {
     let dates: Date[] = [];
 
-    switch (zoomLevel) {
+    // Validate zoom level
+    const validZoomLevel = zoomLevel || 'week';
+    console.log('useDateRange called with:', { currentDate, zoomLevel, validZoomLevel });
+
+    switch (validZoomLevel) {
       case 'day':
         // Single day view
         dates = eachDayOfInterval({

@@ -83,12 +83,20 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       return new Date();
     }
   }, [timelineCurrentDate, boardId, setTimelineCurrentDate]);
-  const zoomLevel = timelineZoomLevel;
+  const zoomLevel = timelineZoomLevel || 'week'; // Fallback to week if undefined
   const collapsedLanes = useMemo(() => new Set(timelineCollapsedLanes), [timelineCollapsedLanes]);
   const [hoveredCard, setHoveredCard] = useState<{ card: any; position: 'before' | 'after'; x: number; y: number } | null>(null); // Track hovered card for tooltip
 
   // Generate date range based on zoom level and current date using custom hook
   const dateRange = useDateRange(currentDate, zoomLevel);
+
+  // Debug: Log when date range changes
+  console.log('Timeline state:', { currentDate, zoomLevel, dateRangeLength: dateRange.length });
+
+  // Ensure date range is not empty
+  if (dateRange.length === 0) {
+    console.warn('Date range is empty, this will hide all cards');
+  }
 
   /**
    * Filter and process cards for timeline display
@@ -117,9 +125,19 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       const hasDates = card.startDate || card.dueDate;
       if (!hasDates) return false;
 
+      // Ensure dates are Date objects (handle string dates from localStorage)
+      const cardStartDate = card.startDate ? (typeof card.startDate === 'string' ? new Date(card.startDate) : card.startDate) : new Date();
+      const cardEndDate = card.dueDate ? (typeof card.dueDate === 'string' ? new Date(card.dueDate) : card.dueDate) : addDays(cardStartDate, 7);
+
+      // Validate dates
+      if (isNaN(cardStartDate.getTime()) || isNaN(cardEndDate.getTime())) {
+        console.warn('Invalid card dates in filtering:', card.startDate, card.dueDate);
+        return false;
+      }
+
       // Normalize dates to start of day for consistent comparison
-      const cardStart = startOfDay(card.startDate || new Date());
-      const cardEnd = startOfDay(card.dueDate || addDays(cardStart, 7));
+      const cardStart = startOfDay(cardStartDate);
+      const cardEnd = startOfDay(cardEndDate);
       const rangeStart = startOfDay(dateRange[0]);
       const rangeEnd = startOfDay(dateRange[dateRange.length - 1]);
 

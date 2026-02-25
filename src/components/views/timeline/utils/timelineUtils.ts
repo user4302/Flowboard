@@ -62,12 +62,25 @@ export const calculateTimelineHeight = (cards: any[], dateRange: Date[]) => {
 
 // Calculate card position and width on timeline
 export const getCardPosition = (card: any, allCards: any[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => {
-  const cardStartDate = card.startDate || new Date();
-  const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
+  // Ensure dates are Date objects (handle string dates from localStorage)
+  const cardStartDate = card.startDate ? (typeof card.startDate === 'string' ? new Date(card.startDate) : card.startDate) : new Date();
+  const cardEndDate = card.dueDate ? (typeof card.dueDate === 'string' ? new Date(card.dueDate) : card.dueDate) : addDays(cardStartDate, 7);
+
+  // Validate dates - be more permissive
+  if (isNaN(cardStartDate.getTime())) {
+    console.warn('Invalid card start date detected, using fallback:', card.startDate);
+    return { left: 0, width: 100 }; // Fallback position
+  }
+
+  if (isNaN(cardEndDate.getTime())) {
+    console.warn('Invalid card end date detected, using fallback:', card.dueDate);
+    return { left: 0, width: 100 }; // Fallback position
+  }
 
   // Debug: Log the date range and card dates
   console.log('Card:', card.title, 'Start:', cardStartDate, 'End:', cardEndDate);
   console.log('Date Range:', dateRange.map(d => d.toISOString().split('T')[0]));
+  console.log('Card data:', card);
 
   let startIndex = -1;
   let endIndex = -1;

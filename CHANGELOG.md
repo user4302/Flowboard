@@ -58,6 +58,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed IndividualCardSwimlane component to simplify timeline architecture
 - Enhanced TimelineHeader with invalid date detection and navigation safety
 - Optimized currentBoard lookup in useBoard hook for better performance
+- Enhanced timeline date handling with comprehensive debugging and validation
+- Fixed critical date serialization issue causing card misalignment after import and refresh
+- Added robust Date object handling in localStorage persistence with automatic cleanup
+- Enhanced timeline positioning with comprehensive date validation and string-to-Date conversion
+- Improved hidden cards logic with proper date validation and error handling
+- Fixed timeline data disappearing after date navigation with zoom level validation
+- Added comprehensive debugging and fallback mechanisms for timeline state management
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

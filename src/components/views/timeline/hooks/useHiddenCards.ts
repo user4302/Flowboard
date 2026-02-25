@@ -23,15 +23,28 @@ export function useHiddenCards(listCards: any[], dateRange: Date[]) {
 
     // Filter cards that end before the visible range starts
     const hiddenCardsBefore = listCards.filter(card => {
-      // Use due date if available, otherwise use start date + 7 days as fallback
-      const cardEnd = card.dueDate || addDays(card.startDate || new Date(), 7);
-      return cardEnd < rangeStart;
+      // Ensure dates are Date objects (handle string dates from localStorage)
+      const cardStartDate = card.startDate ? (typeof card.startDate === 'string' ? new Date(card.startDate) : card.startDate) : new Date();
+      const cardEndDate = card.dueDate ? (typeof card.dueDate === 'string' ? new Date(card.dueDate) : card.dueDate) : addDays(cardStartDate, 7);
+
+      // Validate dates
+      if (isNaN(cardStartDate.getTime()) || isNaN(cardEndDate.getTime())) {
+        return false; // Skip cards with invalid dates
+      }
+
+      return cardEndDate < rangeStart;
     });
 
     // Filter cards that start after the visible range ends
     const hiddenCardsAfter = listCards.filter(card => {
-      // Use start date if available, otherwise use current date as fallback
-      const cardStart = card.startDate || new Date();
+      // Ensure dates are Date objects (handle string dates from localStorage)
+      const cardStart = card.startDate ? (typeof card.startDate === 'string' ? new Date(card.startDate) : card.startDate) : new Date();
+
+      // Validate dates
+      if (isNaN(cardStart.getTime())) {
+        return false; // Skip cards with invalid dates
+      }
+
       return cardStart > rangeEnd;
     });
 

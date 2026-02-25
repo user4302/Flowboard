@@ -191,7 +191,6 @@ export function useBoard() {
   const {
     boards,
     currentBoardId,
-    getCurrentBoard,
     createBoard,
     createList,
     createCard,
@@ -201,32 +200,29 @@ export function useBoard() {
   // Get sharing store method for user info
   const { setUserInfo } = useSharingStore();
 
+  // Get current board reactively
+  const currentBoardData = boards.find((board) => board.id === currentBoardId) || null;
+
   /**
    * Effect to set up sharing info for current user (owner)
    * Automatically sets the current user as board owner when board is loaded
    */
   useEffect(() => {
     // Set up sharing info for current user (owner)
-    if (boards.length > 0 && currentBoardId) {
-      const currentBoard = getCurrentBoard();
-      if (currentBoard) {
-        // Set current user as board owner
-        setUserInfo(
-          'owner-123', // Owner ID
-          'Board Owner', // Username
-          'owner@flowboard.app', // Email
-          true // Is owner
-        );
-      }
+    if (boards.length > 0 && currentBoardId && currentBoardData) {
+      // Set current user as board owner
+      setUserInfo(
+        'owner-123', // Owner ID
+        'Board Owner', // Username
+        'owner@flowboard.app', // Email
+        true // Is owner
+      );
     }
-  }, [boards.length, currentBoardId, getCurrentBoard, setUserInfo]);
-
-  // Get current board reactively
-  const currentBoard = boards.find((board) => board.id === currentBoardId) || null;
+  }, [boards.length, currentBoardId, currentBoardData, setUserInfo]);
 
   return {
     boards,
-    currentBoard,
+    currentBoard: currentBoardData,
     currentBoardId,
     setCurrentBoard,
     createBoard,
