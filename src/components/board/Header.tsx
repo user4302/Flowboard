@@ -187,14 +187,6 @@ export function Header() {
               listData.cards.forEach((cardData: any, cardIndex: number) => {
                 const card = useBoardStore.getState().createCard(newBoard.id, list.id, cardData.title, cardIndex);
 
-                // Update card with additional data
-                console.log('Importing card dates:', {
-                  startDate: cardData.startDate,
-                  startDateType: typeof cardData.startDate,
-                  dueDate: cardData.dueDate,
-                  dueDateType: typeof cardData.dueDate
-                });
-
                 // Validate dates before importing
                 let startDate: Date | undefined = cardData.startDate;
                 let dueDate: Date | undefined = cardData.dueDate;

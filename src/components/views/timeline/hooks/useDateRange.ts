@@ -22,11 +22,6 @@ export function useDateRange(currentDate: Date, zoomLevel: ZoomLevel) {
 
     // Validate zoom level
     const validZoomLevel = zoomLevel || 'week';
-    console.log('useDateRange called with:', {
-      currentDate: currentDate.toISOString(),
-      zoomLevel,
-      validZoomLevel
-    });
 
     switch (validZoomLevel) {
       case 'day':
@@ -65,7 +60,6 @@ export function useDateRange(currentDate: Date, zoomLevel: ZoomLevel) {
         break;
     }
 
-    console.log('Generated date range:', dates.map(d => d.toISOString().split('T')[0]));
     return dates;
   }, [currentDate, zoomLevel]);
 }

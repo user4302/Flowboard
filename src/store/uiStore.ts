@@ -121,15 +121,16 @@ export const useUIStore = create<UIState>()(
           zoomLevel: 'week',
           collapsedLanes: []
         };
-        const isCollapsed = currentBoardState.collapsedLanes.includes(laneId);
+        const collapsedLanes = currentBoardState.collapsedLanes || [];
+        const isCollapsed = collapsedLanes.includes(laneId);
         return {
           timelineState: {
             ...state.timelineState,
             [boardId]: {
               ...currentBoardState,
               collapsedLanes: isCollapsed
-                ? currentBoardState.collapsedLanes.filter((id: string) => id !== laneId)
-                : [...currentBoardState.collapsedLanes, laneId]
+                ? collapsedLanes.filter((id: string) => id !== laneId)
+                : [...collapsedLanes, laneId]
             }
           }
         };

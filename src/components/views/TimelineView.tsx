@@ -17,7 +17,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { startOfDay, addDays } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
 import { Header } from './timeline/components/Header';
@@ -71,16 +71,26 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       // Check if date is valid
       if (isNaN(date.getTime())) {
         console.warn('Invalid timeline date detected, using current date:', timelineCurrentDate);
-        // Reset timeline state with valid date
-        setTimelineCurrentDate(boardId, new Date().toISOString());
-        return new Date();
+        return new Date(); // Return fallback date, state update will be handled by useEffect
       }
       return date;
     } catch (error) {
       console.error('Error parsing timeline date:', error, timelineCurrentDate);
-      // Reset timeline state with valid date
+      return new Date(); // Return fallback date, state update will be handled by useEffect
+    }
+  }, [timelineCurrentDate]);
+
+  // Handle invalid timeline date by resetting state
+  useEffect(() => {
+    try {
+      const date = new Date(timelineCurrentDate);
+      if (isNaN(date.getTime())) {
+        console.warn('Invalid timeline date detected, resetting to current date:', timelineCurrentDate);
+        setTimelineCurrentDate(boardId, new Date().toISOString());
+      }
+    } catch (error) {
+      console.error('Error parsing timeline date:', error, timelineCurrentDate);
       setTimelineCurrentDate(boardId, new Date().toISOString());
-      return new Date();
     }
   }, [timelineCurrentDate, boardId, setTimelineCurrentDate]);
   const zoomLevel = timelineZoomLevel || 'week'; // Fallback to week if undefined
@@ -89,9 +99,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
   // Generate date range based on zoom level and current date using custom hook
   const dateRange = useDateRange(currentDate, zoomLevel);
-
-  // Debug: Log when date range changes
-  console.log('Timeline state:', { currentDate, zoomLevel, dateRangeLength: dateRange.length });
 
   // Ensure date range is not empty
   if (dateRange.length === 0) {
