@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added robust timeline date validation and error handling with automatic recovery
 - Removed IndividualCardSwimlane component to simplify timeline architecture
 - Enhanced TimelineHeader with invalid date detection and navigation safety
+- Optimized currentBoard lookup in useBoard hook for better performance
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

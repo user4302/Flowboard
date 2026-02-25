@@ -221,8 +221,8 @@ export function useBoard() {
     }
   }, [boards.length, currentBoardId, getCurrentBoard, setUserInfo]);
 
-  // Get current board for easy access
-  const currentBoard = getCurrentBoard();
+  // Get current board reactively
+  const currentBoard = boards.find((board) => board.id === currentBoardId) || null;
 
   return {
     boards,
