@@ -60,13 +60,20 @@ export function TimelineCard({
   getCardColor
 }: TimelineCardProps) {
   // Only render cards that are at least partially visible in the timeline
+  // Dates are already Date objects from localStorage conversion
   const cardStart = card.startDate || new Date();
   const cardEnd = card.dueDate || addDays(cardStart, 7);
   const rangeStart = dateRange[0];
   const rangeEnd = dateRange[dateRange.length - 1];
 
+  // Normalize dates to start of day for comparison (to avoid time-based filtering issues)
+  const cardStartDay = new Date(cardStart.getFullYear(), cardStart.getMonth(), cardStart.getDate());
+  const cardEndDay = new Date(cardEnd.getFullYear(), cardEnd.getMonth(), cardEnd.getDate());
+  const rangeStartDay = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate());
+  const rangeEndDay = new Date(rangeEnd.getFullYear(), rangeEnd.getMonth(), rangeEnd.getDate());
+
   // Skip cards that are completely outside the visible range
-  if (cardEnd < rangeStart || cardStart > rangeEnd) {
+  if (cardEndDay < rangeStartDay || cardStartDay > rangeEndDay) {
     return null;
   }
 

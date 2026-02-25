@@ -3,8 +3,8 @@ export interface Board {
   name: string;
   lists: List[];
   members: User[];
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date; // Date object (localStorage handles UTC conversion)
+  updatedAt: Date; // Date object (localStorage handles UTC conversion)
 }
 
 export interface List {
@@ -21,13 +21,13 @@ export interface Card {
   description?: string;
   labels: Label[];
   members: string[];
-  startDate?: Date;
-  dueDate?: Date;
+  startDate?: Date; // Date object (localStorage handles UTC conversion)
+  dueDate?: Date;   // Date object (localStorage handles UTC conversion)
   checklist: ChecklistItem[];
   position: number;
   listId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date; // Date object (localStorage handles UTC conversion)
+  updatedAt: Date; // Date object (localStorage handles UTC conversion)
 }
 
 export interface Label {

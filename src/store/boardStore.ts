@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from '@/lib/constants';
+import { toUTCString, fromUTCString } from '@/lib/dateUtils';
 import { Board, List, Card, Label, User, ChecklistItem } from '@/lib/types';
 import { generateId } from '@/lib/utils';
-import { STORAGE_KEYS } from '@/lib/constants';
 
 /**
  * Board state interface - Defines the shape of board store state and actions
@@ -227,8 +228,8 @@ export const useBoardStore = create<BoardState>()(
           members: [],
           checklist: [],
           position: position ?? list.cards.length,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: toUTCString(new Date()),
+          updatedAt: toUTCString(new Date()),
         };
 
         set((state) => ({
@@ -262,13 +263,13 @@ export const useBoardStore = create<BoardState>()(
                       ...list,
                       cards: list.cards.map((card) =>
                         card.id === cardId
-                          ? { ...card, ...updates, updatedAt: new Date() }
+                          ? { ...card, ...updates, updatedAt: toUTCString(new Date()) }
                           : card
                       ),
                     }
                     : list
                 ),
-                updatedAt: new Date(),
+                updatedAt: toUTCString(new Date()),
               }
               : board
           ),
@@ -555,9 +556,72 @@ export const useBoardStore = create<BoardState>()(
         boards: state.boards,
         currentBoardId: state.currentBoardId,
       }),
+      storage: {
+        getItem: (name) => {
+          const str = localStorage.getItem(name);
+          if (!str) return null;
+
+          try {
+            const data = JSON.parse(str);
+
+            // Convert UTC strings to local Date objects for app usage
+            if (data.state?.boards) {
+              data.state.boards = data.state.boards.map((board: any) => ({
+                ...board,
+                lists: board.lists.map((list: any) => ({
+                  ...list,
+                  cards: list.cards.map((card: any): Card => ({
+                    ...card,
+                    startDate: (fromUTCString(card.startDate) || card.startDate) as Date,
+                    dueDate: (fromUTCString(card.dueDate) || card.dueDate) as Date,
+                    createdAt: (fromUTCString(card.createdAt) || card.createdAt) as Date,
+                    updatedAt: (fromUTCString(card.updatedAt) || card.updatedAt) as Date,
+                  }))
+                }))
+              }));
+            }
+
+            return data;
+          } catch (error) {
+            console.error('Error parsing stored board data:', error);
+            localStorage.removeItem(name);
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          // Convert Date objects to UTC strings for storage
+          if (value.state?.boards) {
+            const dataToStore = {
+              ...value,
+              state: {
+                ...value.state,
+                boards: value.state.boards.map((board: any) => ({
+                  ...board,
+                  lists: board.lists.map((list: any) => ({
+                    ...list,
+                    cards: list.cards.map((card: any) => ({
+                      ...card,
+                      startDate: toUTCString(card.startDate),
+                      dueDate: toUTCString(card.dueDate),
+                      createdAt: toUTCString(card.createdAt),
+                      updatedAt: toUTCString(card.updatedAt),
+                    }))
+                  }))
+                }))
+              }
+            };
+            localStorage.setItem(name, JSON.stringify(dataToStore));
+          } else {
+            localStorage.setItem(name, JSON.stringify(value));
+          }
+        },
+        removeItem: (name) => {
+          localStorage.removeItem(name);
+        },
+      },
     }
   )
-);
+)
 
 // Helper function for reordering arrays
 function reorderArray<T>(array: T[], fromIndex: number, toIndex: number): T[] {

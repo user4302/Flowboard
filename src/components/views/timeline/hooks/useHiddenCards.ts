@@ -23,9 +23,9 @@ export function useHiddenCards(listCards: any[], dateRange: Date[]) {
 
     // Filter cards that end before the visible range starts
     const hiddenCardsBefore = listCards.filter(card => {
-      // Ensure dates are Date objects (handle string dates from localStorage)
-      const cardStartDate = card.startDate ? (typeof card.startDate === 'string' ? new Date(card.startDate) : card.startDate) : new Date();
-      const cardEndDate = card.dueDate ? (typeof card.dueDate === 'string' ? new Date(card.dueDate) : card.dueDate) : addDays(cardStartDate, 7);
+      // Dates are already Date objects from localStorage conversion
+      const cardStartDate = card.startDate || new Date();
+      const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
 
       // Validate dates
       if (isNaN(cardStartDate.getTime()) || isNaN(cardEndDate.getTime())) {
@@ -37,8 +37,8 @@ export function useHiddenCards(listCards: any[], dateRange: Date[]) {
 
     // Filter cards that start after the visible range ends
     const hiddenCardsAfter = listCards.filter(card => {
-      // Ensure dates are Date objects (handle string dates from localStorage)
-      const cardStart = card.startDate ? (typeof card.startDate === 'string' ? new Date(card.startDate) : card.startDate) : new Date();
+      // Dates are already Date objects from localStorage conversion
+      const cardStart = card.startDate || new Date();
 
       // Validate dates
       if (isNaN(cardStart.getTime())) {

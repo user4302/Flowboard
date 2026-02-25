@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useBoardStore, useUIStore } from '@/store';
+import { fromUTCString, toUTCString } from '@/lib/dateUtils';
 import { Button, Input, Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@/components/ui';
 import { LABEL_COLORS } from '@/lib/constants';
 import { cn, formatDate, generateId } from '@/lib/utils';
@@ -55,8 +56,8 @@ export function CardModal() {
     defaultValues: {
       title: foundCard?.title || '',
       description: foundCard?.description || '',
-      startDate: foundCard?.startDate ? new Date(foundCard.startDate).toISOString().split('T')[0] : '',
-      dueDate: foundCard?.dueDate ? new Date(foundCard.dueDate).toISOString().split('T')[0] : '',
+      startDate: foundCard?.startDate ? (fromUTCString(foundCard.startDate) || foundCard.startDate).toISOString().split('T')[0] : '',
+      dueDate: foundCard?.dueDate ? (fromUTCString(foundCard.dueDate) || foundCard.dueDate).toISOString().split('T')[0] : '',
     },
   });
 
@@ -69,8 +70,8 @@ export function CardModal() {
       reset({
         title: foundCard.title,
         description: foundCard.description || '',
-        startDate: foundCard.startDate ? new Date(foundCard.startDate).toISOString().split('T')[0] : '',
-        dueDate: foundCard.dueDate ? new Date(foundCard.dueDate).toISOString().split('T')[0] : '',
+        startDate: foundCard.startDate ? fromUTCString(foundCard.startDate).toISOString().split('T')[0] : '',
+        dueDate: foundCard.dueDate ? fromUTCString(foundCard.dueDate).toISOString().split('T')[0] : '',
       });
     }
   }, [foundCard, reset]);
@@ -97,11 +98,11 @@ export function CardModal() {
     };
 
     if (data.startDate) {
-      updateData.startDate = new Date(data.startDate);
+      updateData.startDate = fromUTCString(new Date(data.startDate));
     }
 
     if (data.dueDate) {
-      updateData.dueDate = new Date(data.dueDate);
+      updateData.dueDate = fromUTCString(new Date(data.dueDate));
     }
 
     updateCard(currentBoardId, foundCard.id, updateData);

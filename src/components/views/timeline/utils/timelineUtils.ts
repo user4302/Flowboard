@@ -1,4 +1,5 @@
 import { isSameDay, isSameWeek, isSameMonth, addDays } from 'date-fns';
+import { normalizeForDisplay } from '@/lib/dateUtils';
 
 // Helper function to calculate timeline height based on card stacking
 export const calculateTimelineHeight = (cards: any[], dateRange: Date[]) => {
@@ -62,9 +63,13 @@ export const calculateTimelineHeight = (cards: any[], dateRange: Date[]) => {
 
 // Calculate card position and width on timeline
 export const getCardPosition = (card: any, allCards: any[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => {
-  // Ensure dates are Date objects (handle string dates from localStorage)
-  const cardStartDate = card.startDate ? (typeof card.startDate === 'string' ? new Date(card.startDate) : card.startDate) : new Date();
-  const cardEndDate = card.dueDate ? (typeof card.dueDate === 'string' ? new Date(card.dueDate) : card.dueDate) : addDays(cardStartDate, 7);
+  // Use normalizeForDisplay to ensure dates are properly handled
+  const cardStartDate = normalizeForDisplay(card.startDate);
+  const cardEndDate = normalizeForDisplay(card.dueDate || addDays(cardStartDate, 7));
+
+  console.log(`[timelineUtils.ts] getCardPosition - Card: "${card.title}"`);
+  console.log(`[timelineUtils.ts] getCardPosition - Card Start: ${cardStartDate?.toISOString().split('T')[0]}, End: ${cardEndDate?.toISOString().split('T')[0]}`);
+  console.log(`[timelineUtils.ts] getCardPosition - Date Range: [${dateRange.map(d => d.toISOString().split('T')[0]).join(', ')}]`);
 
   // Validate dates - be more permissive
   if (isNaN(cardStartDate.getTime())) {

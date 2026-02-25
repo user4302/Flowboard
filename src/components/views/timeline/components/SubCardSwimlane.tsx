@@ -1,6 +1,5 @@
 import { TimelineCard } from './TimelineCard';
 import { getCardColor } from '../utils/timelineUtils';
-import { useHiddenCards } from '../hooks/useHiddenCards';
 import { MiniCardTooltip } from './MiniCardTooltip';
 
 /**
@@ -11,7 +10,7 @@ import { MiniCardTooltip } from './MiniCardTooltip';
  * and the main card in the timeline area.
  * 
  * Features:
- * - Displays hidden cards as mini indicators on left/right sides
+ * - Displays hidden cards as mini indicators on left/right sides (only for first card)
  * - Renders the main card with proper positioning
  * - Handles click interactions for all cards
  * - Responsive layout with fixed side panels
@@ -23,7 +22,8 @@ import { MiniCardTooltip } from './MiniCardTooltip';
  * @param getCardPosition - Function to calculate card positioning
  * @param getCardColor - Function to get card color from labels
  * @param calculateTimelineHeight - Function to calculate timeline height
- * @param allListCards - All cards from the same list for proper hidden cards calculation
+ * @param hiddenCardsBefore - Array of cards hidden before the date range (only for first card)
+ * @param hiddenCardsAfter - Array of cards hidden after the date range (only for first card)
  */
 interface SubCardSwimlaneProps {
   /** The main card to display in the timeline */
@@ -40,9 +40,9 @@ interface SubCardSwimlaneProps {
   getCardColor: (card: any) => string;
   /** Function to calculate timeline height */
   calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
-  /** Array of cards hidden before the date range */
+  /** Array of cards hidden before the date range (only for first card) */
   hiddenCardsBefore: any[];
-  /** Array of cards hidden after the date range */
+  /** Array of cards hidden after the date range (only for first card) */
   hiddenCardsAfter: any[];
 }
 
@@ -51,7 +51,7 @@ interface SubCardSwimlaneProps {
  * 
  * Renders a single card swimlane with hidden cards indicators on both sides.
  * This is used within parent swimlanes to display individual cards with
- * their contextual hidden cards.
+ * their contextual hidden cards (only for the first card in each list).
  */
 export function SubCardSwimlane({
   card,

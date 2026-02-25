@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Search, Menu, Sun, Moon, Users, Plus, Download, Upload, UserPlus, MoreHorizontal, Menu as MenuIcon, Share2, Settings } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Search, Menu, Sun, Moon, Users, Plus, Download, Upload, UserPlus, MoreHorizontal, Menu as MenuIcon, Share2, Settings, X, Calendar } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
+import { fromUTCString } from '@/lib/dateUtils';
 import { useSharingStore } from '@/store/sharingStore';
 import { Button, Input } from '@/components/ui';
 import { VIEWS } from '@/lib/constants';
@@ -187,10 +188,38 @@ export function Header() {
                 const card = useBoardStore.getState().createCard(newBoard.id, list.id, cardData.title, cardIndex);
 
                 // Update card with additional data
+                console.log('Importing card dates:', {
+                  startDate: cardData.startDate,
+                  startDateType: typeof cardData.startDate,
+                  dueDate: cardData.dueDate,
+                  dueDateType: typeof cardData.dueDate
+                });
+
+                // Validate dates before importing
+                let startDate: Date | undefined = cardData.startDate;
+                let dueDate: Date | undefined = cardData.dueDate;
+
+                // Convert string dates to Date objects using fromUTCString
+                if (typeof cardData.startDate === 'string') {
+                  startDate = fromUTCString(cardData.startDate);
+                  if (isNaN(startDate.getTime())) {
+                    console.warn('Invalid start date format:', cardData.startDate);
+                    startDate = undefined;
+                  }
+                }
+
+                if (typeof cardData.dueDate === 'string') {
+                  dueDate = fromUTCString(cardData.dueDate);
+                  if (isNaN(dueDate.getTime())) {
+                    console.warn('Invalid due date format:', cardData.dueDate);
+                    dueDate = undefined;
+                  }
+                }
+
                 useBoardStore.getState().updateCard(newBoard.id, card.id, {
                   description: cardData.description,
-                  startDate: cardData.startDate ? new Date(cardData.startDate) : undefined,
-                  dueDate: cardData.dueDate ? new Date(cardData.dueDate) : undefined,
+                  startDate,
+                  dueDate,
                 });
 
                 // Add labels to the card

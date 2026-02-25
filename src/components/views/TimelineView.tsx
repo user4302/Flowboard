@@ -18,8 +18,9 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { isSameDay, isSameWeek, isSameMonth, addDays, startOfDay } from 'date-fns';
+import { isSameDay, isSameWeek, isSameMonth, startOfDay, addDays } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
+import { cn } from '@/lib/utils';
 import { TimelineHeader } from './timeline/components/TimelineHeader';
 import { TimelineGrid } from './timeline/components/TimelineGrid';
 import { SubCardSwimlane } from './timeline/components/SubCardSwimlane';
@@ -125,11 +126,11 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       const hasDates = card.startDate || card.dueDate;
       if (!hasDates) return false;
 
-      // Ensure dates are Date objects (handle string dates from localStorage)
-      const cardStartDate = card.startDate ? (typeof card.startDate === 'string' ? new Date(card.startDate) : card.startDate) : new Date();
-      const cardEndDate = card.dueDate ? (typeof card.dueDate === 'string' ? new Date(card.dueDate) : card.dueDate) : addDays(cardStartDate, 7);
+      // Dates are already Date objects from localStorage conversion
+      const cardStartDate = card.startDate || new Date();
+      const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
 
-      // Validate dates
+      // Validate dates - be more permissive
       if (isNaN(cardStartDate.getTime()) || isNaN(cardEndDate.getTime())) {
         console.warn('Invalid card dates in filtering:', card.startDate, card.dueDate);
         return false;
@@ -253,8 +254,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     {!isCollapsed && (
                       <div className="bg-white dark:bg-slate-900">
                         {listCards.length > 0 ? (
-                          // Calculate hidden cards once for the entire list
                           (() => {
+                            // Calculate hidden cards once for the entire list
                             const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(list.cards, dateRange);
                             return listCards.map((card, cardIndex) => (
                               <SubCardSwimlane
@@ -266,8 +267,9 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                 getCardPosition={getCardPositionWrapper}
                                 getCardColor={getCardColor}
                                 calculateTimelineHeight={calculateTimelineHeight}
-                                hiddenCardsBefore={hiddenCardsBefore}
-                                hiddenCardsAfter={hiddenCardsAfter}
+                                // Only pass hidden cards to the first card to avoid duplicates
+                                hiddenCardsBefore={cardIndex === 0 ? hiddenCardsBefore : []}
+                                hiddenCardsAfter={cardIndex === 0 ? hiddenCardsAfter : []}
                               />
                             ));
                           })()
