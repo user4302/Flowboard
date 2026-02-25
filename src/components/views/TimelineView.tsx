@@ -26,9 +26,9 @@ import { Grid } from './timeline/components/Grid';
 import { SubSwimlane } from './timeline/components/SubSwimlane';
 import { QueueTooltip } from './timeline/components/QueueTooltip';
 import { useDateRange } from './timeline/hooks/useDateRange';
-import { useTimelineKeyboardShortcuts } from './timeline/hooks/useTimelineKeyboardShortcuts';
+import { useShortcuts } from './timeline/hooks/useShortcuts';
 import { useHiddenCards } from './timeline/hooks/useHiddenCards';
-import { calculateTimelineHeight, getCardPosition, getCardColor } from './timeline/utils/timelineUtils';
+import { calculateTimelineHeight, getCardPosition, getCardColor } from './timeline/utils/utils';
 
 /**
  * Props interface for TimelineView component
@@ -185,7 +185,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   };
 
   // Initialize keyboard shortcuts for timeline navigation
-  useTimelineKeyboardShortcuts(handleZoomChange, handleDateChange, zoomLevel);
+  useShortcuts(handleZoomChange, handleDateChange, zoomLevel);
 
   return (
     <div className="flex h-full flex-col">

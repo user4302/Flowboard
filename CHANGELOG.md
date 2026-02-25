@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved MemberManagement component code organization and readability
 - Enhanced timeline hidden cards with interactive tooltips and consistent logic
 - Optimized timeline hidden cards calculation performance for large datasets
-- Created useTimelinePositioning hook with full card positioning logic
+- Created usePositioning hook with full card positioning logic
 - Created TimelineCard component for individual card rendering
 - Created TimelineHeader component with zoom controls and navigation
 - Created TimelineGrid component for date headers and grid lines
@@ -67,6 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added comprehensive debugging and fallback mechanisms for timeline state management
 - Fixed UTC date conversion in board store storage middleware for proper persistence
 - Optimized hidden cards calculation in timeline view to avoid duplicate processing
+- Refactored timeline component naming for better clarity and consistency
+- Renamed timeline hooks and utils for cleaner architecture
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

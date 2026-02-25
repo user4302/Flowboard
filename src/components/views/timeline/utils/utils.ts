@@ -64,12 +64,12 @@ export const calculateTimelineHeight = (cards: any[], dateRange: Date[]) => {
 // Calculate card position and width on timeline
 export const getCardPosition = (card: any, allCards: any[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => {
   // Use normalizeForDisplay to ensure dates are properly handled
-  const cardStartDate = normalizeForDisplay(card.startDate);
-  const cardEndDate = normalizeForDisplay(card.dueDate || addDays(cardStartDate, 7));
+  const cardStartDate = normalizeForDisplay(card.startDate) || new Date();
+  const cardEndDate = normalizeForDisplay(card.dueDate) || addDays(cardStartDate, 7);
 
-  console.log(`[timelineUtils.ts] getCardPosition - Card: "${card.title}"`);
-  console.log(`[timelineUtils.ts] getCardPosition - Card Start: ${cardStartDate?.toISOString().split('T')[0]}, End: ${cardEndDate?.toISOString().split('T')[0]}`);
-  console.log(`[timelineUtils.ts] getCardPosition - Date Range: [${dateRange.map(d => d.toISOString().split('T')[0]).join(', ')}]`);
+  console.log(`[utils.ts] getCardPosition - Card: "${card.title}"`);
+  console.log(`[utils.ts] getCardPosition - Card Start: ${cardStartDate?.toISOString().split('T')[0]}, End: ${cardEndDate?.toISOString().split('T')[0]}`);
+  console.log(`[utils.ts] getCardPosition - Date Range: [${dateRange.map(d => d.toISOString().split('T')[0]).join(', ')}]`);
 
   // Validate dates - be more permissive
   if (isNaN(cardStartDate.getTime())) {
@@ -174,14 +174,33 @@ export const getCardPosition = (card: any, allCards: any[], cardIndex: number, d
     // If card starts before but ends within range, start at left edge and span to end position
     else if (cardStartDate < rangeStart && endIndex >= 0) {
       left = 0; // Left edge
-      width = ((endIndex + 1) / dateRange.length) * 100; // Span from start to end position
+      // Calculate width based on actual card duration, not just visible portion
+      const cardDuration = Math.ceil((cardEndDate.getTime() - cardStartDate.getTime()) / (1000 * 60 * 60 * 24));
+      const dayWidth = 100 / dateRange.length; // Width of one day in percentage
+      width = Math.min(cardDuration * dayWidth, ((endIndex + 1) / dateRange.length) * 100);
       console.log('Using condition 3: starts before, ends within range');
+      console.log('Card duration (days):', cardDuration, 'Calculated width:', width);
     }
     // If card starts within range but ends after, start at start position and span to right edge
     else if (cardEndDate > rangeEnd && startIndex >= 0) {
       left = (startIndex / dateRange.length) * 100; // Normal positioning
-      width = ((dateRange.length - startIndex) / dateRange.length) * 100; // Span to right edge
-      console.log('Using condition 4: starts within, ends after range');
+      // If endIndex is -1 (not found), calculate width based on days from start to range end
+      if (endIndex === -1) {
+        // Card ends beyond visible range, span to end of range
+        const daysSpanned = dateRange.length - startIndex;
+        left = (startIndex / dateRange.length) * 100;
+        width = (daysSpanned / dateRange.length) * 100;
+        console.log('Using condition 4: starts within, ends after range');
+        console.log('Days spanned:', daysSpanned, 'Start index:', startIndex, 'End index:', endIndex, 'Date range length:', dateRange.length);
+        console.log('Calculated width:', width, '%');
+      } else {
+        const daysSpanned = endIndex - startIndex + 1;
+        left = (startIndex / dateRange.length) * 100;
+        width = (daysSpanned / dateRange.length) * 100;
+        console.log('Using condition 4: starts within, ends after range');
+        console.log('Days spanned:', daysSpanned, 'Start index:', startIndex, 'End index:', endIndex, 'Date range length:', dateRange.length);
+        console.log('Calculated width:', width, '%');
+      }
     }
     // If card spans the entire visible range (starts before, ends after)
     else if (cardStartDate < rangeStart && cardEndDate > rangeEnd) {
@@ -190,9 +209,19 @@ export const getCardPosition = (card: any, allCards: any[], cardIndex: number, d
       console.log('Using condition 5: spans entire range');
     } else {
       // Normal positioning for cards within range
+      let daysSpanned;
+      if (endIndex === -1) {
+        // Card ends beyond visible range, span to end of range
+        daysSpanned = dateRange.length - startIndex;
+      } else {
+        daysSpanned = endIndex - startIndex + 1;
+      }
+
       left = (startIndex / dateRange.length) * 100;
-      width = ((endIndex - startIndex + 1) / dateRange.length) * 100;
+      width = (daysSpanned / dateRange.length) * 100;
       console.log('Using fallback: normal positioning');
+      console.log('Days spanned:', daysSpanned, 'Start index:', startIndex, 'End index:', endIndex, 'Date range length:', dateRange.length);
+      console.log('Calculated width:', width, '%');
     }
   }
 

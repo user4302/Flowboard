@@ -21,7 +21,7 @@ interface CardPosition {
 }
 
 /**
- * useTimelinePositioning hook - Calculates card positioning in timeline view
+ * usePositioning hook - Calculates card positioning in timeline view
  * Handles horizontal positioning, width calculation, and vertical stacking
  * Prevents card overlaps and manages cards outside visible range
  * 
@@ -32,7 +32,7 @@ interface CardPosition {
  * @param zoomLevel - Current zoom level
  * @returns Card position with left, width, and top values
  */
-export function useTimelinePositioning(
+export function usePositioning(
   card: any,
   allCards: any[],
   cardIndex: number,

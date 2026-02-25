@@ -8,7 +8,7 @@ import { addDays, addWeeks, addMonths, addYears } from 'date-fns';
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 
 /**
- * useTimelineKeyboardShortcuts hook - Handles keyboard shortcuts for timeline navigation
+ * useShortcuts hook - Handles keyboard shortcuts for timeline navigation
  * Provides number keys for zoom levels and arrow keys for date navigation
  * Automatically cleans up event listeners on unmount
  * 
@@ -16,7 +16,7 @@ type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
  * @param setCurrentDate - Function to change current date
  * @param zoomLevel - Current zoom level
  */
-export function useTimelineKeyboardShortcuts(
+export function useShortcuts(
   setZoomLevel: (level: ZoomLevel) => void,
   setCurrentDate: (date: Date | ((prev: Date) => Date)) => void,
   zoomLevel: ZoomLevel
