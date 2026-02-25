@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { formatDate } from '@/lib/utils';
 
 /**
- * HiddenCardsIndicator component props interface
+ * Queue component props interface
  * Defines the props for displaying hidden cards indicators in timeline view
  */
-interface HiddenCardsIndicatorProps {
+interface QueueProps {
   // ID of the list containing hidden cards
   listId: string;
   // Array of cards hidden before the current date range
@@ -17,16 +17,16 @@ interface HiddenCardsIndicatorProps {
 }
 
 /**
- * HiddenCardsIndicator component - Displays indicators for cards outside the current timeline view
+ * Queue component - Displays indicators for cards outside the current timeline view
  * Shows expandable lists of hidden cards on both sides of the timeline
  * Provides hover interactions to reveal card details
  */
-export function HiddenCardsIndicator({
+export function Queue({
   listId,
   hiddenCardsBefore,
   hiddenCardsAfter,
   onOpenCardModal
-}: HiddenCardsIndicatorProps) {
+}: QueueProps) {
   // Local state for tracking which hidden group is hovered
   const [hoveredHiddenGroup, setHoveredHiddenGroup] = useState<string | null>(null);
 

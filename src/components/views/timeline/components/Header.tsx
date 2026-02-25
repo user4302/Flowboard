@@ -8,10 +8,10 @@ import { cn } from '@/lib/utils';
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 
 /**
- * TimelineHeader component props interface
+ * Header component props interface
  * Defines the props for the timeline header controls
  */
-interface TimelineHeaderProps {
+interface HeaderProps {
   // Current date being displayed in timeline
   currentDate: Date;
   // Current zoom level
@@ -23,16 +23,16 @@ interface TimelineHeaderProps {
 }
 
 /**
- * TimelineHeader component - Header controls for timeline view
+ * Header component - Header controls for timeline view
  * Provides navigation, date display, and zoom controls
  * Supports keyboard shortcuts for quick zoom level changes
  */
-export function TimelineHeader({
+export function Header({
   currentDate,
   zoomLevel,
   onDateChange,
   onZoomChange
-}: TimelineHeaderProps) {
+}: HeaderProps) {
   /**
    * Handles date navigation based on current zoom level
    * @param direction - Navigation direction ('prev' or 'next')

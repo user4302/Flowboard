@@ -9,10 +9,10 @@ import { Calendar } from 'lucide-react';
 type ZoomLevel = 'day' | 'week' | '2weeks' | 'month' | 'year';
 
 /**
- * TimelineGrid component props interface
+ * Grid component props interface
  * Defines the props for rendering the timeline grid
  */
-interface TimelineGridProps {
+interface GridProps {
   // Array of dates to display in the timeline
   dateRange: Date[];
   // Current zoom level for the timeline
@@ -20,11 +20,11 @@ interface TimelineGridProps {
 }
 
 /**
- * TimelineGrid component - Renders the grid structure for timeline view
+ * Grid component - Renders the grid structure for timeline view
  * Displays date headers and grid lines based on zoom level
  * Provides visual structure for timeline navigation
  */
-export function TimelineGrid({ dateRange, zoomLevel }: TimelineGridProps) {
+export function Grid({ dateRange, zoomLevel }: GridProps) {
   /**
    * Returns the display label for the current zoom level
    * @returns Human-readable zoom level name

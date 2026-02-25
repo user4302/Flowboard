@@ -1,12 +1,12 @@
-import { HiddenCardsIndicator } from './HiddenCardsIndicator';
-import { TimelineCard } from './TimelineCard';
+import { Queue } from './Queue';
+import { Swimmer } from './Swimmer';
 import { useHiddenCards } from '../hooks/useHiddenCards';
 
 /**
- * TimelineSwimlane component props interface
+ * Swimlane component props interface
  * Defines the props for rendering a single timeline swimlane
  */
-interface TimelineSwimlaneProps {
+interface SwimlaneProps {
   // List object containing list information
   list: any;
   // Array of cards belonging to this list
@@ -26,11 +26,11 @@ interface TimelineSwimlaneProps {
 }
 
 /**
- * TimelineSwimlane component - Renders a single swimlane in timeline view
+ * Swimlane component - Renders a single swimlane in timeline view
  * Displays list name, cards, and hidden cards indicators
  * Manages card positioning and visibility within the timeline
  */
-export function TimelineSwimlane({
+export function Swimlane({
   list,
   listCards,
   dateRange,
@@ -39,7 +39,7 @@ export function TimelineSwimlane({
   getCardPosition,
   getCardColor,
   calculateTimelineHeight
-}: TimelineSwimlaneProps) {
+}: SwimlaneProps) {
   // Use the useHiddenCards hook to calculate which cards are hidden
   // before and after the current date range for this specific list
   const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(listCards, dateRange);
@@ -64,7 +64,7 @@ export function TimelineSwimlane({
         }}
       >
         {/* Hidden cards indicator for this swimlane */}
-        <HiddenCardsIndicator
+        <Queue
           listId={list.id}
           hiddenCardsBefore={hiddenCardsBefore}
           hiddenCardsAfter={hiddenCardsAfter}
@@ -73,7 +73,7 @@ export function TimelineSwimlane({
 
         {/* Render all cards in this swimlane */}
         {listCards.map((card, cardIndex) => (
-          <TimelineCard
+          <Swimmer
             key={card.id}
             card={card}
             allCards={listCards}

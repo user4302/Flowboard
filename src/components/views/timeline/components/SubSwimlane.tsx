@@ -1,9 +1,9 @@
-import { TimelineCard } from './TimelineCard';
+import { Swimmer } from './Swimmer';
 import { getCardColor } from '../utils/timelineUtils';
-import { MiniCardTooltip } from './MiniCardTooltip';
+import { QueueTooltip } from './QueueTooltip';
 
 /**
- * SubCardSwimlane Component
+ * SubSwimlane Component
  * 
  * A sub-swimlane component that displays a single card within a parent swimlane.
  * This component handles the rendering of hidden cards on both sides (before/after)
@@ -25,7 +25,7 @@ import { MiniCardTooltip } from './MiniCardTooltip';
  * @param hiddenCardsBefore - Array of cards hidden before the date range (only for first card)
  * @param hiddenCardsAfter - Array of cards hidden after the date range (only for first card)
  */
-interface SubCardSwimlaneProps {
+interface SubSwimlaneProps {
   /** The main card to display in the timeline */
   card: any;
   /** Current visible date range */
@@ -44,16 +44,20 @@ interface SubCardSwimlaneProps {
   hiddenCardsBefore: any[];
   /** Array of cards hidden after the date range (only for first card) */
   hiddenCardsAfter: any[];
+  /** All cards in the list for proper positioning */
+  allCards: any[];
+  /** Actual index of this card among all cards */
+  cardIndex: number;
 }
 
 /**
- * SubCardSwimlane Component
+ * SubSwimlane Component
  * 
  * Renders a single card swimlane with hidden cards indicators on both sides.
  * This is used within parent swimlanes to display individual cards with
  * their contextual hidden cards (only for the first card in each list).
  */
-export function SubCardSwimlane({
+export function SubSwimlane({
   card,
   dateRange,
   zoomLevel,
@@ -62,8 +66,10 @@ export function SubCardSwimlane({
   getCardColor,
   calculateTimelineHeight,
   hiddenCardsBefore,
-  hiddenCardsAfter
-}: SubCardSwimlaneProps) {
+  hiddenCardsAfter,
+  allCards,
+  cardIndex
+}: SubSwimlaneProps) {
   return (
     <div className="flex">
       {/* Left-side space for past hidden cards */}
@@ -80,7 +86,7 @@ export function SubCardSwimlane({
                 title=""  // Remove browser tooltip
               />
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
-                <MiniCardTooltip card={hiddenCard} position="before" />
+                <QueueTooltip card={hiddenCard} position="before" />
               </div>
             </div>
           ))}
@@ -94,10 +100,10 @@ export function SubCardSwimlane({
           minHeight: `${calculateTimelineHeight([card], dateRange)}px`
         }}
       >
-        <TimelineCard
+        <Swimmer
           card={card}
-          allCards={[card]}
-          cardIndex={0}
+          allCards={allCards}
+          cardIndex={cardIndex}
           dateRange={dateRange}
           zoomLevel={zoomLevel}
           onOpenCardModal={onOpenCardModal}
@@ -120,7 +126,7 @@ export function SubCardSwimlane({
                 title=""  // Remove browser tooltip
               />
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
-                <MiniCardTooltip card={hiddenCard} position="after" />
+                <QueueTooltip card={hiddenCard} position="after" />
               </div>
             </div>
           ))}

@@ -21,10 +21,10 @@ import { useState, useMemo, useEffect } from 'react';
 import { isSameDay, isSameWeek, isSameMonth, startOfDay, addDays } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
-import { TimelineHeader } from './timeline/components/TimelineHeader';
-import { TimelineGrid } from './timeline/components/TimelineGrid';
-import { SubCardSwimlane } from './timeline/components/SubCardSwimlane';
-import { MiniCardTooltip } from './timeline/components/MiniCardTooltip';
+import { Header } from './timeline/components/Header';
+import { Grid } from './timeline/components/Grid';
+import { SubSwimlane } from './timeline/components/SubSwimlane';
+import { QueueTooltip } from './timeline/components/QueueTooltip';
 import { useDateRange } from './timeline/hooks/useDateRange';
 import { useTimelineKeyboardShortcuts } from './timeline/hooks/useTimelineKeyboardShortcuts';
 import { useHiddenCards } from './timeline/hooks/useHiddenCards';
@@ -190,7 +190,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Header with zoom controls */}
-      <TimelineHeader
+      <Header
         currentDate={currentDate}
         zoomLevel={zoomLevel}
         onDateChange={handleDateChange}
@@ -202,7 +202,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
         <div className="h-full overflow-auto p-4 absolute inset-0">
           <div className="min-w-[1200px]">
             {/* Date headers and grid lines */}
-            <TimelineGrid dateRange={dateRange} zoomLevel={zoomLevel} />
+            <Grid dateRange={dateRange} zoomLevel={zoomLevel} />
 
             {/* Lists and cards container */}
             <div className="relative">
@@ -265,7 +265,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                             // Calculate hidden cards only from truly hidden cards
                             const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(trulyHiddenCards, dateRange);
                             return listCards.map((card, cardIndex) => (
-                              <SubCardSwimlane
+                              <SubSwimlane
                                 key={card.id}
                                 card={card}
                                 dateRange={dateRange}
@@ -277,6 +277,9 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                 // Only pass hidden cards to the first card to avoid duplicates
                                 hiddenCardsBefore={cardIndex === 0 ? hiddenCardsBefore : []}
                                 hiddenCardsAfter={cardIndex === 0 ? hiddenCardsAfter : []}
+                                // Pass all cards and correct index for proper positioning
+                                allCards={allListCards}
+                                cardIndex={allListCards.findIndex(c => c.id === card.id)}
                               />
                             ));
                           })()
@@ -428,7 +431,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
             transform: 'translateX(0)'
           }}
         >
-          <MiniCardTooltip card={hoveredCard.card} position={hoveredCard.position} />
+          <QueueTooltip card={hoveredCard.card} position={hoveredCard.position} />
         </div>
       )}
     </div >

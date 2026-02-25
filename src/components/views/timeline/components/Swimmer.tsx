@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { addDays } from 'date-fns';
 
 /**
- * TimelineCard Component
+ * Swimmer Component
  * 
  * A single card component that renders within the timeline.
  * This component handles the visual representation of a card
@@ -24,7 +24,7 @@ import { addDays } from 'date-fns';
  * @param getCardPosition - Function to calculate card positioning
  * @param getCardColor - Function to get card color from labels
  */
-interface TimelineCardProps {
+interface SwimmerProps {
   /** The card data to render */
   card: any;
   /** Array of all cards for positioning calculations */
@@ -44,12 +44,12 @@ interface TimelineCardProps {
 }
 
 /**
- * TimelineCard Component
+ * Swimmer Component
  * 
  * Renders an individual card within the timeline with proper positioning
  * and styling based on its properties and the current zoom level.
  */
-export function TimelineCard({
+export function Swimmer({
   card,
   allCards,
   cardIndex,
@@ -58,7 +58,7 @@ export function TimelineCard({
   onOpenCardModal,
   getCardPosition,
   getCardColor
-}: TimelineCardProps) {
+}: SwimmerProps) {
   // Only render cards that are at least partially visible in the timeline
   // Dates are already Date objects from localStorage conversion
   const cardStart = card.startDate || new Date();
@@ -82,7 +82,7 @@ export function TimelineCard({
 
   return (
     <div
-      key={card.id}
+      key={`${card.id}-${position.width}-${position.left}`}
       className={cn(
         'absolute h-8 rounded-md px-2 py-1 text-xs font-medium text-white shadow-sm cursor-pointer transition-all hover:shadow-md hover:z-10',
         `bg-${color}-500`

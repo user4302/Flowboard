@@ -1,5 +1,5 @@
 /**
- * MiniCardTooltip Component
+ * QueueTooltip Component
  * 
  * A tooltip component that displays detailed information about a hidden card
  * when hovering over mini card indicators in the timeline.
@@ -14,7 +14,7 @@
  * @param card - The card data to display in tooltip
  * @param position - Whether the card is before or after current view
  */
-interface MiniCardTooltipProps {
+interface QueueTooltipProps {
   /** The card data to display in tooltip */
   card: any;
   /** Position relative to current view (before/after) */
@@ -22,12 +22,12 @@ interface MiniCardTooltipProps {
 }
 
 /**
- * MiniCardTooltip Component
+ * QueueTooltip Component
  * 
  * Renders a styled tooltip showing card details when hovering
  * over mini card indicators in the timeline.
  */
-export function MiniCardTooltip({ card, position }: MiniCardTooltipProps) {
+export function QueueTooltip({ card, position }: QueueTooltipProps) {
   // Helper function to format dates consistently
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
