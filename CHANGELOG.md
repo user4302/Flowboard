@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed timeline data disappearing after date navigation with zoom level validation
 - Added comprehensive debugging and fallback mechanisms for timeline state management
 - Fixed UTC date conversion in board store storage middleware for proper persistence
+- Optimized hidden cards calculation in timeline view to avoid duplicate processing
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

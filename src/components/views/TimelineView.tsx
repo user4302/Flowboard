@@ -255,8 +255,15 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                       <div className="bg-white dark:bg-slate-900">
                         {listCards.length > 0 ? (
                           (() => {
-                            // Calculate hidden cards once for the entire list
-                            const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(list.cards, dateRange);
+                            // Get all cards in this list
+                            const allListCards = list.cards;
+                            // Get IDs of cards that are already visible in timeline
+                            const visibleCardIds = new Set(listCards.map(card => card.id));
+                            // Filter out visible cards to get only truly hidden cards
+                            const trulyHiddenCards = allListCards.filter(card => !visibleCardIds.has(card.id));
+
+                            // Calculate hidden cards only from truly hidden cards
+                            const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(trulyHiddenCards, dateRange);
                             return listCards.map((card, cardIndex) => (
                               <SubCardSwimlane
                                 key={card.id}
