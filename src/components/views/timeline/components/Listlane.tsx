@@ -1,12 +1,12 @@
 import { Queue } from './Queue';
-import { Swimmer } from './Swimmer';
+import { Task } from './Task';
 import { useHiddenCards } from '../hooks/useHiddenCards';
 
 /**
- * Swimlane component props interface
- * Defines the props for rendering a single timeline swimlane
+ * Tasklane component props interface
+ * Defines the props for rendering a single timeline tasklane
  */
-interface SwimlaneProps {
+interface ListLaneProps {
   // List object containing list information
   list: any;
   // Array of cards belonging to this list
@@ -16,33 +16,33 @@ interface SwimlaneProps {
   // Current zoom level
   zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
   // Function to open card modal for editing
-  onOpenCardModal: (cardId: string) => void;
+  onOpenTaskModal: (cardId: string) => void;
   // Function to calculate card position in timeline
-  getCardPosition: (card: any, allCards: any[], cardIndex: number) => any;
+  getTaskPosition: (card: any, allCards: any[], cardIndex: number) => any;
   // Function to get card color based on properties
-  getCardColor: (card: any) => string;
+  getTaskColor: (card: any) => string;
   // Function to calculate timeline height based on cards and date range
   calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
 }
 
 /**
- * Swimlane component - Renders a single swimlane in timeline view
+ * Tasklane component - Renders a single tasklane in timeline view
  * Displays list name, cards, and hidden cards indicators
  * Manages card positioning and visibility within the timeline
  */
-export function Swimlane({
+export function Tasklane({
   list,
   listCards,
   dateRange,
   zoomLevel,
-  onOpenCardModal,
-  getCardPosition,
-  getCardColor,
+  onOpenTaskModal,
+  getTaskPosition,
+  getTaskColor,
   calculateTimelineHeight
-}: SwimlaneProps) {
+}: ListLaneProps) {
   // Use the useHiddenCards hook to calculate which cards are hidden
   // before and after the current date range for this specific list
-  const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(listCards, dateRange);
+  const { hiddenTasksBefore, hiddenTasksAfter } = useHiddenCards(listCards, dateRange);
 
   return (
     <div key={list.id} className="flex border-b border-slate-100 dark:border-slate-800">
@@ -63,26 +63,26 @@ export function Swimlane({
           minHeight: `${calculateTimelineHeight(listCards, dateRange)}px`
         }}
       >
-        {/* Hidden cards indicator for this swimlane */}
+        {/* Hidden cards indicator for this tasklane */}
         <Queue
           listId={list.id}
-          hiddenCardsBefore={hiddenCardsBefore}
-          hiddenCardsAfter={hiddenCardsAfter}
-          onOpenCardModal={onOpenCardModal}
+          hiddenTasksBefore={hiddenTasksBefore}
+          hiddenTasksAfter={hiddenTasksAfter}
+          onOpenTaskModal={onOpenTaskModal}
         />
 
-        {/* Render all cards in this swimlane */}
+        {/* Render all cards in this tasklane */}
         {listCards.map((card, cardIndex) => (
-          <Swimmer
+          <Task
             key={card.id}
             card={card}
             allCards={listCards}
             cardIndex={cardIndex}
             dateRange={dateRange}
             zoomLevel={zoomLevel}
-            onOpenCardModal={onOpenCardModal}
-            getCardPosition={getCardPosition}
-            getCardColor={getCardColor}
+            onOpenTaskModal={onOpenTaskModal}
+            getTaskPosition={getTaskPosition}
+            getTaskColor={getTaskColor}
           />
         ))}
       </div>

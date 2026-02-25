@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { addDays } from 'date-fns';
 
 /**
- * Swimmer Component
+ * Task Component
  * 
  * A single card component that renders within the timeline.
  * This component handles the visual representation of a card
@@ -20,9 +20,9 @@ import { addDays } from 'date-fns';
  * @param cardIndex - Index of this card in the array
  * @param dateRange - Current visible date range
  * @param zoomLevel - Current timeline zoom level
- * @param onOpenCardModal - Function to open card modal
- * @param getCardPosition - Function to calculate card positioning
- * @param getCardColor - Function to get card color from labels
+ * @param onOpenTaskModal - Function to open card modal
+ * @param getTaskPosition - Function to calculate card positioning
+ * @param getTaskColor - Function to get card color from labels
  */
 interface SwimmerProps {
   /** The card data to render */
@@ -36,28 +36,28 @@ interface SwimmerProps {
   /** Current timeline zoom level */
   zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
   /** Function to open card modal */
-  onOpenCardModal: (cardId: string) => void;
+  onOpenTaskModal: (cardId: string) => void;
   /** Function to calculate card positioning */
-  getCardPosition: (card: any, allCards: any[], cardIndex: number) => any;
+  getTaskPosition: (card: any, allCards: any[], cardIndex: number) => any;
   /** Function to get card color from labels */
-  getCardColor: (card: any) => string;
+  getTaskColor: (card: any) => string;
 }
 
 /**
- * Swimmer Component
+ * Task Component
  * 
  * Renders an individual card within the timeline with proper positioning
  * and styling based on its properties and the current zoom level.
  */
-export function Swimmer({
+export function Task({
   card,
   allCards,
   cardIndex,
   dateRange,
   zoomLevel,
-  onOpenCardModal,
-  getCardPosition,
-  getCardColor
+  onOpenTaskModal,
+  getTaskPosition,
+  getTaskColor
 }: SwimmerProps) {
   // Only render cards that are at least partially visible in the timeline
   // Dates are already Date objects from localStorage conversion
@@ -73,12 +73,13 @@ export function Swimmer({
   const rangeEndDay = new Date(rangeEnd.getFullYear(), rangeEnd.getMonth(), rangeEnd.getDate());
 
   // Skip cards that are completely outside the visible range
-  if (cardEndDay < rangeStartDay || cardStartDay > rangeEndDay) {
-    return null;
-  }
+  // REMOVED: Let TimelineView handle filtering to avoid mismatches
+  // if (cardEndDay < rangeStartDay || cardStartDay > rangeEndDay) {
+  //   return null;
+  // }
 
-  const position = getCardPosition(card, allCards, cardIndex);
-  const color = getCardColor(card);
+  const position = getTaskPosition(card, allCards, cardIndex);
+  const color = getTaskColor(card);
 
   return (
     <div
@@ -89,7 +90,7 @@ export function Swimmer({
       )}
       style={position}
       title={card.title}
-      onClick={() => onOpenCardModal(card.id)}
+      onClick={() => onOpenTaskModal(card.id)}
     >
       <div className="truncate">{card.title}</div>
     </div>

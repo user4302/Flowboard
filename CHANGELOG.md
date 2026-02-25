@@ -69,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optimized hidden cards calculation in timeline view to avoid duplicate processing
 - Refactored timeline component naming for better clarity and consistency
 - Renamed timeline hooks and utils for cleaner architecture
+- Refactored timeline components from card to task terminology
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

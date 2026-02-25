@@ -107,7 +107,7 @@ export function Grid({ dateRange, zoomLevel }: GridProps) {
         </div>
         {/* Right-side empty space without horizontal border */}
         <div className="w-48 flex-shrink-0 border-l border-slate-200 dark:border-slate-700">
-          {/* Empty space for consistency with swimlanes */}
+          {/* Empty space for consistency with listlanes */}
         </div>
       </div>
 

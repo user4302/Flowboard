@@ -62,14 +62,14 @@ export const calculateTimelineHeight = (cards: any[], dateRange: Date[]) => {
 };
 
 // Calculate card position and width on timeline
-export const getCardPosition = (card: any, allCards: any[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => {
+export const getTaskPosition = (card: any, allCards: any[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => {
   // Use normalizeForDisplay to ensure dates are properly handled
   const cardStartDate = normalizeForDisplay(card.startDate) || new Date();
   const cardEndDate = normalizeForDisplay(card.dueDate) || addDays(cardStartDate, 7);
 
-  console.log(`[utils.ts] getCardPosition - Card: "${card.title}"`);
-  console.log(`[utils.ts] getCardPosition - Card Start: ${cardStartDate?.toISOString().split('T')[0]}, End: ${cardEndDate?.toISOString().split('T')[0]}`);
-  console.log(`[utils.ts] getCardPosition - Date Range: [${dateRange.map(d => d.toISOString().split('T')[0]).join(', ')}]`);
+  console.log(`[utils.ts] getTaskPosition - Card: "${card.title}"`);
+  console.log(`[utils.ts] getTaskPosition - Card Start: ${cardStartDate?.toISOString().split('T')[0]}, End: ${cardEndDate?.toISOString().split('T')[0]}`);
+  console.log(`[utils.ts] getTaskPosition - Date Range: [${dateRange.map(d => d.toISOString().split('T')[0]).join(', ')}]`);
 
   // Validate dates - be more permissive
   if (isNaN(cardStartDate.getTime())) {
@@ -341,7 +341,7 @@ export const getCardPosition = (card: any, allCards: any[], cardIndex: number, d
 };
 
 // Get card color based on labels
-export const getCardColor = (card: any) => {
+export const getTaskColor = (card: any) => {
   if (card.labels.length > 0) {
     return card.labels[0].color.replace('bg-', '').replace('-500', '');
   }

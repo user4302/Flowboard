@@ -9,11 +9,11 @@ interface QueueProps {
   // ID of the list containing hidden cards
   listId: string;
   // Array of cards hidden before the current date range
-  hiddenCardsBefore: any[];
+  hiddenTasksBefore: any[];
   // Array of cards hidden after the current date range
-  hiddenCardsAfter: any[];
+  hiddenTasksAfter: any[];
   // Function to open card modal for editing
-  onOpenCardModal: (cardId: string) => void;
+  onOpenTaskModal: (cardId: string) => void;
 }
 
 /**
@@ -23,9 +23,9 @@ interface QueueProps {
  */
 export function Queue({
   listId,
-  hiddenCardsBefore,
-  hiddenCardsAfter,
-  onOpenCardModal
+  hiddenTasksBefore,
+  hiddenTasksAfter,
+  onOpenTaskModal
 }: QueueProps) {
   // Local state for tracking which hidden group is hovered
   const [hoveredHiddenGroup, setHoveredHiddenGroup] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export function Queue({
   return (
     <>
       {/* Left side indicator for cards hidden before current date range */}
-      {hiddenCardsBefore.length > 0 && (
+      {hiddenTasksBefore.length > 0 && (
         <div className="absolute top-2 left-2 z-20">
           <div
             className="relative"
@@ -41,7 +41,7 @@ export function Queue({
             onMouseLeave={() => setHoveredHiddenGroup(null)}
           >
             <div className="bg-indigo-600 text-white text-xs px-2 py-1 rounded-md cursor-pointer shadow-lg">
-              ←{hiddenCardsBefore.length} hidden
+              ←{hiddenTasksBefore.length} hidden
             </div>
 
             {/* Expandable hidden cards list for cards before current range */}
@@ -53,14 +53,14 @@ export function Queue({
               >
                 <div className="p-3 max-h-48 overflow-y-auto">
                   <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-2 text-sm">
-                    ← Before Current View ({hiddenCardsBefore.length})
+                    ← Before Current View ({hiddenTasksBefore.length})
                   </h4>
                   <div className="space-y-2">
-                    {hiddenCardsBefore.map(card => (
+                    {hiddenTasksBefore.map(card => (
                       <div
                         key={card.id}
                         className="p-2 bg-slate-50 dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600"
-                        onClick={() => onOpenCardModal(card.id)}
+                        onClick={() => onOpenTaskModal(card.id)}
                       >
                         <div className="font-medium text-slate-900 dark:text-slate-100">
                           {card.title}
@@ -84,7 +84,7 @@ export function Queue({
       )}
 
       {/* Right side indicator for cards hidden after current date range */}
-      {hiddenCardsAfter.length > 0 && (
+      {hiddenTasksAfter.length > 0 && (
         <div className="absolute top-2 right-2 z-20">
           <div
             className="relative"
@@ -92,7 +92,7 @@ export function Queue({
             onMouseLeave={() => setHoveredHiddenGroup(null)}
           >
             <div className="bg-indigo-600 text-white text-xs px-2 py-1 rounded-md cursor-pointer shadow-lg">
-              {hiddenCardsAfter.length} hidden→
+              {hiddenTasksAfter.length} hidden→
             </div>
 
             {/* Expandable hidden cards list for cards after current range */}
@@ -104,14 +104,14 @@ export function Queue({
               >
                 <div className="p-3 max-h-48 overflow-y-auto">
                   <h4 className="font-medium text-slate-900 dark:text-slate-100 mb-2 text-sm">
-                    After Current View → ({hiddenCardsAfter.length})
+                    After Current View → ({hiddenTasksAfter.length})
                   </h4>
                   <div className="space-y-2">
-                    {hiddenCardsAfter.map(card => (
+                    {hiddenTasksAfter.map(card => (
                       <div
                         key={card.id}
                         className="p-2 bg-slate-50 dark:bg-slate-700 rounded border border-slate-200 dark:border-slate-600 text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600"
-                        onClick={() => onOpenCardModal(card.id)}
+                        onClick={() => onOpenTaskModal(card.id)}
                       >
                         <div className="font-medium text-slate-900 dark:text-slate-100">
                           {card.title}

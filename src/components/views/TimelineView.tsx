@@ -17,18 +17,17 @@
 
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { isSameDay, isSameWeek, isSameMonth, startOfDay, addDays } from 'date-fns';
+import { useState, useMemo } from 'react';
+import { startOfDay, addDays } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
-import { cn } from '@/lib/utils';
 import { Header } from './timeline/components/Header';
 import { Grid } from './timeline/components/Grid';
-import { SubSwimlane } from './timeline/components/SubSwimlane';
-import { QueueTooltip } from './timeline/components/QueueTooltip';
+import { TaskLane } from './timeline/components/TaskLane';
+import { Tooltip } from './timeline/components/Tooltip';
 import { useDateRange } from './timeline/hooks/useDateRange';
 import { useShortcuts } from './timeline/hooks/useShortcuts';
 import { useHiddenCards } from './timeline/hooks/useHiddenCards';
-import { calculateTimelineHeight, getCardPosition, getCardColor } from './timeline/utils/utils';
+import { calculateTimelineHeight, getTaskPosition, getTaskColor } from './timeline/utils/utils';
 
 /**
  * Props interface for TimelineView component
@@ -46,7 +45,7 @@ interface TimelineViewProps {
  * 
  * Features:
  * - Multiple zoom levels (Day, Week, 2 Weeks, Month, Year)
- * - Collapsible swimlanes for each list
+ * - Collapsible listlanes for each list
  * - Hidden cards indicators for out-of-range cards
  * - Card positioning with stacking for overlapping cards
  * - Keyboard shortcuts for navigation
@@ -148,20 +147,20 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   }, [board.lists, searchTerm, dateRange]);
 
   /**
-   * Create wrapper function for getCardPosition to match expected signature
+   * Create wrapper function for getTaskPosition to match expected signature
    * 
-   * This memoized wrapper ensures the getCardPosition function receives
+   * This memoized wrapper ensures the getTaskPosition function receives
    * the current dateRange and zoomLevel parameters while maintaining
    * the expected signature for child components.
    */
-  const getCardPositionWrapper = useMemo(() => {
+  const getTaskPositionWrapper = useMemo(() => {
     return (card: any, allCards: any[], cardIndex: number) => {
-      return getCardPosition(card, allCards, cardIndex, dateRange, zoomLevel);
+      return getTaskPosition(card, allCards, cardIndex, dateRange, zoomLevel);
     };
   }, [dateRange, zoomLevel]);
 
   /**
-   * Toggle collapse state for a swimlane
+   * Toggle collapse state for a tasklane
    * 
    * @param listId - ID of the list to toggle
    */
@@ -206,16 +205,16 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
             {/* Lists and cards container */}
             <div className="relative">
-              {/* Main swimlanes - one for each list */}
+              {/* Main tasklanes - one for each list */}
               {board.lists.map((list) => {
                 // Get cards that belong to this list and are in current date range
                 const listCards = cardsWithDates.filter(card => card.listId === list.id);
-                // Check if this swimlane is collapsed
+                // Check if this tasklane is collapsed
                 const isCollapsed = collapsedLanes.has(list.id);
 
                 return (
                   <div key={list.id} className="border-2 border-slate-200 dark:border-slate-700 rounded-lg mb-4 overflow-visible">
-                    {/* Main swimlane header - visually distinct with collapse toggle */}
+                    {/* Main tasklane header - visually distinct with collapse toggle */}
                     <div
                       className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                       onClick={() => toggleLaneCollapse(list.id)}
@@ -250,7 +249,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                       </div>
                     </div>
 
-                    {/* Sub-card swimlanes within this parent container - collapsible */}
+                    {/* Sub-card listlanes within this parent container - collapsible */}
                     {!isCollapsed && (
                       <div className="bg-white dark:bg-slate-900">
                         {listCards.length > 0 ? (
@@ -263,20 +262,20 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                             const trulyHiddenCards = allListCards.filter(card => !visibleCardIds.has(card.id));
 
                             // Calculate hidden cards only from truly hidden cards
-                            const { hiddenCardsBefore, hiddenCardsAfter } = useHiddenCards(trulyHiddenCards, dateRange);
+                            const { hiddenTasksBefore, hiddenTasksAfter } = useHiddenCards(trulyHiddenCards, dateRange);
                             return listCards.map((card, cardIndex) => (
-                              <SubSwimlane
+                              <TaskLane
                                 key={card.id}
                                 card={card}
                                 dateRange={dateRange}
                                 zoomLevel={zoomLevel}
-                                onOpenCardModal={openCardModal}
-                                getCardPosition={getCardPositionWrapper}
-                                getCardColor={getCardColor}
+                                onOpenTaskModal={openCardModal}
+                                getTaskPosition={getTaskPositionWrapper}
+                                getTaskColor={getTaskColor}
                                 calculateTimelineHeight={calculateTimelineHeight}
                                 // Only pass hidden cards to the first card to avoid duplicates
-                                hiddenCardsBefore={cardIndex === 0 ? hiddenCardsBefore : []}
-                                hiddenCardsAfter={cardIndex === 0 ? hiddenCardsAfter : []}
+                                hiddenTasksBefore={cardIndex === 0 ? hiddenTasksBefore : []}
+                                hiddenTasksAfter={cardIndex === 0 ? hiddenTasksAfter : []}
                                 // Pass all cards and correct index for proper positioning
                                 allCards={allListCards}
                                 cardIndex={allListCards.findIndex(c => c.id === card.id)}
@@ -286,7 +285,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                         ) : (
                           // Check if the original list has any cards at all
                           list.cards.length > 0 ? (
-                            // Show empty swimlane if list has cards but none in current range
+                            // Show empty tasklane if list has cards but none in current range
                             <div className="flex border-b border-slate-50 dark:border-slate-700">
                               {/* Left-side space for past hidden cards */}
                               <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
@@ -303,7 +302,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                       return (
                                         <div
                                           key={card.id}
-                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500 relative`}
+                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(card)}-500 relative`}
                                           title={`${card.title} (Before current view)`}
                                           onClick={() => openCardModal(card.id)}
                                           onMouseEnter={(e) => {
@@ -350,7 +349,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                                       return (
                                         <div
                                           key={card.id}
-                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getCardColor(card)}-500 relative`}
+                                          className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(card)}-500 relative`}
                                           title={`${card.title} (After current view)`}
                                           onClick={() => openCardModal(card.id)}
                                           onMouseEnter={(e) => {
@@ -373,7 +372,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                               </div>
                             </div>
                           ) : (
-                            // Show truly empty swimlane if list has no cards at all
+                            // Show truly empty tasklane if list has no cards at all
                             <div className="flex border-b border-slate-50 dark:border-slate-700">
                               {/* Left-side space */}
                               <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
@@ -431,7 +430,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
             transform: 'translateX(0)'
           }}
         >
-          <QueueTooltip card={hoveredCard.card} position={hoveredCard.position} />
+          <Tooltip card={hoveredCard.card} position={hoveredCard.position} />
         </div>
       )}
     </div >

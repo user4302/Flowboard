@@ -14,7 +14,7 @@ export function useHiddenCards(listCards: any[], dateRange: Date[]) {
   return useMemo(() => {
     // Early return if no date range is provided
     if (dateRange.length === 0) {
-      return { hiddenCardsBefore: [], hiddenCardsAfter: [] };
+      return { hiddenTasksBefore: [], hiddenTasksAfter: [] };
     }
 
     // Get the start and end of the visible date range
@@ -22,7 +22,7 @@ export function useHiddenCards(listCards: any[], dateRange: Date[]) {
     const rangeEnd = dateRange[dateRange.length - 1];
 
     // Filter cards that end before the visible range starts
-    const hiddenCardsBefore = listCards.filter(card => {
+    const hiddenTasksBefore = listCards.filter(card => {
       // Dates are already Date objects from localStorage conversion
       const cardStartDate = card.startDate || new Date();
       const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
@@ -36,7 +36,7 @@ export function useHiddenCards(listCards: any[], dateRange: Date[]) {
     });
 
     // Filter cards that start after the visible range ends
-    const hiddenCardsAfter = listCards.filter(card => {
+    const hiddenTasksAfter = listCards.filter(card => {
       // Dates are already Date objects from localStorage conversion
       const cardStart = card.startDate || new Date();
 
@@ -48,6 +48,6 @@ export function useHiddenCards(listCards: any[], dateRange: Date[]) {
       return cardStart > rangeEnd;
     });
 
-    return { hiddenCardsBefore, hiddenCardsAfter };
+    return { hiddenTasksBefore, hiddenTasksAfter };
   }, [listCards, dateRange]);
 }
