@@ -24,7 +24,7 @@ import { addDays } from 'date-fns';
  * @param getTaskPosition - Function to calculate card positioning
  * @param getTaskColor - Function to get card color from labels
  */
-interface SwimmerProps {
+interface TaskProps {
   /** The card data to render */
   card: any;
   /** Array of all cards for positioning calculations */
@@ -58,7 +58,7 @@ export function Task({
   onOpenTaskModal,
   getTaskPosition,
   getTaskColor
-}: SwimmerProps) {
+}: TaskProps) {
   // Only render cards that are at least partially visible in the timeline
   // Dates are already Date objects from localStorage conversion
   const cardStart = card.startDate || new Date();

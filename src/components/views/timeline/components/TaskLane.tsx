@@ -25,7 +25,7 @@ import { Tooltip } from './Tooltip';
  * @param hiddenTasksBefore - Array of cards hidden before the date range (only for first card)
  * @param hiddenTasksAfter - Array of cards hidden after the date range (only for first card)
  */
-interface SubSwimlaneProps {
+interface TaskLane {
   /** The main card to display in the timeline */
   card: any;
   /** Current visible date range */
@@ -69,7 +69,7 @@ export function TaskLane({
   hiddenTasksAfter,
   allCards,
   cardIndex
-}: SubSwimlaneProps) {
+}: TaskLane) {
   return (
     <div className="flex">
       {/* Left-side space for past hidden cards */}
