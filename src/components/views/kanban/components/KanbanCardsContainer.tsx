@@ -2,7 +2,7 @@
 
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Card } from '@/components/card';
-import { AddCardButton } from './AddCardButton';
+import { InlineInput } from '@/components/ui';
 import { filterCards } from '../utils/utils';
 import { cn } from '@/lib/utils';
 
@@ -42,9 +42,11 @@ export function KanbanCardsContainer({
         ))}
       </SortableContext>
 
-      <AddCardButton
-        listId={listId}
-        onAddCard={onAddCard}
+      <InlineInput
+        placeholder="Enter card title..."
+        addText="Add card"
+        triggerText="Add a card"
+        onAdd={(title) => onAddCard(listId, title)}
       />
     </div>
   );

@@ -4,10 +4,10 @@ import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useBoardStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
+import { DragOverlayWrapper, InlineInput } from '@/components/ui';
+import { Card } from '@/components/card';
 import {
   KanbanList,
-  AddListButton,
-  KanbanDragOverlay,
   useKanbanDragAndDrop,
 } from './kanban';
 
@@ -83,17 +83,27 @@ export function KanbanView({ boardId }: KanbanViewProps) {
               ))}
             </SortableContext>
 
-            <AddListButton onAddList={handleCreateList} />
+            <InlineInput
+              placeholder="Enter list title..."
+              addText="Add list"
+              triggerText="Add another list"
+              containerWidth="20rem"
+              onAdd={handleCreateList}
+            />
           </div>
         </div>
       </div>
 
       {/* Drag overlay for visual feedback during drag operations */}
-      <KanbanDragOverlay
-        activeId={activeId}
-        getActiveCard={getActiveCard}
-        members={board.members}
-      />
+      <DragOverlayWrapper activeId={activeId}>
+        {getActiveCard() && (
+          <Card
+            card={getActiveCard()!}
+            members={board.members}
+            onClick={() => { }}
+          />
+        )}
+      </DragOverlayWrapper>
     </DndContext>
   );
 }
