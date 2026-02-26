@@ -82,6 +82,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Restored delete button positioning in Sidebar board items
 - Added card completion feature and simplified date handling
 - Implemented board-level label management system
+- Refactored kanban view with component extraction
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
