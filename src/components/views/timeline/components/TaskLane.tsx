@@ -47,10 +47,6 @@ interface TaskLaneProps {
   hiddenTasksBefore: Card[];
   /** Array of tasks hidden after the date range (only for first task) */
   hiddenTasksAfter: Card[];
-  /** All tasks in the list for proper positioning */
-  allCards: Card[];
-  /** Actual index of this task among all tasks */
-  cardIndex: number;
 }
 
 /**
@@ -69,9 +65,7 @@ export function TaskLane({
   getTaskColor,
   calculateTimelineHeight,
   hiddenTasksBefore,
-  hiddenTasksAfter,
-  allCards,
-  cardIndex
+  hiddenTasksAfter
 }: TaskLaneProps) {
   return (
     <div className="flex">
@@ -105,8 +99,8 @@ export function TaskLane({
       >
         <Task
           task={task}
-          allCards={allCards}
-          cardIndex={cardIndex}
+          allCards={[task]}
+          cardIndex={0}
           dateRange={dateRange}
           zoomLevel={zoomLevel}
           onOpenTaskModal={onOpenTaskModal}

@@ -81,8 +81,6 @@ export function ListLane({
                   calculateTimelineHeight={calculateTimelineHeight}
                   hiddenTasksBefore={taskIndex === 0 ? hiddenTasksBefore : []}
                   hiddenTasksAfter={taskIndex === 0 ? hiddenTasksAfter : []}
-                  allCards={allListTasks}
-                  cardIndex={allListTasks.findIndex((c: Card) => c.id === task.id)}
                 />
               ));
             })()
