@@ -74,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented modular architecture for timeline task positioning
 - Renamed component interfaces for consistency
 - Improved date handling and removed debug logging
+- Enhanced type safety and consistency in timeline components
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

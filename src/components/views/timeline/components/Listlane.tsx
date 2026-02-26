@@ -1,91 +1,174 @@
-import { Queue } from './Queue';
-import { Task } from './Task';
-import { useHiddenCards } from '../hooks/useHiddenCards';
+import { useUIStore } from '@/store';
+import { Card } from '@/lib/types';
+import { TaskLane } from './TaskLane';
+import { useHiddenTasks } from '../hooks/useHiddenTasks';
+import { getTaskColor } from '../utils/utils';
+import { addDays } from 'date-fns';
 
 /**
- * Tasklane component props interface
- * Defines the props for rendering a single timeline tasklane
+ * ListLane component props interface
+ * Defines the props for rendering a board list within the timeline
  */
 interface ListLaneProps {
+  // Board ID
+  boardId: string;
   // List object containing list information
   list: any;
-  // Array of cards belonging to this list
-  listCards: any[];
+  // Array of tasks belonging to this list (filtered for date range)
+  listTasks: Card[];
   // Date range for the current timeline view
   dateRange: Date[];
   // Current zoom level
   zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
-  // Function to open card modal for editing
-  onOpenTaskModal: (cardId: string) => void;
-  // Function to calculate card position in timeline
-  getTaskPosition: (card: any, allCards: any[], cardIndex: number) => any;
-  // Function to get card color based on properties
-  getTaskColor: (card: any) => string;
-  // Function to calculate timeline height based on cards and date range
-  calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
+  // UI Actions
+  openCardModal: (cardId: string) => void;
+  toggleTimelineLane: (boardId: string, listId: string) => void;
+  // Logic utilities
+  getTaskPosition: (card: Card, allCards: Card[], cardIndex: number) => any;
+  calculateTimelineHeight: (cards: Card[], dateRange: Date[]) => number;
+  // State
+  isCollapsed: boolean;
+  // Tooltip tracking
+  setHoveredTask: (hovered: { task: Card; position: 'before' | 'after'; x: number; y: number } | null) => void;
 }
 
 /**
- * Tasklane component - Renders a single tasklane in timeline view
- * Displays list name, cards, and hidden cards indicators
- * Manages card positioning and visibility within the timeline
+ * ListLane component - Renders a major lane representing a Board List
+ * Handles lane headers, collapsible state, and individual sub-lanes for tasks.
  */
-export function Tasklane({
+export function ListLane({
+  boardId,
   list,
-  listCards,
+  listTasks,
   dateRange,
   zoomLevel,
-  onOpenTaskModal,
+  openCardModal,
+  toggleTimelineLane,
   getTaskPosition,
-  getTaskColor,
-  calculateTimelineHeight
+  calculateTimelineHeight,
+  isCollapsed,
+  setHoveredTask
 }: ListLaneProps) {
-  // Use the useHiddenCards hook to calculate which cards are hidden
-  // before and after the current date range for this specific list
-  const { hiddenTasksBefore, hiddenTasksAfter } = useHiddenCards(listCards, dateRange);
-
   return (
-    <div key={list.id} className="flex border-b border-slate-100 dark:border-slate-800">
-      {/* List name and card count */}
-      <div className="w-48 flex-shrink-0 p-3">
-        <h3 className="font-medium text-slate-900 dark:text-slate-100">
-          {list.title}
-        </h3>
-        <div className="text-xs text-slate-500 dark:text-slate-400">
-          {listCards.length} cards
-        </div>
-      </div>
-
-      {/* Timeline area with cards and indicators */}
+    <div key={list.id} className="border-2 border-slate-200 dark:border-slate-700 rounded-lg mb-4 overflow-visible">
+      {/* ... (rest of the component) */}
       <div
-        className="flex-1 relative"
-        style={{
-          minHeight: `${calculateTimelineHeight(listCards, dateRange)}px`
-        }}
+        className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        onClick={() => toggleTimelineLane(boardId, list.id)}
       >
-        {/* Hidden cards indicator for this tasklane */}
-        <Queue
-          listId={list.id}
-          hiddenTasksBefore={hiddenTasksBefore}
-          hiddenTasksAfter={hiddenTasksAfter}
-          onOpenTaskModal={onOpenTaskModal}
-        />
-
-        {/* Render all cards in this tasklane */}
-        {listCards.map((card, cardIndex) => (
-          <Task
-            key={card.id}
-            card={card}
-            allCards={listCards}
-            cardIndex={cardIndex}
-            dateRange={dateRange}
-            zoomLevel={zoomLevel}
-            onOpenTaskModal={onOpenTaskModal}
-            getTaskPosition={getTaskPosition}
-            getTaskColor={getTaskColor}
-          />
-        ))}
+        {/* ... (header content) */}
       </div>
+
+      {/* Sub-lanes for individual tasks */}
+      {!isCollapsed && (
+        <div className="bg-white dark:bg-slate-900">
+          {listTasks.length > 0 ? (
+            (() => {
+              const allListTasks = list.cards as Card[];
+              const visibleTaskIds = new Set(listTasks.map((task: Card) => task.id));
+              const trulyHiddenTasks = allListTasks.filter((task: Card) => !visibleTaskIds.has(task.id));
+              const { hiddenTasksBefore, hiddenTasksAfter } = useHiddenTasks(trulyHiddenTasks, dateRange);
+
+              return listTasks.map((task: Card, taskIndex: number) => (
+                <TaskLane
+                  key={task.id}
+                  task={task}
+                  dateRange={dateRange}
+                  zoomLevel={zoomLevel}
+                  onOpenTaskModal={openCardModal}
+                  getTaskPosition={getTaskPosition}
+                  getTaskColor={getTaskColor}
+                  calculateTimelineHeight={calculateTimelineHeight}
+                  hiddenTasksBefore={taskIndex === 0 ? hiddenTasksBefore : []}
+                  hiddenTasksAfter={taskIndex === 0 ? hiddenTasksAfter : []}
+                  allCards={allListTasks}
+                  cardIndex={allListTasks.findIndex((c: Card) => c.id === task.id)}
+                />
+              ));
+            })()
+          ) : (
+            list.cards.length > 0 ? (
+              <div className="flex border-b border-slate-50 dark:border-slate-700">
+                <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
+                  <div className="flex flex-wrap gap-1">
+                    {list.cards.map((task: Card) => {
+                      const taskEnd = task.dueDate || addDays(task.startDate || new Date(), 7);
+                      if (taskEnd < dateRange[0]) {
+                        return (
+                          <div
+                            key={task.id}
+                            className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(task)}-500 relative`}
+                            title={`${task.title} (Before current view)`}
+                            onClick={() => openCardModal(task.id)}
+                            onMouseEnter={(e) => {
+                              const rect = e.currentTarget.getBoundingClientRect();
+                              setHoveredTask({
+                                task: task,
+                                position: 'before',
+                                x: rect.left + rect.width / 2,
+                                y: rect.bottom + 8
+                              });
+                            }}
+                            onMouseLeave={() => setHoveredTask(null)}
+                          />
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                </div>
+                <div className="flex-1 relative flex items-center justify-center" style={{ minHeight: '60px' }}>
+                  <div className="text-slate-400 dark:text-slate-500 text-sm italic">
+                    All tasks are outside current date range
+                  </div>
+                </div>
+                <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
+                  <div className="flex flex-wrap gap-1">
+                    {list.cards.map((task: Card) => {
+                      const taskStart = task.startDate || new Date();
+                      if (taskStart > dateRange[dateRange.length - 1]) {
+                        return (
+                          <div
+                            key={task.id}
+                            className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(task)}-500 relative`}
+                            title={`${task.title} (After current view)`}
+                            onClick={() => openCardModal(task.id)}
+                            onMouseEnter={(e) => {
+                              const rect = e.currentTarget.getBoundingClientRect();
+                              setHoveredTask({
+                                task: task,
+                                position: 'after',
+                                x: rect.left + rect.width / 2,
+                                y: rect.bottom + 8
+                              });
+                            }}
+                            onMouseLeave={() => setHoveredTask(null)}
+                          />
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex border-b border-slate-50 dark:border-slate-700">
+                <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
+                  <div className="text-xs text-slate-400 dark:text-slate-500 text-center italic">
+                    No tasks in list
+                  </div>
+                </div>
+                <div className="flex-1 relative flex items-center justify-center" style={{ minHeight: '60px' }}>
+                  <div className="text-slate-400 dark:text-slate-500 text-sm italic">
+                    Add tasks to this list to see them here
+                  </div>
+                </div>
+                <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700" />
+              </div>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 }

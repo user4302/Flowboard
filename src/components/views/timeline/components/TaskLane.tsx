@@ -1,3 +1,4 @@
+import { Card } from '@/lib/types';
 import { Task } from './Task';
 import { getTaskColor } from '../utils/utils';
 import { Tooltip } from './Tooltip';
@@ -5,60 +6,62 @@ import { Tooltip } from './Tooltip';
 /**
  * TaskLane Component
  * 
- * A sub-tasklane component that displays a single card within a parent tasklane.
- * This component handles the rendering of hidden cards on both sides (before/after)
- * and the main card in the timeline area.
+ * A sub-tasklane component that displays a single task within a parent listlane.
+ * This component handles the rendering of hidden tasks on both sides (before/after)
+ * and the main task in the timeline area.
  * 
  * Features:
- * - Displays hidden cards as mini indicators on left/right sides (only for first card)
- * - Renders the main card with proper positioning
- * - Handles click interactions for all cards
+ * - Displays hidden tasks as mini indicators on left/right sides (only for first task)
+ * - Renders the main task with proper positioning
+ * - Handles click interactions for all tasks
  * - Responsive layout with fixed side panels
  * 
- * @param card - The main card to display in the timeline
+ * @param task - The main task to display in the timeline
  * @param dateRange - Current visible date range
  * @param zoomLevel - Current timeline zoom level
- * @param onOpenTaskModal - Function to open card modal
- * @param getTaskPosition - Function to calculate card positioning
- * @param getTaskColor - Function to get card color from labels
+ * @param onOpenTaskModal - Function to open task modal
+ * @param getTaskPosition - Function to calculate task positioning
+ * @param getTaskColor - Function to get task color from labels
  * @param calculateTimelineHeight - Function to calculate timeline height
- * @param hiddenTasksBefore - Array of cards hidden before the date range (only for first card)
- * @param hiddenTasksAfter - Array of cards hidden after the date range (only for first card)
+ * @param hiddenTasksBefore - Array of tasks hidden before the date range (only for first task)
+ * @param hiddenTasksAfter - Array of tasks hidden after the date range (only for first task)
+ * @param allCards - All cards in the list for proper positioning
+ * @param cardIndex - Actual index of this task among all tasks
  */
-interface TaskLane {
-  /** The main card to display in the timeline */
-  card: any;
+interface TaskLaneProps {
+  /** The main task to display in the timeline */
+  task: Card;
   /** Current visible date range */
   dateRange: Date[];
   /** Current timeline zoom level */
   zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year';
-  /** Function to open card modal */
-  onOpenTaskModal: (cardId: string) => void;
-  /** Function to calculate card positioning */
-  getTaskPosition: (card: any, allCards: any[], cardIndex: number) => any;
-  /** Function to get card color from labels */
-  getTaskColor: (card: any) => string;
+  /** Function to open task modal */
+  onOpenTaskModal: (taskId: string) => void;
+  /** Function to calculate task positioning */
+  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number) => any;
+  /** Function to get task color from labels */
+  getTaskColor: (task: Card) => string;
   /** Function to calculate timeline height */
-  calculateTimelineHeight: (cards: any[], dateRange: Date[]) => number;
-  /** Array of cards hidden before the date range (only for first card) */
-  hiddenTasksBefore: any[];
-  /** Array of cards hidden after the date range (only for first card) */
-  hiddenTasksAfter: any[];
-  /** All cards in the list for proper positioning */
-  allCards: any[];
-  /** Actual index of this card among all cards */
+  calculateTimelineHeight: (tasks: Card[], dateRange: Date[]) => number;
+  /** Array of tasks hidden before the date range (only for first task) */
+  hiddenTasksBefore: Card[];
+  /** Array of tasks hidden after the date range (only for first task) */
+  hiddenTasksAfter: Card[];
+  /** All tasks in the list for proper positioning */
+  allCards: Card[];
+  /** Actual index of this task among all tasks */
   cardIndex: number;
 }
 
 /**
  * TaskLane Component
  * 
- * Renders a single card tasklane with hidden cards indicators on both sides.
- * This is used within parent listlanes to display individual cards with
- * their contextual hidden cards (only for the first card in each list).
+ * Renders a single task lane with hidden tasks indicators on both sides.
+ * This is used within parent listlanes to display individual tasks with
+ * their contextual hidden tasks (only for the first task in each list).
  */
 export function TaskLane({
-  card,
+  task,
   dateRange,
   zoomLevel,
   onOpenTaskModal,
@@ -69,39 +72,39 @@ export function TaskLane({
   hiddenTasksAfter,
   allCards,
   cardIndex
-}: TaskLane) {
+}: TaskLaneProps) {
   return (
     <div className="flex">
-      {/* Left-side space for past hidden cards */}
+      {/* Left-side space for past hidden tasks */}
       <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700 overflow-visible">
         <div className="flex flex-wrap gap-1">
-          {hiddenTasksBefore.map((hiddenCard: any) => (
+          {hiddenTasksBefore.map((hiddenTask: Card) => (
             <div
-              key={hiddenCard.id}
+              key={hiddenTask.id}
               className="relative group"
             >
               <div
-                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenCard)}-500`}
-                onClick={() => onOpenTaskModal(hiddenCard.id)}
+                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenTask)}-500`}
+                onClick={() => onOpenTaskModal(hiddenTask.id)}
                 title=""  // Remove browser tooltip
               />
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
-                <Tooltip card={hiddenCard} position="before" />
+                <Tooltip task={hiddenTask} position="before" />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Timeline area with the main card */}
+      {/* Timeline area with the main task */}
       <div
         className="flex-1 relative border-b border-slate-50 dark:border-slate-700"
         style={{
-          minHeight: `${calculateTimelineHeight([card], dateRange)}px`
+          minHeight: `${calculateTimelineHeight([task], dateRange)}px`
         }}
       >
         <Task
-          card={card}
+          task={task}
           allCards={allCards}
           cardIndex={cardIndex}
           dateRange={dateRange}
@@ -112,21 +115,21 @@ export function TaskLane({
         />
       </div>
 
-      {/* Right-side space for future hidden cards */}
+      {/* Right-side space for future hidden tasks */}
       <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700 overflow-visible">
         <div className="flex flex-wrap gap-1">
-          {hiddenTasksAfter.map((hiddenCard: any) => (
+          {hiddenTasksAfter.map((hiddenTask: Card) => (
             <div
-              key={hiddenCard.id}
+              key={hiddenTask.id}
               className="relative group"
             >
               <div
-                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenCard)}-500`}
-                onClick={() => onOpenTaskModal(hiddenCard.id)}
+                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenTask)}-500`}
+                onClick={() => onOpenTaskModal(hiddenTask.id)}
                 title=""  // Remove browser tooltip
               />
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
-                <Tooltip card={hiddenCard} position="after" />
+                <Tooltip task={hiddenTask} position="after" />
               </div>
             </div>
           ))}
