@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import { Calendar, User, MessageSquare, CheckSquare, MoreHorizontal } from 'lucide-react';
 import { Card as CardType, User as UserType } from '@/lib/types';
 import { useBoardStore, useUIStore } from '@/store';
 import { cn, formatDate, isCardOverdue, getChecklistProgress } from '@/lib/utils';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface CardProps {
   card: CardType;
@@ -16,7 +17,15 @@ export function Card({ card, members, onClick }: CardProps) {
   const { openCardModal } = useUIStore();
   const { boards, updateCard, currentBoardId } = useBoardStore();
   const currentBoard = boards.find(b => b.id === currentBoardId);
-  const [isDragging, setIsDragging] = useState(false);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: card.id });
 
   const cardMembers = members.filter(member => card.members.includes(member.id));
   const isOverdue = isCardOverdue(card);
@@ -36,16 +45,20 @@ export function Card({ card, members, onClick }: CardProps) {
 
   return (
     <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
       className={cn(
         'group cursor-pointer rounded-xl bg-white p-3 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] dark:bg-slate-800',
         isDragging && 'opacity-50 rotate-2',
         isOverdue && !card.completed && 'ring-2 ring-red-500',
         card.completed && 'ring-2 ring-green-500'
       )}
+      style={{
+        transform: CSS.Translate.toString(transform),
+        transition,
+      }}
       onClick={handleClick}
-      draggable
-      onDragStart={() => setIsDragging(true)}
-      onDragEnd={() => setIsDragging(false)}
     >
       {/* Slim colored labels at the top */}
       {(card.labelIds?.length ?? 0) > 0 && (

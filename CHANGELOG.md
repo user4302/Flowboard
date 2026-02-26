@@ -84,6 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implemented board-level label management system
 - Refactored kanban view with component extraction
 - Organized timeline exports and reset version
+- Migrated Card component to dnd-kit drag and drop
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
