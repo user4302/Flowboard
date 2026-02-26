@@ -1,6 +1,6 @@
 'use client';
 
-import { DndContext, closestCenter } from '@dnd-kit/core';
+import { DndContext, closestCorners } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useBoardStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
@@ -65,7 +65,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={closestCorners}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}

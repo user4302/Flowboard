@@ -1,5 +1,6 @@
 'use client';
 
+import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Card } from '@/components/card';
 import { InlineInput } from '@/components/ui';
@@ -26,11 +27,17 @@ export function KanbanCardsContainer({
   searchTerm = '',
   className
 }: KanbanCardsContainerProps) {
+  const { setNodeRef } = useDroppable({
+    id: listId,
+  });
 
   const filteredCards = filterCards(cards, searchTerm);
 
   return (
-    <div className={cn("flex flex-1 flex-col gap-2", className)}>
+    <div
+      ref={setNodeRef}
+      className={cn("flex flex-1 flex-col gap-2 min-h-[100px]", className)}
+    >
       <SortableContext items={filteredCards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
         {filteredCards.map((card) => (
           <Card
