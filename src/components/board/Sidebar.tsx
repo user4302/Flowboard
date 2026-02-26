@@ -171,26 +171,24 @@ export function Sidebar() {
                       )}
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <LayoutGrid className="h-4 w-4" />
-                          <span className="truncate">{board.name}</span>
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <LayoutGrid className="h-4 w-4 flex-shrink-0" />
+                          <span className="truncate" title={board.name}>{board.name}</span>
                         </div>
-                        <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                          {board.lists.length} lists • {board.members.length} members
-                        </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteBoard(board.id, board.name);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 flex-shrink-0"
+                          title={`Delete ${board.name}`}
+                        >
+                          <Trash2 className="h-3 w-3 text-slate-400 hover:text-red-600" />
+                        </button>
                       </div>
-                    </button>
-
-                    {/* Delete button - Positioned outside the main button, shows on hover */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteBoard(board.id, board.name);
-                      }}
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700"
-                      title={`Delete ${board.name}`}
-                    >
-                      <Trash2 className="h-3 w-3 text-slate-400 hover:text-red-600" />
+                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                        {board.lists.length} lists • {board.members.length} members
+                      </div>
                     </button>
                   </div>
                 ))}
