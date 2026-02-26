@@ -77,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced type safety and consistency in timeline components
 - Simplified TaskLane component interface and fixed task overflow bug
 - Corrected date indexing in month view timeline
+- Enhanced ListLane header with collapse indicators and task count
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
