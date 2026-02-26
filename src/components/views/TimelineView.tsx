@@ -223,6 +223,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     calculateTimelineHeight={calculateTimelineHeight}
                     isCollapsed={isCollapsed}
                     setHoveredTask={setHoveredTask}
+                    boardLabels={board.labels}
                   />
                 );
               })}
@@ -253,7 +254,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
             transform: 'translateX(0)'
           }}
         >
-          <Tooltip task={hoveredTask.task} position={hoveredTask.position} />
+          <Tooltip task={hoveredTask.task} position={hoveredTask.position} boardLabels={board.labels} />
         </div>
       )}
     </div >

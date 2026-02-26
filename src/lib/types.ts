@@ -3,8 +3,9 @@ export interface Board {
   name: string;
   lists: List[];
   members: User[];
-  createdAt: Date; // Date object (localStorage handles UTC conversion)
-  updatedAt: Date; // Date object (localStorage handles UTC conversion)
+  labels: Label[]; // Global labels for this board
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface List {
@@ -19,22 +20,22 @@ export interface Card {
   id: string;
   title: string;
   description?: string;
-  labels: Label[];
+  labelIds: string[]; // Reference labels by ID
   members: string[];
-  startDate?: Date; // Date object (localStorage handles UTC conversion)
-  dueDate?: Date;   // Date object (localStorage handles UTC conversion)
+  startDate?: Date;
+  dueDate?: Date;
   checklist: ChecklistItem[];
-  completed: boolean; // Track if entire card is completed
+  completed: boolean;
   position: number;
   listId: string;
-  createdAt: Date; // Date object (localStorage handles UTC conversion)
-  updatedAt: Date; // Date object (localStorage handles UTC conversion)
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Label {
   id: string;
-  text: string;
-  color: string; // Tailwind color class
+  text: string; // The "title" of the label
+  color: string; // Tailwind color class or hex code
 }
 
 export interface User {

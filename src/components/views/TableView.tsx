@@ -16,7 +16,7 @@ type SortDirection = 'asc' | 'desc';
 export function TableView({ boardId }: TableViewProps) {
   const { boards } = useBoardStore();
   const { searchTerm, openCardModal } = useUIStore();
-  
+
   const board = boards.find((b) => b.id === boardId);
   if (!board) return null;
 
@@ -25,7 +25,7 @@ export function TableView({ boardId }: TableViewProps) {
 
   // Get all cards with their list info
   const allCards = useMemo(() => {
-    return board.lists.flatMap(list => 
+    return board.lists.flatMap(list =>
       list.cards.map(card => ({
         ...card,
         listName: list.title,
@@ -37,7 +37,7 @@ export function TableView({ boardId }: TableViewProps) {
   // Filter cards
   const filteredCards = useMemo(() => {
     if (!searchTerm) return allCards;
-    return allCards.filter(card => 
+    return allCards.filter(card =>
       card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       card.description?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -178,20 +178,24 @@ export function TableView({ boardId }: TableViewProps) {
                 {/* Labels */}
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1">
-                    {card.labels.slice(0, 2).map((label) => (
-                      <span
-                        key={label.id}
-                        className={cn(
-                          'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white',
-                          label.color
-                        )}
-                      >
-                        {label.text}
-                      </span>
-                    ))}
-                    {card.labels.length > 2 && (
+                    {card.labelIds?.slice(0, 2).map((labelId) => {
+                      const label = board.labels.find(l => l.id === labelId);
+                      if (!label) return null;
+                      return (
+                        <span
+                          key={label.id}
+                          className={cn(
+                            'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white',
+                            label.color
+                          )}
+                        >
+                          {label.text}
+                        </span>
+                      );
+                    })}
+                    {(card.labelIds?.length ?? 0) > 2 && (
                       <span className="text-xs text-slate-500 dark:text-slate-400">
-                        +{card.labels.length - 2}
+                        +{(card.labelIds?.length ?? 0) - 2}
                       </span>
                     )}
                   </div>

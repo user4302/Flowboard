@@ -8,15 +8,25 @@
  * Provides a consistent color palette for card labels
  */
 export const LABEL_COLORS = [
-  'bg-red-500',
-  'bg-orange-500',
-  'bg-yellow-500',
-  'bg-green-500',
-  'bg-teal-500',
-  'bg-blue-500',
-  'bg-indigo-500',
-  'bg-purple-500',
-  'bg-pink-500',
+  // Greens
+  'bg-green-100', 'bg-green-300', 'bg-green-500', 'bg-green-600', 'bg-green-800',
+  // Yellows
+  'bg-yellow-100', 'bg-yellow-300', 'bg-yellow-500', 'bg-yellow-600', 'bg-yellow-800',
+  // Oranges
+  'bg-orange-100', 'bg-orange-300', 'bg-orange-500', 'bg-orange-600', 'bg-orange-800',
+  // Reds
+  'bg-red-100', 'bg-red-300', 'bg-red-500', 'bg-red-600', 'bg-red-800',
+  // Purples
+  'bg-purple-100', 'bg-purple-300', 'bg-purple-500', 'bg-purple-600', 'bg-purple-800',
+  // Azures/Blues
+  'bg-sky-100', 'bg-sky-300', 'bg-sky-500', 'bg-sky-600', 'bg-sky-800',
+  'bg-blue-100', 'bg-blue-300', 'bg-blue-500', 'bg-blue-600', 'bg-blue-800',
+  // Teals
+  'bg-teal-100', 'bg-teal-300', 'bg-teal-500', 'bg-teal-600', 'bg-teal-800',
+  // Pinks
+  'bg-pink-100', 'bg-pink-300', 'bg-pink-500', 'bg-pink-600', 'bg-pink-800',
+  // Slate/Grays
+  'bg-slate-100', 'bg-slate-300', 'bg-slate-500', 'bg-slate-600', 'bg-slate-800',
 ] as const;
 
 /**

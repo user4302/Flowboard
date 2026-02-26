@@ -125,6 +125,7 @@ export function Header() {
       const boardData = {
         name: currentBoard.name,
         exportDate: new Date().toISOString(),
+        labels: currentBoard.labels,
         lists: currentBoard.lists.map(list => ({
           title: list.title,
           cards: list.cards.map(card => ({
@@ -132,7 +133,7 @@ export function Header() {
             description: card.description,
             startDate: card.startDate,
             dueDate: card.dueDate,
-            labels: card.labels,
+            labelIds: card.labelIds,
             members: card.members,
             checklist: card.checklist,
             createdAt: card.createdAt,
@@ -218,9 +219,49 @@ export function Header() {
                   dueDate,
                 });
 
-                // Add labels to the card
-                cardData.labels?.forEach((label: any) => {
-                  useBoardStore.getState().addLabel(newBoard.id, card.id, label);
+                // Store a mapping of old label IDs (from file) to new label IDs (created in store)
+                const labelMap = new Map<string, string>();
+
+                // Recreate labels at board level if they exist
+                if (boardData.labels) {
+                  boardData.labels.forEach((labelData: any) => {
+                    const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
+                    if (existing) {
+                      labelMap.set(labelData.id, existing.id);
+                    } else {
+                      const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
+                        text: labelData.text,
+                        color: labelData.color
+                      });
+                      labelMap.set(labelData.id, newLabel.id);
+                    }
+                  });
+                }
+
+                // Add labels to the card (handle both old and new formats)
+                const importedLabelIds = cardData.labelIds || [];
+                const importedLabels = cardData.labels || []; // Backward compatibility
+
+                // Add by ID
+                importedLabelIds.forEach((oldId: string) => {
+                  const newId = labelMap.get(oldId);
+                  if (newId) {
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card.id, newId);
+                  }
+                });
+
+                // Add by text/color logic for old format
+                importedLabels.forEach((labelData: any) => {
+                  const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
+                  if (existing) {
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card.id, existing.id);
+                  } else {
+                    const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
+                      text: labelData.text,
+                      color: labelData.color
+                    });
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card.id, newLabel.id);
+                  }
                 });
 
                 // Add members to the card

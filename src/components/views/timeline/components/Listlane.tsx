@@ -31,6 +31,8 @@ interface ListLaneProps {
   isCollapsed: boolean;
   // Tooltip tracking
   setHoveredTask: (hovered: { task: Card; position: 'before' | 'after'; x: number; y: number } | null) => void;
+  // Labels available on the board
+  boardLabels: any[];
 }
 
 /**
@@ -48,7 +50,8 @@ export function ListLane({
   getTaskPosition,
   calculateTimelineHeight,
   isCollapsed,
-  setHoveredTask
+  setHoveredTask,
+  boardLabels
 }: ListLaneProps) {
   return (
     <div key={list.id} className="border-2 border-slate-200 dark:border-slate-700 rounded-lg mb-4 overflow-visible">
@@ -96,6 +99,7 @@ export function ListLane({
                   calculateTimelineHeight={calculateTimelineHeight}
                   hiddenTasksBefore={taskIndex === 0 ? hiddenTasksBefore : []}
                   hiddenTasksAfter={taskIndex === 0 ? hiddenTasksAfter : []}
+                  boardLabels={boardLabels}
                 />
               ));
             })()
@@ -110,7 +114,7 @@ export function ListLane({
                         return (
                           <div
                             key={task.id}
-                            className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(task)}-500 relative`}
+                            className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(task, boardLabels)}-500 relative`}
                             title={`${task.title} (Before current view)`}
                             onClick={() => openCardModal(task.id)}
                             onMouseEnter={(e) => {
@@ -143,7 +147,7 @@ export function ListLane({
                         return (
                           <div
                             key={task.id}
-                            className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(task)}-500 relative`}
+                            className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(task, boardLabels)}-500 relative`}
                             title={`${task.title} (After current view)`}
                             onClick={() => openCardModal(task.id)}
                             onMouseEnter={(e) => {

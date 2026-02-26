@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { X, Calendar, User, Tag, CheckSquare, Trash2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { X, Calendar, User, Tag, CheckSquare, Trash2, Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,7 +11,8 @@ import { fromUTCString, toUTCString } from '@/lib/dateUtils';
 import { Button, Input, Modal, ModalHeader, ModalTitle, ModalBody, ModalFooter } from '@/components/ui';
 import { LABEL_COLORS } from '@/lib/constants';
 import { cn, formatDate, generateId } from '@/lib/utils';
-import { Card } from '@/lib/types';
+import { Card, Label } from '@/lib/types';
+import { LabelManager } from './LabelManager';
 
 /**
  * Zod schema for card form validation
@@ -37,14 +39,23 @@ type CardFormData = z.infer<typeof cardSchema>;
 export function CardModal() {
   // Store hooks for state management
   const { cardModalOpen, selectedCardId, closeCardModal } = useUIStore();
-  const { boards, currentBoardId, updateCard, addLabel, removeLabel, addChecklistItem, updateChecklistItem, removeChecklistItem } = useBoardStore();
+  const {
+    boards,
+    currentBoardId,
+    updateCard,
+    addChecklistItem,
+    updateChecklistItem,
+    removeChecklistItem
+  } = useBoardStore();
 
   // Local state for dynamic form elements
-  const [newLabelText, setNewLabelText] = useState('');
-  const [newLabelColor, setNewLabelColor] = useState(LABEL_COLORS[0]);
+  const [showLabelManager, setShowLabelManager] = useState(false);
+  const [popoverCoords, setPopoverCoords] = useState<{ top?: number, bottom?: number, left: number }>({ left: 0 });
   const [newChecklistItem, setNewChecklistItem] = useState('');
-  const [showNewLabelInput, setShowNewLabelInput] = useState(false);
   const [showNewChecklistInput, setShowNewChecklistInput] = useState(false);
+
+  // Refs for positioning
+  const labelTriggerRef = useRef<HTMLDivElement>(null);
 
   // Find current board and selected card
   const currentBoard = boards.find(b => b.id === currentBoardId);
@@ -109,21 +120,7 @@ export function CardModal() {
     closeCardModal();
   };
 
-  /**
-   * Handles adding a new label to the card
-   * Creates label with unique ID and selected color
-   */
-  const handleAddLabel = () => {
-    if (newLabelText.trim()) {
-      addLabel(currentBoardId, foundCard.id, {
-        id: generateId(),
-        text: newLabelText.trim(),
-        color: newLabelColor,
-      });
-      setNewLabelText('');
-      setShowNewLabelInput(false);
-    }
-  };
+  // Handlers for checklist and title removed/moved if necessary, focus on labels
 
   /**
    * Handles adding a new checklist item
@@ -216,78 +213,84 @@ export function CardModal() {
             />
           </div>
 
-          {/* Labels - Color-coded tags for categorization */}
-          <div>
+          {/* Labels - Global board labels referenced by ID */}
+          <div className="relative" ref={labelTriggerRef}>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
               <Tag className="mr-1 inline h-4 w-4" />
               Labels
             </label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {foundCard.labels.map((label) => (
-                <span
-                  key={label.id}
-                  className={cn(
-                    'inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium text-white',
-                    label.color
-                  )}
-                >
-                  {label.text}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      removeLabel(currentBoardId, foundCard.id, label.id);
+            <div className="flex flex-wrap gap-2">
+              {foundCard.labelIds?.map((labelId) => {
+                const label = currentBoard.labels.find((l: Label) => l.id === labelId);
+                if (!label) return null;
+                return (
+                  <span
+                    key={label.id}
+                    className={cn(
+                      'inline-flex h-8 items-center rounded px-3 text-sm font-semibold text-white transition-all hover:brightness-110 cursor-pointer',
+                      label.color
+                    )}
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const spaceBelow = window.innerHeight - rect.bottom;
+                      const hasSpaceBelow = spaceBelow > 450;
+
+                      setPopoverCoords({
+                        top: hasSpaceBelow ? rect.bottom + 8 : undefined,
+                        bottom: hasSpaceBelow ? undefined : (window.innerHeight - rect.top) + 8,
+                        left: rect.left
+                      });
+                      setShowLabelManager(true);
                     }}
-                    className="hover:bg-white/20 rounded-full p-0.5"
                   >
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              ))}
+                    {label.text}
+                  </span>
+                );
+              })}
+              <button
+                type="button"
+                onClick={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const spaceBelow = window.innerHeight - rect.bottom;
+                  const hasSpaceBelow = spaceBelow > 450;
+
+                  setPopoverCoords({
+                    top: hasSpaceBelow ? rect.bottom + 8 : undefined,
+                    bottom: hasSpaceBelow ? undefined : (window.innerHeight - rect.top) + 8,
+                    left: rect.left
+                  });
+                  setShowLabelManager(true);
+                }}
+                className="flex h-8 w-8 items-center justify-center rounded bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
             </div>
 
-            {showNewLabelInput ? (
-              <div className="flex gap-2">
-                <Input
-                  value={newLabelText}
-                  onChange={(e) => setNewLabelText(e.target.value)}
-                  placeholder="Label text"
-                  className="flex-1"
-                />
-                <select
-                  value={newLabelColor}
-                  onChange={(e) => setNewLabelColor(e.target.value as any)}
-                  className="rounded-lg border border-slate-300 px-2 py-1 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-                >
-                  {LABEL_COLORS.map((color) => (
-                    <option key={color} value={color}>
-                      {color.replace('bg-', '').replace('-500', '')}
-                    </option>
-                  ))}
-                </select>
-                <Button type="button" size="sm" onClick={handleAddLabel}>
-                  Add
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setShowNewLabelInput(false);
-                    setNewLabelText('');
-                  }}
-                >
-                  Cancel
-                </Button>
-              </div>
-            ) : (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowNewLabelInput(true)}
+            {/* Label Manager Popover via Portal */}
+            {showLabelManager && typeof document !== 'undefined' && createPortal(
+              <div
+                className="fixed z-[100] flex flex-col items-start"
+                style={{
+                  top: popoverCoords.top !== undefined ? `${popoverCoords.top}px` : 'auto',
+                  bottom: popoverCoords.bottom !== undefined ? `${popoverCoords.bottom}px` : 'auto',
+                  left: `${Math.min(popoverCoords.left, window.innerWidth - 330)}px`,
+                  maxHeight: popoverCoords.top !== undefined
+                    ? `calc(100vh - ${popoverCoords.top}px - 20px)`
+                    : `calc(100vh - ${popoverCoords.bottom}px - 20px)`
+                }}
               >
-                Add label
-              </Button>
+                <div className="fixed inset-0 bg-transparent" onClick={() => setShowLabelManager(false)} />
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                  <LabelManager
+                    boardId={currentBoardId}
+                    cardId={foundCard.id}
+                    selectedLabelIds={foundCard.labelIds || []}
+                    onClose={() => setShowLabelManager(false)}
+                  />
+                </div>
+              </div>,
+              document.body
             )}
           </div>
 
@@ -347,7 +350,7 @@ export function CardModal() {
               Checklist
             </label>
             <div className="space-y-2">
-              {foundCard.checklist.map((item) => (
+              {foundCard.checklist?.map((item) => (
                 <div key={item.id} className="flex items-center gap-2">
                   <input
                     type="checkbox"

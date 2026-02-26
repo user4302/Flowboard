@@ -14,7 +14,8 @@ interface CardProps {
 
 export function Card({ card, members, onClick }: CardProps) {
   const { openCardModal } = useUIStore();
-  const { updateCard, currentBoardId } = useBoardStore();
+  const { boards, updateCard, currentBoardId } = useBoardStore();
+  const currentBoard = boards.find(b => b.id === currentBoardId);
   const [isDragging, setIsDragging] = useState(false);
 
   const cardMembers = members.filter(member => card.members.includes(member.id));
@@ -46,20 +47,23 @@ export function Card({ card, members, onClick }: CardProps) {
       onDragStart={() => setIsDragging(true)}
       onDragEnd={() => setIsDragging(false)}
     >
-      {/* Labels */}
-      {card.labels.length > 0 && (
+      {/* Slim colored labels at the top */}
+      {(card.labelIds?.length ?? 0) > 0 && (
         <div className="mb-2 flex flex-wrap gap-1">
-          {card.labels.map((label) => (
-            <div
-              key={label.id}
-              className={cn(
-                'h-2 rounded-full px-2 py-1 text-xs font-medium text-white',
-                label.color
-              )}
-            >
-              {label.text}
-            </div>
-          ))}
+          {card.labelIds?.map((labelId) => {
+            const label = currentBoard?.labels.find((l: any) => l.id === labelId);
+            if (!label) return null;
+            return (
+              <div
+                key={label.id}
+                className={cn(
+                  'h-1.5 w-10 rounded-full',
+                  label.color
+                )}
+                title={label.text}
+              />
+            );
+          })}
         </div>
       )}
 

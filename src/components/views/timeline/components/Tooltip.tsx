@@ -21,6 +21,8 @@ interface TooltipProps {
   task: Card;
   /** Position relative to current view (before/after) */
   position: 'before' | 'after';
+  /** Labels available on the board */
+  boardLabels: any[];
 }
 
 /**
@@ -29,7 +31,7 @@ interface TooltipProps {
  * Renders a styled tooltip showing task details when hovering
  * over mini task indicators in the timeline.
  */
-export function Tooltip({ task, position }: TooltipProps) {
+export function Tooltip({ task, position, boardLabels }: TooltipProps) {
   // Helper function to format dates consistently
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
@@ -58,16 +60,20 @@ export function Tooltip({ task, position }: TooltipProps) {
           <div>Due: {formatDate(new Date(task.dueDate))}</div>
         )}
       </div>
-      {task.labels && task.labels.length > 0 && (
+      {task.labelIds?.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
-          {task.labels.map((label: any, index: number) => (
-            <span
-              key={index}
-              className={`text-xs px-2 py-1 rounded-full ${label.color}`}
-            >
-              {label.text}
-            </span>
-          ))}
+          {task.labelIds.map((labelId: string, index: number) => {
+            const label = boardLabels.find(l => l.id === labelId);
+            if (!label) return null;
+            return (
+              <span
+                key={label.id}
+                className={`text-[10px] px-1.5 py-0.5 rounded ${label.color} text-white font-medium`}
+              >
+                {label.text}
+              </span>
+            );
+          })}
         </div>
       )}
     </div>

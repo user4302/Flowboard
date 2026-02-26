@@ -40,13 +40,15 @@ interface TaskLaneProps {
   /** Function to calculate task positioning */
   getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number) => any;
   /** Function to get task color from labels */
-  getTaskColor: (task: Card) => string;
+  getTaskColor: (task: Card, boardLabels?: any[]) => string;
   /** Function to calculate timeline height */
   calculateTimelineHeight: (tasks: Card[], dateRange: Date[]) => number;
   /** Array of tasks hidden before the date range (only for first task) */
   hiddenTasksBefore: Card[];
   /** Array of tasks hidden after the date range (only for first task) */
   hiddenTasksAfter: Card[];
+  /** Labels available on the board */
+  boardLabels: any[];
 }
 
 /**
@@ -65,7 +67,8 @@ export function TaskLane({
   getTaskColor,
   calculateTimelineHeight,
   hiddenTasksBefore,
-  hiddenTasksAfter
+  hiddenTasksAfter,
+  boardLabels
 }: TaskLaneProps) {
   return (
     <div className="flex">
@@ -78,12 +81,12 @@ export function TaskLane({
               className="relative group"
             >
               <div
-                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenTask)}-500`}
+                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenTask, boardLabels)}-500`}
                 onClick={() => onOpenTaskModal(hiddenTask.id)}
                 title=""  // Remove browser tooltip
               />
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
-                <Tooltip task={hiddenTask} position="before" />
+                <Tooltip task={hiddenTask} position="before" boardLabels={boardLabels} />
               </div>
             </div>
           ))}
@@ -106,6 +109,7 @@ export function TaskLane({
           onOpenTaskModal={onOpenTaskModal}
           getTaskPosition={getTaskPosition}
           getTaskColor={getTaskColor}
+          boardLabels={boardLabels}
         />
       </div>
 
@@ -118,12 +122,12 @@ export function TaskLane({
               className="relative group"
             >
               <div
-                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenTask)}-500`}
+                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenTask, boardLabels)}-500`}
                 onClick={() => onOpenTaskModal(hiddenTask.id)}
                 title=""  // Remove browser tooltip
               />
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
-                <Tooltip task={hiddenTask} position="after" />
+                <Tooltip task={hiddenTask} position="after" boardLabels={boardLabels} />
               </div>
             </div>
           ))}

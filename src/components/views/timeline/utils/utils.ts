@@ -444,9 +444,13 @@ export const getTaskPosition = (
 /**
  * Get task color based on labels
  */
-export const getTaskColor = (task: Card) => {
-  if (task.labels && task.labels.length > 0) {
-    return task.labels[0].color.replace('bg-', '').replace('-500', '');
+export const getTaskColor = (task: Card, boardLabels: any[] = []) => {
+  if (task.labelIds?.length > 0) {
+    const firstLabelId = task.labelIds[0];
+    const label = boardLabels.find(l => l.id === firstLabelId);
+    if (label) {
+      return label.color.replace('bg-', '').replace('-500', '');
+    }
   }
   return 'slate';
 };

@@ -36,8 +36,11 @@ interface BoardState {
   reorderCards: (boardId: string, listId: string, fromIndex: number, toIndex: number) => void;
 
   // Label actions
-  addLabel: (boardId: string, cardId: string, label: Label) => void;
-  removeLabel: (boardId: string, cardId: string, labelId: string) => void;
+  createBoardLabel: (boardId: string, label: Omit<Label, 'id'>) => Label;
+  updateBoardLabel: (boardId: string, labelId: string, updates: Partial<Label>) => void;
+  deleteBoardLabel: (boardId: string, labelId: string) => void;
+  addLabelToCard: (boardId: string, cardId: string, labelId: string) => void;
+  removeLabelFromCard: (boardId: string, cardId: string, labelId: string) => void;
 
   // Member actions
   addMember: (boardId: string, user: User) => void;
@@ -85,6 +88,14 @@ export const useBoardStore = create<BoardState>()(
           name,
           lists: [],
           members: [],
+          labels: [
+            { id: generateId(), text: 'Copy Request', color: 'bg-yellow-600' },
+            { id: generateId(), text: 'Priority', color: 'bg-red-600' },
+            { id: generateId(), text: 'Design Team', color: 'bg-purple-600' },
+            { id: generateId(), text: 'Product Marketing', color: 'bg-blue-600' },
+            { id: generateId(), text: 'Trello Tip', color: 'bg-teal-600' },
+            { id: generateId(), text: 'Help', color: 'bg-green-600' },
+          ],
           createdAt: new Date(),
           updatedAt: new Date(),
         };
@@ -224,7 +235,7 @@ export const useBoardStore = create<BoardState>()(
           id: generateId(),
           title,
           listId,
-          labels: [],
+          labelIds: [],
           members: [],
           checklist: [],
           completed: false,
@@ -347,7 +358,54 @@ export const useBoardStore = create<BoardState>()(
         }));
       },
 
-      addLabel: (boardId, cardId, label) => {
+      createBoardLabel: (boardId, labelData) => {
+        const newLabel: Label = { ...labelData, id: generateId() };
+        set((state) => ({
+          boards: state.boards.map((b) =>
+            b.id === boardId
+              ? { ...b, labels: [...b.labels, newLabel], updatedAt: new Date() }
+              : b
+          ),
+        }));
+        return newLabel;
+      },
+
+      updateBoardLabel: (boardId, labelId, updates) => {
+        set((state) => ({
+          boards: state.boards.map((b) =>
+            b.id === boardId
+              ? {
+                ...b,
+                labels: b.labels.map((l) => (l.id === labelId ? { ...l, ...updates } : l)),
+                updatedAt: new Date(),
+              }
+              : b
+          ),
+        }));
+      },
+
+      deleteBoardLabel: (boardId, labelId) => {
+        set((state) => ({
+          boards: state.boards.map((b) =>
+            b.id === boardId
+              ? {
+                ...b,
+                labels: b.labels.filter((l) => l.id !== labelId),
+                lists: b.lists.map((l) => ({
+                  ...l,
+                  cards: l.cards.map((c) => ({
+                    ...c,
+                    labelIds: c.labelIds.filter((id) => id !== labelId),
+                  })),
+                })),
+                updatedAt: new Date(),
+              }
+              : b
+          ),
+        }));
+      },
+
+      addLabelToCard: (boardId, cardId, labelId) => {
         set((state) => ({
           boards: state.boards.map((board) =>
             board.id === boardId
@@ -358,10 +416,10 @@ export const useBoardStore = create<BoardState>()(
                     ? {
                       ...list,
                       cards: list.cards.map((card) =>
-                        card.id === cardId
+                        card.id === cardId && !card.labelIds.includes(labelId)
                           ? {
                             ...card,
-                            labels: [...card.labels, { ...label, id: generateId() }],
+                            labelIds: [...card.labelIds, labelId],
                             updatedAt: new Date(),
                           }
                           : card
@@ -376,7 +434,7 @@ export const useBoardStore = create<BoardState>()(
         }));
       },
 
-      removeLabel: (boardId, cardId, labelId) => {
+      removeLabelFromCard: (boardId, cardId, labelId) => {
         set((state) => ({
           boards: state.boards.map((board) =>
             board.id === boardId
@@ -390,7 +448,7 @@ export const useBoardStore = create<BoardState>()(
                         card.id === cardId
                           ? {
                             ...card,
-                            labels: card.labels.filter((l) => l.id !== labelId),
+                            labelIds: card.labelIds.filter((id) => id !== labelId),
                             updatedAt: new Date(),
                           }
                           : card
@@ -565,21 +623,67 @@ export const useBoardStore = create<BoardState>()(
           try {
             const data = JSON.parse(str);
 
-            // Convert UTC strings to local Date objects for app usage
+            // Convert UTC strings to local Date objects and migrate labels
             if (data.state?.boards) {
-              data.state.boards = data.state.boards.map((board: any) => ({
-                ...board,
-                lists: board.lists.map((list: any) => ({
+              data.state.boards = data.state.boards.map((board: any) => {
+                // Ensure board has labels array
+                let boardLabels = Array.isArray(board.labels) ? [...board.labels] : [];
+                // Ensure all board labels have IDs
+                boardLabels = boardLabels.map(l => ({ ...l, id: l.id || generateId() }));
+                const boardLabelIds = new Set(boardLabels.map((l: any) => l.id));
+
+                const newLists = board.lists.map((list: any) => ({
                   ...list,
-                  cards: list.cards.map((card: any): Card => ({
-                    ...card,
-                    startDate: (fromUTCString(card.startDate) || card.startDate) as Date,
-                    dueDate: (fromUTCString(card.dueDate) || card.dueDate) as Date,
-                    createdAt: (fromUTCString(card.createdAt) || card.createdAt) as Date,
-                    updatedAt: (fromUTCString(card.updatedAt) || card.updatedAt) as Date,
-                  }))
-                }))
-              }));
+                  cards: list.cards.map((card: any): Card => {
+                    // Start with existing labelIds or empty array
+                    let labelIds = Array.isArray(card.labelIds) ? [...card.labelIds] : [];
+
+                    // If card still has old labels array, migrate them
+                    if (Array.isArray(card.labels) && card.labels.length > 0) {
+                      card.labels.forEach((oldLabel: any) => {
+                        // Ensure old label has an ID
+                        const labelToMigrate = {
+                          ...oldLabel,
+                          id: oldLabel.id || generateId()
+                        };
+
+                        // If this label is not in boardLabels, add it
+                        if (!boardLabelIds.has(labelToMigrate.id)) {
+                          boardLabels.push(labelToMigrate);
+                          boardLabelIds.add(labelToMigrate.id);
+                        }
+
+                        // If this label's ID is not in the card's labelIds, add it
+                        if (!labelIds.includes(labelToMigrate.id)) {
+                          labelIds.push(labelToMigrate.id);
+                        }
+                      });
+                    }
+
+                    // Safety: Ensure all labelIds actually exist in boardLabels
+                    // This handles cases where bad migrations created dead IDs
+                    labelIds = labelIds.filter(id => boardLabelIds.has(id));
+
+                    // Ensure labelIds is unique
+                    labelIds = Array.from(new Set(labelIds));
+
+                    return {
+                      ...card,
+                      labelIds,
+                      startDate: (fromUTCString(card.startDate) || card.startDate) as Date,
+                      dueDate: (fromUTCString(card.dueDate) || card.dueDate) as Date,
+                      createdAt: (fromUTCString(card.createdAt) || card.createdAt) as Date,
+                      updatedAt: (fromUTCString(card.updatedAt) || card.updatedAt) as Date,
+                    };
+                  })
+                }));
+
+                return {
+                  ...board,
+                  labels: boardLabels,
+                  lists: newLists
+                };
+              });
             }
 
             return data;

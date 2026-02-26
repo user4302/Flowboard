@@ -70,8 +70,8 @@ export function isCardDueSoon(card: { dueDate?: Date }, days: number = 3): boole
  * @param checklist - Array of checklist items with done status
  * @returns Percentage of completed items (0-100)
  */
-export function getChecklistProgress(checklist: { done: boolean }[]): number {
-  if (checklist.length === 0) return 0;
+export function getChecklistProgress(checklist: { done: boolean }[] | undefined | null): number {
+  if (!checklist || checklist.length === 0) return 0;
   const completed = checklist.filter(item => item.done).length;
   return Math.round((completed / checklist.length) * 100);
 }

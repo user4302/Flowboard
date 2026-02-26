@@ -41,7 +41,9 @@ interface TaskProps {
   /** Function to calculate task positioning */
   getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number) => any;
   /** Function to get task color from labels */
-  getTaskColor: (task: Card) => string;
+  getTaskColor: (task: Card, boardLabels?: any[]) => string;
+  /** Labels available on the board */
+  boardLabels: any[];
 }
 
 /**
@@ -58,7 +60,8 @@ export function Task({
   zoomLevel,
   onOpenTaskModal,
   getTaskPosition,
-  getTaskColor
+  getTaskColor,
+  boardLabels
 }: TaskProps) {
   // Only render tasks that are at least partially visible in the timeline
   // Dates are already Date objects from localStorage conversion
@@ -80,7 +83,7 @@ export function Task({
   // }
 
   const position = getTaskPosition(task, allCards, cardIndex);
-  const color = getTaskColor(task);
+  const color = getTaskColor(task, boardLabels);
 
   return (
     <div
