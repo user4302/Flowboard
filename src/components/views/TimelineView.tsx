@@ -21,13 +21,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { startOfDay, addDays } from 'date-fns';
 import { Card } from '@/lib/types';
 import { useBoardStore, useUIStore } from '@/store';
-import { Header } from './timeline/components/Header';
-import { Grid } from './timeline/components/Grid';
-import { ListLane } from './timeline/components/ListLane';
-import { Tooltip } from './timeline/components/Tooltip';
-import { useDateRange } from './timeline/hooks/useDateRange';
-import { useShortcuts } from './timeline/hooks/useShortcuts';
-import { calculateTimelineHeight, getTaskPosition } from './timeline/utils/utils';
+import { Header, Grid, ListLane, Tooltip, useDateRange, useShortcuts, calculateTimelineHeight, getTaskPosition } from './timeline';
 
 /**
  * Props interface for TimelineView component

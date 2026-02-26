@@ -83,6 +83,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added card completion feature and simplified date handling
 - Implemented board-level label management system
 - Refactored kanban view with component extraction
+- Organized timeline exports and reset version
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
