@@ -193,16 +193,20 @@ export function Header() {
 
                 // Convert string dates to Date objects using fromUTCString
                 if (typeof cardData.startDate === 'string') {
-                  startDate = fromUTCString(cardData.startDate);
-                  if (isNaN(startDate.getTime())) {
+                  const date = fromUTCString(cardData.startDate);
+                  if (date && !isNaN(date.getTime())) {
+                    startDate = date;
+                  } else {
                     console.warn('Invalid start date format:', cardData.startDate);
                     startDate = undefined;
                   }
                 }
 
                 if (typeof cardData.dueDate === 'string') {
-                  dueDate = fromUTCString(cardData.dueDate);
-                  if (isNaN(dueDate.getTime())) {
+                  const date = fromUTCString(cardData.dueDate);
+                  if (date && !isNaN(date.getTime())) {
+                    dueDate = date;
+                  } else {
                     console.warn('Invalid due date format:', cardData.dueDate);
                     dueDate = undefined;
                   }

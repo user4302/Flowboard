@@ -56,8 +56,8 @@ export function CardModal() {
     defaultValues: {
       title: foundCard?.title || '',
       description: foundCard?.description || '',
-      startDate: foundCard?.startDate ? (fromUTCString(foundCard.startDate) || foundCard.startDate).toISOString().split('T')[0] : '',
-      dueDate: foundCard?.dueDate ? (fromUTCString(foundCard.dueDate) || foundCard.dueDate).toISOString().split('T')[0] : '',
+      startDate: foundCard?.startDate ? foundCard.startDate.toISOString().split('T')[0] : '',
+      dueDate: foundCard?.dueDate ? foundCard.dueDate.toISOString().split('T')[0] : '',
     },
   });
 
@@ -70,8 +70,8 @@ export function CardModal() {
       reset({
         title: foundCard.title,
         description: foundCard.description || '',
-        startDate: foundCard.startDate ? fromUTCString(foundCard.startDate).toISOString().split('T')[0] : '',
-        dueDate: foundCard.dueDate ? fromUTCString(foundCard.dueDate).toISOString().split('T')[0] : '',
+        startDate: foundCard.startDate ? foundCard.startDate.toISOString().split('T')[0] : '',
+        dueDate: foundCard.dueDate ? foundCard.dueDate.toISOString().split('T')[0] : '',
       });
     }
   }, [foundCard, reset]);
@@ -98,11 +98,11 @@ export function CardModal() {
     };
 
     if (data.startDate) {
-      updateData.startDate = fromUTCString(new Date(data.startDate));
+      updateData.startDate = new Date(data.startDate);
     }
 
     if (data.dueDate) {
-      updateData.dueDate = fromUTCString(new Date(data.dueDate));
+      updateData.dueDate = new Date(data.dueDate);
     }
 
     updateCard(currentBoardId, foundCard.id, updateData);
@@ -169,17 +169,40 @@ export function CardModal() {
       <form onSubmit={handleSubmit(handleSave)}>
         <ModalBody className="space-y-6">
           {/* Title - Required field with validation */}
-          <div>
-            <Input
-              {...register('title')}
-              placeholder="Card title"
-              className="text-lg font-semibold"
-            />
-            {errors.title && (
-              <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-            )}
+          <div className="flex items-start gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (currentBoardId) {
+                  updateCard(currentBoardId, foundCard.id, { completed: !foundCard.completed });
+                }
+              }}
+              className="mt-2.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors"
+              style={{
+                borderColor: foundCard.completed ? '#10b981' : '#d1d5db',
+                backgroundColor: foundCard.completed ? '#10b981' : 'transparent'
+              }}
+            >
+              {foundCard.completed && (
+                <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
+            </button>
+            <div className="flex-1">
+              <Input
+                {...register('title')}
+                placeholder="Card title"
+                className={cn(
+                  "text-lg font-semibold",
+                  foundCard.completed && "line-through opacity-60"
+                )}
+              />
+              {errors.title && (
+                <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+              )}
+            </div>
           </div>
-
           {/* Description - Optional rich text area */}
           <div>
             <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">

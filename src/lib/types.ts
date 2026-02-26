@@ -24,6 +24,7 @@ export interface Card {
   startDate?: Date; // Date object (localStorage handles UTC conversion)
   dueDate?: Date;   // Date object (localStorage handles UTC conversion)
   checklist: ChecklistItem[];
+  completed: boolean; // Track if entire card is completed
   position: number;
   listId: string;
   createdAt: Date; // Date object (localStorage handles UTC conversion)

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Calendar, User, MessageSquare, CheckSquare, MoreHorizontal } from 'lucide-react';
 import { Card as CardType, User as UserType } from '@/lib/types';
-import { useUIStore } from '@/store';
+import { useBoardStore, useUIStore } from '@/store';
 import { cn, formatDate, isCardOverdue, getChecklistProgress } from '@/lib/utils';
 
 interface CardProps {
@@ -14,6 +14,7 @@ interface CardProps {
 
 export function Card({ card, members, onClick }: CardProps) {
   const { openCardModal } = useUIStore();
+  const { updateCard, currentBoardId } = useBoardStore();
   const [isDragging, setIsDragging] = useState(false);
 
   const cardMembers = members.filter(member => card.members.includes(member.id));
@@ -25,12 +26,20 @@ export function Card({ card, members, onClick }: CardProps) {
     openCardModal(card.id);
   };
 
+  const handleToggleCompleted = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (currentBoardId) {
+      updateCard(currentBoardId, card.id, { completed: !card.completed });
+    }
+  };
+
   return (
     <div
       className={cn(
         'group cursor-pointer rounded-xl bg-white p-3 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] dark:bg-slate-800',
         isDragging && 'opacity-50 rotate-2',
-        isOverdue && 'ring-2 ring-red-500'
+        isOverdue && !card.completed && 'ring-2 ring-red-500',
+        card.completed && 'ring-2 ring-green-500'
       )}
       onClick={handleClick}
       draggable
@@ -54,10 +63,31 @@ export function Card({ card, members, onClick }: CardProps) {
         </div>
       )}
 
-      {/* Title */}
-      <h3 className="mb-2 text-sm font-medium text-slate-900 dark:text-slate-100">
-        {card.title}
-      </h3>
+      {/* Title and completion radio */}
+      <div className="flex items-start gap-2">
+        <button
+          type="button"
+          onClick={handleToggleCompleted}
+          className={cn(
+            'mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors',
+            card.completed
+              ? 'bg-indigo-600 border-indigo-600'
+              : 'border-slate-300 hover:border-indigo-400 dark:border-slate-600'
+          )}
+        >
+          {card.completed && (
+            <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          )}
+        </button>
+        <h3 className={cn(
+          'mb-2 text-sm font-medium text-slate-900 dark:text-slate-100 flex-1',
+          card.completed && 'line-through opacity-60'
+        )}>
+          {card.title}
+        </h3>
+      </div>
 
       {/* Description preview */}
       {card.description && (

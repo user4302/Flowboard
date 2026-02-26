@@ -10,10 +10,10 @@
  */
 export function toUTCString(date?: Date | string): string | undefined {
   if (!date) return undefined;
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(dateObj.getTime())) return undefined;
-  
+
   return dateObj.toISOString();
 }
 
@@ -22,12 +22,16 @@ export function toUTCString(date?: Date | string): string | undefined {
  * @param utcString - UTC ISO string to convert
  * @returns Local Date object or undefined
  */
-export function fromUTCString(utcString?: string): Date | undefined {
+export function fromUTCString(utcString?: string | Date): Date | undefined {
   if (!utcString) return undefined;
-  
+
+  if (utcString instanceof Date) {
+    return isNaN(utcString.getTime()) ? undefined : utcString;
+  }
+
   const dateObj = new Date(utcString);
   if (isNaN(dateObj.getTime())) return undefined;
-  
+
   return dateObj;
 }
 
@@ -39,10 +43,10 @@ export function fromUTCString(utcString?: string): Date | undefined {
  */
 export function toLocalDate(date?: Date | string): Date | undefined {
   if (!date) return undefined;
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(dateObj.getTime())) return undefined;
-  
+
   return dateObj;
 }
 

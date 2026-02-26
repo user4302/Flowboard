@@ -227,9 +227,10 @@ export const useBoardStore = create<BoardState>()(
           labels: [],
           members: [],
           checklist: [],
+          completed: false,
           position: position ?? list.cards.length,
-          createdAt: toUTCString(new Date()),
-          updatedAt: toUTCString(new Date()),
+          createdAt: new Date(),
+          updatedAt: new Date(),
         };
 
         set((state) => ({
@@ -263,13 +264,13 @@ export const useBoardStore = create<BoardState>()(
                       ...list,
                       cards: list.cards.map((card) =>
                         card.id === cardId
-                          ? { ...card, ...updates, updatedAt: toUTCString(new Date()) }
+                          ? { ...card, ...updates, updatedAt: new Date() }
                           : card
                       ),
                     }
                     : list
                 ),
-                updatedAt: toUTCString(new Date()),
+                updatedAt: new Date(),
               }
               : board
           ),
