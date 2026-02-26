@@ -91,8 +91,8 @@ const findTwoWeekIndices = (dateRange: Date[], taskStartDate: Date, taskEndDate:
 
 // Helper function to find date indices for month view
 const findMonthIndices = (dateRange: Date[], taskStartDate: Date, taskEndDate: Date) => {
-  const startIndex = dateRange.findIndex(date => isSameWeek(date, taskStartDate));
-  const endIndex = dateRange.findIndex(date => isSameWeek(date, taskEndDate));
+  const startIndex = dateRange.findIndex(date => isSameDay(date, taskStartDate));
+  const endIndex = dateRange.findIndex(date => isSameDay(date, taskEndDate));
   return { startIndex, endIndex };
 };
 
