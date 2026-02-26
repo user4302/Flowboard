@@ -79,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected date indexing in month view timeline
 - Enhanced ListLane header with collapse indicators and task count
 - Improved board item layout in Sidebar component
+- Restored delete button positioning in Sidebar board items
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
