@@ -306,32 +306,64 @@ export const useBoardStore = create<BoardState>()(
       },
 
       moveCard: (boardId, cardId, fromListId, toListId, position) => {
-        const state = get();
-        const board = state.boards.find((b) => b.id === boardId);
-        if (!board) return;
-
-        const fromList = board.lists.find((l) => l.id === fromListId);
-        const toList = board.lists.find((l) => l.id === toListId);
-        if (!fromList || !toList) return;
-
-        const cardIndex = fromList.cards.findIndex((c) => c.id === cardId);
-        if (cardIndex === -1) return;
-
-        const [card] = fromList.cards.splice(cardIndex, 1);
-        card.listId = toListId;
-        card.position = position;
-        toList.cards.splice(position, 0, card);
-
-        // Update positions
-        fromList.cards.forEach((c, idx) => (c.position = idx));
-        toList.cards.forEach((c, idx) => (c.position = idx));
-
         set((state) => ({
-          boards: state.boards.map((b) =>
-            b.id === boardId
-              ? { ...b, lists: [...b.lists], updatedAt: new Date() }
-              : b
-          ),
+          boards: state.boards.map((board) => {
+            if (board.id !== boardId) return board;
+
+            const fromList = board.lists.find((l) => l.id === fromListId);
+            const toList = board.lists.find((l) => l.id === toListId);
+            if (!fromList || !toList) return board;
+
+            const cardIndex = fromList.cards.findIndex((c) => c.id === cardId);
+            if (cardIndex === -1 && fromListId !== toListId) return board;
+
+            // Get the card to move
+            let movedCard: Card;
+            if (fromListId === toListId) {
+              movedCard = fromList.cards[cardIndex];
+            } else {
+              movedCard = { ...fromList.cards[cardIndex], listId: toListId };
+            }
+
+            return {
+              ...board,
+              lists: board.lists.map((list) => {
+                if (list.id === fromListId && fromListId === toListId) {
+                  // Reorder within the same list (fallback, usually handled by reorderCards)
+                  const newCards = Array.from(list.cards);
+                  newCards.splice(cardIndex, 1);
+                  newCards.splice(position, 0, movedCard);
+                  return {
+                    ...list,
+                    cards: newCards.map((c, idx) => ({ ...c, position: idx })),
+                  };
+                }
+
+                if (list.id === fromListId) {
+                  // Remove from source list
+                  return {
+                    ...list,
+                    cards: list.cards
+                      .filter((c) => c.id !== cardId)
+                      .map((c, idx) => ({ ...c, position: idx })),
+                  };
+                }
+
+                if (list.id === toListId) {
+                  // Add to target list
+                  const newCards = Array.from(list.cards);
+                  newCards.splice(position, 0, movedCard);
+                  return {
+                    ...list,
+                    cards: newCards.map((c, idx) => ({ ...c, position: idx })),
+                  };
+                }
+
+                return list;
+              }),
+              updatedAt: new Date(),
+            };
+          }),
         }));
       },
 

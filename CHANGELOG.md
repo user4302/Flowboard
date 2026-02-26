@@ -86,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Organized timeline exports and reset version
 - Migrated Card component to dnd-kit drag and drop
 - Consolidated UI components and removed kanban duplicates
+- Improved kanban drag and drop with optimistic updates
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import {
   DragStartEvent,
+  DragOverEvent,
   DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
 import { useBoardStore } from '@/store';
 
 interface UseKanbanDragAndDropProps {
@@ -21,6 +22,7 @@ interface UseKanbanDragAndDropReturn {
   sensors: any[];
   activeId: string | null;
   handleDragStart: (event: DragStartEvent) => void;
+  handleDragOver: (event: DragOverEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;
   getActiveCard: () => any;
 }
@@ -46,62 +48,95 @@ export function useKanbanDragAndDrop({
     setActiveId(event.active.id as string);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
-
     if (!over) return;
 
     const activeId = active.id as string;
     const overId = over.id as string;
 
-    // Find the active card and its current list
-    let activeCard = null;
-    let fromListId = null;
-    let fromIndex = -1;
-
+    // Find our active card's list
+    let activeListId = null;
     for (const list of board.lists) {
-      const cardIndex = list.cards.findIndex((c: any) => c.id === activeId);
-      if (cardIndex !== -1) {
-        activeCard = list.cards[cardIndex];
-        fromListId = list.id;
-        fromIndex = cardIndex;
+      if (list.cards.some((c: any) => c.id === activeId)) {
+        activeListId = list.id;
         break;
       }
     }
 
-    if (!activeCard || !fromListId) return;
-
-    // Find the target list and position
-    let toListId = fromListId;
-    let toIndex = 0;
-
-    // Check if we're dropping on a list
-    const targetList = board.lists.find((l: any) => l.id === overId);
-    if (targetList) {
-      toListId = targetList.id;
-      toIndex = targetList.cards.length;
+    // Find the list we are hovering over
+    // It could be the list itself or a card within that list
+    let overListId = null;
+    const overList = board.lists.find((l: any) => l.id === overId);
+    if (overList) {
+      overListId = overList.id;
     } else {
-      // Check if we're dropping on another card
       for (const list of board.lists) {
-        const cardIndex = list.cards.findIndex((c: any) => c.id === overId);
-        if (cardIndex !== -1) {
-          toListId = list.id;
-          toIndex = cardIndex;
+        if (list.cards.some((c: any) => c.id === overId)) {
+          overListId = list.id;
           break;
         }
       }
     }
 
-    // Move the card
-    if (fromListId === toListId) {
-      // Reorder within the same list
-      useBoardStore.getState().reorderCards(boardId, fromListId, fromIndex, toIndex);
-    } else {
-      // Move to a different list
-      useBoardStore.getState().moveCard(boardId, activeId, fromListId, toListId, toIndex);
+    if (!activeListId || !overListId || activeListId === overListId) return;
+
+    // We are dragging over a different list!
+    // Tell the store to optimistically move the card
+    const overIndex = board.lists.find((l: any) => l.id === overListId).cards.findIndex((c: any) => c.id === overId);
+    const newIndex = overIndex >= 0 ? overIndex : 0;
+
+    useBoardStore.getState().moveCard(boardId, activeId, activeListId, overListId, newIndex);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveId(null);
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    // Find the current list and position
+    let activeListId = null;
+    let fromIndex = -1;
+    for (const list of board.lists) {
+      const idx = list.cards.findIndex((c: any) => c.id === activeId);
+      if (idx !== -1) {
+        activeListId = list.id;
+        fromIndex = idx;
+        break;
+      }
     }
 
-    setActiveId(null);
+    if (!activeListId) return;
+
+    // Find target list and index
+    let overListId = null;
+    let toIndex = -1;
+
+    const overList = board.lists.find((l: any) => l.id === overId);
+    if (overList) {
+      overListId = overList.id;
+      toIndex = overList.cards.length;
+    } else {
+      for (const list of board.lists) {
+        const idx = list.cards.findIndex((c: any) => c.id === overId);
+        if (idx !== -1) {
+          overListId = list.id;
+          toIndex = idx;
+          break;
+        }
+      }
+    }
+
+    if (!overListId) return;
+
+    if (activeListId === overListId) {
+      useBoardStore.getState().reorderCards(boardId, activeListId, fromIndex, toIndex);
+    } else {
+      useBoardStore.getState().moveCard(boardId, activeId, activeListId, overListId, toIndex);
+    }
   };
 
   const getActiveCard = () => {
@@ -118,6 +153,7 @@ export function useKanbanDragAndDrop({
     sensors,
     activeId,
     handleDragStart,
+    handleDragOver,
     handleDragEnd,
     getActiveCard,
   };

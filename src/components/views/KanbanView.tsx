@@ -39,6 +39,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     sensors,
     activeId,
     handleDragStart,
+    handleDragOver,
     handleDragEnd,
     getActiveCard,
   } = useKanbanDragAndDrop({ boardId, board });
@@ -66,6 +67,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
       sensors={sensors}
       collisionDetection={closestCenter}
       onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-full flex-col max-w-full">
