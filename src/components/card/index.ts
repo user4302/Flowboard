@@ -5,7 +5,6 @@
 
 // Main card components
 export { Card } from './Card';
-export { CardModal } from './CardModal';
 
 // Label manager module
 export { LabelManager } from './LabelManager';

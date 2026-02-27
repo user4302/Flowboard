@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Sidebar } from '@/components/sidebar';
 import { Header } from '@/components/header';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
-import { CardModal } from '@/components/card';
+import { CardModal } from '@/components/modal';
 import { JoinBoardModal } from '@/components/sharing';
 import { useBoard, useUIStore } from '@/hooks';
 import { useSharingStore } from '@/store/sharingStore';

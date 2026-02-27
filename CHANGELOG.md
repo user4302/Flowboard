@@ -133,6 +133,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modularized card components for improved maintainability
 - Modularized search and filter components for improved maintainability
 - Modularized sidebar components for improved maintainability
+- Reorganized modal functionality into dedicated modal module
 
 ### Fixed
 - CardModal label creation with proper ID generation

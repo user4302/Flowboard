@@ -1,0 +1,96 @@
+'use client';
+
+import { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { Tag, Plus } from 'lucide-react';
+import { Label } from '@/lib/types';
+import { PopoverCoords } from '@/components/card/types/card.types';
+import { LabelManager } from '@/components/card/LabelManager';
+
+interface ModalLabelSectionProps {
+  boardId: string;
+  cardId: string;
+  labelIds: string[];
+  labels: Label[];
+}
+
+export function ModalLabelSection({
+  boardId,
+  cardId,
+  labelIds,
+  labels
+}: ModalLabelSectionProps) {
+  const [showLabelManager, setShowLabelManager] = useState(false);
+  const [popoverCoords, setPopoverCoords] = useState<PopoverCoords>({ left: 0 });
+  const labelTriggerRef = useRef<HTMLDivElement>(null);
+
+  const handleLabelClick = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const hasSpaceBelow = spaceBelow > 450;
+
+    setPopoverCoords({
+      top: hasSpaceBelow ? rect.bottom + 8 : undefined,
+      bottom: hasSpaceBelow ? undefined : (window.innerHeight - rect.top) + 8,
+      left: rect.left
+    });
+    setShowLabelManager(true);
+  };
+
+  return (
+    <div className="relative" ref={labelTriggerRef}>
+      <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+        <Tag className="mr-1 inline h-4 w-4" />
+        Labels
+      </label>
+      <div className="flex flex-wrap gap-2">
+        {labelIds?.map((labelId) => {
+          const label = labels.find((l: Label) => l.id === labelId);
+          if (!label) return null;
+          return (
+            <span
+              key={label.id}
+              className={`inline-flex h-8 items-center rounded px-3 text-sm font-semibold text-white transition-all hover:brightness-110 cursor-pointer ${label.color}`}
+              onClick={handleLabelClick}
+            >
+              {label.text}
+            </span>
+          );
+        })}
+        <button
+          type="button"
+          onClick={handleLabelClick}
+          className="flex h-8 w-8 items-center justify-center rounded bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700"
+        >
+          <Plus className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Label Manager Popover via Portal */}
+      {showLabelManager && typeof document !== 'undefined' && createPortal(
+        <div
+          className="fixed z-[100] flex flex-col items-start"
+          style={{
+            top: popoverCoords.top !== undefined ? `${popoverCoords.top}px` : 'auto',
+            bottom: popoverCoords.bottom !== undefined ? `${popoverCoords.bottom}px` : 'auto',
+            left: `${Math.min(popoverCoords.left, window.innerWidth - 330)}px`,
+            maxHeight: popoverCoords.top !== undefined
+              ? `calc(100vh - ${popoverCoords.top}px - 20px)`
+              : `calc(100vh - ${popoverCoords.bottom}px - 20px)`
+          }}
+        >
+          <div className="fixed inset-0 bg-transparent" onClick={() => setShowLabelManager(false)} />
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            <LabelManager
+              boardId={boardId}
+              cardId={cardId}
+              selectedLabelIds={labelIds || []}
+              onClose={() => setShowLabelManager(false)}
+            />
+          </div>
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}

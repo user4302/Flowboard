@@ -1,4 +1,4 @@
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button, Input } from '@/components/ui';
 import { ChecklistManagerProps } from '../types/card.types';
