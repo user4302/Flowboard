@@ -107,6 +107,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced timeline task color system and improved function signatures
 - Fixed timeline header gap and scrolling content behind it
 - Fixed Add list input squashing and implemented auto-scroll
+- Fixed completed cards showing red overdue styling instead of green
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

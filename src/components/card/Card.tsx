@@ -121,9 +121,11 @@ export function Card({ card, members, onClick }: CardProps) {
             <div
               className={cn(
                 'flex items-center gap-1 rounded px-2 py-1 text-xs',
-                isOverdue
-                  ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
-                  : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
+                card.completed
+                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                  : isOverdue
+                    ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+                    : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300'
               )}
             >
               <Calendar className="h-3 w-3" />
