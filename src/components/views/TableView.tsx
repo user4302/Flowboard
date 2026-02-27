@@ -1,16 +1,16 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { ArrowUpDown, Calendar, User, CheckSquare, Tag } from 'lucide-react';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { ArrowUpDown, Calendar, User, CheckSquare, Tag, Flag, Clock, Settings, ChevronDown } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
-import { formatDate, getChecklistProgress } from '@/lib/utils';
+import { formatDate, getChecklistProgress, formatRelativeTime } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
 interface TableViewProps {
   boardId: string;
 }
 
-type SortField = 'title' | 'list' | 'dueDate' | 'progress';
+type SortField = 'title' | 'list' | 'dueDate' | 'progress' | 'priority' | 'createdAt';
 type SortDirection = 'asc' | 'desc';
 
 export function TableView({ boardId }: TableViewProps) {
@@ -22,6 +22,33 @@ export function TableView({ boardId }: TableViewProps) {
 
   const [sortField, setSortField] = useState<SortField>('title');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
+  // Column visibility state
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(new Set(['title', 'list', 'labels', 'members', 'priority', 'dueDate', 'createdAt', 'progress']));
+  const [showColumnDropdown, setShowColumnDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const toggleColumn = (columnKey: string) => {
+    const newVisibleColumns = new Set(visibleColumns);
+    if (newVisibleColumns.has(columnKey)) {
+      newVisibleColumns.delete(columnKey);
+    } else {
+      newVisibleColumns.add(columnKey);
+    }
+    setVisibleColumns(newVisibleColumns);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowColumnDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Get all cards with their list info
   const allCards = useMemo(() => {
@@ -66,6 +93,14 @@ export function TableView({ boardId }: TableViewProps) {
           aValue = getChecklistProgress(a.checklist);
           bValue = getChecklistProgress(b.checklist);
           break;
+        case 'priority':
+          aValue = a.priority || 0;
+          bValue = b.priority || 0;
+          break;
+        case 'createdAt':
+          aValue = a.createdAt ? new Date(a.createdAt).getTime() : Infinity;
+          bValue = b.createdAt ? new Date(b.createdAt).getTime() : Infinity;
+          break;
         default:
           return 0;
       }
@@ -100,7 +135,9 @@ export function TableView({ boardId }: TableViewProps) {
     { key: 'list', label: 'List', icon: null },
     { key: 'labels', label: 'Labels', icon: Tag },
     { key: 'members', label: 'Members', icon: User },
+    { key: 'priority', label: 'Priority', icon: Flag },
     { key: 'dueDate', label: 'Due Date', icon: Calendar },
+    { key: 'createdAt', label: 'Created', icon: Clock },
     { key: 'progress', label: 'Progress', icon: CheckSquare },
   ] as const;
 
@@ -112,8 +149,43 @@ export function TableView({ boardId }: TableViewProps) {
           <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             Table View
           </h2>
-          <div className="text-sm text-slate-600 dark:text-slate-400">
-            {sortedCards.length} cards
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-slate-600 dark:text-slate-400">
+              {sortedCards.length} cards
+            </div>
+
+            {/* Column Toggle Dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setShowColumnDropdown(!showColumnDropdown)}
+                className="flex items-center gap-2 px-3 py-1 text-sm border border-slate-300 rounded-md hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-800"
+              >
+                <Settings className="h-4 w-4" />
+                Columns
+                <ChevronDown className="h-3 w-3" />
+              </button>
+
+              {showColumnDropdown && (
+                <div className="absolute right-0 mt-1 w-48 bg-white border border-slate-200 rounded-md shadow-lg z-10 dark:bg-slate-800 dark:border-slate-700">
+                  <div className="p-2">
+                    {columns.map((column) => (
+                      <label
+                        key={column.key}
+                        className="flex items-center gap-2 px-2 py-1 text-sm hover:bg-slate-50 dark:hover:bg-slate-700 rounded cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={visibleColumns.has(column.key)}
+                          onChange={() => toggleColumn(column.key)}
+                          className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-700"
+                        />
+                        <span className="text-slate-700 dark:text-slate-300">{column.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -123,7 +195,7 @@ export function TableView({ boardId }: TableViewProps) {
         <table className="w-full">
           <thead className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
             <tr>
-              {columns.map((column) => {
+              {columns.filter(column => visibleColumns.has(column.key)).map((column) => {
                 const Icon = column.icon;
                 return (
                   <th
@@ -155,109 +227,155 @@ export function TableView({ boardId }: TableViewProps) {
                 onClick={() => handleCardClick(card.id)}
               >
                 {/* Title */}
-                <td className="px-4 py-3">
-                  <div>
-                    <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                      {card.title}
-                    </div>
-                    {card.description && (
-                      <div className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">
-                        {card.description}
+                {visibleColumns.has('title') && (
+                  <td className="px-4 py-3">
+                    <div>
+                      <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        {card.title}
                       </div>
-                    )}
-                  </div>
-                </td>
+                      {card.description && (
+                        <div className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">
+                          {card.description}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                )}
 
                 {/* List */}
-                <td className="px-4 py-3">
-                  <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                    {card.listName}
-                  </span>
-                </td>
+                {visibleColumns.has('list') && (
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                      {card.listName}
+                    </span>
+                  </td>
+                )}
 
                 {/* Labels */}
-                <td className="px-4 py-3">
-                  <div className="flex flex-wrap gap-1">
-                    {card.labelIds?.slice(0, 2).map((labelId) => {
-                      const label = board.labels.find(l => l.id === labelId);
-                      if (!label) return null;
-                      return (
-                        <span
-                          key={label.id}
-                          className={cn(
-                            'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white',
-                            label.color
-                          )}
-                        >
-                          {label.text}
+                {visibleColumns.has('labels') && (
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap gap-1">
+                      {card.labelIds?.slice(0, 2).map((labelId) => {
+                        const label = board.labels.find(l => l.id === labelId);
+                        if (!label) return null;
+                        return (
+                          <span
+                            key={label.id}
+                            className={cn(
+                              'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white',
+                              label.color
+                            )}
+                          >
+                            {label.text}
+                          </span>
+                        );
+                      })}
+                      {(card.labelIds?.length ?? 0) > 2 && (
+                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                          +{(card.labelIds?.length ?? 0) - 2}
                         </span>
-                      );
-                    })}
-                    {(card.labelIds?.length ?? 0) > 2 && (
-                      <span className="text-xs text-slate-500 dark:text-slate-400">
-                        +{(card.labelIds?.length ?? 0) - 2}
-                      </span>
-                    )}
-                  </div>
-                </td>
+                      )}
+                    </div>
+                  </td>
+                )}
 
                 {/* Members */}
-                <td className="px-4 py-3">
-                  <div className="flex -space-x-1">
-                    {getCardMembers(card.members).slice(0, 3).map((member, index) => (
-                      <div
-                        key={member.id}
-                        className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-indigo-500 text-xs font-medium text-white dark:border-slate-900"
-                        style={{ zIndex: 3 - index }}
-                        title={member.name}
-                      >
-                        {member.name
-                          .split(' ')
-                          .map((n: string) => n[0])
-                          .join('')
-                          .toUpperCase()}
+                {visibleColumns.has('members') && (
+                  <td className="px-4 py-3">
+                    <div className="flex -space-x-1">
+                      {getCardMembers(card.members).slice(0, 3).map((member, index) => (
+                        <div
+                          key={member.id}
+                          className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-indigo-500 text-xs font-medium text-white dark:border-slate-900"
+                          style={{ zIndex: 3 - index }}
+                          title={member.name}
+                        >
+                          {member.name
+                            .split(' ')
+                            .map((n: string) => n[0])
+                            .join('')
+                            .toUpperCase()}
+                        </div>
+                      ))}
+                      {card.members.length > 3 && (
+                        <div
+                          className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-300 text-xs font-medium text-slate-600 dark:border-slate-900 dark:bg-slate-600 dark:text-slate-300"
+                          style={{ zIndex: 0 }}
+                        >
+                          +{card.members.length - 3}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                )}
+
+                {/* Priority */}
+                {visibleColumns.has('priority') && (
+                  <td className="px-4 py-3">
+                    {card.priority ? (
+                      <div className="flex items-center gap-2">
+                        <span className={cn(
+                          'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium',
+                          card.priority >= 80 ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' :
+                            card.priority >= 50 ? 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300' :
+                              card.priority >= 20 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300' :
+                                'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                        )}>
+                          {card.priority}
+                        </span>
                       </div>
-                    ))}
-                    {card.members.length > 3 && (
-                      <div
-                        className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-slate-300 text-xs font-medium text-slate-600 dark:border-slate-900 dark:bg-slate-600 dark:text-slate-300"
-                        style={{ zIndex: 0 }}
-                      >
-                        +{card.members.length - 3}
-                      </div>
+                    ) : (
+                      <span className="text-xs text-slate-400 dark:text-slate-500">No priority</span>
                     )}
-                  </div>
-                </td>
+                  </td>
+                )}
 
                 {/* Due Date */}
-                <td className="px-4 py-3">
-                  {card.dueDate ? (
-                    <div className="text-sm text-slate-900 dark:text-slate-100">
-                      {formatDate(card.dueDate)}
-                    </div>
-                  ) : (
-                    <span className="text-xs text-slate-400 dark:text-slate-500">No due date</span>
-                  )}
-                </td>
+                {visibleColumns.has('dueDate') && (
+                  <td className="px-4 py-3">
+                    {card.dueDate ? (
+                      <div className="text-sm text-slate-900 dark:text-slate-100">
+                        {formatDate(card.dueDate)}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-slate-400 dark:text-slate-500">No due date</span>
+                    )}
+                  </td>
+                )}
+
+                {/* Created Date */}
+                {visibleColumns.has('createdAt') && (
+                  <td className="px-4 py-3">
+                    {card.createdAt ? (
+                      <div className="text-sm text-slate-900 dark:text-slate-100" title={formatDate(card.createdAt)}>
+                        {formatRelativeTime(card.createdAt)}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-slate-400 dark:text-slate-500">Unknown</span>
+                    )}
+                  </td>
+                )}
 
                 {/* Progress */}
-                <td className="px-4 py-3">
-                  {card.checklist.length > 0 ? (
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-slate-200 rounded-full h-2 dark:bg-slate-700">
-                        <div
-                          className="bg-indigo-600 h-2 rounded-full"
-                          style={{ width: `${getChecklistProgress(card.checklist)}%` }}
-                        />
+                {visibleColumns.has('progress') && (
+                  <td className="px-4 py-3">
+                    {card.checklist.length > 0 ? (
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 bg-slate-200 rounded-full h-2 dark:bg-slate-700">
+                          <div
+                            className="bg-indigo-600 h-2 rounded-full"
+                            style={{ width: `${getChecklistProgress(card.checklist)}%` }}
+                          />
+                        </div>
+                        <span className="text-xs text-slate-600 dark:text-slate-400">
+                          {getChecklistProgress(card.checklist)}%
+                        </span>
                       </div>
-                      <span className="text-xs text-slate-600 dark:text-slate-400">
-                        {getChecklistProgress(card.checklist)}%
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-xs text-slate-400 dark:text-slate-500">No checklist</span>
-                  )}
-                </td>
+                    ) : (
+                      <span className="text-xs text-slate-400 dark:text-slate-500">No checklist</span>
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

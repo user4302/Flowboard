@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Calendar, User, Tag, CheckSquare, Trash2, Plus } from 'lucide-react';
+import { X, Calendar, User, Tag, CheckSquare, Trash2, Plus, Flag } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -23,6 +23,7 @@ const cardSchema = z.object({
   description: z.string().optional(),
   startDate: z.string().optional(),
   dueDate: z.string().optional(),
+  priority: z.number().min(1, 'Priority must be between 1-100').max(100, 'Priority must be between 1-100').optional(),
 });
 
 /**
@@ -62,13 +63,14 @@ export function CardModal() {
   const foundCard = currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId);
 
   // React Hook Form setup with zod validation
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<CardFormData>({
+  const { register, handleSubmit, reset, formState: { errors }, setValue } = useForm<CardFormData>({
     resolver: zodResolver(cardSchema),
     defaultValues: {
       title: foundCard?.title || '',
       description: foundCard?.description || '',
       startDate: foundCard?.startDate ? foundCard.startDate.toISOString().split('T')[0] : '',
       dueDate: foundCard?.dueDate ? foundCard.dueDate.toISOString().split('T')[0] : '',
+      priority: foundCard?.priority || undefined,
     },
   });
 
@@ -83,6 +85,7 @@ export function CardModal() {
         description: foundCard.description || '',
         startDate: foundCard.startDate ? foundCard.startDate.toISOString().split('T')[0] : '',
         dueDate: foundCard.dueDate ? foundCard.dueDate.toISOString().split('T')[0] : '',
+        priority: foundCard.priority || undefined,
       });
     }
   }, [foundCard, reset]);
@@ -114,6 +117,10 @@ export function CardModal() {
 
     if (data.dueDate) {
       updateData.dueDate = new Date(data.dueDate);
+    }
+
+    if (data.priority) {
+      updateData.priority = data.priority;
     }
 
     updateCard(currentBoardId, foundCard.id, updateData);
@@ -292,6 +299,28 @@ export function CardModal() {
               </div>,
               document.body
             )}
+          </div>
+
+          {/* Priority - Number-based priority input */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+              <Flag className="mr-1 inline h-4 w-4" />
+              Priority
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="100"
+              placeholder="Enter priority (1-100)"
+              {...register('priority', { valueAsNumber: true })}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            />
+            {errors.priority && (
+              <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
+            )}
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              Enter a number between 1-100 (higher numbers = higher priority)
+            </p>
           </div>
 
           {/* Members - Display assigned team members */}

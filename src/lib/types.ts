@@ -28,6 +28,7 @@ export interface Card {
   completed: boolean;
   position: number;
   listId: string;
+  priority?: number; // Number-based priority (greater than 0)
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { format, isAfter, isBefore, isToday, isPast, isFuture } from 'date-fns';
+import { format, isAfter, isBefore, isToday, isPast, isFuture, formatDistanceToNow } from 'date-fns';
 
 /**
  * Utility function for combining CSS classes
@@ -39,6 +39,16 @@ export function formatDate(date: Date | undefined | null): string {
 export function formatDateTime(date: Date | undefined | null): string {
   if (!date) return '';
   return format(date, 'MMM d, yyyy h:mm a');
+}
+
+/**
+ * Format a date as relative time
+ * @param date - Date to format
+ * @returns Relative time string (e.g., "2 hours ago", "3 days ago")
+ */
+export function formatRelativeTime(date: Date | undefined | null): string {
+  if (!date) return '';
+  return formatDistanceToNow(date, { addSuffix: true });
 }
 
 /**

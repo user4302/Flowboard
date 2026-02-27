@@ -1,9 +1,9 @@
-# Flowboard v1.1.1
+# Flowboard v1.2.0
 
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-1.1.1-green.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
 
@@ -12,7 +12,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 ### Core Functionality
 - **Four Switchable Views**: Kanban (default), Timeline (Gantt-style), Calendar, and Table views
 - **Drag-and-Drop**: Full drag-and-drop support for cards between lists using @dnd-kit
-- **Rich Card Management**: Detailed card editing with descriptions, labels, members, dates, and checklists
+- **Rich Card Management**: Detailed card editing with descriptions, labels, members, dates, checklists, and priority
 - **Real-time Search**: Filter cards by title, description, labels, and members
 - **Dark/Light Theme**: System preference detection with manual toggle
 - **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions
@@ -22,7 +22,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 ### Data Model
 - **Boards**: Multiple boards with member management
 - **Lists**: Organized columns within boards
-- **Cards**: Rich cards with metadata (labels, members, dates, checklists)
+- **Cards**: Rich cards with metadata (labels, members, dates, checklists, priority)
 - **Persistence**: Local storage with easy migration path to cloud services
 
 ### Timeline Enhancements 🚀
@@ -134,12 +134,16 @@ flowboard/
 - **Title & Description**: Inline editing with validation
 - **Labels**: Color-coded labels for categorization
 - **Members**: Assign team members to cards
+- **Priority**: Number-based priority system (higher numbers = higher priority)
 - **Dates**: Set start and due dates
 - **Checklist**: Add progress tracking items
 
 ### Other Views
 - **Calendar**: Monthly grid view showing due dates
-- **Table**: Sortable data table with all card properties
+- **Table**: Sortable data table with all card properties, including priority and created date
+- **Column Customization**: Toggle table columns on/off for personalized view
+- **Priority Sorting**: Sort cards by numerical priority in table view
+- **Relative Time Display**: View card creation dates as relative time (e.g., "2 hours ago")
 
 ## Data Persistence
 
