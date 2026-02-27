@@ -188,9 +188,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
         onZoomChange={handleZoomChange}
       />
 
-      {/* Timeline container with scroll */}
       <div className="flex-1 overflow-hidden relative">
-        <div className="h-full overflow-auto p-4 absolute inset-0">
+        <div className="h-full overflow-auto px-4 pb-4 absolute inset-0">
           <div className="min-w-[1200px]">
             {/* Date headers and grid lines */}
             <Grid dateRange={dateRange} zoomLevel={zoomLevel} />

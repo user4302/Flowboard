@@ -105,6 +105,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved kanban menu management and clean default data
 - Fixed ListLane import path case sensitivity
 - Enhanced timeline task color system and improved function signatures
+- Fixed timeline header gap and scrolling content behind it
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

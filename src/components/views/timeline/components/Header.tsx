@@ -64,7 +64,7 @@ export function Header({
   };
 
   return (
-    <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
+    <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
       {/* Date navigation controls */}
       <div className="flex items-center justify-between w-96">
         {/* Previous date button */}
