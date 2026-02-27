@@ -2,7 +2,7 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Card } from '@/components/card';
+import { TaskCard } from '@/components/taskCard';
 import { InlineInput } from '@/components/ui';
 import { filterCards, FilterOptions } from '@/lib/filterUtils';
 import { useUIStore, useBoardStore } from '@/store';
@@ -63,7 +63,7 @@ export function KanbanCardsContainer({
     >
       <SortableContext items={filteredCards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
         {filteredCards.map((card) => (
-          <Card
+          <TaskCard
             key={card.id}
             card={card}
             members={members}

@@ -74,3 +74,63 @@ export type DragItem = {
   listId?: string;
   position: number;
 };
+
+// SearchAndFilter types
+export interface SearchAndFilterProps {
+  boardId: string;
+  className?: string;
+  compact?: boolean;
+}
+
+export interface DropdownPosition {
+  top: number;
+  left: number;
+  width: number;
+  minWidth?: number;
+}
+
+export interface FilterOption {
+  value: string;
+  label: string;
+  icon?: any;
+}
+
+export type StatusValue = 'all' | 'incomplete' | 'completed';
+export type DueDateValue = 'all' | 'overdue' | 'today' | 'week' | 'month';
+
+// BoardShare types
+export interface InviteModalProps {
+  /** Whether the modal is currently open */
+  isOpen: boolean;
+  /** Function to call when the modal should be closed */
+  onClose: () => void;
+}
+
+export interface JoinBoardModalProps {
+  /** Whether the modal is currently open */
+  isOpen: boolean;
+  /** Function to call when the modal should be closed */
+  onClose: () => void;
+  /** Optional invitation ID from URL parameters */
+  inviteId?: string;
+}
+
+export interface MemberManagementProps {
+  /** Whether the modal is currently open */
+  isOpen: boolean;
+  /** Function to call when the modal should be closed */
+  onClose: () => void;
+}
+
+export interface JoinFormData {
+  email: string;
+  username: string;
+  password: string;
+}
+
+export type ActiveTab = 'pending' | 'members';
+
+export interface ExpiryOption {
+  value: number;
+  label: string;
+}

@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Sidebar } from '@/components/sidebar';
-import { Header } from '@/components/header';
+import { BoardSidebar } from '@/components/boardSidebar';
+import { BoardHeader } from '@/components/boardHeader';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
-import { CardModal } from '@/components/modal';
-import { JoinBoardModal } from '@/components/sharing';
+import { TaskModal } from '@/components/taskModal';
+import { JoinBoardModal } from '@/components/boardShare';
 import { useBoard, useUIStore } from '@/hooks';
 import { useSharingStore } from '@/store/sharingStore';
 
@@ -56,9 +56,9 @@ export default function Home() {
 
         {/* Main app interface - only visible when welcome screen is hidden */}
         <div className={`flex h-screen bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ${showWelcomeScreen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-          <Sidebar />
+          <BoardSidebar />
           <div className="flex flex-1 flex-col lg:ml-64">
-            <Header />
+            <BoardHeader />
             <main className="flex-1 overflow-hidden flex items-center justify-center">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
@@ -92,17 +92,17 @@ export default function Home() {
 
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
-      <Sidebar />
+      <BoardSidebar />
 
       <div className="flex flex-1 flex-col lg:ml-64">
-        <Header />
+        <BoardHeader />
 
         <main className="flex-1 overflow-hidden">
           {renderCurrentView()}
         </main>
       </div>
 
-      <CardModal />
+      <TaskModal />
       <JoinBoardModal
         isOpen={showJoinModal}
         onClose={() => setShowJoinModal(false)}

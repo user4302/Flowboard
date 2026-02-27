@@ -3,6 +3,8 @@
  * Contains color palettes, view configurations, animation settings, breakpoints, and storage keys
  */
 
+import { FilterOption } from './types';
+
 /**
  * Available label colors for cards
  * Provides a consistent color palette for card labels
@@ -83,4 +85,43 @@ export const STORAGE_KEYS = {
   CURRENT_BOARD: 'flowboard-current-board',
   UI_STATE: 'flowboard-ui-state',
   THEME: 'flowboard-theme',
+} as const;
+
+// SearchAndFilter constants
+export const STATUS_OPTIONS: FilterOption[] = [
+  { value: 'all', label: 'All' },
+  { value: 'incomplete', label: 'Incomplete' },
+  { value: 'completed', label: 'Completed' }
+];
+
+export const TIMELINE_OPTIONS: FilterOption[] = [
+  { value: 'all', label: 'Any time', icon: 'Clock' },
+  { value: 'overdue', label: 'Overdue', icon: 'X' },
+  { value: 'today', label: 'Today', icon: 'Calendar' },
+  { value: 'week', label: 'This Week', icon: 'Calendar' },
+  { value: 'month', label: 'This Month', icon: 'Calendar' }
+];
+
+export const PRIORITY_RANGE = {
+  MIN: 1,
+  MAX: 100
+} as const;
+
+export const DROPDOWN_Z_INDEX = 9999;
+export const DROPDOWN_MIN_WIDTH = 220;
+
+// BoardShare invitation constants
+export const INVITATION_EXPIRY_OPTIONS = [
+  { value: 24, label: '24 hours' },
+  { value: 168, label: '1 week' },
+  { value: 720, label: '1 month' },
+] as const;
+
+export const DEFAULT_INVITATION_EXPIRY_HOURS = 168; // 1 week
+
+export const INVITATION_MESSAGES = {
+  createSuccess: 'Invitation link created and copied to clipboard!',
+  joinSuccess: 'Successfully joined the board!',
+  joinError: 'Failed to join board. Please try again.',
+  validationError: 'Please fill in all fields',
 } as const;

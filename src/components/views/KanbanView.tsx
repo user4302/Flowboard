@@ -6,7 +6,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { useBoardStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
 import { DragOverlayWrapper, InlineInput } from '@/components/ui';
-import { Card } from '@/components/card';
+import { TaskCard } from '@/components/taskCard';
 import {
   KanbanList,
   useKanbanDragAndDrop,
@@ -142,7 +142,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
       {/* Drag overlay for visual feedback during drag operations */}
       <DragOverlayWrapper activeId={activeId}>
         {getActiveCard() && (
-          <Card
+          <TaskCard
             card={getActiveCard()!}
             members={board.members}
             onClick={() => { }}

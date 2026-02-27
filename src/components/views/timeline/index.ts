@@ -1,17 +1,17 @@
 // Components
-export { Header } from './components/Header';
-export { Grid } from './components/Grid';
-export { ListLane } from './components/Listlane';
-export { Task } from './components/Task';
-export { TaskLane } from './components/TaskLane';
-export { Queue } from './components/Queue';
-export { Tooltip } from './components/Tooltip';
+export { TimelineHeader } from './components/TimelineHeader';
+export { TimelineGrid } from './components/TimelineGrid';
+export { TimelineListLane } from './components/TimelineListLane';
+export { TimelineTask } from './components/TimelineTask';
+export { TimelineTaskLane } from './components/TimelineTaskLane';
+export { TimelineQueue } from './components/TimelineQueue';
+export { TimelineTooltip } from './components/TimelineTooltip';
 
 // Hooks
-export { useDateRange } from './hooks/useDateRange';
-export { useHiddenTasks } from './hooks/useHiddenTasks';
-export { usePositioning } from './hooks/usePositioning';
-export { useShortcuts } from './hooks/useShortcuts';
+export { useTimelineDateRange } from './hooks/useTimelineDateRange';
+export { useTimelineHiddenTasks } from './hooks/useTimelineHiddenTasks';
+export { useTimelinePositioning } from './hooks/useTimelinePositioning';
+export { useTimelineShortcuts } from './hooks/useTimelineShortcuts';
 
 // Utils
 export { calculateTimelineHeight, getTaskPosition } from './utils/utils';

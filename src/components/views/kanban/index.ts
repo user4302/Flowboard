@@ -7,4 +7,4 @@ export { KanbanCardsContainer } from './components/KanbanCardsContainer';
 export { useKanbanDragAndDrop } from './hooks/useKanbanDragAndDrop';
 
 // Utils
-export { filterCards, getFilteredCardCount } from './utils/utils';
+export { filterCards, getFilteredCardCount } from '@/lib/filterUtils';

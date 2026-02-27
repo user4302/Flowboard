@@ -22,7 +22,7 @@ import { startOfDay, addDays } from 'date-fns';
 import { Card } from '@/lib/types';
 import { useBoardStore, useUIStore } from '@/store';
 import { filterCards } from '@/lib/filterUtils';
-import { Header, Grid, ListLane, Tooltip, useDateRange, useShortcuts, calculateTimelineHeight, getTaskPosition } from './timeline';
+import { TimelineHeader, TimelineGrid, TimelineListLane, TimelineTooltip, useTimelineDateRange, useTimelineShortcuts, calculateTimelineHeight, getTaskPosition } from './timeline';
 
 /**
  * Props interface for TimelineView component
@@ -106,7 +106,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   const [hoveredTask, setHoveredTask] = useState<{ task: Card; position: 'before' | 'after'; x: number; y: number } | null>(null); // Track hovered task for tooltip
 
   // Generate date range based on zoom level and current date using custom hook
-  const dateRange = useDateRange(currentDate, zoomLevel);
+  const dateRange = useTimelineDateRange(currentDate, zoomLevel);
 
   // Ensure date range is not empty
   if (dateRange.length === 0) {
@@ -200,12 +200,12 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   };
 
   // Initialize keyboard shortcuts for timeline navigation
-  useShortcuts(handleZoomChange, handleDateChange, zoomLevel);
+  useTimelineShortcuts(handleZoomChange, handleDateChange, zoomLevel);
 
   return (
     <div className="flex h-full flex-col">
       {/* Header with zoom controls */}
-      <Header
+      <TimelineHeader
         currentDate={currentDate}
         zoomLevel={zoomLevel}
         onDateChange={handleDateChange}
@@ -216,7 +216,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
         <div className="h-full overflow-auto px-4 pb-4 absolute inset-0">
           <div className="min-w-[1200px]">
             {/* Date headers and grid lines */}
-            <Grid dateRange={dateRange} zoomLevel={zoomLevel} />
+            <TimelineGrid dateRange={dateRange} zoomLevel={zoomLevel} />
 
             {/* Lists and tasks container */}
             <div className="relative">
@@ -227,7 +227,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                 const isCollapsed = collapsedLanes.has(list.id);
 
                 return (
-                  <ListLane
+                  <TimelineListLane
                     key={list.id}
                     boardId={boardId}
                     list={list}
@@ -271,7 +271,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
             transform: 'translateX(0)'
           }}
         >
-          <Tooltip task={hoveredTask.task} position={hoveredTask.position} boardLabels={board.labels} />
+          <TimelineTooltip task={hoveredTask.task} position={hoveredTask.position} boardLabels={board.labels} />
         </div>
       )}
     </div >
