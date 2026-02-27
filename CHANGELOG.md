@@ -130,6 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reorganized header and sidebar components into modular architecture
 - Simplified export data function with spread operator
 - Fixed card completion state preservation during import
+- Modularized card components for improved maintainability
 
 ### Fixed
 - CardModal label creation with proper ID generation
