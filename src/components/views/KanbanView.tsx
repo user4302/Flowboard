@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { DndContext, closestCorners } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useBoardStore, useUIStore } from '@/store';
@@ -29,6 +30,9 @@ export function KanbanView({ boardId }: KanbanViewProps) {
   // Store hooks for board operations and UI state
   const { boards, createList, createCard, updateList, deleteList } = useBoardStore();
   const { searchTerm } = useUIStore();
+
+  // State to manage which list menu is open
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   // Find the current board
   const board = boards.find((b) => b.id === boardId);
@@ -81,6 +85,19 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     }
   };
 
+  /**
+   * Handle menu toggle for a specific list
+   * @param listId - ID of the list
+   * @param isOpen - Whether the menu is open
+   */
+  const handleMenuToggle = (listId: string, isOpen: boolean) => {
+    if (isOpen) {
+      setOpenMenuId(listId);
+    } else {
+      setOpenMenuId(null);
+    }
+  };
+
   return (
     <DndContext
       sensors={sensors}
@@ -102,6 +119,8 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                   onRenameList={handleRenameList}
                   onDeleteList={handleDeleteList}
                   searchTerm={searchTerm}
+                  onMenuToggle={(isOpen) => handleMenuToggle(list.id, isOpen)}
+                  isAnyMenuOpen={openMenuId !== null && openMenuId !== list.id}
                 />
               ))}
             </SortableContext>

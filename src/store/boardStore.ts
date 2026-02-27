@@ -88,14 +88,7 @@ export const useBoardStore = create<BoardState>()(
           name,
           lists: [],
           members: [],
-          labels: [
-            { id: generateId(), text: 'Copy Request', color: 'bg-yellow-600' },
-            { id: generateId(), text: 'Priority', color: 'bg-red-600' },
-            { id: generateId(), text: 'Design Team', color: 'bg-purple-600' },
-            { id: generateId(), text: 'Product Marketing', color: 'bg-blue-600' },
-            { id: generateId(), text: 'Trello Tip', color: 'bg-teal-600' },
-            { id: generateId(), text: 'Help', color: 'bg-green-600' },
-          ],
+          labels: [],
           createdAt: new Date(),
           updatedAt: new Date(),
         };

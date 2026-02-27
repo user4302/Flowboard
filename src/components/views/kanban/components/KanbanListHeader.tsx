@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MoreHorizontal, X, Trash2, Edit3 } from 'lucide-react';
 import { Button, Input } from '@/components/ui';
 import { cn } from '@/lib/utils';
@@ -11,15 +11,18 @@ interface ListHeaderProps {
   onRename: (newTitle: string) => void;
   onDelete: () => void;
   className?: string;
+  onMenuToggle?: (isOpen: boolean) => void;
+  isAnyMenuOpen?: boolean;
 }
 
 /**
  * KanbanListHeader component - Displays list title and card count with edit/delete functionality
  */
-export function KanbanListHeader({ title, cardCount, onRename, onDelete, className }: ListHeaderProps) {
+export function KanbanListHeader({ title, cardCount, onRename, onDelete, className, onMenuToggle, isAnyMenuOpen }: ListHeaderProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(title);
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleRename = () => {
     if (editTitle.trim() && editTitle !== title) {
@@ -40,6 +43,43 @@ export function KanbanListHeader({ title, cardCount, onRename, onDelete, classNa
       handleCancel();
     }
   };
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [showMenu]);
+
+  // Close menu when another menu is opened
+  useEffect(() => {
+    if (isAnyMenuOpen && !showMenu) {
+      setShowMenu(false);
+    }
+  }, [isAnyMenuOpen, showMenu]);
+
+  // Notify parent when menu state changes
+  useEffect(() => {
+    onMenuToggle?.(showMenu);
+  }, [showMenu, onMenuToggle]);
 
   if (isEditing) {
     return (
@@ -68,7 +108,7 @@ export function KanbanListHeader({ title, cardCount, onRename, onDelete, classNa
         <span className="text-sm text-slate-500 dark:text-slate-400">
           {cardCount}
         </span>
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
           <Button
             variant="ghost"
             size="sm"

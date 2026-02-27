@@ -13,6 +13,8 @@ interface ListProps {
   onDeleteList: (listId: string) => void;
   searchTerm?: string;
   className?: string;
+  onMenuToggle?: (isOpen: boolean) => void;
+  isAnyMenuOpen?: boolean;
 }
 
 /**
@@ -25,7 +27,9 @@ export function KanbanList({
   onRenameList,
   onDeleteList,
   searchTerm = '',
-  className
+  className,
+  onMenuToggle,
+  isAnyMenuOpen
 }: ListProps) {
 
   const filteredCardCount = getFilteredCardCount(list, searchTerm);
@@ -37,6 +41,8 @@ export function KanbanList({
         cardCount={filteredCardCount}
         onRename={(newTitle) => onRenameList(list.id, newTitle)}
         onDelete={() => onDeleteList(list.id)}
+        onMenuToggle={onMenuToggle}
+        isAnyMenuOpen={isAnyMenuOpen}
       />
 
       <KanbanCardsContainer

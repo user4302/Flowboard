@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-02-27
+
+### Changed
+- Removed pre-populated labels from new boards - boards now start with empty labels array
+- Fixed dropdown menu behavior in kanban list headers to close when clicking outside or other menus
+- Only user-created labels will exist in boards going forward
+
+### Fixed
+- Kanban list dropdown menus now properly close when clicking outside the menu area
+- Dropdown menus close when opening other list option buttons
+- Improved menu state management across multiple lists
+
 ## [Unreleased]
 
 ### Added
@@ -90,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added drag activation constraint to prevent accidental drags
 - Improved drag and drop collision detection and droppable areas
 - Added list management functionality and improved UI text
+- Improved kanban menu management and clean default data
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
