@@ -127,6 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Always show swimlanes even when empty in current range
 - Removed horizontal borders from side spaces for cleaner look
 - Reorganized changelog unreleased section for better categorization
+- Reorganized header and sidebar components into modular architecture
 
 ### Fixed
 - CardModal label creation with proper ID generation
