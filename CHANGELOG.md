@@ -128,6 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed horizontal borders from side spaces for cleaner look
 - Reorganized changelog unreleased section for better categorization
 - Reorganized header and sidebar components into modular architecture
+- Simplified export data function with spread operator
 
 ### Fixed
 - CardModal label creation with proper ID generation

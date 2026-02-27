@@ -22,15 +22,7 @@ export const exportData = (data: any) => {
     lists: data.lists.map((list: any) => ({
       title: list.title,
       cards: list.cards.map((card: any) => ({
-        title: card.title,
-        description: card.description,
-        startDate: card.startDate,
-        dueDate: card.dueDate,
-        labelIds: card.labelIds,
-        members: card.members,
-        checklist: card.checklist,
-        createdAt: card.createdAt,
-        updatedAt: card.updatedAt
+        ...card // Spread entire card object to include all fields like completed, etc.
       }))
     }))
   };
