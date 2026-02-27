@@ -103,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved drag and drop collision detection and droppable areas
 - Added list management functionality and improved UI text
 - Improved kanban menu management and clean default data
+- Fixed ListLane import path case sensitivity
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

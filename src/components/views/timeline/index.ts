@@ -1,7 +1,7 @@
 // Components
 export { Header } from './components/Header';
 export { Grid } from './components/Grid';
-export { ListLane } from './components/ListLane';
+export { ListLane } from './components/Listlane';
 export { Task } from './components/Task';
 export { TaskLane } from './components/TaskLane';
 export { Queue } from './components/Queue';
