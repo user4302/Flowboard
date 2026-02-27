@@ -50,7 +50,7 @@ export const exportData = (data: any) => {
  * - Validates JSON file format
  * - Creates new data from imported data
  * - Recreates all lists and cards
- * - Preserves card properties (dates, labels, members, checklists)
+ * - Preserves card properties (dates, labels, members, checklists, completed state)
  * 
  * @param file - The JSON file to import
  * @param setCurrentBoard - Function to set the current board after import
@@ -124,6 +124,7 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
               description: cardData.description,
               startDate,
               dueDate,
+              completed: cardData.completed,
             });
 
             // Add labels to the card (handle both old and new formats)
