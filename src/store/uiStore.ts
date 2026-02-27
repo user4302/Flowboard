@@ -38,6 +38,9 @@ interface UIState extends ViewState, FilterState {
   setSelectedLabels: (labels: string[]) => void;
   setSelectedMembers: (members: string[]) => void;
   setShowOverdue: (show: boolean) => void;
+  setShowCompleted: (status: 'all' | 'completed' | 'incomplete') => void;
+  setPriorityThreshold: (threshold: number | null) => void;
+  setDueDateFilter: (filter: 'all' | 'overdue' | 'today' | 'week' | 'month') => void;
   clearFilters: () => void;
 
   // Modal actions
@@ -66,6 +69,9 @@ export const useUIStore = create<UIState>()(
       selectedLabels: [],
       selectedMembers: [],
       showOverdue: false,
+      showCompleted: 'all',
+      priorityThreshold: null,
+      dueDateFilter: 'all',
 
       // Initial modal state
       cardModalOpen: false,
@@ -194,6 +200,24 @@ export const useUIStore = create<UIState>()(
       setShowOverdue: (show) => set({ showOverdue: show }),
 
       /**
+       * Set completed status filter
+       * @param status - Completed status filter
+       */
+      setShowCompleted: (status) => set({ showCompleted: status }),
+
+      /**
+       * Set priority threshold for filtering (1-100)
+       * @param threshold - Minimum priority to show
+       */
+      setPriorityThreshold: (threshold) => set({ priorityThreshold: threshold }),
+
+      /**
+       * Set due date filter
+       * @param filter - Due date filter type
+       */
+      setDueDateFilter: (filter) => set({ dueDateFilter: filter }),
+
+      /**
        * Clear all filters
        */
       clearFilters: () => set({
@@ -201,6 +225,9 @@ export const useUIStore = create<UIState>()(
         selectedLabels: [],
         selectedMembers: [],
         showOverdue: false,
+        showCompleted: 'all',
+        priorityThreshold: null,
+        dueDateFilter: 'all',
       }),
 
       /**
@@ -250,6 +277,9 @@ export const useUIStore = create<UIState>()(
         selectedLabels: state.selectedLabels,
         selectedMembers: state.selectedMembers,
         showOverdue: state.showOverdue,
+        showCompleted: state.showCompleted,
+        priorityThreshold: state.priorityThreshold,
+        dueDateFilter: state.dueDateFilter,
         timelineState: state.timelineState,
       }),
     }

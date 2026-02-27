@@ -63,6 +63,9 @@ export interface FilterState {
   selectedLabels: string[];
   selectedMembers: string[];
   showOverdue: boolean;
+  showCompleted: 'all' | 'completed' | 'incomplete';
+  priorityThreshold: number | null;
+  dueDateFilter: 'all' | 'overdue' | 'today' | 'week' | 'month';
 }
 
 export type DragItem = {

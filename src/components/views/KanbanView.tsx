@@ -25,11 +25,11 @@ interface KanbanViewProps {
  * KanbanView component - Displays board in traditional kanban format
  * Provides drag-and-drop functionality for cards between lists
  * Supports creating new lists and cards with inline editing
+ * Includes comprehensive search and filtering capabilities
  */
 export function KanbanView({ boardId }: KanbanViewProps) {
   // Store hooks for board operations and UI state
   const { boards, createList, createCard, updateList, deleteList } = useBoardStore();
-  const { searchTerm } = useUIStore();
 
   // State to manage which list menu is open
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -99,14 +99,15 @@ export function KanbanView({ boardId }: KanbanViewProps) {
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="flex h-full flex-col max-w-full">
+    <div className="flex h-full flex-col max-w-full">
+      {/* Kanban Board */}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
         <div className="flex-1 overflow-hidden relative">
           <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0">
             <div className="flex gap-4 h-full min-w-max">
@@ -119,7 +120,6 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                     onAddCard={handleCreateCard}
                     onRenameList={handleRenameList}
                     onDeleteList={handleDeleteList}
-                    searchTerm={searchTerm}
                     onMenuToggle={(isOpen) => handleMenuToggle(list.id, isOpen)}
                     isAnyMenuOpen={openMenuId !== null && openMenuId !== list.id}
                   />
@@ -137,7 +137,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
             </div>
           </div>
         </div>
-      </div>
+      </DndContext>
 
       {/* Drag overlay for visual feedback during drag operations */}
       <DragOverlayWrapper activeId={activeId}>
@@ -149,6 +149,6 @@ export function KanbanView({ boardId }: KanbanViewProps) {
           />
         )}
       </DragOverlayWrapper>
-    </DndContext>
+    </div>
   );
 }

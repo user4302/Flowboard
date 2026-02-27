@@ -109,6 +109,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Add list input squashing and implemented auto-scroll
 - Fixed completed cards showing red overdue styling instead of green
 - Implemented comprehensive table view and priority system
+- Implemented comprehensive search and filtering across all views
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure

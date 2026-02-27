@@ -4,18 +4,35 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import { ArrowUpDown, Calendar, User, CheckSquare, Tag, Flag, Clock, Settings, ChevronDown } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { formatDate, getChecklistProgress, formatRelativeTime } from '@/lib/utils';
+import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
+
+import { Card } from '@/lib/types';
 
 interface TableViewProps {
   boardId: string;
 }
+
+type CardWithList = Card & {
+  listName: string;
+  listId: string;
+};
 
 type SortField = 'title' | 'list' | 'dueDate' | 'progress' | 'priority' | 'createdAt';
 type SortDirection = 'asc' | 'desc';
 
 export function TableView({ boardId }: TableViewProps) {
   const { boards } = useBoardStore();
-  const { searchTerm, openCardModal } = useUIStore();
+  const {
+    searchTerm,
+    selectedLabels,
+    selectedMembers,
+    showOverdue,
+    showCompleted,
+    priorityThreshold,
+    dueDateFilter,
+    openCardModal
+  } = useUIStore();
 
   const board = boards.find((b) => b.id === boardId);
   if (!board) return null;
@@ -50,25 +67,28 @@ export function TableView({ boardId }: TableViewProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Get all cards with their list info
-  const allCards = useMemo(() => {
-    return board.lists.flatMap(list =>
+  // Get filtered cards using the utility
+  const filteredCards = useMemo<CardWithList[]>(() => {
+    const cardsWithList: CardWithList[] = board.lists.flatMap(list =>
       list.cards.map(card => ({
         ...card,
         listName: list.title,
         listId: list.id,
       }))
     );
-  }, [board.lists]);
 
-  // Filter cards
-  const filteredCards = useMemo(() => {
-    if (!searchTerm) return allCards;
-    return allCards.filter(card =>
-      card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      card.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [allCards, searchTerm]);
+    const filterOptions = {
+      searchTerm,
+      selectedLabels,
+      selectedMembers,
+      showOverdue,
+      showCompleted,
+      priorityThreshold,
+      dueDateFilter
+    };
+
+    return filterCards(cardsWithList, filterOptions, board.labels) as CardWithList[];
+  }, [board.lists, board.labels, searchTerm, selectedLabels, selectedMembers, showOverdue, showCompleted, priorityThreshold, dueDateFilter]);
 
   // Sort cards
   const sortedCards = useMemo(() => {

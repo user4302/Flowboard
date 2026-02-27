@@ -4,7 +4,8 @@ import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Card } from '@/components/card';
 import { InlineInput } from '@/components/ui';
-import { filterCards } from '../utils/utils';
+import { filterCards, FilterOptions } from '@/lib/filterUtils';
+import { useUIStore, useBoardStore } from '@/store';
 import { cn } from '@/lib/utils';
 
 interface KanbanCardsContainerProps {
@@ -31,7 +32,29 @@ export function KanbanCardsContainer({
     id: listId,
   });
 
-  const filteredCards = filterCards(cards, searchTerm);
+  // Get filter options from UI store
+  const {
+    searchTerm: globalSearchTerm,
+    selectedLabels,
+    selectedMembers,
+    showCompleted,
+    priorityThreshold,
+    dueDateFilter
+  } = useUIStore();
+
+  const { boards, currentBoardId } = useBoardStore();
+  const currentBoard = boards.find(b => b.id === currentBoardId);
+
+  const filterOptions: FilterOptions = {
+    searchTerm: globalSearchTerm || searchTerm,
+    selectedLabels,
+    selectedMembers,
+    showCompleted,
+    priorityThreshold,
+    dueDateFilter
+  };
+
+  const filteredCards = filterCards(cards, filterOptions, currentBoard?.labels || []);
 
   return (
     <div

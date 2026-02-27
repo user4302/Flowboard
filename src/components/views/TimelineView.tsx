@@ -21,6 +21,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { startOfDay, addDays } from 'date-fns';
 import { Card } from '@/lib/types';
 import { useBoardStore, useUIStore } from '@/store';
+import { filterCards } from '@/lib/filterUtils';
 import { Header, Grid, ListLane, Tooltip, useDateRange, useShortcuts, calculateTimelineHeight, getTaskPosition } from './timeline';
 
 /**
@@ -49,7 +50,20 @@ interface TimelineViewProps {
  */
 export function TimelineView({ boardId }: TimelineViewProps) {
   const { boards } = useBoardStore();
-  const { searchTerm, openCardModal, getTimelineState, setTimelineCurrentDate, setTimelineZoomLevel, toggleTimelineLane } = useUIStore();
+  const {
+    searchTerm,
+    selectedLabels,
+    selectedMembers,
+    showOverdue,
+    showCompleted,
+    priorityThreshold,
+    dueDateFilter,
+    openCardModal,
+    getTimelineState,
+    setTimelineCurrentDate,
+    setTimelineZoomLevel,
+    toggleTimelineLane
+  } = useUIStore();
 
   // Get timeline state for this specific board
   const timelineState = getTimelineState(boardId);
@@ -111,41 +125,51 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     // Get all cards from all lists in the board
     const allCards = board.lists.flatMap(list => list.cards);
 
-    // First apply search filter if search term exists
-    const filtered = searchTerm
-      ? allCards.filter(card =>
-        card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        card.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      : allCards;
+    // Filter using global filter options (reactive state)
+    const filterOptions = {
+      searchTerm,
+      selectedLabels,
+      selectedMembers,
+      showOverdue,
+      showCompleted,
+      priorityThreshold,
+      dueDateFilter
+    };
+
+    const filtered = filterCards(allCards, filterOptions, board.labels);
 
     // Then filter to only show cards that overlap with current date range
-    // A card overlaps if it starts before or during range AND ends after or during range
     return filtered.filter(card => {
       // Check if card has any date information
       const hasDates = card.startDate || card.dueDate;
       if (!hasDates) return false;
 
-      // Dates are already Date objects from localStorage conversion
       const cardStartDate = card.startDate || new Date();
       const cardEndDate = card.dueDate || addDays(cardStartDate, 7);
 
-      // Validate dates - be more permissive
       if (isNaN(cardStartDate.getTime()) || isNaN(cardEndDate.getTime())) {
-        console.warn('Invalid card dates in filtering:', card.startDate, card.dueDate);
         return false;
       }
 
-      // Normalize dates to start of day for consistent comparison
       const cardStart = startOfDay(cardStartDate);
       const cardEnd = startOfDay(cardEndDate);
       const rangeStart = startOfDay(dateRange[0]);
       const rangeEnd = startOfDay(dateRange[dateRange.length - 1]);
 
-      // Card overlaps if it starts before or during range AND ends after or during range
       return cardStart <= rangeEnd && cardEnd >= rangeStart;
     });
-  }, [board.lists, searchTerm, dateRange]);
+  }, [
+    board.lists,
+    board.labels,
+    searchTerm,
+    selectedLabels,
+    selectedMembers,
+    showOverdue,
+    showCompleted,
+    priorityThreshold,
+    dueDateFilter,
+    dateRange
+  ]);
 
   /**
    * Create wrapper function for getTaskPosition to match expected signature

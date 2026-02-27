@@ -9,6 +9,7 @@ import { Button, Input } from '@/components/ui';
 import { VIEWS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { InviteModal, MemberManagement } from '@/components/sharing';
+import { SearchAndFilterBar } from '@/components/search';
 
 /**
  * Header Component
@@ -333,34 +334,43 @@ export function Header() {
             </div>
           </div>
 
-          {/* Center - View navigation tabs */}
+          {/* Center - View navigation tabs and search */}
           <div className="flex items-center justify-center w-3/5">
             {currentBoard && (
-              <div className="flex items-center gap-2">
-                {VIEWS.map((view) => {
-                  const Icon = require('lucide-react')[view.icon];
-                  return (
-                    <button
-                      key={view.id}
-                      onClick={() => setCurrentView(view.id as any)}
-                      className={cn(
-                        'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                        currentView === view.id
-                          ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                          : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      <span>{view.name}</span>
-                    </button>
-                  );
-                })}
+              <div className="flex items-center gap-4">
+                {/* View navigation tabs */}
+                <div className="flex items-center gap-2">
+                  {VIEWS.map((view) => {
+                    const Icon = require('lucide-react')[view.icon];
+                    return (
+                      <button
+                        key={view.id}
+                        onClick={() => setCurrentView(view.id as any)}
+                        className={cn(
+                          'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                          currentView === view.id
+                            ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
+                            : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <span>{view.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
 
-          {/* Right side - Hamburger menu */}
-          <div className="flex items-center justify-end gap-3 flex-shrink-0 w-1/5">
+          {/* Right side - Search and hamburger menu */}
+          <div className="flex items-center justify-end gap-3 flex-shrink-0 w-2/5">
+            {/* Search and Filter Bar */}
+            {currentBoard && (
+              <div className="flex-1 max-w-sm">
+                <SearchAndFilterBar boardId={currentBoard.id} compact={true} />
+              </div>
+            )}
             {/* Hamburger menu for actions */}
             <div className="relative">
               <Button

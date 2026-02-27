@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
+import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
 
 /**
@@ -22,7 +23,16 @@ interface CalendarViewProps {
 export function CalendarView({ boardId }: CalendarViewProps) {
   // Store hooks for board data and UI state
   const { boards } = useBoardStore();
-  const { searchTerm, openCardModal } = useUIStore();
+  const {
+    searchTerm,
+    selectedLabels,
+    selectedMembers,
+    showOverdue,
+    showCompleted,
+    priorityThreshold,
+    dueDateFilter,
+    openCardModal
+  } = useUIStore();
 
   // Find the current board
   const board = boards.find((b) => b.id === boardId);
@@ -47,15 +57,20 @@ export function CalendarView({ boardId }: CalendarViewProps) {
    */
   const cardsWithDueDates = useMemo(() => {
     const allCards = board.lists.flatMap(list => list.cards);
-    const filtered = searchTerm
-      ? allCards.filter(card =>
-        card.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        card.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      : allCards;
 
+    const filterOptions = {
+      searchTerm,
+      selectedLabels,
+      selectedMembers,
+      showOverdue,
+      showCompleted,
+      priorityThreshold,
+      dueDateFilter
+    };
+
+    const filtered = filterCards(allCards, filterOptions, board.labels);
     return filtered.filter(card => card.dueDate);
-  }, [board.lists, searchTerm]);
+  }, [board.lists, board.labels, searchTerm, selectedLabels, selectedMembers, showOverdue, showCompleted, priorityThreshold, dueDateFilter]);
 
   /**
    * Get cards for a specific calendar day
