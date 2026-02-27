@@ -1,10 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus, LayoutGrid, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import {
+  SidebarBackdrop,
+  SidebarHeader,
+  BoardList
+} from './components';
+import { useSidebarState } from './hooks';
 
 /**
  * Sidebar component - Main navigation sidebar for the Flowboard application
@@ -17,26 +22,20 @@ export function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useUIStore();
 
   // Local state for board creation
-  const [isCreatingBoard, setIsCreatingBoard] = useState(false);
-  const [newBoardName, setNewBoardName] = useState('');
+  const { isCreatingBoard, setIsCreatingBoard } = useSidebarState();
 
   /**
    * Handles the creation of a new board
    * Validates input, creates board, and resets form state
    */
-  const handleCreateBoard = () => {
-    if (newBoardName.trim()) {
-      createBoard(newBoardName.trim());
-      setNewBoardName('');
-      setIsCreatingBoard(false);
-    }
+  const handleCreateBoard = (boardName: string) => {
+    createBoard(boardName);
+    setIsCreatingBoard(false);
   };
 
   /**
    * Handles board deletion with confirmation
    * Prevents deletion of the last board and switches to another board if current is deleted
-   * @param boardId - ID of the board to delete
-   * @param boardName - Name of the board for confirmation dialog
    */
   const handleDeleteBoard = (boardId: string, boardName: string) => {
     if (confirm(`Are you sure you want to delete "${boardName}"? This action cannot be undone.`)) {
@@ -51,29 +50,21 @@ export function Sidebar() {
     }
   };
 
-  /**
-   * Handles keyboard events for the board creation input
-   * Enter to submit, Escape to cancel
-   * @param e - Keyboard event
-   */
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleCreateBoard();
-    } else if (e.key === 'Escape') {
-      setIsCreatingBoard(false);
-      setNewBoardName('');
-    }
+  const handleStartCreatingBoard = () => {
+    setIsCreatingBoard(true);
+  };
+
+  const handleCancelCreation = () => {
+    setIsCreatingBoard(false);
   };
 
   return (
     <>
       {/* Mobile backdrop - closes sidebar when clicked */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      <SidebarBackdrop
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
 
       {/* Sidebar - Fixed positioning with responsive behavior */}
       <div
@@ -84,123 +75,26 @@ export function Sidebar() {
       >
         <div className="flex h-full flex-col">
           {/* Header - App branding and mobile close button */}
-          <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-            <div className="flex items-center gap-2">
-              <LayoutGrid className="h-6 w-6 text-indigo-600" />
-              <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                Flowboard
-              </h1>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            >
-              ×
-            </Button>
-          </div>
+          <SidebarHeader onClose={() => setSidebarOpen(false)} />
 
           {/* Boards Section - Board list and creation */}
           <div className="flex-1 overflow-y-auto p-4">
-            <div className="mb-4">
-              <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-sm font-medium text-slate-500 dark:text-slate-400">
-                  Your Boards
-                </h2>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  onClick={() => setIsCreatingBoard(true)}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* New Board Input - Inline form for creating new boards */}
-              {isCreatingBoard && (
-                <div className="mb-3 rounded-lg border border-slate-200 p-2 dark:border-slate-700">
-                  <input
-                    type="text"
-                    value={newBoardName}
-                    onChange={(e) => setNewBoardName(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    onBlur={() => {
-                      setTimeout(() => {
-                        setIsCreatingBoard(false);
-                        setNewBoardName('');
-                      }, 200);
-                    }}
-                    placeholder="Board name..."
-                    className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-                    autoFocus
-                  />
-                  <div className="mt-2 flex gap-2">
-                    <Button size="sm" onClick={handleCreateBoard}>
-                      Add
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setIsCreatingBoard(false);
-                        setNewBoardName('');
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Boards List - Interactive list of all boards */}
-              <div className="space-y-1">
-                {boards.map((board) => (
-                  <div key={board.id} className="relative group">
-                    <button
-                      onClick={() => {
-                        setCurrentBoard(board.id);
-                        setSidebarOpen(false);
-                      }}
-                      className={cn(
-                        'w-full rounded-lg px-3 py-2 text-left text-sm transition-colors',
-                        currentBoardId === board.id
-                          ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                          : 'text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <LayoutGrid className="h-4 w-4 flex-shrink-0" />
-                          <span className="truncate" title={board.name}>{board.name}</span>
-                        </div>
-                      </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400">
-                        {board.lists.length} lists • {board.members.length} members
-                      </div>
-                    </button>
-
-                    {/* Delete button - Positioned outside the main button, shows on hover */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteBoard(board.id, board.name);
-                      }}
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 flex-shrink-0"
-                      title={`Delete ${board.name}`}
-                    >
-                      <Trash2 className="h-3 w-3 text-slate-400 hover:text-red-600" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <BoardList
+              boards={boards}
+              currentBoardId={currentBoardId}
+              isCreatingBoard={isCreatingBoard}
+              onSelectBoard={setCurrentBoard}
+              onDeleteBoard={handleDeleteBoard}
+              onCreateBoard={handleCreateBoard}
+              onCancelCreation={handleCancelCreation}
+              onCloseSidebar={() => setSidebarOpen(false)}
+              onStartCreatingBoard={handleStartCreatingBoard}
+            />
 
             {/* Footer - App version information */}
             <div className="border-t border-slate-200 p-4 dark:border-slate-700">
               <div className="text-xs text-slate-500 dark:text-slate-400">
-                Flowboard v1.0.0
+                Flowboard v1.1.0
               </div>
             </div>
           </div>
