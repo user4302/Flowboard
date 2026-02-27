@@ -32,51 +32,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keyboard shortcuts (1-5) for quick timeline zoom level switching
 - 2 weeks zoom level replacing quarter view for better practicality
 - Quarter markers (Q1-Q4) in timeline year view for better orientation
-- Enhanced timeline UI styling with improved button contrast and active states
-- Enhanced month view with daily granularity and improved date labeling
-- Fixed card stacking logic for out-of-range cards in timeline view
-- Added hidden cards indicator and expandable list for out-of-range timeline cards
-- Fixed day view card overlapping issue with proper vertical stacking
+- Hidden cards indicator and expandable list for out-of-range timeline cards
 - Created HiddenCardsIndicator component with dual-side directional indicators
 - Added useDateRange and useHiddenCards hooks for better component separation
-- Enhanced hidden cards with directional indicators (before/after) and performance optimizations
-- Added comprehensive JSDoc comments and documentation to all components and utilities
-- Improved MemberManagement component code organization and readability
-- Enhanced timeline hidden cards with interactive tooltips and consistent logic
-- Optimized timeline hidden cards calculation performance for large datasets
 - Created usePositioning hook with full card positioning logic
 - Created TimelineCard component for individual card rendering
 - Created TimelineHeader component with zoom controls and navigation
 - Created TimelineGrid component for date headers and grid lines
-- TimelineView reduced from ~750 lines to 548 lines (27% reduction)
-- All functionality preserved with cleaner component separation
 - Export and Import board data functionality
-- Styled tooltips for mini cards with enhanced visual design
 - Visual squares for hidden cards indicator
 - Collapsible parent swimlanes with expand/collapse functionality
 - Keyboard shortcuts for timeline navigation (dedicated hook)
 - IndividualCardSwimlane component for better card organization
 - SubCardSwimlane component for nested card management
-- Timeline utilities for enhanced positioning and layout calculations
 - MiniCardTooltip dedicated component for improved UX
+- Comprehensive timeline state management with per-board persistence
+- Board-level label management system
+- Comprehensive table view with sorting and column visibility
+- Number-based priority system (1-100) for cards
+- Enhanced search and filtering across all views with advanced options
+- Compact search bar mode for header integration
+
+### Changed
+- Enhanced timeline UI styling with improved button contrast and active states
+- Enhanced month view with daily granularity and improved date labeling
+- Fixed card stacking logic for out-of-range cards in timeline view
+- Fixed day view card overlapping issue with proper vertical stacking
+- Enhanced hidden cards with directional indicators (before/after) and performance optimizations
+- TimelineView reduced from ~750 lines to 548 lines (27% reduction)
 - Reduced welcome screen display time from 2 seconds to 500ms for faster app loading
 - Fixed tooltip z-index issues by increasing to z-[9999] for proper layering
-- Added comprehensive timeline state management with per-board persistence
-- Enhanced timeline positioning with debug logging for troubleshooting
-- Improved TypeScript type safety in UI store functions
 - Major UI restructuring: migrated sidebar management buttons to header hamburger menu
 - Renamed BoardHeader component to Header with enhanced sharing functionality
 - Added robust timeline date validation and error handling with automatic recovery
-- Removed IndividualCardSwimlane component to simplify timeline architecture
-- Enhanced TimelineHeader with invalid date detection and navigation safety
 - Optimized currentBoard lookup in useBoard hook for better performance
-- Enhanced timeline date handling with comprehensive debugging and validation
 - Fixed critical date serialization issue causing card misalignment after import and refresh
 - Added robust Date object handling in localStorage persistence with automatic cleanup
-- Enhanced timeline positioning with comprehensive date validation and string-to-Date conversion
-- Improved hidden cards logic with proper date validation and error handling
 - Fixed timeline data disappearing after date navigation with zoom level validation
-- Added comprehensive debugging and fallback mechanisms for timeline state management
 - Fixed UTC date conversion in board store storage middleware for proper persistence
 - Optimized hidden cards calculation in timeline view to avoid duplicate processing
 - Refactored timeline component naming for better clarity and consistency
@@ -93,7 +85,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved board item layout in Sidebar component
 - Restored delete button positioning in Sidebar board items
 - Added card completion feature and simplified date handling
-- Implemented board-level label management system
 - Refactored kanban view with component extraction
 - Organized timeline exports and reset version
 - Migrated Card component to dnd-kit drag and drop
@@ -103,16 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved drag and drop collision detection and droppable areas
 - Added list management functionality and improved UI text
 - Improved kanban menu management and clean default data
-- Fixed ListLane import path case sensitivity
-- Enhanced timeline task color system and improved function signatures
-- Fixed timeline header gap and scrolling content behind it
-- Fixed Add list input squashing and implemented auto-scroll
-- Fixed completed cards showing red overdue styling instead of green
-- Implemented comprehensive table view and priority system
-- Implemented comprehensive search and filtering across all views
-- Fixed label duplication during file import and corrected version
-
-### Changed
+- Enhanced timeline task color system with hex color mapping and contrast calculation
 - Improved board header responsive layout with fixed 3-column structure
 - Added truncation to prevent board title overflow on small screens
 - Made search bar responsive and visible on all screen sizes
@@ -144,6 +126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Equal width distribution for left and right side spaces
 - Always show swimlanes even when empty in current range
 - Removed horizontal borders from side spaces for cleaner look
+- Reorganized changelog unreleased section for better categorization
 
 ### Fixed
 - CardModal label creation with proper ID generation
@@ -156,6 +139,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Label duplication during file import (labels now properly reused across cards)
 - Hardcoded mock data for Homepage redesign card
 - Card positioning and date calculation issues
+- ListLane import path case sensitivity
+- Timeline header gap and scrolling content behind it
+- Add list input squashing and implemented auto-scroll
+- Completed cards showing red overdue styling instead of green
+- Version number correction from 1.2.0 to 1.1.0
 
 ### Refactoring
 - Extracted MiniCardTooltip to dedicated component
@@ -163,6 +151,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TimelineView component breakdown into smaller, focused components
 - Improved code organization with dedicated hooks and utilities
 - Enhanced component separation for better maintainability
+- Added comprehensive JSDoc comments and documentation to all components and utilities
+- Improved MemberManagement component code organization and readability
+- Enhanced timeline hidden cards with interactive tooltips and consistent logic
+- Optimized timeline hidden cards calculation performance for large datasets
+- Enhanced timeline positioning with debug logging for troubleshooting
+- Improved TypeScript type safety in UI store functions
+- Removed IndividualCardSwimlane component to simplify timeline architecture
+- Enhanced TimelineHeader with invalid date detection and navigation safety
+- Enhanced timeline date handling with comprehensive debugging and validation
+- Enhanced timeline positioning with comprehensive date validation and string-to-Date conversion
+- Improved hidden cards logic with proper date validation and error handling
+- Added comprehensive debugging and fallback mechanisms for timeline state management
 
 ## [1.1.0] - 2026-02-25
 
