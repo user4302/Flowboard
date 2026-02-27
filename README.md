@@ -123,7 +123,7 @@ flowboard/
 ### Kanban View
 - Drag cards between lists to reorganize
 - Click "Add a card" to create new cards
-- Click "Add another list" to create new lists
+- Click "Add a list" to create new lists
 - Click on cards to open detailed editing modal
 
 ### Board Management

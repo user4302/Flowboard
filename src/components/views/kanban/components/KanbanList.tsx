@@ -9,6 +9,8 @@ interface ListProps {
   list: any;
   members: any[];
   onAddCard: (listId: string, title: string) => void;
+  onRenameList: (listId: string, newTitle: string) => void;
+  onDeleteList: (listId: string) => void;
   searchTerm?: string;
   className?: string;
 }
@@ -20,6 +22,8 @@ export function KanbanList({
   list,
   members,
   onAddCard,
+  onRenameList,
+  onDeleteList,
   searchTerm = '',
   className
 }: ListProps) {
@@ -31,6 +35,8 @@ export function KanbanList({
       <KanbanListHeader
         title={list.title}
         cardCount={filteredCardCount}
+        onRename={(newTitle) => onRenameList(list.id, newTitle)}
+        onDelete={() => onDeleteList(list.id)}
       />
 
       <KanbanCardsContainer

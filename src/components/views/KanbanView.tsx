@@ -27,7 +27,7 @@ interface KanbanViewProps {
  */
 export function KanbanView({ boardId }: KanbanViewProps) {
   // Store hooks for board operations and UI state
-  const { boards, createList, createCard } = useBoardStore();
+  const { boards, createList, createCard, updateList, deleteList } = useBoardStore();
   const { searchTerm } = useUIStore();
 
   // Find the current board
@@ -62,6 +62,25 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     createCard(boardId, listId, title);
   };
 
+  /**
+   * Handle renaming a list
+   * @param listId - ID of the list to rename
+   * @param newTitle - New title for the list
+   */
+  const handleRenameList = (listId: string, newTitle: string) => {
+    updateList(boardId, listId, { title: newTitle });
+  };
+
+  /**
+   * Handle deleting a list
+   * @param listId - ID of the list to delete
+   */
+  const handleDeleteList = (listId: string) => {
+    if (window.confirm('Are you sure you want to delete this list? All cards in this list will be deleted.')) {
+      deleteList(boardId, listId);
+    }
+  };
+
   return (
     <DndContext
       sensors={sensors}
@@ -80,6 +99,8 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                   list={list}
                   members={board.members}
                   onAddCard={handleCreateCard}
+                  onRenameList={handleRenameList}
+                  onDeleteList={handleDeleteList}
                   searchTerm={searchTerm}
                 />
               ))}
@@ -88,8 +109,9 @@ export function KanbanView({ boardId }: KanbanViewProps) {
             <InlineInput
               placeholder="Enter list title..."
               addText="Add list"
-              triggerText="Add another list"
+              triggerText="Add a list"
               containerWidth="20rem"
+              className="justify-center text-center"
               onAdd={handleCreateList}
             />
           </div>

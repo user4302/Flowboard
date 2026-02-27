@@ -89,6 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved kanban drag and drop with optimistic updates
 - Added drag activation constraint to prevent accidental drags
 - Improved drag and drop collision detection and droppable areas
+- Added list management functionality and improved UI text
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
