@@ -25,7 +25,7 @@ interface ListLaneProps {
   openCardModal: (cardId: string) => void;
   toggleTimelineLane: (boardId: string, listId: string) => void;
   // Logic utilities
-  getTaskPosition: (card: Card, allCards: Card[], cardIndex: number) => any;
+  getTaskPosition: (card: Card, allCards: Card[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => any;
   calculateTimelineHeight: (cards: Card[], dateRange: Date[]) => number;
   // State
   isCollapsed: boolean;
@@ -114,7 +114,8 @@ export function ListLane({
                         return (
                           <div
                             key={task.id}
-                            className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(task, boardLabels)}-500 relative`}
+                            className="w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity relative"
+                            style={{ backgroundColor: getTaskColor(task, boardLabels).background }}
                             title={`${task.title} (Before current view)`}
                             onClick={() => openCardModal(task.id)}
                             onMouseEnter={(e) => {
@@ -147,7 +148,8 @@ export function ListLane({
                         return (
                           <div
                             key={task.id}
-                            className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(task, boardLabels)}-500 relative`}
+                            className="w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity relative"
+                            style={{ backgroundColor: getTaskColor(task, boardLabels).background }}
                             title={`${task.title} (After current view)`}
                             onClick={() => openCardModal(task.id)}
                             onMouseEnter={(e) => {

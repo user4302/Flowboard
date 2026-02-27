@@ -39,9 +39,9 @@ interface TaskProps {
   /** Function to open task modal */
   onOpenTaskModal: (taskId: string) => void;
   /** Function to calculate task positioning */
-  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number) => any;
+  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => any;
   /** Function to get task color from labels */
-  getTaskColor: (task: Card, boardLabels?: any[]) => string;
+  getTaskColor: (task: Card, boardLabels?: any[]) => { background: string; text: string };
   /** Labels available on the board */
   boardLabels: any[];
 }
@@ -82,17 +82,18 @@ export function Task({
   //   return null;
   // }
 
-  const position = getTaskPosition(task, allCards, cardIndex);
-  const color = getTaskColor(task, boardLabels);
+  const position = getTaskPosition(task, allCards, cardIndex, dateRange, zoomLevel);
+  const colors = getTaskColor(task, boardLabels);
 
   return (
     <div
       key={`${task.id}-${position.width}-${position.left}`}
-      className={cn(
-        'absolute h-8 rounded-md px-2 py-1 text-xs font-medium text-white shadow-sm cursor-pointer transition-all hover:shadow-md hover:z-10',
-        `bg-${color}-500`
-      )}
-      style={position}
+      className="absolute h-8 rounded-md px-2 py-1 text-xs font-medium shadow-sm cursor-pointer transition-all hover:shadow-md hover:z-10"
+      style={{
+        ...position,
+        backgroundColor: colors.background,
+        color: colors.text
+      }}
       title={task.title}
       onClick={() => onOpenTaskModal(task.id)}
     >

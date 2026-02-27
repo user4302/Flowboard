@@ -442,15 +442,62 @@ export const getTaskPosition = (
 };
 
 /**
- * Get task color based on labels
+ * Color mapping for timeline bars
+ * Maps Tailwind color names to hex values
+ */
+const COLOR_MAP: { [key: string]: string } = {
+  'green': '#10b981',
+  'yellow': '#f59e0b',
+  'orange': '#f97316',
+  'red': '#ef4444',
+  'purple': '#a855f7',
+  'sky': '#0ea5e9',
+  'blue': '#3b82f6',
+  'teal': '#14b8a6',
+  'pink': '#ec4899',
+  'slate': '#64748b',
+};
+
+/**
+ * Get contrasting text color for background
+ */
+const getContrastColor = (bgColor: string): string => {
+  // Convert hex to RGB
+  const hex = bgColor.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Calculate luminance
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Return black for light backgrounds, white for dark backgrounds
+  return luminance > 0.5 ? '#000000' : '#ffffff';
+};
+
+/**
+ * Get task color and contrasting text color
  */
 export const getTaskColor = (task: Card, boardLabels: any[] = []) => {
   if (task.labelIds?.length > 0) {
     const firstLabelId = task.labelIds[0];
     const label = boardLabels.find(l => l.id === firstLabelId);
     if (label) {
-      return label.color.replace('bg-', '').replace('-500', '');
+      // Extract color name from Tailwind class (e.g., 'bg-green-500' -> 'green')
+      const colorName = label.color.replace('bg-', '').replace(/-\d+$/, '');
+      const bgColor = COLOR_MAP[colorName] || COLOR_MAP['slate'];
+      const textColor = getContrastColor(bgColor);
+
+      return {
+        background: bgColor,
+        text: textColor
+      };
     }
   }
-  return 'slate';
+
+  // Neutral fallback
+  return {
+    background: '#e5e7eb',
+    text: '#000000'
+  };
 };

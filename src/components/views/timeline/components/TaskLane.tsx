@@ -38,9 +38,9 @@ interface TaskLaneProps {
   /** Function to open task modal */
   onOpenTaskModal: (taskId: string) => void;
   /** Function to calculate task positioning */
-  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number) => any;
+  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => any;
   /** Function to get task color from labels */
-  getTaskColor: (task: Card, boardLabels?: any[]) => string;
+  getTaskColor: (task: Card, boardLabels?: any[]) => { background: string; text: string };
   /** Function to calculate timeline height */
   calculateTimelineHeight: (tasks: Card[], dateRange: Date[]) => number;
   /** Array of tasks hidden before the date range (only for first task) */
@@ -81,7 +81,8 @@ export function TaskLane({
               className="relative group"
             >
               <div
-                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenTask, boardLabels)}-500`}
+                className="w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity"
+                style={{ backgroundColor: getTaskColor(hiddenTask, boardLabels).background }}
                 onClick={() => onOpenTaskModal(hiddenTask.id)}
                 title=""  // Remove browser tooltip
               />
@@ -122,7 +123,8 @@ export function TaskLane({
               className="relative group"
             >
               <div
-                className={`w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity bg-${getTaskColor(hiddenTask, boardLabels)}-500`}
+                className="w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity"
+                style={{ backgroundColor: getTaskColor(hiddenTask, boardLabels).background }}
                 onClick={() => onOpenTaskModal(hiddenTask.id)}
                 title=""  // Remove browser tooltip
               />
