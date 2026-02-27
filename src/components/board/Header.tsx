@@ -183,6 +183,25 @@ export function Header() {
             const newBoard = useBoardStore.getState().createBoard(boardData.name);
 
             // Import lists and cards with their properties
+            // Store a mapping of old label IDs (from file) to new label IDs (created in store)
+            const labelMap = new Map<string, string>();
+
+            // Recreate labels at board level if they exist
+            if (boardData.labels) {
+              boardData.labels.forEach((labelData: any) => {
+                const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
+                if (existing) {
+                  labelMap.set(labelData.id, existing.id);
+                } else {
+                  const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
+                    text: labelData.text,
+                    color: labelData.color
+                  });
+                  labelMap.set(labelData.id, newLabel.id);
+                }
+              });
+            }
+
             boardData.lists.forEach((listData: any, listIndex: number) => {
               const list = useBoardStore.getState().createList(newBoard.id, listData.title, listIndex);
 
@@ -219,25 +238,6 @@ export function Header() {
                   startDate,
                   dueDate,
                 });
-
-                // Store a mapping of old label IDs (from file) to new label IDs (created in store)
-                const labelMap = new Map<string, string>();
-
-                // Recreate labels at board level if they exist
-                if (boardData.labels) {
-                  boardData.labels.forEach((labelData: any) => {
-                    const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
-                    if (existing) {
-                      labelMap.set(labelData.id, existing.id);
-                    } else {
-                      const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
-                        text: labelData.text,
-                        color: labelData.color
-                      });
-                      labelMap.set(labelData.id, newLabel.id);
-                    }
-                  });
-                }
 
                 // Add labels to the card (handle both old and new formats)
                 const importedLabelIds = cardData.labelIds || [];

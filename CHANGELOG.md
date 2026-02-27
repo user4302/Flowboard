@@ -110,6 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed completed cards showing red overdue styling instead of green
 - Implemented comprehensive table view and priority system
 - Implemented comprehensive search and filtering across all views
+- Fixed label duplication during file import and corrected version
 
 ### Changed
 - Improved board header responsive layout with fixed 3-column structure
@@ -152,6 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove mock data and enable proper date editing for cards
 - Correct hidden cards placement in empty swimlanes
 - Timeline layout and card positioning issues
+- Label duplication during file import (labels now properly reused across cards)
 - Hardcoded mock data for Homepage redesign card
 - Card positioning and date calculation issues
 
