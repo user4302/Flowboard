@@ -1,4 +1,4 @@
-import { useState, forwardRef } from 'react';
+import { useState, forwardRef, useRef, useEffect } from 'react';
 import { Plus, X } from 'lucide-react';
 import { Button } from './button';
 import { Input } from './input';
@@ -52,6 +52,37 @@ export const InlineInput = forwardRef<HTMLButtonElement, InlineInputProps>(
   }, ref) => {
     const [showInput, setShowInput] = useState(false);
     const [value, setValue] = useState(initialValue);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Auto-scroll to ensure the full input is visible when shown
+    useEffect(() => {
+      if (showInput && containerRef.current) {
+        const container = containerRef.current;
+
+        // Find the nearest scrollable parent
+        let scrollableParent = container.parentElement;
+        while (scrollableParent &&
+          scrollableParent !== document.body &&
+          scrollableParent.scrollWidth <= scrollableParent.clientWidth) {
+          scrollableParent = scrollableParent.parentElement;
+        }
+
+        if (scrollableParent && scrollableParent.scrollWidth > scrollableParent.clientWidth) {
+          // Calculate the right edge of the container relative to the scrollable parent
+          const containerRect = container.getBoundingClientRect();
+          const parentRect = scrollableParent.getBoundingClientRect();
+          const rightEdge = containerRect.right - parentRect.right;
+
+          // If the container is cut off on the right, scroll to make it fully visible
+          if (rightEdge > 0) {
+            scrollableParent.scrollBy({
+              left: rightEdge + 20, // Add some padding
+              behavior: 'smooth'
+            });
+          }
+        }
+      }
+    }, [showInput]);
 
     const handleAdd = () => {
       if (value.trim()) {
@@ -88,6 +119,7 @@ export const InlineInput = forwardRef<HTMLButtonElement, InlineInputProps>(
     if (showInput) {
       return (
         <div
+          ref={containerRef}
           className={cn(
             "rounded-xl border border-slate-200 p-3 dark:border-slate-700",
             className
@@ -126,7 +158,7 @@ export const InlineInput = forwardRef<HTMLButtonElement, InlineInputProps>(
       <button
         ref={ref}
         className={cn(
-          "flex items-center gap-2 rounded-xl p-3 text-left text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300",
+          "flex items-center gap-2 rounded-xl p-2 text-left text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300",
           className
         )}
         style={{ width: containerWidth === "auto" ? "auto" : containerWidth }}

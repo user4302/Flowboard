@@ -108,31 +108,33 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     >
       <div className="flex h-full flex-col max-w-full">
         <div className="flex-1 overflow-hidden relative">
-          <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0 max-w-full">
-            <SortableContext items={board.lists.map((l) => l.id)} strategy={verticalListSortingStrategy}>
-              {board.lists.map((list) => (
-                <KanbanList
-                  key={list.id}
-                  list={list}
-                  members={board.members}
-                  onAddCard={handleCreateCard}
-                  onRenameList={handleRenameList}
-                  onDeleteList={handleDeleteList}
-                  searchTerm={searchTerm}
-                  onMenuToggle={(isOpen) => handleMenuToggle(list.id, isOpen)}
-                  isAnyMenuOpen={openMenuId !== null && openMenuId !== list.id}
-                />
-              ))}
-            </SortableContext>
+          <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0">
+            <div className="flex gap-4 h-full min-w-max">
+              <SortableContext items={board.lists.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+                {board.lists.map((list) => (
+                  <KanbanList
+                    key={list.id}
+                    list={list}
+                    members={board.members}
+                    onAddCard={handleCreateCard}
+                    onRenameList={handleRenameList}
+                    onDeleteList={handleDeleteList}
+                    searchTerm={searchTerm}
+                    onMenuToggle={(isOpen) => handleMenuToggle(list.id, isOpen)}
+                    isAnyMenuOpen={openMenuId !== null && openMenuId !== list.id}
+                  />
+                ))}
+              </SortableContext>
 
-            <InlineInput
-              placeholder="Enter list title..."
-              addText="Add list"
-              triggerText="Add a list"
-              containerWidth="20rem"
-              className="justify-center text-center"
-              onAdd={handleCreateList}
-            />
+              <InlineInput
+                placeholder="Enter list title..."
+                addText="Add list"
+                triggerText="Add a list"
+                containerWidth="20rem"
+                className="flex-shrink-0 h-fit"
+                onAdd={handleCreateList}
+              />
+            </div>
           </div>
         </div>
       </div>
