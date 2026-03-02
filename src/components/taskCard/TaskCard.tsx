@@ -12,7 +12,7 @@ import { TaskCardCardLabels } from './components/TaskCardCardLabels';
 import { TaskCardCardMembers } from './components/TaskCardCardMembers';
 import { TaskCardCardMeta } from './components/TaskCardCardMeta';
 import { TaskCardCardCompletion } from './components/TaskCardCardCompletion';
-import { CardContextMenu } from './components/CardContextMenu';
+import { CardContextMenu } from './components/contextMenu';
 import { useCardContextMenu } from './hooks/useCardContextMenu';
 
 export function TaskCard({ card, members, onClick }: CardProps) {

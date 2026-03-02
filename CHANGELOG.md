@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved component-specific types from global types.ts to respective component folders
 - Consolidated constants in component-specific constants files
 - Enhanced documentation with comprehensive API reference and usage examples
+- Refactored CardContextMenu into modular component architecture with separate utilities, hooks, and types
 
 ### Fixed
 
