@@ -1,11 +1,54 @@
-import { Calendar, User, Tag, CheckSquare, Flag } from 'lucide-react';
+'use client';
+
+import { Calendar, User, Tag, CheckSquare, Flag, Maximize2, Minimize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input, Button } from '@/components/ui';
 import { ModalFormProps } from '@/components/taskModal/types/TaskModal.form.types';
 import { TaskCardCardCompletion } from '@/components/taskCard/components/TaskCardCardCompletion';
 import { TaskCardCardMembers } from '@/components/taskCard/components/TaskCardCardMembers';
+import { useState, useRef, useEffect } from 'react';
 
 export function TaskModalModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [descriptionValue, setDescriptionValue] = useState(card?.description || '');
+  const [contentExceedsHeight, setContentExceedsHeight] = useState(false);
+
+  // Update description when card changes
+  useEffect(() => {
+    setDescriptionValue(card?.description || '');
+  }, [card?.id]);
+
+  // Check if content exceeds default height
+  useEffect(() => {
+    if (textareaRef.current && !isDescriptionExpanded) {
+      // Temporarily set height to auto to measure content
+      const originalHeight = textareaRef.current.style.height;
+      textareaRef.current.style.height = 'auto';
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = originalHeight;
+
+      // Default 4 rows = approximately 96px
+      setContentExceedsHeight(scrollHeight > 96);
+    }
+  }, [descriptionValue, isDescriptionExpanded]);
+
+  // Auto-adjust height when expanded or content changes
+  useEffect(() => {
+    if (textareaRef.current && isDescriptionExpanded) {
+      // Reset height to auto to get the natural scroll height
+      textareaRef.current.style.height = 'auto';
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = `${scrollHeight}px`;
+    } else if (textareaRef.current && !isDescriptionExpanded) {
+      // Reset to default when collapsed
+      textareaRef.current.style.height = '';
+    }
+  }, [isDescriptionExpanded, descriptionValue]);
+
+  const toggleDescriptionExpansion = () => {
+    setIsDescriptionExpanded(!isDescriptionExpanded);
+  };
   return (
     <>
       {/* Title - Required field with validation */}
@@ -32,13 +75,48 @@ export function TaskModalModalForm({ card, form, errors, register, onToggleCompl
 
       {/* Description - Optional rich text area */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
-          Description
-        </label>
+        <div className="mb-2 flex items-center justify-between">
+          <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+            Description
+          </label>
+          {contentExceedsHeight && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={toggleDescriptionExpansion}
+              className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
+            >
+              {isDescriptionExpanded ? (
+                <>
+                  <Minimize2 className="h-3 w-3 mr-1" />
+                  Shrink
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="h-3 w-3 mr-1" />
+                  Expand
+                </>
+              )}
+            </Button>
+          )}
+        </div>
         <textarea
-          {...register('description')}
-          rows={4}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+          value={descriptionValue}
+          onChange={(e) => {
+            setDescriptionValue(e.target.value);
+            form.setValue('description', e.target.value);
+          }}
+          ref={textareaRef}
+          rows={isDescriptionExpanded ? 1 : 4}
+          style={{
+            resize: 'vertical',
+            height: isDescriptionExpanded ? undefined : '',
+            minHeight: '96px'
+          }}
+          className={cn(
+            "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200"
+          )}
           placeholder="Add a more detailed description..."
         />
       </div>
