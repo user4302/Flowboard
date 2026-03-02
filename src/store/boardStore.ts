@@ -37,6 +37,7 @@ interface BoardState {
   duplicateCard: (boardId: string, cardId: string, listId: string) => void;
   archiveCard: (boardId: string, cardId: string) => void;
   unarchiveCard: (boardId: string, archivedCardId: string) => void;
+  permanentlyDeleteArchivedCard: (boardId: string, archivedCardId: string) => void;
 
   // Label actions
   createBoardLabel: (boardId: string, label: Omit<Label, 'id'>) => Label;
@@ -779,6 +780,25 @@ export const useBoardStore = create<BoardState>()(
               updatedAt: new Date(),
             };
           }),
+        }));
+      },
+
+      /**
+       * Permanently delete an archived card
+       * @param boardId - ID of the board containing the archived card
+       * @param archivedCardId - ID of the archived card to permanently delete
+       */
+      permanentlyDeleteArchivedCard: (boardId, archivedCardId) => {
+        set((state) => ({
+          boards: state.boards.map((board) =>
+            board.id === boardId
+              ? {
+                ...board,
+                archivedCards: board.archivedCards.filter((ac) => ac.id !== archivedCardId),
+                updatedAt: new Date(),
+              }
+              : board
+          ),
         }));
       },
     }),

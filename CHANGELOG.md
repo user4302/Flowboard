@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Card archiving and unarchiving functionality
 - ArchivedCards component for managing archived cards
 - Context menu positioning with viewport boundary detection
+- Reusable ConfirmationModal component for dangerous actions
+- Permanent delete functionality for archived cards with confirmation popup
+- Archive button in board header with badge showing archived cards count
 
 ### Changed
 - Refactored click outside detection to use centralized hook
@@ -21,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced SearchAndFilterDropdown with better ref management
 - Updated TaskCard to support context menu integration
 - Enhanced board store with archived cards management
+- Updated archived cards modal with permanent delete options
 
 ### Fixed
 

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { X, RotateCcw, Trash2, Calendar, Archive } from 'lucide-react';
 import { ArchivedCard } from '@/lib/types';
 import { useBoardStore } from '@/store';
+import { ConfirmationModal } from '@/components/ui/ConfirmationModal';
 import { cn } from '@/lib/utils';
 
 interface ArchivedCardsModalProps {
@@ -12,8 +13,17 @@ interface ArchivedCardsModalProps {
 }
 
 export function ArchivedCardsModal({ isOpen, onClose }: ArchivedCardsModalProps) {
-  const { currentBoardId, getCurrentBoard, unarchiveCard } = useBoardStore();
+  const { currentBoardId, getCurrentBoard, unarchiveCard, permanentlyDeleteArchivedCard } = useBoardStore();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{
+    isOpen: boolean;
+    archivedCardId: string;
+    cardTitle: string;
+  }>({
+    isOpen: false,
+    archivedCardId: '',
+    cardTitle: '',
+  });
 
   const currentBoard = getCurrentBoard();
   const archivedCards = currentBoard?.archivedCards || [];
@@ -26,6 +36,28 @@ export function ArchivedCardsModal({ isOpen, onClose }: ArchivedCardsModalProps)
       unarchiveCard(currentBoardId, archivedCardId);
     } catch (error) {
       console.error('Failed to unarchive card:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePermanentlyDelete = async (archivedCardId: string, cardTitle: string) => {
+    setDeleteConfirmation({
+      isOpen: true,
+      archivedCardId,
+      cardTitle,
+    });
+  };
+
+  const confirmPermanentDelete = async () => {
+    if (!currentBoardId || !deleteConfirmation.archivedCardId) return;
+
+    setIsProcessing(true);
+    try {
+      permanentlyDeleteArchivedCard(currentBoardId, deleteConfirmation.archivedCardId);
+      setDeleteConfirmation({ isOpen: false, archivedCardId: '', cardTitle: '' });
+    } catch (error) {
+      console.error('Failed to permanently delete card:', error);
     } finally {
       setIsProcessing(false);
     }
@@ -121,6 +153,14 @@ export function ArchivedCardsModal({ isOpen, onClose }: ArchivedCardsModalProps)
                           <RotateCcw className="h-3 w-3" />
                           Restore
                         </button>
+                        <button
+                          onClick={() => handlePermanentlyDelete(archivedCard.id, archivedCard.card.title)}
+                          disabled={isProcessing}
+                          className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded hover:bg-red-100 dark:hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          Delete
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -133,10 +173,23 @@ export function ArchivedCardsModal({ isOpen, onClose }: ArchivedCardsModalProps)
           {archivedCards.length > 0 && (
             <div className="p-6 border-t border-slate-200 dark:border-slate-600">
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Archived cards are stored indefinitely. Use the Restore button to move them back to their original list.
+                Archived cards are stored indefinitely. Use the Restore button to move them back to their original list, or Delete to permanently remove them.
               </p>
             </div>
           )}
+
+          {/* Delete Confirmation Modal */}
+          <ConfirmationModal
+            isOpen={deleteConfirmation.isOpen}
+            onClose={() => setDeleteConfirmation({ isOpen: false, archivedCardId: '', cardTitle: '' })}
+            onConfirm={confirmPermanentDelete}
+            title="Permanently Delete Card"
+            content={`Are you sure you want to permanently delete "${deleteConfirmation.cardTitle}"? This action cannot be undone and the card will be lost forever.`}
+            confirmText="Delete Forever"
+            cancelText="Cancel"
+            variant="danger"
+            isProcessing={isProcessing}
+          />
         </div>
       </div>
     </>
