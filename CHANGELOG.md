@@ -5,18 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.1] - 2026-02-27
-
-### Changed
-- Removed pre-populated labels from new boards - boards now start with empty labels array
-- Fixed dropdown menu behavior in kanban list headers to close when clicking outside or other menus
-- Only user-created labels will exist in boards going forward
-
-### Fixed
-- Kanban list dropdown menus now properly close when clicking outside the menu area
-- Dropdown menus close when opening other list option buttons
-- Improved menu state management across multiple lists
-
 ## [Unreleased]
 
 ### Added
@@ -24,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SortableKanbanList component with @dnd-kit/sortable integration
 - Column order persistence in UI store with localStorage
 - Visual drag handles and overlay for list reordering
+- Comprehensive JSDoc documentation for all components and hooks
 - Board sharing and collaboration system with invitation-based access
 - Invite modal for creating shareable invitation links with configurable expiration
 - Join board modal for users to access shared boards via invitation links
@@ -58,6 +47,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Compact search bar mode for header integration
 
 ### Changed
+- Enhanced drag-and-drop system to support both card and list reordering
+- Improved kanban view with persistent column ordering
+- Updated documentation with comprehensive guides and security policy
+- Enhanced code comments and inline documentation
+- Removed pre-populated labels from new boards - boards now start with empty labels array
+- Fixed dropdown menu behavior in kanban list headers to close when clicking outside or other menus
+- Only user-created labels will exist in boards going forward
 - Enhanced timeline UI styling with improved button contrast and active states
 - Enhanced month view with daily granularity and improved date labeling
 - Fixed card stacking logic for out-of-range cards in timeline view
@@ -146,6 +142,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved code organization with dedicated hooks and services modules
 
 ### Fixed
+- Improved drag handle positioning and visual feedback
+- Better state management for drag operations
+- Enhanced type safety in drag-and-drop components
+- Kanban list dropdown menus now properly close when clicking outside the menu area
+- Dropdown menus close when opening other list option buttons
+- Improved menu state management across multiple lists
 - CardModal label creation with proper ID generation
 - TypeScript type casting issues in select elements
 - Form state management robustness in card editing
@@ -227,7 +229,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### ✅ **Core Features**
 - **Board Management**: Create, edit, delete boards
-- **Multiple Views**: Kanban, Calendar, Timeline, Table views
+- **Multiple Views**: Kanban, Calendar, Timeline, and Table views
 - **Dark/Light Theme**: System-wide theme switching
 - **Import/Export**: JSON board data import/export functionality
 - **Responsive Design**: Mobile and desktop optimized interface

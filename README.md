@@ -1,13 +1,13 @@
-# Flowboard v1.2.0
+# Flowboard v1.1.0
 
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-1.2.0-green.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
 
-## Features
+## Features ✨
 
 ### Core Functionality
 - **Four Switchable Views**: Kanban (default), Timeline (Gantt-style), Calendar, and Table views
@@ -50,13 +50,12 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Date Handling**: date-fns
 - **Animations**: Framer Motion
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
 - Node.js 18+ 
 - npm, yarn, pnpm, or bun
 
-### Installation
+## Installation 📥
 
 1. Clone the repository:
 ```bash
@@ -84,7 +83,25 @@ pnpm dev
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Project Structure
+## Usage / Quick Start ⚡
+
+### Creating Your First Board
+1. Open the application and click "Create New Board"
+2. Enter a board name (e.g., "Website Redesign")
+3. Start adding lists and cards to organize your project
+
+### Kanban View Features
+- **Drag cards between lists** to update their status
+- **Drag list headers** to reorder columns
+- **Click "Add a list"** to create new columns
+- **Double-click cards** to edit details
+- **Use the search bar** to filter cards instantly
+
+### Keyboard Shortcuts
+- `1-5`: Switch timeline zoom levels (Day, Week, 2 Weeks, Month, Year)
+- `Escape`: Close modals and dropdowns
+
+## Project Structure 📂
 
 ```
 flowboard/
@@ -98,144 +115,123 @@ flowboard/
 │   │   ├── card/              # Card components
 │   │   └── views/             # View implementations
 │   ├── hooks/                 # Custom React hooks
-│   ├── lib/                   # Utilities and types
-│   ├── store/                 # Zustand state management
-│   └── styles/                # Global styles
+│   ├── lib/                   # Utility functions
+│   └── store/                 # State management
 ├── public/                    # Static assets
-├── VERSION                    # Version file
-└── README.md
+├── docs/                      # Additional documentation
+└── netlify/                   # Netlify functions
 ```
 
-## Usage / Quick Start ⚡
+## Configuration 🔧
 
-### Basic Navigation
-1. **Sidebar**: Navigate between boards and create new ones
-2. **Header**: Switch views, search cards, manage theme and members, export/import boards
-3. **Main Area**: Interact with the current view (Kanban, Timeline, Calendar, or Table)
+### Environment Variables
+Create a `.env.local` file for environment-specific settings:
 
-### Timeline View Features
-- **Keyboard Shortcuts**: Press 1-5 to quickly switch between zoom levels
-- **Hidden Cards**: Small colored squares indicate cards outside the current date range
-- **Interactive Tooltips**: Hover over hidden cards to see details without clicking
-- **Collapsible Swimlanes**: Click the arrow to expand/collapse parent swimlanes
-- **Smart Navigation**: Use the header controls to navigate dates and zoom levels
-
-### Kanban View
-- Drag cards between lists to reorganize
-- Click "Add a card" to create new cards
-- Click "Add a list" to create new lists
-- Click on cards to open detailed editing modal
-
-### Board Management
-- **Export Boards**: Click the download icon in the header to save board data as JSON
-- **Import Boards**: Click the upload icon to load board data from a JSON file
-- **Inline Title Editing**: Click the board title to edit it directly
-### Card Editing
-- **Title & Description**: Inline editing with validation
-- **Labels**: Color-coded labels for categorization
-- **Members**: Assign team members to cards
-- **Priority**: Number-based priority system (higher numbers = higher priority)
-- **Dates**: Set start and due dates
-- **Checklist**: Add progress tracking items
-
-### Other Views
-- **Calendar**: Monthly grid view showing due dates
-- **Table**: Sortable data table with all card properties, including priority and created date
-- **Column Customization**: Toggle table columns on/off for personalized view
-- **Priority Sorting**: Sort cards by numerical priority in table view
-- **Relative Time Display**: View card creation dates as relative time (e.g., "2 hours ago")
-
-## Data Persistence
-
-The application uses localStorage for client-side persistence. Data is automatically saved when:
-- Creating, updating, or deleting boards, lists, or cards
-- Changing UI preferences (theme, sidebar state, current view)
-
-## Future Enhancements
-
-### Planned Features
-- **Real-time Collaboration**: WebSocket connections for multi-user editing
-- **File Attachments**: Upload and manage files on cards
-- **Comments**: Discussion threads on cards
-- **Advanced Filtering**: More sophisticated search and filter options
-- **Keyboard Shortcuts**: Power user productivity features
-- **Export/Import**: Backup and restore functionality
-
-### Migration to Cloud
-The application is designed for easy migration to cloud services:
-- **Netlify Functions**: Serverless API endpoints
-- **PostgreSQL**: Database integration (Neon recommended)
-- **Authentication**: User management system
-- **Real-time Sync**: Cross-device synchronization
-
-## Deployment
-
-### Netlify (Recommended)
-
-#### Method 1: Drag & Drop
-1. Run `npm run build` to create the production build
-2. Drag the `out` folder to the Netlify deploy area
-3. Your site will be live instantly
-
-#### Method 2: Git Integration
-1. Push your code to a Git repository
-2. Connect the repository to Netlify
-3. Deploy automatically on push to main branch
-
-#### Method 3: Netlify CLI
-```bash
-# Install Netlify CLI
-npm install -g netlify-cli
-
-# Build the project
-npm run build
-
-# Deploy
-netlify deploy --prod --dir=out
+```env
+# Add your environment variables here
 ```
 
-### Configuration Files
-The project includes:
-- `netlify.toml` - Build configuration and redirects
-- `netlify/functions/` - Example serverless functions for future API integration
-- `VERSION` - Current version file for tracking
+### Theme Configuration
+The application automatically detects system theme preference. Users can manually toggle between light and dark themes using the header control.
 
-### Other Platforms
-The application can be deployed to any platform supporting static sites:
-- **Vercel**: Connect repository and deploy automatically
-- **AWS Amplify**: Static site hosting with CI/CD
-- **Firebase Hosting**: Deploy via Firebase CLI
-- **GitHub Pages**: Use GitHub Actions for deployment
+## Development / Running Locally 🏗️
 
-### Build Commands
+### Available Scripts
 ```bash
-# Development
+npm run dev      # Start development server
+npm run build    # Build for production
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
+
+### Code Quality
+- **ESLint**: Configured with Next.js recommended rules
+- **TypeScript**: Strict type checking enabled
+- **Prettier**: Code formatting (recommended)
+
+### Component Development
+- Use TypeScript interfaces for all props
+- Follow the existing component structure
+- Add JSDoc comments for public functions
+- Test with both light and dark themes
+
+## Testing 🧪
+
+Currently, the project uses manual testing. To run the application and test features:
+
+```bash
 npm run dev
-
-# Production build
-npm run build
-
-# Start production server
-npm start
-
-# Lint code
-npm run lint
 ```
 
-## Contributing
+Test the following workflows:
+- Board creation and management
+- Card creation, editing, and deletion
+- Drag-and-drop functionality
+- View switching (Kanban, Timeline, Calendar, Table)
+- Search and filtering
+- Theme switching
+- Import/export functionality
 
+## Building for Production 🏭
+
+```bash
+npm run build
+npm run start
+```
+
+The production build is optimized for:
+- Minimal bundle size
+- Fast loading times
+- Efficient rendering
+- SEO optimization
+
+## Deployment 🚀
+
+### Netlify Deployment
+The project includes Netlify configuration for easy deployment:
+
+1. Connect your GitLab repository to Netlify
+2. Configure build settings:
+   - Build command: `npm run build`
+   - Publish directory: `out`
+3. Deploy automatically on pushes to main branch
+
+### Manual Deployment
+```bash
+npm run build
+# Deploy the 'out' directory to your hosting provider
+```
+
+## Contributing 🤝
+
+We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+### Quick Contribution Guide
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'feat: add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Merge Request on GitLab
 
-## License
+### Code Style
+- Use conventional commit messages
+- Follow existing code patterns
+- Add TypeScript types for new code
+- Include JSDoc comments for public APIs
 
-This project is open source and available under the [MIT License](LICENSE).
+## License 📄
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Support & Contact 👋
 
-For any questions, bug reports, feature requests, or security concerns, please open an issue on GitLab: https://gitlab.com/user4302_Projects/coding/next-js/flowboard/-/issues
+For questions, bugs, features, or security issues, please open an issue on GitLab:
+[https://gitlab.com/user4302_Projects/coding/next-js/flowboard/-/issues](https://gitlab.com/user4302_Projects/coding/next-js/flowboard/-/issues)
 
-No email or direct messaging support is available.
+No email or direct support is provided. All support requests should be submitted through GitLab Issues.
+
+## Acknowledgments 🙏
+
+- Inspired by Trello's kanban board functionality
+- Built with modern web technologies and best practices
+- Thanks to all contributors who help improve this project
