@@ -47,6 +47,8 @@ export function ConfirmationModal({
   variant = 'danger',
   isProcessing = false,
 }: ConfirmationModalProps) {
+  // Note: Confirmation dialogs should NOT close on outside click per UX standards
+  // Users must explicitly choose Cancel or Confirm for destructive actions
   if (!isOpen) return null;
 
   const handleConfirm = () => {
@@ -85,10 +87,7 @@ export function ConfirmationModal({
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-50 bg-black/50"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 z-50 bg-black/50" />
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

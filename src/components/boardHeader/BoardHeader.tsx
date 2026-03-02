@@ -10,7 +10,7 @@ import { SearchAndFilter } from '@/components/searchAndFilter';
 import { BoardHeaderTitle } from './components/BoardHeaderTitle';
 import { BoardHeaderViewNavigation } from './components/BoardHeaderViewNavigation';
 import { BoardHeaderActionMenu } from './components/BoardHeaderActionMenu';
-import { ArchivedCardsModal } from '@/components/archivedCards/ArchivedCardsModal';
+import { ArchiveModal } from '@/components/archiveModal';
 
 /**
  * BoardHeader Component
@@ -149,7 +149,7 @@ export function BoardHeader() {
       />
 
       {/* Archived Cards Modal */}
-      <ArchivedCardsModal
+      <ArchiveModal
         isOpen={showArchivedCards}
         onClose={() => setShowArchivedCards(false)}
       />
