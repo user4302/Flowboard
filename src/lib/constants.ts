@@ -3,7 +3,14 @@
  * Contains color palettes, view configurations, animation settings, breakpoints, and storage keys
  */
 
+import packageJson from '../../package.json';
 import { FilterOption } from './types';
+
+/**
+ * Application version - automatically derived from package.json
+ * Ensures consistent versioning across the entire application
+ */
+export const APP_VERSION = packageJson.version;
 
 /**
  * Available label colors for cards

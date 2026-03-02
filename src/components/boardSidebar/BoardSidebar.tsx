@@ -4,6 +4,7 @@ import { Plus } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { APP_VERSION } from '@/lib/constants';
 import {
   BoardSidebarBackdrop,
   BoardSidebarHeader,
@@ -94,7 +95,7 @@ export function BoardSidebar() {
             {/* Footer - App version information */}
             <div className="border-t border-slate-200 p-4 dark:border-slate-700">
               <div className="text-xs text-slate-500 dark:text-slate-400">
-                Flowboard v1.1.0
+                Flowboard v{APP_VERSION}
               </div>
             </div>
           </div>
