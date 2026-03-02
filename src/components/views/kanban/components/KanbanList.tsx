@@ -16,6 +16,10 @@ interface ListProps {
   className?: string;
   onMenuToggle?: (isOpen: boolean) => void;
   isAnyMenuOpen?: boolean;
+  dragHandleProps?: {
+    attributes: any;
+    listeners: any;
+  };
 }
 
 /**
@@ -30,7 +34,8 @@ export function KanbanList({
   searchTerm = '',
   className,
   onMenuToggle,
-  isAnyMenuOpen
+  isAnyMenuOpen,
+  dragHandleProps
 }: ListProps) {
   // Get filter options from UI store
   const {
@@ -65,6 +70,7 @@ export function KanbanList({
         onDelete={() => onDeleteList(list.id)}
         onMenuToggle={onMenuToggle}
         isAnyMenuOpen={isAnyMenuOpen}
+        dragHandleProps={dragHandleProps}
       />
 
       <KanbanCardsContainer

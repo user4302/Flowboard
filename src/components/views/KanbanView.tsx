@@ -1,14 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { DndContext, closestCorners } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, closestCorners, closestCenter } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 import { useBoardStore, useUIStore } from '@/store';
 import { cn } from '@/lib/utils';
 import { DragOverlayWrapper, InlineInput } from '@/components/ui';
 import { TaskCard } from '@/components/taskCard';
 import {
   KanbanList,
+  SortableKanbanList,
   useKanbanDragAndDrop,
 } from './kanban';
 
@@ -29,7 +30,8 @@ interface KanbanViewProps {
  */
 export function KanbanView({ boardId }: KanbanViewProps) {
   // Store hooks for board operations and UI state
-  const { boards, createList, createCard, updateList, deleteList } = useBoardStore();
+  const { boards, createList, createCard, updateList, deleteList, reorderLists } = useBoardStore();
+  const { cardModalOpen, getColumnOrder, setColumnOrder } = useUIStore();
 
   // State to manage which list menu is open
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -38,15 +40,55 @@ export function KanbanView({ boardId }: KanbanViewProps) {
   const board = boards.find((b) => b.id === boardId);
   if (!board) return null;
 
+  // Get ordered lists based on saved column order
+  const savedColumnOrder = getColumnOrder(boardId);
+  const orderedLists = savedColumnOrder.length > 0
+    ? savedColumnOrder
+      .map(id => board.lists.find(l => l.id === id))
+      .filter((list): list is typeof board.lists[0] => list !== undefined)
+    : board.lists;
+
   // Use custom hook for drag and drop functionality
   const {
     sensors,
     activeId,
+    activeDataType,
     handleDragStart,
     handleDragOver,
-    handleDragEnd,
+    handleDragEnd: originalHandleDragEnd,
     getActiveCard,
+    getActiveList,
   } = useKanbanDragAndDrop({ boardId, board });
+
+  // Wrap handleDragEnd to update column order in localStorage
+  const handleDragEnd = (event: any) => {
+    // Calculate the new order before calling the original handler
+    let newOrder: string[] = [];
+
+    if (activeDataType === 'list' && event.over) {
+      const { active, over } = event;
+      const activeId = active.id as string;
+      const overId = over.id as string;
+
+      const activeIndex = orderedLists.findIndex(l => l.id === activeId);
+      const overIndex = orderedLists.findIndex(l => l.id === overId);
+
+      if (activeIndex !== -1 && overIndex !== -1) {
+        // Create new order by moving the active list to the new position
+        newOrder = [...orderedLists.map(l => l.id)];
+        const [movedList] = newOrder.splice(activeIndex, 1);
+        newOrder.splice(overIndex, 0, movedList);
+      }
+    }
+
+    // Call the original handler
+    originalHandleDragEnd(event);
+
+    // Update localStorage with the new order
+    if (newOrder.length > 0) {
+      setColumnOrder(boardId, newOrder);
+    }
+  };
 
   /**
    * Handle creating a new list
@@ -102,8 +144,8 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     <div className="flex h-full flex-col max-w-full">
       {/* Kanban Board */}
       <DndContext
-        sensors={sensors}
-        collisionDetection={closestCorners}
+        sensors={cardModalOpen ? [] : sensors}
+        collisionDetection={closestCenter}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
@@ -111,9 +153,9 @@ export function KanbanView({ boardId }: KanbanViewProps) {
         <div className="flex-1 overflow-hidden relative">
           <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0">
             <div className="flex gap-4 h-full min-w-max">
-              <SortableContext items={board.lists.map((l) => l.id)} strategy={verticalListSortingStrategy}>
-                {board.lists.map((list) => (
-                  <KanbanList
+              <SortableContext items={orderedLists.map((l) => l.id)} strategy={horizontalListSortingStrategy}>
+                {orderedLists.map((list) => (
+                  <SortableKanbanList
                     key={list.id}
                     list={list}
                     members={board.members}
@@ -141,12 +183,24 @@ export function KanbanView({ boardId }: KanbanViewProps) {
 
       {/* Drag overlay for visual feedback during drag operations */}
       <DragOverlayWrapper activeId={activeId}>
-        {getActiveCard() && (
+        {activeDataType === 'card' && getActiveCard() && (
           <TaskCard
             card={getActiveCard()!}
             members={board.members}
             onClick={() => { }}
           />
+        )}
+        {activeDataType === 'list' && getActiveList() && (
+          <div className="w-80 flex-shrink-0 opacity-75">
+            <div className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg">
+              <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                {getActiveList()!.title}
+              </h3>
+              <span className="text-sm text-slate-500 dark:text-slate-400">
+                {getActiveList()!.cards.length}
+              </span>
+            </div>
+          </div>
         )}
       </DragOverlayWrapper>
     </div>

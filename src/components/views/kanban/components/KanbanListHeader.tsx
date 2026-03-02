@@ -13,12 +13,17 @@ interface ListHeaderProps {
   className?: string;
   onMenuToggle?: (isOpen: boolean) => void;
   isAnyMenuOpen?: boolean;
+  /** Drag handle props for list reordering functionality */
+  dragHandleProps?: {
+    attributes: any;
+    listeners: any;
+  };
 }
 
 /**
  * KanbanListHeader component - Displays list title and card count with edit/delete functionality
  */
-export function KanbanListHeader({ title, cardCount, onRename, onDelete, className, onMenuToggle, isAnyMenuOpen }: ListHeaderProps) {
+export function KanbanListHeader({ title, cardCount, onRename, onDelete, className, onMenuToggle, isAnyMenuOpen, dragHandleProps }: ListHeaderProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(title);
   const [showMenu, setShowMenu] = useState(false);
@@ -100,10 +105,17 @@ export function KanbanListHeader({ title, cardCount, onRename, onDelete, classNa
   }
 
   return (
-    <div className={cn("flex items-center justify-between group", className)}>
-      <h3 className="font-medium text-slate-900 dark:text-slate-100">
-        {title}
-      </h3>
+    <div
+      className={cn("flex items-center justify-between group", className)}
+      {...dragHandleProps?.attributes}
+      {...dragHandleProps?.listeners}
+    >
+      <div className="flex items-center gap-2 cursor-move">
+        <div className="w-1 h-4 bg-slate-300 dark:bg-slate-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+        <h3 className="font-medium text-slate-900 dark:text-slate-100">
+          {title}
+        </h3>
+      </div>
       <div className="flex items-center gap-2">
         <span className="text-sm text-slate-500 dark:text-slate-400">
           {cardCount}

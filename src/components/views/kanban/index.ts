@@ -1,5 +1,6 @@
 // Components
 export { KanbanList } from './components/KanbanList';
+export { SortableKanbanList } from './components/SortableKanbanList';
 export { KanbanListHeader } from './components/KanbanListHeader';
 export { KanbanCardsContainer } from './components/KanbanCardsContainer';
 

@@ -21,10 +21,12 @@ interface UseKanbanDragAndDropProps {
 interface UseKanbanDragAndDropReturn {
   sensors: any[];
   activeId: string | null;
+  activeDataType: 'card' | 'list' | null;
   handleDragStart: (event: DragStartEvent) => void;
   handleDragOver: (event: DragOverEvent) => void;
   handleDragEnd: (event: DragEndEvent) => void;
   getActiveCard: () => any;
+  getActiveList: () => any;
 }
 
 /**
@@ -35,6 +37,7 @@ export function useKanbanDragAndDrop({
   board
 }: UseKanbanDragAndDropProps): UseKanbanDragAndDropReturn {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeDataType, setActiveDataType] = useState<'card' | 'list' | null>(null);
 
   // Configure drag and drop sensors
   const sensors = useSensors(
@@ -50,6 +53,18 @@ export function useKanbanDragAndDrop({
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
+
+    // Determine if we're dragging a card or a list
+    const isCard = board.lists.some((list: any) =>
+      list.cards.some((card: any) => card.id === event.active.id)
+    );
+    const isList = board.lists.some((list: any) => list.id === event.active.id);
+
+    if (isCard) {
+      setActiveDataType('card');
+    } else if (isList) {
+      setActiveDataType('list');
+    }
   };
 
   const handleDragOver = (event: DragOverEvent) => {
@@ -96,11 +111,25 @@ export function useKanbanDragAndDrop({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
+    setActiveDataType(null);
+
     if (!over) return;
 
     const activeId = active.id as string;
     const overId = over.id as string;
 
+    // Handle list reordering
+    if (activeDataType === 'list') {
+      const activeIndex = board.lists.findIndex((l: any) => l.id === activeId);
+      const overIndex = board.lists.findIndex((l: any) => l.id === overId);
+
+      if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
+        useBoardStore.getState().reorderLists(boardId, activeIndex, overIndex);
+      }
+      return;
+    }
+
+    // Handle card reordering (existing logic)
     // Find the current list and position
     let activeListId = null;
     let fromIndex = -1;
@@ -144,7 +173,7 @@ export function useKanbanDragAndDrop({
   };
 
   const getActiveCard = () => {
-    if (!activeId) return null;
+    if (!activeId || activeDataType !== 'card') return null;
 
     for (const list of board.lists) {
       const card = list.cards.find((c: any) => c.id === activeId);
@@ -153,12 +182,20 @@ export function useKanbanDragAndDrop({
     return null;
   };
 
+  const getActiveList = () => {
+    if (!activeId || activeDataType !== 'list') return null;
+
+    return board.lists.find((l: any) => l.id === activeId);
+  };
+
   return {
     sensors,
     activeId,
+    activeDataType,
     handleDragStart,
     handleDragOver,
     handleDragEnd,
     getActiveCard,
+    getActiveList,
   };
 }

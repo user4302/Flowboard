@@ -19,6 +19,9 @@ interface UIState extends ViewState, FilterState {
     collapsedLanes: string[];
   }>;
 
+  // Column order state (per board)
+  columnOrder: Record<string, string[]>;
+
   // View actions
   setCurrentView: (view: ViewState['currentView']) => void;
   toggleSidebar: () => void;
@@ -32,6 +35,10 @@ interface UIState extends ViewState, FilterState {
   toggleTimelineLane: (boardId: string, laneId: string) => void;
   getTimelineState: (boardId: string) => { currentDate: string; zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year'; collapsedLanes: string[]; };
   clearTimelineState: (boardId: string) => void;
+
+  // Column order actions
+  setColumnOrder: (boardId: string, order: string[]) => void;
+  getColumnOrder: (boardId: string) => string[];
 
   // Filter actions
   setSearchTerm: (term: string) => void;
@@ -79,6 +86,9 @@ export const useUIStore = create<UIState>()(
 
       // Initial timeline state (per board)
       timelineState: {},
+
+      // Initial column order state (per board)
+      columnOrder: {},
 
       /**
        * Set the current view mode
@@ -154,6 +164,28 @@ export const useUIStore = create<UIState>()(
         delete newTimelineState[boardId];
         return { timelineState: newTimelineState };
       }),
+
+      /**
+       * Set column order for a board
+       * @param boardId - Board ID
+       * @param order - Array of list IDs in order
+       */
+      setColumnOrder: (boardId: string, order: string[]) => set((state: UIState) => ({
+        columnOrder: {
+          ...state.columnOrder,
+          [boardId]: order
+        }
+      })),
+
+      /**
+       * Get column order for a board
+       * @param boardId - Board ID
+       * @returns Array of list IDs in order
+       */
+      getColumnOrder: (boardId: string) => {
+        const state = get();
+        return state.columnOrder[boardId] || [];
+      },
 
       /**
        * Set sidebar visibility
@@ -281,6 +313,7 @@ export const useUIStore = create<UIState>()(
         priorityThreshold: state.priorityThreshold,
         dueDateFilter: state.dueDateFilter,
         timelineState: state.timelineState,
+        columnOrder: state.columnOrder,
       }),
     }
   )

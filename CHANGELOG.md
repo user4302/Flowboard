@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Kanban list drag-and-drop reordering functionality
+- SortableKanbanList component with @dnd-kit/sortable integration
+- Column order persistence in UI store with localStorage
+- Visual drag handles and overlay for list reordering
 - Board sharing and collaboration system with invitation-based access
 - Invite modal for creating shareable invitation links with configurable expiration
 - Join board modal for users to access shared boards via invitation links
