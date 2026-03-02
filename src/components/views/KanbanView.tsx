@@ -186,28 +186,17 @@ export function KanbanView({ boardId }: KanbanViewProps) {
 
   return (
     <div className="flex h-full flex-col max-w-full">
-      {/* Main Kanban Board with drag-and-drop context */}
-      <DndContext
-        // Disable sensors when card modal is open to prevent conflicts
-        sensors={cardModalOpen ? [] : sensors}
-        // Use closest center collision detection for better drop zone accuracy
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
-        {/* Scrollable container for kanban lists */}
-        <div className="flex-1 overflow-hidden relative">
-          <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0">
-            <div className="flex gap-4 h-full min-w-max">
-              {/* Sortable context for list reordering */}
-              <SortableContext
-                items={orderedLists.map((l) => l.id)}
-                strategy={horizontalListSortingStrategy}
-              >
-                {/* Render each list as a sortable component */}
+      {/* Main Kanban Board with drag-and-drop context - only render when card modal is not open */}
+      {cardModalOpen ? (
+        // Render without DndContext when modal is open
+        <>
+          {/* Scrollable container for kanban lists */}
+          <div className="flex-1 overflow-hidden relative">
+            <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0">
+              <div className="flex gap-4 h-full min-w-max">
+                {/* Render each list without sortable context */}
                 {orderedLists.map((list) => (
-                  <SortableKanbanList
+                  <KanbanList
                     key={list.id}
                     list={list}
                     members={board.members}
@@ -220,21 +209,71 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                     isAnyMenuOpen={openMenuId !== null && openMenuId !== list.id}
                   />
                 ))}
-              </SortableContext>
 
-              {/* Add new list input component */}
-              <InlineInput
-                placeholder="Enter list title..."
-                addText="Add list"
-                triggerText="Add a list"
-                containerWidth="20rem"
-                className="flex-shrink-0 h-fit"
-                onAdd={handleCreateList}
-              />
+                {/* Add new list input component */}
+                <InlineInput
+                  placeholder="Enter list title..."
+                  addText="Add list"
+                  triggerText="Add a list"
+                  containerWidth="20rem"
+                  className="flex-shrink-0 h-fit"
+                  onAdd={handleCreateList}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </DndContext>
+        </>
+      ) : (
+        // Render with DndContext when modal is closed
+        <DndContext
+          // Use stable sensors reference
+          sensors={sensors}
+          // Use closest center collision detection for better drop zone accuracy
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          {/* Scrollable container for kanban lists */}
+          <div className="flex-1 overflow-hidden relative">
+            <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0">
+              <div className="flex gap-4 h-full min-w-max">
+                {/* Sortable context for list reordering */}
+                <SortableContext
+                  items={orderedLists.map((l) => l.id)}
+                  strategy={horizontalListSortingStrategy}
+                >
+                  {/* Render each list as a sortable component */}
+                  {orderedLists.map((list) => (
+                    <SortableKanbanList
+                      key={list.id}
+                      list={list}
+                      members={board.members}
+                      onAddCard={handleCreateCard}
+                      onRenameList={handleRenameList}
+                      onDeleteList={handleDeleteList}
+                      // Pass menu toggle handler with the specific list ID
+                      onMenuToggle={(isOpen) => handleMenuToggle(list.id, isOpen)}
+                      // Disable menu if another list's menu is open
+                      isAnyMenuOpen={openMenuId !== null && openMenuId !== list.id}
+                    />
+                  ))}
+                </SortableContext>
+
+                {/* Add new list input component */}
+                <InlineInput
+                  placeholder="Enter list title..."
+                  addText="Add list"
+                  triggerText="Add a list"
+                  containerWidth="20rem"
+                  className="flex-shrink-0 h-fit"
+                  onAdd={handleCreateList}
+                />
+              </div>
+            </div>
+          </div>
+        </DndContext>
+      )}
 
       {/* Drag overlay for visual feedback during drag operations */}
       <DragOverlayWrapper activeId={activeId}>
