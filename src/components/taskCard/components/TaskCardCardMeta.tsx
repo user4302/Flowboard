@@ -1,7 +1,7 @@
 import { Calendar, MessageSquare, CheckSquare } from 'lucide-react';
 import { cn, formatDate } from '@/lib/utils';
-import { CardMetaProps } from '../types/TaskCard.types';
-import { getDueDateClasses } from '../utils/TaskCardUtils';
+import { CardMetaProps } from '../types';
+import { getDueDateClasses } from '../utils';
 
 export function TaskCardCardMeta({ card, isOverdue, checklistProgress }: CardMetaProps) {
   return (

@@ -8,4 +8,4 @@ export { BoardSidebarBackdrop, BoardSidebarHeader, BoardSidebarBoardList, BoardS
 export { useBoardSidebarState, useBoardSidebarActions } from './hooks';
 
 // Types
-export type { Board, SidebarState, BoardActions } from './types/BoardSidebar.types';
+export type { Board, SidebarState, BoardActions } from './types';

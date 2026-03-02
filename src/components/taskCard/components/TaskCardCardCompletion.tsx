@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { CardCompletionProps } from '../types/TaskCard.types';
+import { CardCompletionProps } from '../types';
 
 export function TaskCardCardCompletion({ completed, onToggle, size = 'small' }: CardCompletionProps) {
   const sizeClasses = {

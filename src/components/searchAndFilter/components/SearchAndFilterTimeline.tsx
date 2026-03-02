@@ -1,6 +1,6 @@
 import { Calendar, Clock, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { TIMELINE_OPTIONS } from '@/lib/constants';
+import { TIMELINE_OPTIONS } from '../constants';
 
 interface SearchAndFilterTimelineProps {
   dueDateFilter: string;

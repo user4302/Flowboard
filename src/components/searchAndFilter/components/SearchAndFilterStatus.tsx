@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { STATUS_OPTIONS } from '@/lib/constants';
+import { STATUS_OPTIONS } from '../constants';
 
 interface SearchAndFilterStatusProps {
   showCompleted: string;

@@ -3,7 +3,7 @@ import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SearchAndFilterPortal } from './SearchAndFilterPortal';
 import { useSearchAndFilterDropdownPosition } from '../hooks/useSearchAndFilterDropdownPosition';
-import { DROPDOWN_MIN_WIDTH, DROPDOWN_Z_INDEX } from '@/lib/constants';
+import { DROPDOWN_MIN_WIDTH, DROPDOWN_Z_INDEX } from '../constants';
 
 interface SearchAndFilterDropdownProps {
   label: string;

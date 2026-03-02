@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Tag, Plus } from 'lucide-react';
 import { Label } from '@/lib/types';
-import { PopoverCoords } from '@/components/taskCard/types/TaskCard.types';
+import { PopoverCoords } from '@/components/taskCard/types';
 import { TaskModalLabelManager } from './LabelManager/TaskModalLabelManager';
 
 interface TaskModalModalLabelSectionProps {

@@ -14,4 +14,4 @@ export { TaskCardCardMeta } from './components/TaskCardCardMeta';
 export { TaskCardCardCompletion } from './components/TaskCardCardCompletion';
 
 // Types
-export * from './types/TaskCard.types';
+export * from './types';

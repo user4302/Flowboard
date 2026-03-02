@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { BoardSidebarItem } from './BoardSidebarItem';
 import { BoardSidebarCreationForm } from './BoardSidebarCreationForm';
-import type { Board } from '../types/BoardSidebar.types';
+import type { Board } from '../types';
 
 /**
  * BoardSidebarBoardList component with creation functionality

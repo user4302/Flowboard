@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated TaskCard to support context menu integration
 - Enhanced board store with archived cards management
 - Updated archived cards modal with permanent delete options
+- Reorganized types and constants into component-specific files for better maintainability
+- Moved component-specific types from global types.ts to respective component folders
+- Consolidated constants in component-specific constants files
 
 ### Fixed
 

@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { useSharingStore } from '@/store/sharingStore';
 import { useBoardStore } from '@/store';
-import { DEFAULT_INVITATION_EXPIRY_HOURS } from '@/lib/constants';
+import { DEFAULT_INVITATION_EXPIRY_HOURS } from '../constants';
 
 export function useInviteModal() {
   // Store hooks for board and sharing functionality

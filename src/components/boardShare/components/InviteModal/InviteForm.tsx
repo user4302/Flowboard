@@ -4,7 +4,7 @@
 
 import { Users, Clock, Share2, Copy } from 'lucide-react';
 import { Button } from '@/components/ui';
-import { INVITATION_EXPIRY_OPTIONS } from '@/lib/constants';
+import { INVITATION_EXPIRY_OPTIONS } from '../../constants';
 
 interface InviteFormProps {
   expiresIn: number;
