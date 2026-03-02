@@ -13,6 +13,8 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Four Switchable Views**: Kanban (default), Timeline (Gantt-style), Calendar, and Table views
 - **Drag-and-Drop**: Full drag-and-drop support for cards between lists and list reordering using @dnd-kit
 - **Rich Card Management**: Detailed card editing with descriptions, labels, members, dates, checklists, and priority
+- **Context Menu Actions**: Right-click context menu for quick card operations (duplicate, archive, copy link, edit labels)
+- **Card Archiving**: Archive completed cards with restore and permanent delete options
 - **Real-time Search**: Filter cards by title, description, labels, and members
 - **Dark/Light Theme**: System preference detection with manual toggle
 - **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions

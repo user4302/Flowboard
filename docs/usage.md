@@ -29,7 +29,17 @@ This guide covers how to use Flowboard effectively for project management.
 ### Card Management
 1. **Quick Add**: Click "+ Add a card" and press Enter
 2. **Detailed Edit**: Double-click to open full card editor
-3. **Card Details**:
+3. **Context Menu**: Right-click any card to access quick actions:
+   - **Open Card**: Open full card modal
+   - **Edit Labels**: Quick label management without opening modal
+   - **Change Members**: Assign team members (coming soon)
+   - **Change Cover**: Add cover images (coming soon)
+   - **Edit Dates**: Set start/due dates (coming soon)
+   - **Move**: Move card between lists (coming soon)
+   - **Copy Card**: Duplicate card in same list
+   - **Copy Link**: Copy direct link to card
+   - **Archive**: Move card to archive (restorable)
+4. **Card Details**:
    - Title and description
    - Labels for categorization
    - Member assignments
@@ -147,6 +157,14 @@ This guide covers how to use Flowboard effectively for project management.
 - **Set Priorities**: Use the 1-100 scale for importance
 - **Assign Owners**: Every card should have a responsible person
 - **Add Context**: Use descriptions to provide necessary information
+- **Archive Completed**: Use context menu to archive completed cards
+- **Permanent Delete**: Use archive modal to permanently delete if needed
+
+### Archived Cards Management
+- **Access Archive**: Click archive button in board header (shows count)
+- **Restore Cards**: Unarchive cards to return them to active lists
+- **Permanent Delete**: Remove archived cards permanently (cannot be undone)
+- **Bulk Operations**: Select multiple archived cards for batch actions
 
 ### Workflow Optimization
 - **Daily Review**: Check and update cards daily

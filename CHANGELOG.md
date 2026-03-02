@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reusable ConfirmationModal component for dangerous actions
 - Permanent delete functionality for archived cards with confirmation popup
 - Archive button in board header with badge showing archived cards count
+- Functional "Edit Labels" context menu option using TaskModalLabelManager
+- Label picker integration in card context menu for quick label management
+- Comprehensive JSDoc documentation for CardContextMenu component
+- Enhanced API documentation with component and hook references
+- Updated usage guide with context menu and archived cards workflows
 
 ### Changed
 - Refactored click outside detection to use centralized hook
@@ -25,9 +30,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated TaskCard to support context menu integration
 - Enhanced board store with archived cards management
 - Updated archived cards modal with permanent delete options
+- Replaced placeholder label functionality with full label manager integration
 - Reorganized types and constants into component-specific files for better maintainability
 - Moved component-specific types from global types.ts to respective component folders
 - Consolidated constants in component-specific constants files
+- Enhanced documentation with comprehensive API reference and usage examples
 
 ### Fixed
 
