@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- 
+
+### Changed
+- 
+
+### Fixed
+- 
+
+### Refactoring
+- 
+
+## [1.2.0] - 2026-03-03
+
+### Added
 - Kanban list drag-and-drop reordering functionality
 - SortableKanbanList component with @dnd-kit/sortable integration
 - Column order persistence in UI store with localStorage

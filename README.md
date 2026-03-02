@@ -1,9 +1,9 @@
-# Flowboard v1.1.0
+# Flowboard v1.2.0
 
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-1.1.0-green.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
 
@@ -18,6 +18,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions
 - **Board Management**: Create, switch between, and delete boards with confirmation dialogs
 - **Board Export/Import**: Save and load board data as JSON files for backup and sharing
+- **Board Sharing & Collaboration**: Invitation-based board sharing with member management and real-time synchronization
 
 ### Data Model
 - **Boards**: Multiple boards with member management
@@ -32,6 +33,11 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Collapsible Swimlanes**: Expand/collapse parent swimlanes for better organization
 - **Smart Card Positioning**: Automatic vertical stacking to prevent overlaps
 - **Performance Optimized**: Efficient rendering for large datasets
+
+### Kanban Enhancements 📋
+- **List Reordering**: Drag list headers to reorder columns with persistent positioning
+- **Enhanced Drag Handles**: Visual feedback and improved drag-and-drop performance
+- **Optimistic Updates**: Immediate UI feedback during drag operations
 
 ## Tech Stack / Built With 🛠️
 
