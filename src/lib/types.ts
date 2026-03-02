@@ -4,6 +4,7 @@ export interface Board {
   lists: List[];
   members: User[];
   labels: Label[]; // Global labels for this board
+  archivedCards: ArchivedCard[]; // Archived cards storage
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +32,14 @@ export interface Card {
   priority?: number; // Number-based priority (greater than 0)
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface ArchivedCard {
+  id: string;
+  card: Card; // The original card data
+  archivedAt: Date;
+  originalListId: string; // Which list it was in before archiving
+  originalPosition: number; // Position in the original list
 }
 
 export interface Label {

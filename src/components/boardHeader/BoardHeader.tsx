@@ -1,6 +1,7 @@
 'use client';
 
-import { Menu } from 'lucide-react';
+import { useState } from 'react';
+import { Menu, Archive } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { useSharingStore } from '@/store/sharingStore';
 import { Button } from '@/components/ui';
@@ -9,6 +10,7 @@ import { SearchAndFilter } from '@/components/searchAndFilter';
 import { BoardHeaderTitle } from './components/BoardHeaderTitle';
 import { BoardHeaderViewNavigation } from './components/BoardHeaderViewNavigation';
 import { BoardHeaderActionMenu } from './components/BoardHeaderActionMenu';
+import { ArchivedCardsModal } from '@/components/archivedCards/ArchivedCardsModal';
 
 /**
  * BoardHeader Component
@@ -32,7 +34,7 @@ import { BoardHeaderActionMenu } from './components/BoardHeaderActionMenu';
  */
 export function BoardHeader() {
   // Store hooks for data and UI state management
-  const { boards, currentBoardId, setCurrentBoard } = useBoardStore();
+  const { boards, currentBoardId, setCurrentBoard, getCurrentBoard } = useBoardStore();
   const {
     currentView,
     sidebarOpen,
@@ -50,8 +52,12 @@ export function BoardHeader() {
     setShowMemberManagement
   } = useSharingStore();
 
+  // Archived cards modal state
+  const [showArchivedCards, setShowArchivedCards] = useState(false);
+
   // Find the current board from the boards array
   const currentBoard = boards.find(board => board.id === currentBoardId);
+  const archivedCardsCount = currentBoard?.archivedCards?.length || 0;
 
   /**
    * Toggle between light and dark themes
@@ -110,6 +116,24 @@ export function BoardHeader() {
               onInviteModalOpen={() => setShowInviteModal(true)}
               onMemberManagementOpen={() => setShowMemberManagement(true)}
             />
+
+            {/* Archived cards button */}
+            {currentBoard && archivedCardsCount > 0 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowArchivedCards(true)}
+                className="relative"
+                title={`View ${archivedCardsCount} archived ${archivedCardsCount === 1 ? 'card' : 'cards'}`}
+              >
+                <Archive className="h-5 w-5" />
+                {archivedCardsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center">
+                    {archivedCardsCount}
+                  </span>
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -122,6 +146,12 @@ export function BoardHeader() {
       <MemberManagement
         isOpen={showMemberManagement}
         onClose={() => setShowMemberManagement(false)}
+      />
+
+      {/* Archived Cards Modal */}
+      <ArchivedCardsModal
+        isOpen={showArchivedCards}
+        onClose={() => setShowArchivedCards(false)}
       />
     </>
   );

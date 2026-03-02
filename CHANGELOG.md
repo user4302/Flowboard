@@ -10,11 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Generic useClickOutside hook for click outside detection
 - Escape key handling for dropdown menus
+- Card context menu with right-click and button trigger options
+- Card archiving and unarchiving functionality
+- ArchivedCards component for managing archived cards
+- Context menu positioning with viewport boundary detection
 
 ### Changed
 - Refactored click outside detection to use centralized hook
 - Improved dropdown menu handling in BoardHeaderActionMenu
 - Enhanced SearchAndFilterDropdown with better ref management
+- Updated TaskCard to support context menu integration
+- Enhanced board store with archived cards management
 
 ### Fixed
 
