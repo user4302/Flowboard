@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Number-based priority system (1-100) for cards
 - Enhanced search and filtering across all views with advanced options
 - Compact search bar mode for header integration
+- Expandable description with auto-resizing and visual indicators
 
 ### Changed
 - Enhanced drag-and-drop system to support both card and list reordering
@@ -55,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed dropdown menu behavior in kanban list headers to close when clicking outside or other menus
 - Only user-created labels will exist in boards going forward
 - Enhanced timeline UI styling with improved button contrast and active states
+- Simplified timeline card positioning logic with direct calculations
 - Enhanced month view with daily granularity and improved date labeling
 - Fixed card stacking logic for out-of-range cards in timeline view
 - Fixed day view card overlapping issue with proper vertical stacking
@@ -140,6 +142,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced component exports and imports for better maintainability
 - Removed duplicate components and consolidated shared utilities
 - Improved code organization with dedicated hooks and services modules
+- Optimized drag-and-drop performance with sensor memoization
+- Disabled drag-and-drop when card modal is open to prevent conflicts
+- Improved conditional rendering logic for better component separation
+- Enhanced sensor configuration with stable references
+- Optimized kanban view performance during modal interactions
+- Prevented accidental label deletion when not editing
 
 ### Fixed
 - Improved drag handle positioning and visual feedback
@@ -163,6 +171,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add list input squashing and implemented auto-scroll
 - Completed cards showing red overdue styling instead of green
 - Version number correction from 1.2.0 to 1.1.0
+- Kanban list dropdown menus now properly close when clicking outside of menu area
+- Dropdown menus close when opening other list option buttons
+- Improved menu state management across multiple lists
+- Removed pre-populated labels from new boards - boards now start with empty labels array
+- Fixed dropdown menu behavior in kanban list headers to close when clicking outside or other menus
+- Only user-created labels will exist in boards going forward
+- Prevented accidental label deletion when not editing
 
 ### Refactoring
 - Extracted MiniCardTooltip to dedicated component
