@@ -8,8 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Generic useClickOutside hook for click outside detection
+- Escape key handling for dropdown menus
 
 ### Changed
+- Refactored click outside detection to use centralized hook
+- Improved dropdown menu handling in BoardHeaderActionMenu
+- Enhanced SearchAndFilterDropdown with better ref management
 
 ### Fixed
 

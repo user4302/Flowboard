@@ -28,8 +28,7 @@ export function SearchAndFilterDropdown({
   itemType
 }: SearchAndFilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const portalDropdownRef = useRef<HTMLDivElement>(null);
   const { triggerRect, triggerRef } = useSearchAndFilterDropdownPosition(isOpen);
 
   const renderSelectedItem = (item: any) => {
@@ -69,7 +68,7 @@ export function SearchAndFilterDropdown({
       {isOpen && triggerRect && (
         <SearchAndFilterPortal>
           <div
-            ref={dropdownRef}
+            ref={portalDropdownRef}
             style={{
               position: 'fixed',
               top: `${triggerRect.bottom + 8}px`,
