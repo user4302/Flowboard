@@ -106,11 +106,11 @@ export function KanbanListHeader({ title, cardCount, onRename, onDelete, classNa
 
   return (
     <div
-      className={cn("flex items-center justify-between group", className)}
+      className={cn("flex items-center justify-between group p-2 -m-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-move", className)}
       {...dragHandleProps?.attributes}
       {...dragHandleProps?.listeners}
     >
-      <div className="flex items-center gap-2 cursor-move">
+      <div className="flex items-center gap-2">
         <div className="w-1 h-4 bg-slate-300 dark:bg-slate-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
         <h3 className="font-medium text-slate-900 dark:text-slate-100">
           {title}
@@ -124,7 +124,7 @@ export function KanbanListHeader({ title, cardCount, onRename, onDelete, classNa
           <Button
             variant="ghost"
             size="sm"
-            className="opacity-0 group-hover:opacity-100 transition-opacity"
+            className="opacity-0 group-hover:opacity-100 transition-all hover:bg-slate-200 dark:hover:bg-slate-700 rounded"
             onClick={() => setShowMenu(!showMenu)}
           >
             <MoreHorizontal className="h-4 w-4" />
