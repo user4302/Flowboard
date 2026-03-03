@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Added tooltip to paste button for better UX consistency
+- Corrected version number from 1.6.0 to 1.3.0
+
 ### Added
 - Card JSON import/export functionality with clipboard detection
 - Smart paste functionality for creating cards from clipboard JSON data
