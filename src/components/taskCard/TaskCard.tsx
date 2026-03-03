@@ -5,17 +5,20 @@ import { Card as CardType, User as UserType } from '@/lib/types';
 import { useBoardStore } from '@/store';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { CardProps } from './types/TaskCard.types';
-import { getCardMembers, getCardMetadata, getCardClasses, getCardTitleClasses } from './utils/TaskCardUtils';
+import { CardProps } from './types';
+import { getCardMembers, getCardMetadata, getCardClasses, getCardTitleClasses } from './utils';
 import { useTaskModalCardActions } from '@/components/taskModal/hooks/useTaskModalCardActions';
 import { TaskCardCardLabels } from './components/TaskCardCardLabels';
 import { TaskCardCardMembers } from './components/TaskCardCardMembers';
 import { TaskCardCardMeta } from './components/TaskCardCardMeta';
 import { TaskCardCardCompletion } from './components/TaskCardCardCompletion';
+import { CardContextMenu } from './components/contextMenu';
+import { useCardContextMenu } from './hooks/useCardContextMenu';
 
 export function TaskCard({ card, members, onClick }: CardProps) {
   const { boards, currentBoardId } = useBoardStore();
   const { handleCardClick, handleToggleCompleted } = useTaskModalCardActions();
+  const { isOpen, position, handleContextMenu, handleButtonClick, closeContextMenu } = useCardContextMenu();
 
   const currentBoard = boards.find(b => b.id === currentBoardId);
   const boardLabels = currentBoard?.labels || [];
@@ -53,6 +56,7 @@ export function TaskCard({ card, members, onClick }: CardProps) {
         transition,
       }}
       onClick={handleClick}
+      onContextMenu={handleContextMenu}
     >
       {/* Slim colored labels at the top */}
       <TaskCardCardLabels
@@ -104,12 +108,21 @@ export function TaskCard({ card, members, onClick }: CardProps) {
           className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-300"
           onClick={(e) => {
             e.stopPropagation();
-            // Open card menu
+            handleButtonClick(e, e.currentTarget);
           }}
         >
           <MoreHorizontal className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Context Menu */}
+      <CardContextMenu
+        card={card}
+        isOpen={isOpen}
+        onClose={closeContextMenu}
+        position={position}
+        onOpenCard={handleClick}
+      />
     </div>
   );
 }

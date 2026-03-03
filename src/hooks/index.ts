@@ -5,4 +5,5 @@
 export { useBoard } from './useBoard';
 export { useDragAndDrop } from './useDragAndDrop';
 export { useLocalStorage } from './useLocalStorage';
+export { useClickOutside } from './useClickOutside';
 export { useUIStore } from '../store/uiStore';

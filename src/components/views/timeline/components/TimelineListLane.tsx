@@ -2,7 +2,7 @@ import { useUIStore } from '@/store';
 import { Card } from '@/lib/types';
 import { TimelineTaskLane } from './TimelineTaskLane';
 import { useTimelineHiddenTasks } from '../hooks/useTimelineHiddenTasks';
-import { getTaskColor } from '../utils/utils';
+import { getTaskColor } from '../utils';
 import { addDays } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 

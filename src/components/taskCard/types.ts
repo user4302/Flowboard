@@ -6,6 +6,14 @@ export interface CardProps {
   onClick: () => void;
 }
 
+export interface CardContextMenuProps {
+  card: CardType;
+  isOpen: boolean;
+  onClose: () => void;
+  position: { x: number; y: number };
+  onOpenCard: () => void;
+}
+
 export interface CardMembersProps {
   members: UserType[];
   maxVisible?: number;

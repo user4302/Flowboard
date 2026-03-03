@@ -17,6 +17,6 @@ export { MemberTabs, PendingRequests, MembersList } from './components';
 export { useInviteModal, useJoinBoardModal, useMemberManagement } from './hooks';
 
 // Types and constants
-export * from '@/lib/types';
-export * from '@/lib/constants';
+export * from './types';
+export * from './constants';
 export * from './utils';

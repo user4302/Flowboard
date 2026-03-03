@@ -1,7 +1,7 @@
 'use client';
 
 import { useBoardStore } from '@/store';
-import type { BoardActions } from '../types/BoardSidebar.types';
+import type { BoardActions } from '../types';
 
 /**
  * Custom hook for BoardSidebar board CRUD operations

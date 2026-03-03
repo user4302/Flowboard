@@ -1,6 +1,69 @@
 # API Documentation
 
-Flowboard is primarily a client-side application with local storage persistence. This document outlines the available APIs and data structures.
+Flowboard provides a comprehensive API for managing boards, lists, cards, and user interactions. This document outlines the available components, hooks, stores, and utilities for developers extending or integrating with Flowboard.
+
+## Core Architecture
+
+### State Management
+
+Flowboard uses Zustand for state management with two main stores:
+
+#### Board Store (`useBoardStore`)
+Central store for managing board data, cards, lists, and user operations.
+
+```typescript
+interface BoardStore {
+  // Board operations
+  currentBoardId: string | null;
+  boards: Record<string, Board>;
+  getCurrentBoard: () => Board | undefined;
+  
+  // Card operations
+  createCard: (boardId: string, listId: string, card: Omit<Card, 'id'>) => void;
+  updateCard: (boardId: string, cardId: string, updates: Partial<Card>) => void;
+  deleteCard: (boardId: string, cardId: string) => void;
+  duplicateCard: (boardId: string, cardId: string, listId: string) => void;
+  archiveCard: (boardId: string, cardId: string) => void;
+  unarchiveCard: (boardId: string, cardId: string) => void;
+  permanentlyDeleteCard: (boardId: string, cardId: string) => void;
+  
+  // List operations
+  createList: (boardId: string, list: Omit<List, 'id'>) => void;
+  updateList: (boardId: string, listId: string, updates: Partial<List>) => void;
+  deleteList: (boardId: string, listId: string) => void;
+  
+  // Label operations
+  createLabel: (boardId: string, label: Omit<Label, 'id'>) => void;
+  updateLabel: (boardId: string, labelId: string, updates: Partial<Label>) => void;
+  deleteLabel: (boardId: string, labelId: string) => void;
+}
+```
+
+#### UI Store (`useUIStore`)
+Manages UI state, filters, and user preferences.
+
+```typescript
+interface UIStore {
+  // View state
+  currentView: 'kanban' | 'timeline' | 'calendar' | 'table';
+  sidebarOpen: boolean;
+  theme: 'light' | 'dark';
+  
+  // Filter state
+  searchTerm: string;
+  selectedLabels: string[];
+  selectedMembers: string[];
+  showOverdue: boolean;
+  showCompleted: 'all' | 'completed' | 'incomplete';
+  priorityThreshold: number | null;
+  dueDateFilter: 'all' | 'overdue' | 'today' | 'week' | 'month';
+  
+  // Column ordering for kanban view
+  columnOrder: Record<string, string[]>;
+  setColumnOrder: (boardId: string, order: string[]) => void;
+  getColumnOrder: (boardId: string) => string[];
+}
+```
 
 ## Data Models
 

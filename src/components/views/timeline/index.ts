@@ -14,4 +14,4 @@ export { useTimelinePositioning } from './hooks/useTimelinePositioning';
 export { useTimelineShortcuts } from './hooks/useTimelineShortcuts';
 
 // Utils
-export { calculateTimelineHeight, getTaskPosition } from './utils/utils';
+export { calculateTimelineHeight, getTaskPosition } from './utils';

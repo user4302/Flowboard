@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { useBoardHeaderActions } from '../hooks/useBoardHeaderActions';
+import { useClickOutside } from '@/hooks';
 
 interface BoardHeaderActionMenuProps {
   currentBoard: any;
@@ -37,6 +38,7 @@ export function BoardHeaderActionMenu({
 }: BoardHeaderActionMenuProps) {
   const [showActionMenu, setShowActionMenu] = useState(false);
   const { handleExportBoard, handleImportBoard } = useBoardHeaderActions(currentBoard);
+  const actionMenuRef = useClickOutside<HTMLDivElement>(() => setShowActionMenu(false));
 
   return (
     <div className="relative">
@@ -51,7 +53,7 @@ export function BoardHeaderActionMenu({
 
       {/* Action menu dropdown */}
       {showActionMenu && (
-        <div className="absolute right-0 top-8 bg-white border border-slate-200 rounded-lg shadow-lg p-2 z-50 dark:bg-slate-800 dark:border-slate-600 w-48">
+        <div ref={actionMenuRef} className="absolute right-0 top-8 bg-white border border-slate-200 rounded-lg shadow-lg p-2 z-50 dark:bg-slate-800 dark:border-slate-600 w-48">
           <div className="space-y-1">
             <button
               onClick={() => {

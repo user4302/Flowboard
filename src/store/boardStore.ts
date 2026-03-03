@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { STORAGE_KEYS } from '@/lib/constants';
 import { toUTCString, fromUTCString } from '@/lib/dateUtils';
-import { Board, List, Card, Label, User, ChecklistItem } from '@/lib/types';
+import { Board, List, Card, Label, User, ChecklistItem, ArchivedCard } from '@/lib/types';
 import { generateId } from '@/lib/utils';
 
 /**
@@ -34,6 +34,10 @@ interface BoardState {
   deleteCard: (boardId: string, cardId: string) => void;
   moveCard: (boardId: string, cardId: string, fromListId: string, toListId: string, position: number) => void;
   reorderCards: (boardId: string, listId: string, fromIndex: number, toIndex: number) => void;
+  duplicateCard: (boardId: string, cardId: string, listId: string) => void;
+  archiveCard: (boardId: string, cardId: string) => void;
+  unarchiveCard: (boardId: string, archivedCardId: string) => void;
+  permanentlyDeleteArchivedCard: (boardId: string, archivedCardId: string) => void;
 
   // Label actions
   createBoardLabel: (boardId: string, label: Omit<Label, 'id'>) => Label;
@@ -89,6 +93,7 @@ export const useBoardStore = create<BoardState>()(
           lists: [],
           members: [],
           labels: [],
+          archivedCards: [],
           createdAt: new Date(),
           updatedAt: new Date(),
         };
@@ -633,6 +638,169 @@ export const useBoardStore = create<BoardState>()(
         if (!board) return null;
         return board.lists.find((l) => l.id === listId) || null;
       },
+
+      /**
+       * Duplicate a card within the same list
+       * @param boardId - ID of the board containing the card
+       * @param cardId - ID of the card to duplicate
+       * @param listId - ID of the list to duplicate the card in
+       */
+      duplicateCard: (boardId, cardId, listId) => {
+        const state = get();
+        const board = state.boards.find((b) => b.id === boardId);
+        if (!board) return;
+
+        const sourceList = board.lists.find((l) => l.cards.some((c) => c.id === cardId));
+        const targetList = board.lists.find((l) => l.id === listId);
+        if (!sourceList || !targetList) return;
+
+        const sourceCard = sourceList.cards.find((c) => c.id === cardId);
+        if (!sourceCard) return;
+
+        const duplicatedCard: Card = {
+          ...sourceCard,
+          id: generateId(),
+          title: `${sourceCard.title} (copy)`,
+          listId: targetList.id,
+          position: targetList.cards.length,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        set((state) => ({
+          boards: state.boards.map((board) =>
+            board.id === boardId
+              ? {
+                ...board,
+                lists: board.lists.map((list) =>
+                  list.id === targetList.id
+                    ? { ...list, cards: [...list.cards, duplicatedCard] }
+                    : list
+                ),
+                updatedAt: new Date(),
+              }
+              : board
+          ),
+        }));
+      },
+
+      /**
+       * Archive a card (soft delete)
+       * @param boardId - ID of the board containing the card
+       * @param cardId - ID of the card to archive
+       */
+      archiveCard: (boardId, cardId) => {
+        set((state) => ({
+          boards: state.boards.map((board) => {
+            if (board.id !== boardId) return board;
+
+            // Find the card to archive
+            let cardToArchive: Card | null = null;
+            let originalListId: string | null = null;
+            let originalPosition: number | null = null;
+
+            const updatedLists = board.lists.map((list) => {
+              const cardIndex = list.cards.findIndex((c) => c.id === cardId);
+              if (cardIndex !== -1) {
+                cardToArchive = { ...list.cards[cardIndex] };
+                originalListId = list.id;
+                originalPosition = cardIndex;
+                return {
+                  ...list,
+                  cards: list.cards.filter((card) => card.id !== cardId),
+                };
+              }
+              return list;
+            });
+
+            if (cardToArchive && originalListId && originalPosition !== null) {
+              const archivedCard: ArchivedCard = {
+                id: generateId(),
+                card: cardToArchive,
+                archivedAt: new Date(),
+                originalListId,
+                originalPosition,
+              };
+
+              return {
+                ...board,
+                lists: updatedLists,
+                archivedCards: [...board.archivedCards, archivedCard],
+                updatedAt: new Date(),
+              };
+            }
+
+            return board;
+          }),
+        }));
+      },
+
+      /**
+       * Unarchive a card (restore from archive)
+       * @param boardId - ID of the board containing the archived card
+       * @param archivedCardId - ID of the archived card to restore
+       */
+      unarchiveCard: (boardId, archivedCardId) => {
+        set((state) => ({
+          boards: state.boards.map((board) => {
+            if (board.id !== boardId) return board;
+
+            const archivedCardIndex = board.archivedCards.findIndex((ac) => ac.id === archivedCardId);
+            if (archivedCardIndex === -1) return board;
+
+            const archivedCard = board.archivedCards[archivedCardIndex];
+            const restoredCard: Card = {
+              ...archivedCard.card,
+              listId: archivedCard.originalListId,
+              position: archivedCard.originalPosition,
+              updatedAt: new Date(),
+            };
+
+            // Find the target list and insert the card at its original position
+            const updatedLists = board.lists.map((list) => {
+              if (list.id === archivedCard.originalListId) {
+                const newCards = [...list.cards];
+                // Ensure position doesn't exceed array length
+                const position = Math.min(archivedCard.originalPosition, newCards.length);
+                newCards.splice(position, 0, restoredCard);
+
+                // Update positions for all cards in the list
+                return {
+                  ...list,
+                  cards: newCards.map((card, index) => ({ ...card, position: index })),
+                };
+              }
+              return list;
+            });
+
+            return {
+              ...board,
+              lists: updatedLists,
+              archivedCards: board.archivedCards.filter((ac) => ac.id !== archivedCardId),
+              updatedAt: new Date(),
+            };
+          }),
+        }));
+      },
+
+      /**
+       * Permanently delete an archived card
+       * @param boardId - ID of the board containing the archived card
+       * @param archivedCardId - ID of the archived card to permanently delete
+       */
+      permanentlyDeleteArchivedCard: (boardId, archivedCardId) => {
+        set((state) => ({
+          boards: state.boards.map((board) =>
+            board.id === boardId
+              ? {
+                ...board,
+                archivedCards: board.archivedCards.filter((ac) => ac.id !== archivedCardId),
+                updatedAt: new Date(),
+              }
+              : board
+          ),
+        }));
+      },
     }),
     {
       name: STORAGE_KEYS.BOARDS,
@@ -651,11 +819,27 @@ export const useBoardStore = create<BoardState>()(
             // Convert UTC strings to local Date objects and migrate labels
             if (data.state?.boards) {
               data.state.boards = data.state.boards.map((board: any) => {
-                // Ensure board has labels array
+                // Ensure board has labels array and archivedCards array
                 let boardLabels = Array.isArray(board.labels) ? [...board.labels] : [];
+                let archivedCards = Array.isArray(board.archivedCards) ? [...board.archivedCards] : [];
+
                 // Ensure all board labels have IDs
                 boardLabels = boardLabels.map(l => ({ ...l, id: l.id || generateId() }));
                 const boardLabelIds = new Set(boardLabels.map((l: any) => l.id));
+
+                // Migrate archived cards if needed
+                archivedCards = archivedCards.map((ac: any) => ({
+                  ...ac,
+                  id: ac.id || generateId(),
+                  archivedAt: ac.archivedAt ? new Date(ac.archivedAt) : new Date(),
+                  card: {
+                    ...ac.card,
+                    startDate: (fromUTCString(ac.card.startDate) || ac.card.startDate) as Date,
+                    dueDate: (fromUTCString(ac.card.dueDate) || ac.card.dueDate) as Date,
+                    createdAt: (fromUTCString(ac.card.createdAt) || ac.card.createdAt) as Date,
+                    updatedAt: (fromUTCString(ac.card.updatedAt) || ac.card.updatedAt) as Date,
+                  }
+                }));
 
                 const newLists = board.lists.map((list: any) => ({
                   ...list,
@@ -706,6 +890,7 @@ export const useBoardStore = create<BoardState>()(
                 return {
                   ...board,
                   labels: boardLabels,
+                  archivedCards: archivedCards,
                   lists: newLists
                 };
               });
@@ -727,6 +912,17 @@ export const useBoardStore = create<BoardState>()(
                 ...value.state,
                 boards: value.state.boards.map((board: any) => ({
                   ...board,
+                  archivedCards: board.archivedCards.map((ac: any) => ({
+                    ...ac,
+                    archivedAt: toUTCString(ac.archivedAt),
+                    card: {
+                      ...ac.card,
+                      startDate: toUTCString(ac.card.startDate),
+                      dueDate: toUTCString(ac.card.dueDate),
+                      createdAt: toUTCString(ac.card.createdAt),
+                      updatedAt: toUTCString(ac.card.updatedAt),
+                    }
+                  })),
                   lists: board.lists.map((list: any) => ({
                     ...list,
                     cards: list.cards.map((card: any) => ({

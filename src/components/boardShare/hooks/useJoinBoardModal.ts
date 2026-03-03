@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import { useSharingStore } from '@/store/sharingStore';
-import { JoinFormData } from '@/lib/types';
+import { JoinFormData } from '../types';
 import { validateJoinForm } from '../utils';
 
 export function useJoinBoardModal(inviteId?: string) {

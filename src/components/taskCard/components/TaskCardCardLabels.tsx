@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Label } from '@/lib/types';
-import { CardLabelsProps } from '../types/TaskCard.types';
+import { CardLabelsProps } from '../types';
 
 export function TaskCardCardLabels({ labelIds, labels, onLabelClick }: CardLabelsProps) {
   if (!labelIds?.length) return null;

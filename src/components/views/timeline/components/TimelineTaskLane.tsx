@@ -1,6 +1,6 @@
 import { Card } from '@/lib/types';
 import { TimelineTask } from './TimelineTask';
-import { getTaskColor } from '../utils/utils';
+import { getTaskColor } from '../utils';
 import { TimelineTooltip } from './TimelineTooltip';
 
 /**

@@ -1,7 +1,7 @@
 import { Star, Plus, Minus } from 'lucide-react';
 import { Button, Input } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { PRIORITY_RANGE } from '@/lib/constants';
+import { PRIORITY_RANGE } from '../constants';
 
 interface SearchAndFilterPriorityProps {
   priorityThreshold: number | null;

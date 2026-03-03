@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { SidebarState } from '../types/BoardSidebar.types';
+import type { SidebarState } from '../types';
 
 /**
  * Custom hook for managing BoardSidebar local state

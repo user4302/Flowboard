@@ -1,5 +1,5 @@
 import { User as UserType } from '@/lib/types';
-import { CardMembersProps } from '../types/TaskCard.types';
+import { CardMembersProps } from '../types';
 
 export function TaskCardCardMembers({ members, maxVisible = 3 }: CardMembersProps) {
   if (members.length === 0) return null;

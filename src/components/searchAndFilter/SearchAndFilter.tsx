@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 import { useUIStore, useBoardStore } from '@/store';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { SearchAndFilterProps } from '@/lib/types';
+import { SearchAndFilterProps } from './types';
 import { hasActiveFilters } from '@/lib/filterUtils';
 import { useSearchAndFilterClickOutside } from './hooks/useSearchAndFilterClickOutside';
 import { SearchAndFilterInput } from './components/SearchAndFilterInput';

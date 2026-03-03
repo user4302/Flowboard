@@ -10,5 +10,5 @@ export { SearchAndFilterDropdown } from './components/SearchAndFilterDropdown';
 export { useSearchAndFilterDropdownPosition } from './hooks/useSearchAndFilterDropdownPosition';
 export { useSearchAndFilterClickOutside } from './hooks/useSearchAndFilterClickOutside';
 export { hasActiveFilters, getFilterSummary } from '@/lib/filterUtils';
-export * from '@/lib/types';
-export * from '@/lib/constants';
+export * from './types';
+export * from './constants';

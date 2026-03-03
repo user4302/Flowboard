@@ -2,7 +2,7 @@
 
 import { LayoutGrid, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { Board } from '../types/BoardSidebar.types';
+import type { Board } from '../types';
 
 /**
  * BoardSidebarItem component

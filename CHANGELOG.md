@@ -7,13 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-03-03
+
 ### Added
+- Generic useClickOutside hook for click outside detection
+- Escape key handling for dropdown menus
+- Card context menu with right-click and button trigger options
+- Card archiving and unarchiving functionality
+- ArchivedCards component for managing archived cards
+- Context menu positioning with viewport boundary detection
+- Reusable ConfirmationModal component for dangerous actions
+- Permanent delete functionality for archived cards with confirmation popup
+- Archive button in board header with badge showing archived cards count
+- Functional "Edit Labels" context menu option using TaskModalLabelManager
+- Label picker integration in card context menu for quick label management
+- Comprehensive JSDoc documentation for CardContextMenu component
+- Enhanced API documentation with component and hook references
+- Updated usage guide with context menu and archived cards workflows
+- Functional date picker modal for editing card start and due dates
+- Date picker positioning with viewport boundary detection
+- Real-time date updates with optimistic UI feedback
 
 ### Changed
-
-### Fixed
-
-### Refactoring 
+- Refactored click outside detection to use centralized hook
+- Improved dropdown menu handling in BoardHeaderActionMenu
+- Enhanced SearchAndFilterDropdown with better ref management
+- Updated TaskCard to support context menu integration
+- Enhanced board store with archived cards management
+- Updated archived cards modal with permanent delete options
+- Replaced placeholder label functionality with full label manager integration
+- Reorganized types and constants into component-specific files for better maintainability
+- Moved component-specific types from global types.ts to respective component folders
+- Consolidated constants in component-specific constants files
+- Enhanced documentation with comprehensive API reference and usage examples
+- Refactored CardContextMenu into modular component architecture with separate utilities, hooks, and types
+- Replaced placeholder date functionality with functional date picker modal
+- Improved label manager portal structure with proper backdrop and z-index handling
+- Enhanced label click interactions in task modal with cursor pointer styling
+- Fixed event propagation issues in label manager components
 
 ## [1.2.0] - 2026-03-03
 

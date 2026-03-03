@@ -3,7 +3,7 @@ import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SearchAndFilterPortal } from './SearchAndFilterPortal';
 import { useSearchAndFilterDropdownPosition } from '../hooks/useSearchAndFilterDropdownPosition';
-import { DROPDOWN_MIN_WIDTH, DROPDOWN_Z_INDEX } from '@/lib/constants';
+import { DROPDOWN_MIN_WIDTH, DROPDOWN_Z_INDEX } from '../constants';
 
 interface SearchAndFilterDropdownProps {
   label: string;
@@ -28,8 +28,7 @@ export function SearchAndFilterDropdown({
   itemType
 }: SearchAndFilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const portalDropdownRef = useRef<HTMLDivElement>(null);
   const { triggerRect, triggerRef } = useSearchAndFilterDropdownPosition(isOpen);
 
   const renderSelectedItem = (item: any) => {
@@ -69,7 +68,7 @@ export function SearchAndFilterDropdown({
       {isOpen && triggerRect && (
         <SearchAndFilterPortal>
           <div
-            ref={dropdownRef}
+            ref={portalDropdownRef}
             style={{
               position: 'fixed',
               top: `${triggerRect.bottom + 8}px`,
