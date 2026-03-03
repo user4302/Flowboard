@@ -106,6 +106,7 @@ pnpm dev
 - **Double-click cards** to edit details
 - **Use the search bar** to filter cards instantly
 - **Smart paste**: When valid card JSON is in clipboard, a paste button appears for quick card creation
+- **Dedicated card creation buttons**: Separate buttons for adding cards, uploading JSON files, and pasting from clipboard
 
 ### Card JSON Import/Export
 - **Copy JSON**: Right-click card → "Copy JSON" to copy card data to clipboard

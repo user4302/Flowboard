@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Card JSON validation and format conversion utilities
 - File upload/download support for card JSON data
 - Smart paste button in kanban containers with JSON handling
+- CustomTooltip component for reusable tooltip functionality
+- Dedicated card creation buttons (add, upload, paste) in kanban view
 
 ### Changed
 - Enhanced board store with createCardFromData method for JSON import support
