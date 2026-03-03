@@ -8,6 +8,7 @@ import { validateCardJSON, CardJSON } from '@/lib/cardJsonUtils';
 export function useClipboardDetection() {
   const [hasValidCardJSON, setHasValidCardJSON] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [isPasting, setIsPasting] = useState(false);
 
   /**
    * Checks if clipboard contains valid card JSON
@@ -19,8 +20,9 @@ export function useClipboardDetection() {
       return;
     }
 
-    // Check if document is focused before accessing clipboard
-    if (document.hidden || !document.hasFocus()) {
+    // More lenient focus check - allow clipboard access even if document doesn't have focus
+    // This helps when context menu or other elements have focus
+    if (document.hidden) {
       setHasValidCardJSON(false);
       return;
     }
@@ -64,16 +66,21 @@ export function useClipboardDetection() {
    * Gets card JSON from clipboard if valid
    */
   const getCardJSONFromClipboard = useCallback(async (): Promise<CardJSON | null> => {
-    if (!navigator.clipboard) return null;
-
-    // Check if document is focused before accessing clipboard
-    if (document.hidden || !document.hasFocus()) {
+    if (!navigator.clipboard) {
       return null;
     }
 
+    // More lenient focus check - allow clipboard access even if document doesn't have focus
+    if (document.hidden) {
+      return null;
+    }
+
+    setIsPasting(true);
     try {
       const text = await navigator.clipboard.readText();
-      if (!text.trim()) return null;
+      if (!text.trim()) {
+        return null;
+      }
 
       const data = JSON.parse(text);
       if (validateCardJSON(data)) {
@@ -87,6 +94,8 @@ export function useClipboardDetection() {
       } else {
         console.error('Error getting card JSON from clipboard:', error);
       }
+    } finally {
+      setIsPasting(false);
     }
 
     return null;
@@ -115,7 +124,7 @@ export function useClipboardDetection() {
 
     // Set up periodic check as fallback (only when focused)
     const interval = setInterval(() => {
-      if (!document.hidden && document.hasFocus()) {
+      if (!document.hidden) {
         checkClipboard();
       }
     }, 10000); // Check every 10 seconds (reduced frequency)
@@ -130,6 +139,7 @@ export function useClipboardDetection() {
   return {
     hasValidCardJSON,
     isChecking,
+    isPasting,
     checkClipboard,
     getCardJSONFromClipboard
   };

@@ -62,12 +62,6 @@ export function CardContextMenu({
     const calculatedPosition = calculateLabelManagerPosition(position);
     setLabelManagerPosition(calculatedPosition);
     setShowLabelManager(true);
-    console.log('handleLabels called', {
-      boardId: currentBoard?.id,
-      cardId: card.id,
-      position: calculatedPosition,
-      contextMenuPosition: position
-    });
   }, [position, currentBoard?.id, card.id]);
 
   /**

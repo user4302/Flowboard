@@ -2,6 +2,7 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { useMemo, useState } from 'react';
 import { TaskCard } from '@/components/taskCard';
 import { InlineInput } from '@/components/ui';
 import { CustomTooltip } from '@/components/ui/custom-tooltip';
@@ -12,7 +13,7 @@ import { jsonToCardData } from '@/lib/cardJsonUtils';
 import { cn } from '@/lib/utils';
 import { Card, User } from '@/lib/types';
 import { CardJSON } from '@/lib/cardJsonUtils';
-import { Upload, Plus, ClipboardPaste } from 'lucide-react';
+import { Upload, Plus, ClipboardPaste, Loader2 } from 'lucide-react';
 
 interface KanbanCardsContainerProps {
   cards: Card[];
@@ -51,8 +52,9 @@ export function KanbanCardsContainer({
   const { boards, currentBoardId, createCardFromData } = useBoardStore();
   const currentBoard = boards.find(b => b.id === currentBoardId);
 
-  // Smart paste detection
-  const { hasValidCardJSON, getCardJSONFromClipboard } = useClipboardDetection();
+  // Smart paste detection - removed for performance
+  const { getCardJSONFromClipboard } = useClipboardDetection();
+  const [isPasting, setIsPasting] = useState(false);
 
   const filterOptions: FilterOptions = {
     searchTerm: globalSearchTerm || searchTerm,
@@ -63,7 +65,10 @@ export function KanbanCardsContainer({
     dueDateFilter
   };
 
-  const filteredCards = filterCards(cards, filterOptions, currentBoard?.labels || []);
+  // Memoize filtered cards to prevent excessive re-renders
+  const filteredCards = useMemo(() => {
+    return filterCards(cards, filterOptions, currentBoard?.labels || []);
+  }, [cards, filterOptions, currentBoard?.labels]);
 
   const handlePasteCardJSON = async (cardJSON: CardJSON) => {
     if (!currentBoard || !currentBoardId) return;
@@ -75,9 +80,6 @@ export function KanbanCardsContainer({
       // Create card from data
       const newCard = createCardFromData(currentBoardId, listId, cardData);
 
-      if (newCard) {
-        console.log('Card created from JSON:', newCard);
-      }
     } catch (error) {
       console.error('Failed to create card from JSON:', error);
       alert('Failed to create card from JSON. Please check the format.');
@@ -97,10 +99,7 @@ export function KanbanCardsContainer({
 
       // Create card from data
       const newCard = createCardFromData(currentBoardId, listId, cardData);
-
-      if (newCard) {
-        console.log('Card created from uploaded file:', newCard);
-      }
+      
     } catch (error) {
       console.error('Failed to create card from uploaded file:', error);
       alert('Failed to create card from uploaded file. Please check the format.');
@@ -149,23 +148,39 @@ export function KanbanCardsContainer({
           </button>
         </CustomTooltip>
 
-        {hasValidCardJSON && (
-          <button
-            className={cn(
-              "ml-auto flex w-8 h-8 items-center justify-center rounded-xl text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400",
-              "border border-blue-200 dark:border-blue-800"
-            )}
-            onClick={async () => {
+        {/* Paste button - always visible, validates on click */}
+        <button
+          className={cn(
+            "ml-auto flex w-8 h-8 items-center justify-center rounded-xl transition-colors",
+            isPasting
+              ? "text-blue-400 bg-blue-50 border border-blue-200 dark:border-blue-800"
+              : "text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400 border border-blue-200 dark:border-blue-800"
+          )}
+          onClick={async () => {
+            setIsPasting(true);
+            try {
               const cardJSON = await getCardJSONFromClipboard();
               if (cardJSON) {
                 handlePasteCardJSON(cardJSON);
+              } else {
+                // Show user-friendly error for invalid clipboard content
+                alert('No valid card JSON found in clipboard. Please copy a card first using "Copy JSON" from the card menu.');
               }
-            }}
-            title="Paste card from clipboard"
-          >
+            } catch (error) {
+              console.error('Paste failed:', error);
+              alert('Failed to paste card. Please try again.');
+            } finally {
+              setIsPasting(false);
+            }
+          }}
+          title="Paste card from clipboard"
+        >
+          {isPasting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
             <ClipboardPaste className="h-4 w-4" />
-          </button>
-        )}
+          )}
+        </button>
       </div>
 
       {/* Hidden file input for upload */}

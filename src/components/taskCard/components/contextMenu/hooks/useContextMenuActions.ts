@@ -58,7 +58,10 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
   const handleCopyLink = useCallback(async () => {
     const cardUrl = generateCardUrl(window.location.origin, currentBoardId!, card.id);
     await copyToClipboard(cardUrl);
-  }, [currentBoardId, card.id]);
+
+    // Close context menu after successful copy
+    onActionComplete?.();
+  }, [currentBoardId, card.id, onActionComplete]);
 
   /**
    * Handles updating card dates
@@ -111,10 +114,13 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
 
       const cardJSON = cardToJSON(card, currentBoard.labels || [], currentBoard.members || []);
       await copyToClipboard(JSON.stringify(cardJSON, null, 2));
+
+      // Close context menu after successful copy
+      onActionComplete?.();
     } catch (error) {
       console.error('Failed to copy card as JSON:', error);
     }
-  }, [card, currentBoard]);
+  }, [card, currentBoard, onActionComplete]);
 
   /**
    * Handles downloading the current card as a JSON file
@@ -127,10 +133,13 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
       const cardJSON = cardToJSON(card, currentBoard.labels || [], currentBoard.members || []);
       const filename = `${card.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_card.json`;
       downloadCardJSON(cardJSON, filename);
+
+      // Close context menu after successful download
+      onActionComplete?.();
     } catch (error) {
       console.error('Failed to download card JSON:', error);
     }
-  }, [card, currentBoard]);
+  }, [card, currentBoard, onActionComplete]);
 
   /**
    * Handles uploading a card from a JSON file
@@ -150,7 +159,6 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
         const cardData = JSON.parse(text);
 
         // TODO: Process cardData and create new card
-        console.log('Upload card data:', cardData);
         alert('Upload functionality will be implemented in next phase!');
       };
 

@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Massive TypeScript cleanup across 58 files with improved type safety
 - Removed hardcoded mock data and optimized component architecture
 - Enhanced utility functions with better type annotations and import cleanup
+- Improved clipboard detection with better focus handling for context menus
+- Enhanced paste UX with loading states and always-visible paste button
+- Optimized kanban performance with memoized filtered cards
+- Auto-close context menu after successful copy/download actions
 
 ## [1.3.0] - 2026-03-03
 
