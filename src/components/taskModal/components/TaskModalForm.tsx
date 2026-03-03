@@ -16,8 +16,10 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
 
   // Update description when card changes
   useEffect(() => {
-    setDescriptionValue(card?.description || '');
-  }, [card?.id]);
+    // Use setTimeout to avoid calling setState synchronously
+    const timeoutId = setTimeout(() => setDescriptionValue(card?.description || ''), 0);
+    return () => clearTimeout(timeoutId);
+  }, [card?.description, card?.id]);
 
   // Check if content exceeds default height
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { useState, forwardRef, useRef, useEffect } from 'react';
+import { CardJSON } from '@/lib/cardJsonUtils';
 import { Plus, X, ClipboardPaste } from 'lucide-react';
 import { Button } from './button';
 import { Input } from './input';
@@ -33,7 +34,7 @@ export interface InlineInputProps {
   /** Enable smart paste button for card JSON */
   enableSmartPaste?: boolean;
   /** Callback when paste is clicked with card JSON data */
-  onPasteCardJSON?: (cardJSON: any) => void;
+  onPasteCardJSON?: (cardJSON: CardJSON) => void;
 }
 
 /**

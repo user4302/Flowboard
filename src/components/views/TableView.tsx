@@ -35,7 +35,6 @@ export function TableView({ boardId }: TableViewProps) {
   } = useUIStore();
 
   const board = boards.find((b) => b.id === boardId);
-  if (!board) return null;
 
   const [sortField, setSortField] = useState<SortField>('title');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -69,6 +68,8 @@ export function TableView({ boardId }: TableViewProps) {
 
   // Get filtered cards using the utility
   const filteredCards = useMemo<CardWithList[]>(() => {
+    if (!board) return [];
+
     const cardsWithList: CardWithList[] = board.lists.flatMap(list =>
       list.cards.map(card => ({
         ...card,
@@ -88,13 +89,13 @@ export function TableView({ boardId }: TableViewProps) {
     };
 
     return filterCards(cardsWithList, filterOptions, board.labels) as CardWithList[];
-  }, [board.lists, board.labels, searchTerm, selectedLabels, selectedMembers, showOverdue, showCompleted, priorityThreshold, dueDateFilter]);
+  }, [board, searchTerm, selectedLabels, selectedMembers, showOverdue, showCompleted, priorityThreshold, dueDateFilter]);
 
   // Sort cards
   const sortedCards = useMemo(() => {
     const sorted = [...filteredCards].sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
+      let aValue: string | number;
+      let bValue: string | number;
 
       switch (sortField) {
         case 'title':
@@ -132,6 +133,9 @@ export function TableView({ boardId }: TableViewProps) {
 
     return sorted;
   }, [filteredCards, sortField, sortDirection]);
+
+  // Early return after all hooks are called
+  if (!board) return null;
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -216,7 +220,6 @@ export function TableView({ boardId }: TableViewProps) {
           <thead className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
             <tr>
               {columns.filter(column => visibleColumns.has(column.key)).map((column) => {
-                const Icon = column.icon;
                 return (
                   <th
                     key={column.key}

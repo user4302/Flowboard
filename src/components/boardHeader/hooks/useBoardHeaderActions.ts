@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { useBoardStore } from '@/store';
 import { exportData, importData } from '../services/BoardHeaderImportExport';
+import { Board } from '@/lib/types';
 
 /**
  * Custom hook for managing BoardHeader actions (export/import)
  * 
  * Provides handlers for export and import functionality
  */
-export const useBoardHeaderActions = (currentBoard: any) => {
+export const useBoardHeaderActions = (currentBoard: Board) => {
   /**
    * Export data to JSON file
    */

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths } from 'date-fns';
 import { useBoardStore, useUIStore } from '@/store';
 import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
@@ -36,7 +36,6 @@ export function CalendarView({ boardId }: CalendarViewProps) {
 
   // Find the current board
   const board = boards.find((b) => b.id === boardId);
-  if (!board) return null;
 
   // Local state for current month navigation
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -56,6 +55,8 @@ export function CalendarView({ boardId }: CalendarViewProps) {
    * Returns only cards with due dates for calendar display
    */
   const cardsWithDueDates = useMemo(() => {
+    if (!board) return [];
+
     const allCards = board.lists.flatMap(list => list.cards);
 
     const filterOptions = {
@@ -68,9 +69,23 @@ export function CalendarView({ boardId }: CalendarViewProps) {
       dueDateFilter
     };
 
-    const filtered = filterCards(allCards, filterOptions, board.labels);
+    const filtered = filterCards(allCards, filterOptions, board.labels || []);
+
+    // Only return cards that have due dates
     return filtered.filter(card => card.dueDate);
-  }, [board.lists, board.labels, searchTerm, selectedLabels, selectedMembers, showOverdue, showCompleted, priorityThreshold, dueDateFilter]);
+  }, [
+    board,
+    searchTerm,
+    selectedLabels,
+    selectedMembers,
+    showOverdue,
+    showCompleted,
+    priorityThreshold,
+    dueDateFilter
+  ]);
+
+  // Early return after all hooks are called
+  if (!board) return null;
 
   /**
    * Get cards for a specific calendar day

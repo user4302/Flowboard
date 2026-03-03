@@ -2,6 +2,40 @@
 
 import { fromUTCString } from '@/lib/dateUtils';
 import { useBoardStore } from '@/store';
+import { Board, List, Card, Label } from '@/lib/types';
+
+interface ImportedLabel {
+  id: string;
+  text: string;
+  color: string;
+}
+
+interface ImportedCardData {
+  title: string;
+  description?: string;
+  startDate?: string | Date;
+  dueDate?: string | Date;
+  completed?: boolean;
+  labelIds?: string[];
+  labels?: ImportedLabel[];
+  members?: string[];
+  checklist?: Array<{
+    id: string;
+    text: string;
+    done: boolean;
+  }>;
+}
+
+interface ImportedListData {
+  title: string;
+  cards: ImportedCardData[];
+}
+
+interface ImportedBoardData {
+  name: string;
+  labels?: ImportedLabel[];
+  lists: ImportedListData[];
+}
 
 /**
  * Export data to JSON file
@@ -13,15 +47,15 @@ import { useBoardStore } from '@/store';
  * 
  * @param data - The data object to export
  */
-export const exportData = (data: any) => {
+export const exportData = (data: Board) => {
   // Structure the data for export
   const exportData = {
     name: data.name,
     exportDate: new Date().toISOString(),
     labels: data.labels,
-    lists: data.lists.map((list: any) => ({
+    lists: data.lists.map((list: List) => ({
       title: list.title,
-      cards: list.cards.map((card: any) => ({
+      cards: list.cards.map((card: Card) => ({
         ...card // Spread entire card object to include all fields like completed, etc.
       }))
     }))
@@ -75,7 +109,7 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
 
         // Recreate labels at board level if they exist
         if (boardData.labels) {
-          boardData.labels.forEach((labelData: any) => {
+          boardData.labels.forEach((labelData: ImportedLabel) => {
             const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
             if (existing) {
               labelMap.set(labelData.id, existing.id);
@@ -89,84 +123,90 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
           });
         }
 
-        boardData.lists.forEach((listData: any, listIndex: number) => {
+        boardData.lists.forEach((listData: ImportedListData, listIndex: number) => {
           const list = useBoardStore.getState().createList(newBoard.id, listData.title, listIndex);
 
-          listData.cards.forEach((cardData: any, cardIndex: number) => {
-            const card = useBoardStore.getState().createCard(newBoard.id, list.id, cardData.title, cardIndex);
+          listData.cards.forEach((cardData: ImportedCardData, cardIndex: number) => {
+            if (list) {
+              const card = useBoardStore.getState().createCard(newBoard.id, list.id, cardData.title, cardIndex);
 
-            // Validate dates before importing
-            let startDate: Date | undefined = cardData.startDate;
-            let dueDate: Date | undefined = cardData.dueDate;
+              // Validate dates before importing
+              let startDate: Date | undefined;
+              let dueDate: Date | undefined;
 
-            // Convert string dates to Date objects using fromUTCString
-            if (typeof cardData.startDate === 'string') {
-              const date = fromUTCString(cardData.startDate);
-              if (date && !isNaN(date.getTime())) {
-                startDate = date;
-              } else {
-                console.warn('Invalid start date format:', cardData.startDate);
-                startDate = undefined;
+              // Convert string dates to Date objects using fromUTCString
+              if (typeof cardData.startDate === 'string') {
+                const date = fromUTCString(cardData.startDate);
+                if (date && !isNaN(date.getTime())) {
+                  startDate = date;
+                } else {
+                  console.warn('Invalid start date format:', cardData.startDate);
+                  startDate = undefined;
+                }
+              } else if (cardData.startDate instanceof Date) {
+                startDate = cardData.startDate;
               }
-            }
 
-            if (typeof cardData.dueDate === 'string') {
-              const date = fromUTCString(cardData.dueDate);
-              if (date && !isNaN(date.getTime())) {
-                dueDate = date;
-              } else {
-                console.warn('Invalid due date format:', cardData.dueDate);
-                dueDate = undefined;
+              if (typeof cardData.dueDate === 'string') {
+                const date = fromUTCString(cardData.dueDate);
+                if (date && !isNaN(date.getTime())) {
+                  dueDate = date;
+                } else {
+                  console.warn('Invalid due date format:', cardData.dueDate);
+                  dueDate = undefined;
+                }
+              } else if (cardData.dueDate instanceof Date) {
+                dueDate = cardData.dueDate;
               }
-            }
 
-            useBoardStore.getState().updateCard(newBoard.id, card.id, {
-              description: cardData.description,
-              startDate,
-              dueDate,
-              completed: cardData.completed,
-            });
-
-            // Add labels to the card (handle both old and new formats)
-            const importedLabelIds = cardData.labelIds || [];
-            const importedLabels = cardData.labels || []; // Backward compatibility
-
-            // Add by ID
-            importedLabelIds.forEach((oldId: string) => {
-              const newId = labelMap.get(oldId);
-              if (newId) {
-                useBoardStore.getState().addLabelToCard(newBoard.id, card.id, newId);
-              }
-            });
-
-            // Add by text/color logic for old format
-            importedLabels.forEach((labelData: any) => {
-              const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
-              if (existing) {
-                useBoardStore.getState().addLabelToCard(newBoard.id, card.id, existing.id);
-              } else {
-                const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
-                  text: labelData.text,
-                  color: labelData.color
-                });
-                useBoardStore.getState().addLabelToCard(newBoard.id, card.id, newLabel.id);
-              }
-            });
-
-            // Add members to the card
-            cardData.members?.forEach((memberId: string) => {
-              useBoardStore.getState().updateCard(newBoard.id, card.id, {
-                members: [...card.members, memberId]
+              useBoardStore.getState().updateCard(newBoard.id, card!.id, {
+                description: cardData.description,
+                startDate,
+                dueDate,
+                completed: cardData.completed,
               });
-            });
 
-            // Add checklist items and their completion status
-            cardData.checklist?.forEach((item: any) => {
-              useBoardStore.getState().addChecklistItem(newBoard.id, card.id, item.text);
-              if (item.done) {
-                useBoardStore.getState().updateChecklistItem(newBoard.id, card.id, item.id, { done: true });
-              }
-            });
+              // Add labels to the card (handle both old and new formats)
+              const importedLabelIds = cardData.labelIds || [];
+              const importedLabels = cardData.labels || []; // Backward compatibility
+
+              // Add by ID
+              importedLabelIds.forEach((oldId: string) => {
+                const newId = labelMap.get(oldId);
+                if (newId) {
+                  useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, newId);
+                }
+              });
+
+              // Add by text/color logic for old format
+              importedLabels.forEach((labelData: ImportedLabel) => {
+                const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
+                if (existing) {
+                  useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, existing.id);
+                } else {
+                  const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
+                    text: labelData.text,
+                    color: labelData.color
+                  });
+                  useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, newLabel.id);
+                }
+              });
+
+              // Add members to the card
+              cardData.members?.forEach((memberId: string) => {
+                useBoardStore.getState().updateCard(newBoard.id, card!.id, {
+                  members: [...card!.members, memberId]
+                });
+              });
+
+              // Add checklist items and their completion status
+              cardData.checklist?.forEach((item: { id: string; text: string; done: boolean }) => {
+                useBoardStore.getState().addChecklistItem(newBoard.id, card!.id, item.text);
+                if (item.done) {
+                  useBoardStore.getState().updateChecklistItem(newBoard.id, card!.id, item.id, { done: true });
+                }
+              });
+            }
           });
         });
 

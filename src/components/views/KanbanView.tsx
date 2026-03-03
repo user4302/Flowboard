@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { DndContext, closestCorners, closestCenter } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, horizontalListSortingStrategy } from '@dnd-kit/sortable';
+import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useBoardStore, useUIStore } from '@/store';
-import { cn } from '@/lib/utils';
 import { DragOverlayWrapper, InlineInput } from '@/components/ui';
 import { TaskCard } from '@/components/taskCard';
 import {
@@ -31,7 +30,7 @@ interface KanbanViewProps {
  */
 export function KanbanView({ boardId }: KanbanViewProps) {
   // Store hooks for board operations and UI state management
-  const { boards, createList, createCard, updateList, deleteList, reorderLists } = useBoardStore();
+  const { boards, createList, createCard, updateList, deleteList } = useBoardStore();
   const { cardModalOpen, getColumnOrder, setColumnOrder } = useUIStore();
 
   // Local state to track which list's dropdown menu is currently open
@@ -39,9 +38,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   // Find the current board from the boards array
-  // Return null if board doesn't exist to prevent errors
   const board = boards.find((b) => b.id === boardId);
-  if (!board) return null;
 
   // Get ordered lists based on user's saved column order preference
   // If no saved order exists, use the default order from the board
@@ -49,10 +46,10 @@ export function KanbanView({ boardId }: KanbanViewProps) {
   const orderedLists = savedColumnOrder.length > 0
     ? savedColumnOrder
       // Map saved IDs to actual list objects
-      .map(id => board.lists.find(l => l.id === id))
+      .map(id => board?.lists.find(l => l.id === id))
       // Filter out any lists that no longer exist (type guard for TypeScript)
-      .filter((list): list is typeof board.lists[0] => list !== undefined)
-    : board.lists; // Fallback to default order
+      .filter((list): list is typeof list => list !== undefined)
+    : board?.lists || []; // Fallback to default order
 
   // Custom hook for comprehensive drag and drop functionality
   // Handles both card movement between lists and list reordering
@@ -65,7 +62,10 @@ export function KanbanView({ boardId }: KanbanViewProps) {
     handleDragEnd: originalHandleDragEnd,  // Original handler from the hook
     getActiveCard,       // Function to get active card data for overlay
     getActiveList,       // Function to get active list data for overlay
-  } = useKanbanDragAndDrop({ boardId, board });
+  } = useKanbanDragAndDrop({ boardId, board: board! });
+
+  // Early return after all hooks are called
+  if (!board) return null;
 
   /**
    * Enhanced drag end handler that wraps the original handler
@@ -76,7 +76,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
    * 
    * @param event - The drag end event from @dnd-kit
    */
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     // Initialize empty array to store the new column order
     let newOrder: string[] = [];
 
@@ -241,7 +241,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                 {/* Sortable context for list reordering */}
                 <SortableContext
                   items={orderedLists.map((l) => l.id)}
-                  strategy={horizontalListSortingStrategy}
+                  strategy={verticalListSortingStrategy}
                 >
                   {/* Render each list as a sortable component */}
                   {orderedLists.map((list) => (

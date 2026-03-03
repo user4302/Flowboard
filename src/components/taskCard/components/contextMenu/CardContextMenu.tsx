@@ -43,14 +43,15 @@ export function CardContextMenu({
   // Close popups when context menu closes to prevent orphaned UI elements
   useEffect(() => {
     if (!isOpen) {
-      setShowLabelManager(false);
-      setShowDatePicker(false);
-      datePickerPositionedRef.current = false;
+      // Use setTimeout to avoid calling setState synchronously
+      const timeoutId = setTimeout(() => {
+        setShowLabelManager(false);
+        setShowDatePicker(false);
+        datePickerPositionedRef.current = false;
+      }, 0);
+      return () => clearTimeout(timeoutId);
     }
   }, [isOpen]);
-
-  // Don't render anything if the menu is closed
-  if (!isOpen) return null;
 
   /**
    * Handles opening the label manager for the current card
@@ -82,13 +83,10 @@ export function CardContextMenu({
       datePickerPositionedRef.current = true;
     }
     setShowDatePicker(true);
-    console.log('handleDates called', {
-      boardId: currentBoard?.id,
-      cardId: card.id,
-      position: datePickerPosition,
-      contextMenuPosition: position
-    });
-  }, [position, currentBoard?.id, card.id, datePickerPosition]);
+  }, [position]);
+
+  // Don't render anything if the menu is closed
+  if (!isOpen) return null;
 
   /**
    * Handles clicks on the backdrop area

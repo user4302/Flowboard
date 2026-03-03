@@ -63,7 +63,7 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
   const openEdit = (label: Label) => {
     setEditingLabel(label);
     setLabelTitle(label.text);
-    setLabelColor(label.color as any);
+    setLabelColor(label.color as typeof label.color);
     setView('edit');
   };
 

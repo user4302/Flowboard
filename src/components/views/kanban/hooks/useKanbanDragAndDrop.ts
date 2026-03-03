@@ -8,10 +8,10 @@ import {
   KeyboardSensor,
   PointerSensor,
   useSensor,
-  useSensors,
 } from '@dnd-kit/core';
-import { sortableKeyboardCoordinates, arrayMove } from '@dnd-kit/sortable';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useBoardStore } from '@/store';
+import { Board, List, Card } from '@/lib/types';
 
 /**
  * Props for the useKanbanDragAndDrop hook
@@ -21,7 +21,7 @@ interface UseKanbanDragAndDropProps {
   /** ID of the board being managed */
   boardId: string;
   /** Board data containing lists and cards */
-  board: any;
+  board: Board;
 }
 
 /**
@@ -30,7 +30,7 @@ interface UseKanbanDragAndDropProps {
  */
 interface UseKanbanDragAndDropReturn {
   /** Configured drag and drop sensors */
-  sensors: any[];
+  sensors: unknown[];
   /** ID of the currently dragged item */
   activeId: string | null;
   /** Type of item being dragged (card or list) */
@@ -42,9 +42,9 @@ interface UseKanbanDragAndDropReturn {
   /** Handler for drag end events */
   handleDragEnd: (event: DragEndEvent) => void;
   /** Function to get the currently active card data */
-  getActiveCard: () => any;
+  getActiveCard: () => Card | null;
   /** Function to get the currently active list data */
-  getActiveList: () => any;
+  getActiveList: () => List | null;
 }
 
 /**
@@ -101,11 +101,11 @@ export function useKanbanDragAndDrop({
     setActiveId(event.active.id as string);
 
     // Check if the dragged ID belongs to a card by searching through all lists
-    const isCard = board.lists.some((list: any) =>
-      list.cards.some((card: any) => card.id === event.active.id)
+    const isCard = board.lists.some((list: List) =>
+      list.cards.some((card: Card) => card.id === event.active.id)
     );
     // Check if the dragged ID belongs to a list
-    const isList = board.lists.some((list: any) => list.id === event.active.id);
+    const isList = board.lists.some((list: List) => list.id === event.active.id);
 
     if (isCard) {
       setActiveDataType('card');
@@ -132,7 +132,7 @@ export function useKanbanDragAndDrop({
     // Find which list contains the active card being dragged
     let activeListId = null;
     for (const list of board.lists) {
-      if (list.cards.some((c: any) => c.id === activeId)) {
+      if (list.cards.some((c: Card) => c.id === activeId)) {
         activeListId = list.id;
         break;
       }
@@ -140,14 +140,14 @@ export function useKanbanDragAndDrop({
 
     // Determine the target list - could be the list itself or a card within the list
     let overListId = null;
-    const overList = board.lists.find((l: any) => l.id === overId);
+    const overList = board.lists.find((l: List) => l.id === overId);
     if (overList) {
       // Dragging directly over a list
       overListId = overList.id;
     } else {
       // Dragging over a card - find its parent list
       for (const list of board.lists) {
-        if (list.cards.some((c: any) => c.id === overId)) {
+        if (list.cards.some((c: Card) => c.id === overId)) {
           overListId = list.id;
           break;
         }
@@ -159,8 +159,8 @@ export function useKanbanDragAndDrop({
 
     // Calculate the position where the card should be inserted
     // If dragging over a card, insert at that position; if over a list, append to end
-    const overIndex = board.lists.find((l: any) => l.id === overListId).cards.findIndex((c: any) => c.id === overId);
-    const newIndex = overIndex >= 0 ? overIndex : 0;
+    const overIndex = board.lists.find((l: List) => l.id === overListId)?.cards.findIndex((c: Card) => c.id === overId);
+    const newIndex = overIndex !== undefined && overIndex >= 0 ? overIndex : 0;
 
     // Optimistically update the store for immediate visual feedback
     useBoardStore.getState().moveCard(boardId, activeId, activeListId, overListId, newIndex);
@@ -188,8 +188,8 @@ export function useKanbanDragAndDrop({
 
     // Handle list reordering when dragging a list
     if (activeDataType === 'list') {
-      const activeIndex = board.lists.findIndex((l: any) => l.id === activeId);
-      const overIndex = board.lists.findIndex((l: any) => l.id === overId);
+      const activeIndex = board.lists.findIndex((l: List) => l.id === activeId);
+      const overIndex = board.lists.findIndex((l: List) => l.id === overId);
 
       // Only reorder if both positions are valid and different
       if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
@@ -203,7 +203,7 @@ export function useKanbanDragAndDrop({
     let activeListId = null;
     let fromIndex = -1;
     for (const list of board.lists) {
-      const idx = list.cards.findIndex((c: any) => c.id === activeId);
+      const idx = list.cards.findIndex((c: Card) => c.id === activeId);
       if (idx !== -1) {
         activeListId = list.id;
         fromIndex = idx;
@@ -219,14 +219,14 @@ export function useKanbanDragAndDrop({
     let toIndex = -1;
 
     // Check if dragging over a list (append to end)
-    const overList = board.lists.find((l: any) => l.id === overId);
+    const overList = board.lists.find((l: List) => l.id === overId);
     if (overList) {
       overListId = overList.id;
       toIndex = overList.cards.length;
     } else {
       // Check if dragging over a card (insert at that position)
       for (const list of board.lists) {
-        const idx = list.cards.findIndex((c: any) => c.id === overId);
+        const idx = list.cards.findIndex((c: Card) => c.id === overId);
         if (idx !== -1) {
           overListId = list.id;
           toIndex = idx;
@@ -259,7 +259,7 @@ export function useKanbanDragAndDrop({
 
     // Search through all lists to find the card with the active ID
     for (const list of board.lists) {
-      const card = list.cards.find((c: any) => c.id === activeId);
+      const card = list.cards.find((c: Card) => c.id === activeId);
       if (card) return card;
     }
     return null; // Card not found
@@ -275,7 +275,7 @@ export function useKanbanDragAndDrop({
     if (!activeId || activeDataType !== 'list') return null;
 
     // Find the list with the active ID
-    return board.lists.find((l: any) => l.id === activeId);
+    return board.lists.find((l: List) => l.id === activeId) || null;
   };
 
   return {

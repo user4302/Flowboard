@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { eachDayOfInterval, startOfDay, endOfDay, startOfWeek, endOfWeek, addWeeks, startOfMonth, endOfMonth, addMonths, startOfYear, endOfYear } from 'date-fns';
+import { eachDayOfInterval, startOfDay, endOfDay, startOfWeek, endOfWeek, addWeeks, startOfMonth, endOfMonth } from 'date-fns';
 
 /**
  * Timeline zoom level type

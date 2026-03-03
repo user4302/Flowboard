@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { format, isAfter, isBefore, isToday, isPast, isFuture, formatDistanceToNow } from 'date-fns';
+import { format, isToday, isPast, formatDistanceToNow } from 'date-fns';
 
 /**
  * Utility function for combining CSS classes
@@ -93,7 +93,7 @@ export function getChecklistProgress(checklist: { done: boolean }[] | undefined 
  * @param wait - Wait time in milliseconds
  * @returns Debounced function
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

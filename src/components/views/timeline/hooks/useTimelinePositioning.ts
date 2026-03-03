@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { isSameDay, isSameWeek, isSameMonth, addDays } from 'date-fns';
+import { Card } from '@/lib/types';
 
 /**
  * Timeline zoom level type
@@ -33,8 +34,8 @@ interface CardPosition {
  * @returns Card position with left, width, and top values
  */
 export function useTimelinePositioning(
-  card: any,
-  allCards: any[],
+  card: Card,
+  allCards: Card[],
   cardIndex: number,
   dateRange: Date[],
   zoomLevel: ZoomLevel
@@ -155,7 +156,7 @@ export function useTimelinePositioning(
     /**
      * Calculate stack level for the current card by checking overlaps with previous cards
      */
-    allCards.slice(0, cardIndex + 1).forEach((currentCard, currentIndex) => {
+    allCards.slice(0, cardIndex + 1).forEach((currentCard) => {
       const currentCardStartDate = currentCard.startDate || new Date();
       const currentCardEndDate = currentCard.dueDate || addDays(currentCardStartDate, 7);
 

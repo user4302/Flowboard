@@ -31,7 +31,7 @@ export function SearchAndFilterDropdown({
   const portalDropdownRef = useRef<HTMLDivElement>(null);
   const { triggerRect, triggerRef } = useSearchAndFilterDropdownPosition(isOpen);
 
-  const renderSelectedItem = (item: any) => {
+  const renderSelectedItem = (item: { id: string; text?: string; color?: string; name?: string }) => {
     if (itemType === 'label') {
       return (
         <div className={cn("h-3 w-3 rounded-full shrink-0 ring-2 ring-slate-900 group-hover:ring-slate-700 transition-all", item.color)} />
@@ -39,7 +39,7 @@ export function SearchAndFilterDropdown({
     } else {
       return (
         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-600 text-[10px] font-white ring-2 ring-slate-900">
-          {item.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
+          {item.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase() || ''}
         </div>
       );
     }

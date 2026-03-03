@@ -21,7 +21,6 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
     selectedMembers,
     setSelectedMembers,
     showOverdue,
-    setShowOverdue,
     showCompleted,
     setShowCompleted,
     priorityThreshold,
@@ -32,10 +31,13 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
   } = useUIStore();
 
   const { boards } = useBoardStore();
-  const board = boards.find(b => b.id === boardId);
 
   const [showFilters, setShowFilters] = useState(false);
-  const dropdownRefs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
+  const dropdownRef1 = useRef<HTMLDivElement>(null);
+  const dropdownRef2 = useRef<HTMLDivElement>(null);
+  const dropdownRefs = [dropdownRef1, dropdownRef2];
+
+  const board = boards.find(b => b.id === boardId);
 
   // Move hooks before conditional return
   useSearchAndFilterClickOutside(dropdownRefs, () => setShowFilters(false));
@@ -95,7 +97,7 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
 
       {showFilters && (
         <SearchAndFilterPanel
-          ref={dropdownRefs[0]}
+          ref={dropdownRef1}
           showCompleted={showCompleted}
           setShowCompleted={setShowCompleted as (value: string) => void}
           priorityThreshold={priorityThreshold}

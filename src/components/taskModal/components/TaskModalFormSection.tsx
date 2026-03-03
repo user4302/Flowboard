@@ -1,12 +1,13 @@
 'use client';
 
 import { TaskModalForm } from './TaskModalForm';
+import { Card } from '@/lib/types';
 
 interface TaskModalFormSectionProps {
-  card: any;
-  form: any;
-  errors: any;
-  register: any;
+  card: Card | null;
+  form: unknown;
+  errors: Record<string, unknown>;
+  register: unknown;
   onToggleCompleted?: () => void;
 }
 

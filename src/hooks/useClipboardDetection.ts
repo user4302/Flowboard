@@ -19,10 +19,16 @@ export function useClipboardDetection() {
       return;
     }
 
+    // Check if document is focused before accessing clipboard
+    if (document.hidden || !document.hasFocus()) {
+      setHasValidCardJSON(false);
+      return;
+    }
+
     setIsChecking(true);
     try {
       const text = await navigator.clipboard.readText();
-      
+
       if (!text.trim()) {
         setHasValidCardJSON(false);
         return;
@@ -41,8 +47,14 @@ export function useClipboardDetection() {
       const isValid = validateCardJSON(data);
       setHasValidCardJSON(isValid);
     } catch (error) {
-      console.error('Error checking clipboard:', error);
-      setHasValidCardJSON(false);
+      // Handle clipboard access errors gracefully
+      if (error instanceof Error && error.name === 'NotAllowedError') {
+        // Silently handle permission errors - document not focused
+        setHasValidCardJSON(false);
+      } else {
+        console.error('Error checking clipboard:', error);
+        setHasValidCardJSON(false);
+      }
     } finally {
       setIsChecking(false);
     }
@@ -54,6 +66,11 @@ export function useClipboardDetection() {
   const getCardJSONFromClipboard = useCallback(async (): Promise<CardJSON | null> => {
     if (!navigator.clipboard) return null;
 
+    // Check if document is focused before accessing clipboard
+    if (document.hidden || !document.hasFocus()) {
+      return null;
+    }
+
     try {
       const text = await navigator.clipboard.readText();
       if (!text.trim()) return null;
@@ -63,7 +80,13 @@ export function useClipboardDetection() {
         return data;
       }
     } catch (error) {
-      console.error('Error getting card JSON from clipboard:', error);
+      // Handle clipboard access errors gracefully
+      if (error instanceof Error && error.name === 'NotAllowedError') {
+        // Silently handle permission errors - document not focused
+        return null;
+      } else {
+        console.error('Error getting card JSON from clipboard:', error);
+      }
     }
 
     return null;
@@ -90,8 +113,12 @@ export function useClipboardDetection() {
     window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Set up periodic check as fallback
-    const interval = setInterval(checkClipboard, 5000); // Check every 5 seconds
+    // Set up periodic check as fallback (only when focused)
+    const interval = setInterval(() => {
+      if (!document.hidden && document.hasFocus()) {
+        checkClipboard();
+      }
+    }, 10000); // Check every 10 seconds (reduced frequency)
 
     return () => {
       window.removeEventListener('focus', handleFocus);

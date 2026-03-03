@@ -2,6 +2,7 @@
 
 import { VIEWS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import { LayoutGrid, CalendarDays, Calendar } from 'lucide-react';
 
 interface BoardHeaderViewNavigationProps {
   currentView: string;
@@ -14,10 +15,17 @@ interface BoardHeaderViewNavigationProps {
  * Displays tabs for each available view with icons and active state styling
  */
 export function BoardHeaderViewNavigation({ currentView, onViewChange }: BoardHeaderViewNavigationProps) {
+  // Icon mapping for views
+  const iconMap: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+    'LayoutGrid': LayoutGrid,
+    'CalendarDays': CalendarDays,
+    'Calendar': Calendar,
+  };
+
   return (
     <div className="flex items-center gap-2">
       {VIEWS.map((view) => {
-        const Icon = require('lucide-react')[view.icon];
+        const Icon = iconMap[view.icon] || LayoutGrid;
         return (
           <button
             key={view.id}

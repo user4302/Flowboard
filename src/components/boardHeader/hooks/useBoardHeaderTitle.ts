@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useBoardStore } from '@/store';
+import { Board } from '@/lib/types';
 
 /**
  * Custom hook for managing BoardHeader title editing functionality
@@ -12,7 +13,7 @@ import { useBoardStore } from '@/store';
  * - Save and cancel functionality
  * - Keyboard shortcuts (Enter to save, Escape to cancel)
  */
-export const useBoardHeaderTitle = (currentBoard: any) => {
+export const useBoardHeaderTitle = (currentBoard: Board) => {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [tempTitle, setTempTitle] = useState('');
 

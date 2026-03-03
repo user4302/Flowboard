@@ -26,43 +26,42 @@ export interface CardJSON {
 /**
  * Validates if a JSON object represents a valid card
  */
-export function validateCardJSON(data: any): data is CardJSON {
+export function validateCardJSON(data: unknown): data is CardJSON {
   if (!data || typeof data !== 'object') return false;
-  
+
+  const obj = data as Record<string, unknown>;
+
   // Required fields
-  if (typeof data.title !== 'string' || data.title.trim() === '') return false;
-  
+  if (typeof obj.title !== 'string' || obj.title.trim() === '') return false;
+
   // Optional fields validation
-  if (data.description && typeof data.description !== 'string') return false;
-  
+  if (obj.description && typeof obj.description !== 'string') return false;
+
   // Validate labels array
-  if (data.labels && !Array.isArray(data.labels)) return false;
-  if (data.labels && !data.labels.every((label: any) => 
-    typeof label === 'object' && 
-    typeof label.text === 'string' && 
-    typeof label.color === 'string'
-  )) return false;
-  
+  if (obj.labels && (!Array.isArray(obj.labels) || !obj.labels.every((label: unknown) =>
+    typeof label === 'object' && label !== null &&
+    typeof (label as { text: unknown }).text === 'string' &&
+    typeof (label as { color: unknown }).color === 'string'
+  ))) return false;
+
   // Validate members array
-  if (data.members && !Array.isArray(data.members)) return false;
-  if (data.members && !data.members.every((member: any) => 
-    typeof member === 'object' && 
-    typeof member.name === 'string' && 
-    (member.email === undefined || typeof member.email === 'string')
-  )) return false;
-  
+  if (obj.members && (!Array.isArray(obj.members) || !obj.members.every((member: unknown) =>
+    typeof member === 'object' && member !== null &&
+    typeof (member as { name: unknown }).name === 'string' &&
+    ((member as { email?: unknown }).email === undefined || typeof (member as { email: string }).email === 'string')
+  ))) return false;
+
   // Validate dates
-  if (data.startDate && !isValidISOString(data.startDate)) return false;
-  if (data.dueDate && !isValidISOString(data.dueDate)) return false;
-  
+  if (obj.startDate && (typeof obj.startDate !== 'string' || !isValidISOString(obj.startDate))) return false;
+  if (obj.dueDate && (typeof obj.dueDate !== 'string' || !isValidISOString(obj.dueDate))) return false;
+
   // Validate checklist
-  if (data.checklist && !Array.isArray(data.checklist)) return false;
-  if (data.checklist && !data.checklist.every((item: any) => 
-    typeof item === 'object' && 
-    typeof item.text === 'string' && 
-    typeof item.done === 'boolean'
-  )) return false;
-  
+  if (obj.checklist && (!Array.isArray(obj.checklist) || !obj.checklist.every((item: unknown) =>
+    typeof item === 'object' && item !== null &&
+    typeof (item as { text: unknown }).text === 'string' &&
+    typeof (item as { done: unknown }).done === 'boolean'
+  ))) return false;
+
   return true;
 }
 
@@ -115,15 +114,15 @@ export function cardToJSON(card: Card, boardLabels: Label[], boardMembers: User[
  * Maps labels and members to board IDs
  */
 export function jsonToCardData(
-  cardJSON: CardJSON, 
-  boardLabels: Label[], 
+  cardJSON: CardJSON,
+  boardLabels: Label[],
   boardMembers: User[]
 ): Omit<Card, 'id' | 'position' | 'createdAt' | 'updatedAt' | 'listId'> {
   // Map label objects to label IDs
   const labelIds = cardJSON.labels
     .map(jsonLabel => {
-      const matchingLabel = boardLabels.find(boardLabel => 
-        boardLabel.text === jsonLabel.text && 
+      const matchingLabel = boardLabels.find(boardLabel =>
+        boardLabel.text === jsonLabel.text &&
         boardLabel.color === jsonLabel.color
       );
       return matchingLabel?.id;
@@ -133,8 +132,8 @@ export function jsonToCardData(
   // Map member objects to member IDs
   const members = cardJSON.members
     .map(jsonMember => {
-      const matchingMember = boardMembers.find(boardMember => 
-        boardMember.name === jsonMember.name && 
+      const matchingMember = boardMembers.find(boardMember =>
+        boardMember.name === jsonMember.name &&
         (jsonMember.email ? boardMember.email === jsonMember.email : true)
       );
       return matchingMember?.id;
@@ -167,7 +166,7 @@ export function downloadCardJSON(cardJSON: CardJSON, filename: string): void {
   const jsonString = JSON.stringify(cardJSON, null, 2);
   const blob = new Blob([jsonString], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  
+
   const link = document.createElement('a');
   link.href = url;
   link.download = filename;
@@ -183,10 +182,10 @@ export function downloadCardJSON(cardJSON: CardJSON, filename: string): void {
 export async function readCardJSONFile(file: File): Promise<CardJSON> {
   const text = await file.text();
   const data = JSON.parse(text);
-  
+
   if (!validateCardJSON(data)) {
     throw new Error('Invalid card JSON format');
   }
-  
+
   return data;
 }

@@ -84,7 +84,7 @@ export function BoardHeader() {
             </Button>
 
             {/* Title with inline editing capability */}
-            <BoardHeaderTitle currentBoard={currentBoard} />
+            <BoardHeaderTitle currentBoard={currentBoard!} />
           </div>
 
           {/* Center - View navigation tabs and search */}
@@ -94,7 +94,7 @@ export function BoardHeader() {
                 {/* View navigation tabs */}
                 <BoardHeaderViewNavigation
                   currentView={currentView}
-                  onViewChange={(viewId: string) => setCurrentView(viewId as any)}
+                  onViewChange={(viewId: string) => setCurrentView(viewId as 'kanban' | 'timeline' | 'calendar' | 'table')}
                 />
               </div>
             )}
@@ -111,7 +111,7 @@ export function BoardHeader() {
 
             {/* Action menu */}
             <BoardHeaderActionMenu
-              currentBoard={currentBoard}
+              currentBoard={currentBoard!}
               isOwner={isOwner}
               onInviteModalOpen={() => setShowInviteModal(true)}
               onMemberManagementOpen={() => setShowMemberManagement(true)}

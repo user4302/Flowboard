@@ -23,14 +23,14 @@ interface BoardState {
   deleteBoard: (boardId: string) => void;
 
   // List actions
-  createList: (boardId: string, title: string, position?: number) => List;
+  createList: (boardId: string, title: string, position?: number) => List | null;
   updateList: (boardId: string, listId: string, updates: Partial<List>) => void;
   deleteList: (boardId: string, listId: string) => void;
   reorderLists: (boardId: string, fromIndex: number, toIndex: number) => void;
 
   // Card actions
-  createCard: (boardId: string, listId: string, title: string, position?: number) => Card;
-  createCardFromData: (boardId: string, listId: string, cardData: any) => Card | null;
+  createCard: (boardId: string, listId: string, title: string, position?: number) => Card | null;
+  createCardFromData: (boardId: string, listId: string, cardData: Partial<Card>) => Card | null;
   updateCard: (boardId: string, cardId: string, updates: Partial<Card>) => void;
   deleteCard: (boardId: string, cardId: string) => void;
   moveCard: (boardId: string, cardId: string, fromListId: string, toListId: string, position: number) => void;
@@ -143,7 +143,7 @@ export const useBoardStore = create<BoardState>()(
       createList: (boardId, title, position) => {
         const state = get();
         const board = state.boards.find((b) => b.id === boardId);
-        if (!board) return null as any;
+        if (!board) return null;
 
         const newList: List = {
           id: generateId(),
@@ -228,7 +228,7 @@ export const useBoardStore = create<BoardState>()(
         const state = get();
         const board = state.boards.find((b) => b.id === boardId);
         const list = board?.lists.find((l) => l.id === listId);
-        if (!board || !list) return null as any;
+        if (!board || !list) return null;
 
         const newCard: Card = {
           id: generateId(),
@@ -867,17 +867,17 @@ export const useBoardStore = create<BoardState>()(
 
             // Convert UTC strings to local Date objects and migrate labels
             if (data.state?.boards) {
-              data.state.boards = data.state.boards.map((board: any) => {
+              data.state.boards = data.state.boards.map((board: Board) => {
                 // Ensure board has labels array and archivedCards array
                 let boardLabels = Array.isArray(board.labels) ? [...board.labels] : [];
                 let archivedCards = Array.isArray(board.archivedCards) ? [...board.archivedCards] : [];
 
                 // Ensure all board labels have IDs
                 boardLabels = boardLabels.map(l => ({ ...l, id: l.id || generateId() }));
-                const boardLabelIds = new Set(boardLabels.map((l: any) => l.id));
+                const boardLabelIds = new Set(boardLabels.map((l: Label) => l.id));
 
                 // Migrate archived cards if needed
-                archivedCards = archivedCards.map((ac: any) => ({
+                archivedCards = archivedCards.map((ac: ArchivedCard) => ({
                   ...ac,
                   id: ac.id || generateId(),
                   archivedAt: ac.archivedAt ? new Date(ac.archivedAt) : new Date(),
@@ -890,15 +890,15 @@ export const useBoardStore = create<BoardState>()(
                   }
                 }));
 
-                const newLists = board.lists.map((list: any) => ({
+                const newLists = board.lists.map((list: List) => ({
                   ...list,
-                  cards: list.cards.map((card: any): Card => {
+                  cards: list.cards.map((card: Card & { labels?: Label[] }): Card => {
                     // Start with existing labelIds or empty array
                     let labelIds = Array.isArray(card.labelIds) ? [...card.labelIds] : [];
 
                     // If card still has old labels array, migrate them
-                    if (Array.isArray(card.labels) && card.labels.length > 0) {
-                      card.labels.forEach((oldLabel: any) => {
+                    if (card.labels && card.labels.length > 0) {
+                      card.labels.forEach((oldLabel: Label) => {
                         // Ensure old label has an ID
                         const labelToMigrate = {
                           ...oldLabel,
@@ -959,9 +959,9 @@ export const useBoardStore = create<BoardState>()(
               ...value,
               state: {
                 ...value.state,
-                boards: value.state.boards.map((board: any) => ({
+                boards: value.state.boards.map((board: Board) => ({
                   ...board,
-                  archivedCards: board.archivedCards.map((ac: any) => ({
+                  archivedCards: board.archivedCards.map((ac: ArchivedCard) => ({
                     ...ac,
                     archivedAt: toUTCString(ac.archivedAt),
                     card: {
@@ -972,9 +972,9 @@ export const useBoardStore = create<BoardState>()(
                       updatedAt: toUTCString(ac.card.updatedAt),
                     }
                   })),
-                  lists: board.lists.map((list: any) => ({
+                  lists: board.lists.map((list: List) => ({
                     ...list,
-                    cards: list.cards.map((card: any) => ({
+                    cards: list.cards.map((card: Card) => ({
                       ...card,
                       startDate: toUTCString(card.startDate),
                       dueDate: toUTCString(card.dueDate),

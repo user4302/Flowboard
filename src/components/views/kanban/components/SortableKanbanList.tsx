@@ -3,6 +3,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { KanbanList } from './KanbanList';
+import { List, User } from '@/lib/types';
 
 /**
  * Props for the SortableKanbanList component
@@ -10,9 +11,9 @@ import { KanbanList } from './KanbanList';
  */
 interface SortableKanbanListProps {
   /** The list data containing cards and metadata */
-  list: any;
+  list: List;
   /** Array of board members for card assignment */
-  members: any[];
+  members: User[];
   /** Callback function when a new card is added to the list */
   onAddCard: (listId: string, title: string) => void;
   /** Callback function when the list is renamed */
@@ -103,8 +104,8 @@ export function SortableKanbanList({
         isAnyMenuOpen={isAnyMenuOpen}
         // Pass drag handle props to enable list dragging
         dragHandleProps={{
-          attributes,
-          listeners,
+          attributes: attributes as unknown as Record<string, unknown>,
+          listeners: listeners as unknown as Record<string, unknown>,
         }}
       />
     </div>

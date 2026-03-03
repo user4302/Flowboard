@@ -3,14 +3,15 @@ import { useBoardStore, useUIStore } from '@/store';
 import { useTaskModalForm } from './useTaskModalForm';
 import { useTaskModalChecklist } from './useTaskModalChecklist';
 import { CardModalData } from '../types/TaskModal.modal.types';
+import { CardJSON } from '@/lib/cardJsonUtils';
 
 export function useTaskModalData(): CardModalData & {
-  form: any;
-  checklist: any;
+  form: ReturnType<typeof useTaskModalForm>;
+  checklist: ReturnType<typeof useTaskModalChecklist>;
   currentBoardId: string | null;
   cardModalOpen: boolean;
   selectedCardId: string | null;
-  cardJSONData: any;
+  cardJSONData: CardJSON | null;
   targetListId: string | null;
   isJSONImportMode: boolean;
 } {
@@ -35,10 +36,10 @@ export function useTaskModalData(): CardModalData & {
     cardId: foundCard?.id || ''
   });
 
-  const boardLabels = currentBoard?.labels || [];
+  const boardLabels = useMemo(() => currentBoard?.labels || [], [currentBoard?.labels]);
 
   return useMemo(() => ({
-    currentBoard,
+    currentBoard: currentBoard || null,
     foundCard,
     boardLabels,
     form,

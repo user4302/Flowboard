@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced board store with createCardFromData method for JSON import support
 - Improved UI store with card JSON data and target list ID state management
 - Refactored TaskModal components for better form organization and JSON pre-population
+- Hardcoded APP_VERSION to avoid package.json import for build stability
+- Massive TypeScript cleanup across 58 files with improved type safety
+- Removed hardcoded mock data and optimized component architecture
+- Enhanced utility functions with better type annotations and import cleanup
 
 ## [1.3.0] - 2026-03-03
 

@@ -15,8 +15,8 @@ interface ListHeaderProps {
   isAnyMenuOpen?: boolean;
   /** Drag handle props for list reordering functionality */
   dragHandleProps?: {
-    attributes: any;
-    listeners: any;
+    attributes: Record<string, unknown>;
+    listeners: Record<string, unknown>;
   };
 }
 
@@ -77,7 +77,9 @@ export function KanbanListHeader({ title, cardCount, onRename, onDelete, classNa
   // Close menu when another menu is opened
   useEffect(() => {
     if (isAnyMenuOpen && !showMenu) {
-      setShowMenu(false);
+      // Use setTimeout to avoid calling setState synchronously
+      const timeoutId = setTimeout(() => setShowMenu(false), 0);
+      return () => clearTimeout(timeoutId);
     }
   }, [isAnyMenuOpen, showMenu]);
 

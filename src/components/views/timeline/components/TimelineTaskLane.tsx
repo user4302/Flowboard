@@ -1,6 +1,5 @@
-import { Card } from '@/lib/types';
+import { Card, Label } from '@/lib/types';
 import { TimelineTask } from './TimelineTask';
-import { getTaskColor } from '../utils';
 import { TimelineTooltip } from './TimelineTooltip';
 
 /**
@@ -38,9 +37,9 @@ interface TaskLaneProps {
   /** Function to open task modal */
   onOpenTaskModal: (taskId: string) => void;
   /** Function to calculate task positioning */
-  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => any;
+  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => { left: number; width: number; };
   /** Function to get task color from labels */
-  getTaskColor: (task: Card, boardLabels?: any[]) => { background: string; text: string };
+  getTaskColor: (task: Card, boardLabels?: Label[]) => { background: string; text: string };
   /** Function to calculate timeline height */
   calculateTimelineHeight: (tasks: Card[], dateRange: Date[]) => number;
   /** Array of tasks hidden before the date range (only for first task) */
@@ -48,7 +47,7 @@ interface TaskLaneProps {
   /** Array of tasks hidden after the date range (only for first task) */
   hiddenTasksAfter: Card[];
   /** Labels available on the board */
-  boardLabels: any[];
+  boardLabels: Label[];
 }
 
 /**

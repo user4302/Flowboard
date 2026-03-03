@@ -8,6 +8,10 @@ interface SearchAndFilterPortalProps {
 
 export function SearchAndFilterPortal({ children }: SearchAndFilterPortalProps) {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    // Use setTimeout to avoid calling setState synchronously
+    const timeoutId = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timeoutId);
+  }, []);
   return mounted ? createPortal(children, document.body) : null;
 }

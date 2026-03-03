@@ -2,23 +2,25 @@ import { useCallback } from 'react';
 import { useBoardStore, useUIStore } from '@/store';
 import { useTaskModalActions } from './useTaskModalActions';
 import { CardModalHandlers } from '../types/TaskModal.modal.types';
+import { Card } from '@/lib/types';
+import { CardJSON } from '@/lib/cardJsonUtils';
 
 export function useTaskModalHandlers(
   currentBoardId: string | null,
-  foundCard: any,
-  form: any,
+  foundCard: Card | undefined,
+  form: unknown,
   isJSONImportMode: boolean,
-  cardJSONData: any,
+  cardJSONData: CardJSON | null,
   targetListId: string | null
 ): CardModalHandlers & { closeCardModal: () => void } {
   const { closeCardModal } = useUIStore();
   const { updateCard, createCard } = useBoardStore();
   const { handleSaveCard } = useTaskModalActions();
 
-  const handleSave = useCallback((data: any) => {
+  const handleSave = useCallback((data: Partial<Card>) => {
     if (isJSONImportMode && currentBoardId && targetListId && cardJSONData) {
       // Create new card from JSON data
-      const newCard = createCard(currentBoardId, targetListId, data.title);
+      const newCard = createCard(currentBoardId, targetListId, data.title || 'Untitled Card');
       if (newCard) {
         // Update the new card with additional data
         updateCard(currentBoardId, newCard.id, {

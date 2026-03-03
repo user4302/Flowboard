@@ -1,4 +1,4 @@
-import { Card } from '@/lib/types';
+import { Card, Label } from '@/lib/types';
 
 /**
  * Tooltip Component
@@ -22,7 +22,7 @@ interface TooltipProps {
   /** Position relative to current view (before/after) */
   position: 'before' | 'after';
   /** Labels available on the board */
-  boardLabels: any[];
+  boardLabels: Label[];
 }
 
 /**
@@ -31,7 +31,7 @@ interface TooltipProps {
  * Renders a styled tooltip showing task details when hovering
  * over mini task indicators in the timeline.
  */
-export function TimelineTooltip({ task, position, boardLabels }: TooltipProps) {
+export function TimelineTooltip({ task, boardLabels }: TooltipProps) {
   // Helper function to format dates consistently
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
@@ -62,7 +62,7 @@ export function TimelineTooltip({ task, position, boardLabels }: TooltipProps) {
       </div>
       {task.labelIds?.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-2">
-          {task.labelIds.map((labelId: string, index: number) => {
+          {task.labelIds.map((labelId: string) => {
             const label = boardLabels.find(l => l.id === labelId);
             if (!label) return null;
             return (

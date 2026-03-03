@@ -48,17 +48,21 @@ export function DatePickerModal({
 
   // Initialize local state when props change
   useEffect(() => {
-    if (startDate) {
-      setLocalStartDate(startDate.toISOString().split('T')[0]);
-    } else {
-      setLocalStartDate('');
-    }
+    // Use setTimeout to avoid calling setState synchronously
+    const timeoutId = setTimeout(() => {
+      if (startDate) {
+        setLocalStartDate(startDate.toISOString().split('T')[0]);
+      } else {
+        setLocalStartDate('');
+      }
 
-    if (dueDate) {
-      setLocalDueDate(dueDate.toISOString().split('T')[0]);
-    } else {
-      setLocalDueDate('');
-    }
+      if (dueDate) {
+        setLocalDueDate(dueDate.toISOString().split('T')[0]);
+      } else {
+        setLocalDueDate('');
+      }
+    }, 0);
+    return () => clearTimeout(timeoutId);
   }, [startDate, dueDate]);
 
   const handleStartDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

@@ -9,11 +9,13 @@ import { useUIStore, useBoardStore } from '@/store';
 import { useClipboardDetection } from '@/hooks/useClipboardDetection';
 import { jsonToCardData } from '@/lib/cardJsonUtils';
 import { cn } from '@/lib/utils';
+import { Card, User } from '@/lib/types';
+import { CardJSON } from '@/lib/cardJsonUtils';
 
 interface KanbanCardsContainerProps {
-  cards: any[];
+  cards: Card[];
   listId: string;
-  members: any[];
+  members: User[];
   onAddCard: (listId: string, title: string) => void;
   searchTerm?: string;
   className?: string;
@@ -48,7 +50,7 @@ export function KanbanCardsContainer({
   const currentBoard = boards.find(b => b.id === currentBoardId);
 
   // Smart paste detection
-  const { hasValidCardJSON, getCardJSONFromClipboard } = useClipboardDetection();
+  const { hasValidCardJSON } = useClipboardDetection();
 
   const filterOptions: FilterOptions = {
     searchTerm: globalSearchTerm || searchTerm,
@@ -61,7 +63,7 @@ export function KanbanCardsContainer({
 
   const filteredCards = filterCards(cards, filterOptions, currentBoard?.labels || []);
 
-  const handlePasteCardJSON = async (cardJSON: any) => {
+  const handlePasteCardJSON = async (cardJSON: CardJSON) => {
     if (!currentBoard || !currentBoardId) return;
 
     try {

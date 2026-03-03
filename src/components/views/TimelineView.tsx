@@ -70,7 +70,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   const { currentDate: timelineCurrentDate, zoomLevel: timelineZoomLevel, collapsedLanes: timelineCollapsedLanes } = timelineState;
 
   const board = boards.find((b) => b.id === boardId);
-  if (!board) return null;
 
   // Component state - use persisted state directly from store
   const currentDate = useMemo(() => {
@@ -101,17 +100,13 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       setTimelineCurrentDate(boardId, new Date().toISOString());
     }
   }, [timelineCurrentDate, boardId, setTimelineCurrentDate]);
+
   const zoomLevel = timelineZoomLevel || 'week'; // Fallback to week if undefined
   const collapsedLanes = useMemo(() => new Set(timelineCollapsedLanes), [timelineCollapsedLanes]);
   const [hoveredTask, setHoveredTask] = useState<{ task: Card; position: 'before' | 'after'; x: number; y: number } | null>(null); // Track hovered task for tooltip
 
   // Generate date range based on zoom level and current date using custom hook
   const dateRange = useTimelineDateRange(currentDate, zoomLevel);
-
-  // Ensure date range is not empty
-  if (dateRange.length === 0) {
-    console.warn('Date range is empty, this will hide all cards');
-  }
 
   /**
    * Filter and process cards for timeline display
@@ -122,6 +117,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
    * 3. Overlap with current date range
    */
   const tasksWithDates = useMemo(() => {
+    if (!board) return [];
+
     // Get all cards from all lists in the board
     const allCards = board.lists.flatMap(list => list.cards);
 
@@ -159,8 +156,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       return cardStart <= rangeEnd && cardEnd >= rangeStart;
     });
   }, [
-    board.lists,
-    board.labels,
+    board,
     searchTerm,
     selectedLabels,
     selectedMembers,
@@ -179,7 +175,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
    * the expected signature for child components.
    */
   const getTaskPositionWrapper = useMemo(() => {
-    return (card: any, allCards: any[], cardIndex: number) => {
+    return (card: Card, allCards: Card[], cardIndex: number) => {
       return getTaskPosition(card, allCards, cardIndex, dateRange, zoomLevel);
     };
   }, [dateRange, zoomLevel]);
@@ -201,6 +197,14 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
   // Initialize keyboard shortcuts for timeline navigation
   useTimelineShortcuts(handleZoomChange, handleDateChange, zoomLevel);
+
+  // Early return after all hooks are called
+  if (!board) return null;
+
+  // Ensure date range is not empty
+  if (dateRange.length === 0) {
+    console.warn('Date range is empty, this will hide all cards');
+  }
 
   return (
     <div className="flex h-full flex-col">
