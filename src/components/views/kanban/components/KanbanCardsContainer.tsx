@@ -99,7 +99,7 @@ export function KanbanCardsContainer({
 
       // Create card from data
       const newCard = createCardFromData(currentBoardId, listId, cardData);
-      
+
     } catch (error) {
       console.error('Failed to create card from uploaded file:', error);
       alert('Failed to create card from uploaded file. Please check the format.');
@@ -149,38 +149,39 @@ export function KanbanCardsContainer({
         </CustomTooltip>
 
         {/* Paste button - always visible, validates on click */}
-        <button
-          className={cn(
-            "ml-auto flex w-8 h-8 items-center justify-center rounded-xl transition-colors",
-            isPasting
-              ? "text-blue-400 bg-blue-50 border border-blue-200 dark:border-blue-800"
-              : "text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400 border border-blue-200 dark:border-blue-800"
-          )}
-          onClick={async () => {
-            setIsPasting(true);
-            try {
-              const cardJSON = await getCardJSONFromClipboard();
-              if (cardJSON) {
-                handlePasteCardJSON(cardJSON);
-              } else {
-                // Show user-friendly error for invalid clipboard content
-                alert('No valid card JSON found in clipboard. Please copy a card first using "Copy JSON" from the card menu.');
+        <CustomTooltip text="Paste card from clipboard">
+          <button
+            className={cn(
+              "ml-auto flex w-8 h-8 items-center justify-center rounded-xl transition-colors",
+              isPasting
+                ? "text-blue-400 bg-blue-50 border border-blue-200 dark:border-blue-800"
+                : "text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-900/20 dark:hover:text-blue-400 border border-blue-200 dark:border-blue-800"
+            )}
+            onClick={async () => {
+              setIsPasting(true);
+              try {
+                const cardJSON = await getCardJSONFromClipboard();
+                if (cardJSON) {
+                  handlePasteCardJSON(cardJSON);
+                } else {
+                  // Show user-friendly error for invalid clipboard content
+                  alert('No valid card JSON found in clipboard. Please copy a card first using "Copy JSON" from the card menu.');
+                }
+              } catch (error) {
+                console.error('Paste failed:', error);
+                alert('Failed to paste card. Please try again.');
+              } finally {
+                setIsPasting(false);
               }
-            } catch (error) {
-              console.error('Paste failed:', error);
-              alert('Failed to paste card. Please try again.');
-            } finally {
-              setIsPasting(false);
-            }
-          }}
-          title="Paste card from clipboard"
-        >
-          {isPasting ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <ClipboardPaste className="h-4 w-4" />
-          )}
-        </button>
+            }}
+          >
+            {isPasting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ClipboardPaste className="h-4 w-4" />
+            )}
+          </button>
+        </CustomTooltip>
       </div>
 
       {/* Hidden file input for upload */}
