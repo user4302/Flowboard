@@ -1,6 +1,6 @@
 import { useBoardStore, useUIStore } from '@/store';
 
-export const useTaskModalCardActions = () => {
+export const useTaskModalActions = () => {
   const { updateCard } = useBoardStore();
   const { openCardModal } = useUIStore();
 

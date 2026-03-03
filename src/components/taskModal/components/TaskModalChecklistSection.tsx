@@ -3,7 +3,7 @@
 import { TaskModalChecklistManager } from './TaskModalChecklistManager';
 import { ChecklistItem } from '@/lib/types';
 
-interface TaskModalModalChecklistSectionProps {
+interface TaskModalChecklistSectionProps {
   cardId: string;
   boardId: string;
   checklist: ChecklistItem[];
@@ -20,12 +20,12 @@ interface TaskModalModalChecklistSectionProps {
   };
 }
 
-export function TaskModalModalChecklistSection({
+export function TaskModalChecklistSection({
   cardId,
   boardId,
   checklist,
   checklistHook
-}: TaskModalModalChecklistSectionProps) {
+}: TaskModalChecklistSectionProps) {
   return (
     <div>
       <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">

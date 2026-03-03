@@ -7,19 +7,19 @@ import { Label } from '@/lib/types';
 import { PopoverCoords } from '@/components/taskCard/types';
 import { TaskModalLabelManager } from './LabelManager/TaskModalLabelManager';
 
-interface TaskModalModalLabelSectionProps {
+interface TaskModalLabelSectionProps {
   boardId: string;
   cardId: string;
   labelIds: string[];
   labels: Label[];
 }
 
-export function TaskModalModalLabelSection({
+export function TaskModalLabelSection({
   boardId,
   cardId,
   labelIds,
   labels
-}: TaskModalModalLabelSectionProps) {
+}: TaskModalLabelSectionProps) {
   const [showLabelManager, setShowLabelManager] = useState(false);
   const [popoverCoords, setPopoverCoords] = useState<PopoverCoords>({ left: 0 });
   const labelTriggerRef = useRef<HTMLDivElement>(null);

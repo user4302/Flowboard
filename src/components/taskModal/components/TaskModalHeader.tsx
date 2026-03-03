@@ -3,11 +3,11 @@
 import { X } from 'lucide-react';
 import { ModalHeader as UIModalHeader, ModalTitle } from '@/components/ui';
 
-interface TaskModalModalHeaderProps {
+interface TaskModalHeaderProps {
   onClose: () => void;
 }
 
-export function TaskModalModalHeader({ onClose }: TaskModalModalHeaderProps) {
+export function TaskModalHeader({ onClose }: TaskModalHeaderProps) {
   return (
     <UIModalHeader>
       <ModalTitle>Edit Card</ModalTitle>

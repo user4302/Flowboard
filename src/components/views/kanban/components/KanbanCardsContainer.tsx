@@ -6,6 +6,8 @@ import { TaskCard } from '@/components/taskCard';
 import { InlineInput } from '@/components/ui';
 import { filterCards, FilterOptions } from '@/lib/filterUtils';
 import { useUIStore, useBoardStore } from '@/store';
+import { useClipboardDetection } from '@/hooks/useClipboardDetection';
+import { jsonToCardData } from '@/lib/cardJsonUtils';
 import { cn } from '@/lib/utils';
 
 interface KanbanCardsContainerProps {
@@ -42,8 +44,11 @@ export function KanbanCardsContainer({
     dueDateFilter
   } = useUIStore();
 
-  const { boards, currentBoardId } = useBoardStore();
+  const { boards, currentBoardId, createCardFromData } = useBoardStore();
   const currentBoard = boards.find(b => b.id === currentBoardId);
+
+  // Smart paste detection
+  const { hasValidCardJSON, getCardJSONFromClipboard } = useClipboardDetection();
 
   const filterOptions: FilterOptions = {
     searchTerm: globalSearchTerm || searchTerm,
@@ -55,6 +60,25 @@ export function KanbanCardsContainer({
   };
 
   const filteredCards = filterCards(cards, filterOptions, currentBoard?.labels || []);
+
+  const handlePasteCardJSON = async (cardJSON: any) => {
+    if (!currentBoard || !currentBoardId) return;
+
+    try {
+      // Convert JSON to card data format
+      const cardData = jsonToCardData(cardJSON, currentBoard.labels || [], currentBoard.members || []);
+
+      // Create card from data
+      const newCard = createCardFromData(currentBoardId, listId, cardData);
+
+      if (newCard) {
+        console.log('Card created from JSON:', newCard);
+      }
+    } catch (error) {
+      console.error('Failed to create card from JSON:', error);
+      alert('Failed to create card from JSON. Please check the format.');
+    }
+  };
 
   return (
     <div
@@ -77,6 +101,8 @@ export function KanbanCardsContainer({
         addText="Add card"
         triggerText="Add a card"
         onAdd={(title) => onAddCard(listId, title)}
+        enableSmartPaste={hasValidCardJSON}
+        onPasteCardJSON={handlePasteCardJSON}
       />
     </div>
   );

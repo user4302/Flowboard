@@ -30,6 +30,7 @@ interface BoardState {
 
   // Card actions
   createCard: (boardId: string, listId: string, title: string, position?: number) => Card;
+  createCardFromData: (boardId: string, listId: string, cardData: any) => Card | null;
   updateCard: (boardId: string, cardId: string, updates: Partial<Card>) => void;
   deleteCard: (boardId: string, cardId: string) => void;
   moveCard: (boardId: string, cardId: string, fromListId: string, toListId: string, position: number) => void;
@@ -238,6 +239,54 @@ export const useBoardStore = create<BoardState>()(
           checklist: [],
           completed: false,
           position: position ?? list.cards.length,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        set((state) => ({
+          boards: state.boards.map((b) =>
+            b.id === boardId
+              ? {
+                ...b,
+                lists: b.lists.map((l) =>
+                  l.id === listId
+                    ? { ...l, cards: [...l.cards, newCard] }
+                    : l
+                ),
+                updatedAt: new Date(),
+              }
+              : b
+          ),
+        }));
+
+        return newCard;
+      },
+
+      /**
+       * Create a new card from structured data (JSON import)
+       * @param boardId - ID of the board to create the card in
+       * @param listId - ID of the list to create the card in
+       * @param cardData - Structured card data with all fields
+       * @returns The created card object or null if failed
+       */
+      createCardFromData: (boardId, listId, cardData) => {
+        const state = get();
+        const board = state.boards.find((b) => b.id === boardId);
+        const list = board?.lists.find((l) => l.id === listId);
+        if (!board || !list) return null;
+
+        const newCard: Card = {
+          id: generateId(),
+          title: cardData.title || 'Untitled Card',
+          listId,
+          labelIds: cardData.labelIds || [],
+          members: cardData.members || [],
+          checklist: cardData.checklist || [],
+          completed: false,
+          position: list.cards.length,
+          startDate: cardData.startDate,
+          dueDate: cardData.dueDate,
+          priority: cardData.priority,
           createdAt: new Date(),
           updatedAt: new Date(),
         };

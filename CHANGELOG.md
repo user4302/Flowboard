@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Card JSON import/export functionality with clipboard detection
+- Smart paste functionality for creating cards from clipboard JSON data
+- Enhanced context menu with clone, copy JSON, download JSON, and upload JSON options
+- Cross-platform clipboard monitoring hook for valid card JSON detection
+- Card JSON validation and format conversion utilities
+- File upload/download support for card JSON data
+- Smart paste button in kanban containers with JSON handling
+
+### Changed
+- Enhanced board store with createCardFromData method for JSON import support
+- Improved UI store with card JSON data and target list ID state management
+- Refactored TaskModal components for better form organization and JSON pre-population
+
 ## [1.3.0] - 2026-03-03
 
 ### Added

@@ -1,0 +1,49 @@
+import { useCallback } from 'react';
+import { useBoardStore, useUIStore } from '@/store';
+import { useTaskModalActions } from './useTaskModalActions';
+import { CardModalHandlers } from '../types/TaskModal.modal.types';
+
+export function useTaskModalHandlers(
+  currentBoardId: string | null,
+  foundCard: any,
+  form: any,
+  isJSONImportMode: boolean,
+  cardJSONData: any,
+  targetListId: string | null
+): CardModalHandlers & { closeCardModal: () => void } {
+  const { closeCardModal } = useUIStore();
+  const { updateCard, createCard } = useBoardStore();
+  const { handleSaveCard } = useTaskModalActions();
+
+  const handleSave = useCallback((data: any) => {
+    if (isJSONImportMode && currentBoardId && targetListId && cardJSONData) {
+      // Create new card from JSON data
+      const newCard = createCard(currentBoardId, targetListId, data.title);
+      if (newCard) {
+        // Update the new card with additional data
+        updateCard(currentBoardId, newCard.id, {
+          description: data.description,
+          startDate: data.startDate ? new Date(data.startDate) : undefined,
+          dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+          priority: data.priority,
+        });
+        closeCardModal();
+      }
+    } else if (currentBoardId && foundCard) {
+      // Update existing card
+      handleSaveCard(currentBoardId, foundCard.id, data, closeCardModal);
+    }
+  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleSaveCard, closeCardModal]);
+
+  const handleToggleCompleted = useCallback(() => {
+    if (currentBoardId && foundCard) {
+      updateCard(currentBoardId, foundCard.id, { completed: !foundCard.completed });
+    }
+  }, [currentBoardId, foundCard, updateCard]);
+
+  return {
+    handleSave,
+    handleToggleCompleted,
+    closeCardModal
+  };
+}

@@ -9,7 +9,9 @@ import {
   Link,
   GitBranch,
   Archive,
-  ExternalLink
+  ExternalLink,
+  Download,
+  Upload
 } from 'lucide-react';
 import { CSS_CLASSES } from '../constants';
 import { MenuItemConfig, ContextMenuItemProps } from '../types';
@@ -42,6 +44,9 @@ interface ContextMenuItemsProps {
   onDates: (e: React.MouseEvent) => void;
   actionHandlers: {
     handleDuplicate: () => void;
+    handleCopyAsJSON: () => void;
+    handleDownloadJSON: () => void;
+    handleUploadJSON: () => void;
     handleArchive: () => void;
     handleCopyLink: () => void;
     handleMove: () => void;
@@ -64,6 +69,9 @@ export function ContextMenuItems({
 }: ContextMenuItemsProps) {
   const {
     handleDuplicate,
+    handleCopyAsJSON,
+    handleDownloadJSON,
+    handleUploadJSON,
     handleArchive,
     handleCopyLink,
     handleMove,
@@ -109,9 +117,24 @@ export function ContextMenuItems({
       onClick: handleMove,
     },
     {
-      icon: Copy,
-      label: 'Copy card',
+      icon: GitBranch,
+      label: 'Clone',
       onClick: handleDuplicate,
+    },
+    {
+      icon: Copy,
+      label: 'Copy JSON',
+      onClick: handleCopyAsJSON,
+    },
+    {
+      icon: Download,
+      label: 'Download JSON',
+      onClick: handleDownloadJSON,
+    },
+    {
+      icon: Upload,
+      label: 'Upload JSON',
+      onClick: handleUploadJSON,
     },
     {
       icon: Link,
@@ -137,7 +160,7 @@ export function ContextMenuItems({
     <>
       {menuItems.map((item, index) => {
         // Add dividers before certain sections
-        const shouldAddDivider = index === 1 || index === 5 || index === 9;
+        const shouldAddDivider = index === 1 || index === 5 || index === 11;
 
         return (
           <React.Fragment key={index}>

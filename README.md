@@ -20,6 +20,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions
 - **Board Management**: Create, switch between, and delete boards with confirmation dialogs
 - **Board Export/Import**: Save and load board data as JSON files for backup and sharing
+- **Card JSON Import/Export**: Copy, download, and upload individual cards as JSON with smart paste functionality
 - **Board Sharing & Collaboration**: Invitation-based board sharing with member management and real-time synchronization
 
 ### Data Model
@@ -104,6 +105,13 @@ pnpm dev
 - **Click "Add a list"** to create new columns
 - **Double-click cards** to edit details
 - **Use the search bar** to filter cards instantly
+- **Smart paste**: When valid card JSON is in clipboard, a paste button appears for quick card creation
+
+### Card JSON Import/Export
+- **Copy JSON**: Right-click card → "Copy JSON" to copy card data to clipboard
+- **Download JSON**: Right-click card → "Download JSON" to save as file
+- **Upload JSON**: Right-click → "Upload JSON" or use smart paste button
+- **Clone Card**: Right-click card → "Clone" to create duplicate with same properties
 
 ### Keyboard Shortcuts
 - `1-5`: Switch timeline zoom levels (Day, Week, 2 Weeks, Month, Year)

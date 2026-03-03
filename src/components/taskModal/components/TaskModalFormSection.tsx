@@ -1,24 +1,24 @@
 'use client';
 
-import { TaskModalModalForm } from './TaskModalModalForm';
+import { TaskModalForm } from './TaskModalForm';
 
-interface TaskModalModalFormSectionProps {
+interface TaskModalFormSectionProps {
   card: any;
   form: any;
   errors: any;
   register: any;
-  onToggleCompleted: () => void;
+  onToggleCompleted?: () => void;
 }
 
-export function TaskModalModalFormSection({
+export function TaskModalFormSection({
   card,
   form,
   errors,
   register,
   onToggleCompleted
-}: TaskModalModalFormSectionProps) {
+}: TaskModalFormSectionProps) {
   return (
-    <TaskModalModalForm
+    <TaskModalForm
       card={card}
       form={form}
       errors={errors}

@@ -3,10 +3,10 @@
  * Exports all modal-related hooks for the Flowboard application
  */
 
-export { useTaskModalCardModalData } from './useTaskModalCardModalData';
-export { useTaskModalCardModalHandlers } from './useTaskModalCardModalHandlers';
+export { useTaskModalData } from './useTaskModalData';
+export { useTaskModalHandlers } from './useTaskModalHandlers';
 
 // Moved from card hooks
-export { useTaskModalCardForm } from './useTaskModalCardForm';
+export { useTaskModalForm } from './useTaskModalForm';
 export { useTaskModalChecklist } from './useTaskModalChecklist';
-export { useTaskModalCardActions } from './useTaskModalCardActions';
+export { useTaskModalActions } from './useTaskModalActions';

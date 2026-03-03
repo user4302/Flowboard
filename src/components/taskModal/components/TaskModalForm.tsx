@@ -8,7 +8,7 @@ import { TaskCardCardCompletion } from '@/components/taskCard/components/TaskCar
 import { TaskCardCardMembers } from '@/components/taskCard/components/TaskCardCardMembers';
 import { useState, useRef, useEffect } from 'react';
 
-export function TaskModalModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
+export function TaskModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [descriptionValue, setDescriptionValue] = useState(card?.description || '');
