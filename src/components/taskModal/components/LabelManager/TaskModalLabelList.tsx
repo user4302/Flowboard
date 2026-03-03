@@ -25,7 +25,12 @@ export function TaskModalLabelList({
   onClose
 }: TaskModalLabelListProps) {
   return (
-    <div className="flex flex-col h-full space-y-4 overflow-hidden">
+    <div
+      className="flex flex-col h-full space-y-4 overflow-hidden"
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
       <div className="relative flex-shrink-0">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-slate-400" />
         <Input

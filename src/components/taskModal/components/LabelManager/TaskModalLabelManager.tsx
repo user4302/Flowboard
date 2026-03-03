@@ -26,7 +26,12 @@ export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClo
   } = useTaskModalLabelManager({ boardId, cardId, selectedLabelIds });
 
   return (
-    <div className="w-80 max-h-[480px] flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-xl dark:border-slate-700 dark:bg-slate-900 overflow-hidden">
+    <div
+      className="w-80 max-h-[480px] flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-xl dark:border-slate-700 dark:bg-slate-900 overflow-hidden"
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
+    >
       <div className="mb-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-2">
           {view !== 'list' && (

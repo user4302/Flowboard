@@ -68,16 +68,20 @@ export function TaskModalModalLabelSection({
 
       {/* Label Manager Popover via SearchAndFilterPortal */}
       {showLabelManager && typeof document !== 'undefined' && createPortal(
-        <div
-          className="fixed z-[100] flex flex-col items-start"
-          style={{
-            top: popoverCoords.top ? `${popoverCoords.top}px` : undefined,
-            bottom: popoverCoords.top ? undefined : `${popoverCoords.bottom}px`,
-            left: `${popoverCoords.left}px`
-          }}
-        >
-          <div className="fixed inset-0 bg-transparent" onClick={() => setShowLabelManager(false)} />
-          <div className="relative" onClick={(e) => e.stopPropagation()}>
+        <>
+          <div
+            className="fixed inset-0 bg-transparent z-[99]"
+            onClick={() => setShowLabelManager(false)}
+          />
+          <div
+            className="fixed z-[100] flex flex-col items-start"
+            style={{
+              top: popoverCoords.top ? `${popoverCoords.top}px` : undefined,
+              bottom: popoverCoords.top ? undefined : `${popoverCoords.bottom}px`,
+              left: `${popoverCoords.left}px`
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <TaskModalLabelManager
               boardId={boardId}
               cardId={cardId}
@@ -85,7 +89,7 @@ export function TaskModalModalLabelSection({
               onClose={() => setShowLabelManager(false)}
             />
           </div>
-        </div>,
+        </>,
         document.body
       )}
     </div>

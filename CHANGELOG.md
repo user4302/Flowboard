@@ -40,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced documentation with comprehensive API reference and usage examples
 - Refactored CardContextMenu into modular component architecture with separate utilities, hooks, and types
 - Replaced placeholder date functionality with functional date picker modal
+- Improved label manager portal structure with proper backdrop and z-index handling
+- Enhanced label click interactions in task modal with cursor pointer styling
+- Fixed event propagation issues in label manager components
 
 ### Fixed
 
