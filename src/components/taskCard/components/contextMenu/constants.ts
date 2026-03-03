@@ -8,7 +8,11 @@ export const DIMENSIONS = {
   LABEL_MANAGER_WIDTH: 320,
   /** Approximate height of the label manager popup */
   LABEL_MANAGER_HEIGHT: 408,
-  /** Small gap between context menu and label manager */
+  /** Width of the date picker popup */
+  DATE_PICKER_WIDTH: 320,
+  /** Approximate height of the date picker popup */
+  DATE_PICKER_HEIGHT: 280,
+  /** Small gap between context menu and popups */
   MENU_MARGIN: 4,
   /** Minimum distance from viewport edges */
   VIEWPORT_MARGIN: 8,

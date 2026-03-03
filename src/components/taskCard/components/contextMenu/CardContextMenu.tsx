@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useBoardStore } from '@/store';
-import { calculateLabelManagerPosition } from './utils';
+import { calculateLabelManagerPosition, calculateDatePickerPosition } from './utils';
 import { useContextMenuActions } from './hooks/useContextMenuActions';
 import { ContextMenuItems } from './components/ContextMenuItems';
 import { LabelManagerPortal } from './components/LabelManagerPortal';
+import { DatePickerModal } from './components/DatePickerModal';
 import { Z_INDEX } from './constants';
-import { CardContextMenuProps, LabelManagerPosition } from './types';
+import { CardContextMenuProps, LabelManagerPosition, DatePickerState } from './types';
 
 /**
  * CardContextMenu component - Provides a context menu for card actions
@@ -32,14 +33,19 @@ export function CardContextMenu({
   // State management for UI interactions
   const [showLabelManager, setShowLabelManager] = useState(false);
   const [labelManagerPosition, setLabelManagerPosition] = useState<LabelManagerPosition>({ left: 0, top: 0 });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [datePickerPosition, setDatePickerPosition] = useState<LabelManagerPosition>({ left: 0, top: 0 });
+  const datePickerPositionedRef = useRef(false);
 
   // Action handlers hook
   const actionHandlers = useContextMenuActions(card, onClose);
 
-  // Close label manager when context menu closes to prevent orphaned UI elements
+  // Close popups when context menu closes to prevent orphaned UI elements
   useEffect(() => {
     if (!isOpen) {
       setShowLabelManager(false);
+      setShowDatePicker(false);
+      datePickerPositionedRef.current = false;
     }
   }, [isOpen]);
 
@@ -51,17 +57,38 @@ export function CardContextMenu({
    * Positions the label manager next to the context menu
    * Uses viewport detection to ensure the label manager stays visible
    */
-  const handleLabels = (e: React.MouseEvent) => {
+  const handleLabels = useCallback((e: React.MouseEvent) => {
     const calculatedPosition = calculateLabelManagerPosition(position);
     setLabelManagerPosition(calculatedPosition);
     setShowLabelManager(true);
-    console.log('handleLabels called', { 
-      boardId: currentBoard?.id, 
-      cardId: card.id, 
-      position: calculatedPosition, 
-      contextMenuPosition: position 
+    console.log('handleLabels called', {
+      boardId: currentBoard?.id,
+      cardId: card.id,
+      position: calculatedPosition,
+      contextMenuPosition: position
     });
-  };
+  }, [position, currentBoard?.id, card.id]);
+
+  /**
+   * Handles opening the date picker for the current card
+   * Positions the date picker next to the context menu
+   * Uses viewport detection to ensure the date picker stays visible
+   */
+  const handleDates = useCallback((e: React.MouseEvent) => {
+    // Only calculate position once when opening
+    if (!datePickerPositionedRef.current) {
+      const calculatedPosition = calculateDatePickerPosition(position);
+      setDatePickerPosition(calculatedPosition);
+      datePickerPositionedRef.current = true;
+    }
+    setShowDatePicker(true);
+    console.log('handleDates called', {
+      boardId: currentBoard?.id,
+      cardId: card.id,
+      position: datePickerPosition,
+      contextMenuPosition: position
+    });
+  }, [position, currentBoard?.id, card.id, datePickerPosition]);
 
   /**
    * Handles clicks on the backdrop area
@@ -102,6 +129,7 @@ export function CardContextMenu({
         <ContextMenuItems
           onOpenCard={onOpenCard}
           onLabels={handleLabels}
+          onDates={handleDates}
           actionHandlers={actionHandlers}
           isProcessing={actionHandlers.isProcessing}
         />
@@ -119,6 +147,14 @@ export function CardContextMenu({
         cardId={card.id}
         selectedLabelIds={card.labelIds}
         onClose={() => setShowLabelManager(false)}
+      />
+      <DatePickerModal
+        show={showDatePicker}
+        position={datePickerPosition}
+        startDate={card.startDate}
+        dueDate={card.dueDate}
+        onDatesChange={actionHandlers.handleDatesChange}
+        onClose={() => setShowDatePicker(false)}
       />
     </>
   );

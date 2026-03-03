@@ -25,6 +25,14 @@ export interface LabelManagerPosition {
 }
 
 /**
+ * Date picker state interface
+ */
+export interface DatePickerState {
+  show: boolean;
+  position: LabelManagerPosition;
+}
+
+/**
  * Menu item configuration interface
  */
 export interface MenuItemConfig {

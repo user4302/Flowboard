@@ -20,7 +20,7 @@ import { MenuItemConfig, ContextMenuItemProps } from '../types';
  */
 export function ContextMenuItem({ config, disabled }: ContextMenuItemProps) {
   const variantClass = config.variant === 'danger' ? CSS_CLASSES.MENU_ITEM_DANGER : CSS_CLASSES.MENU_ITEM_DEFAULT;
-  
+
   return (
     <button
       onClick={config.onClick}
@@ -39,6 +39,7 @@ export function ContextMenuItem({ config, disabled }: ContextMenuItemProps) {
 interface ContextMenuItemsProps {
   onOpenCard: () => void;
   onLabels: (e: React.MouseEvent) => void;
+  onDates: (e: React.MouseEvent) => void;
   actionHandlers: {
     handleDuplicate: () => void;
     handleArchive: () => void;
@@ -46,7 +47,6 @@ interface ContextMenuItemsProps {
     handleMove: () => void;
     handleMembers: () => void;
     handleCover: () => void;
-    handleDates: () => void;
     handleMirror: () => void;
   };
   isProcessing: boolean;
@@ -58,6 +58,7 @@ interface ContextMenuItemsProps {
 export function ContextMenuItems({
   onOpenCard,
   onLabels,
+  onDates,
   actionHandlers,
   isProcessing,
 }: ContextMenuItemsProps) {
@@ -68,7 +69,6 @@ export function ContextMenuItems({
     handleMove,
     handleMembers,
     handleCover,
-    handleDates,
     handleMirror,
   } = actionHandlers;
 
@@ -79,7 +79,7 @@ export function ContextMenuItems({
       label: 'Open card',
       onClick: onOpenCard,
     },
-    
+
     // Label and member actions
     {
       icon: Tag,
@@ -99,9 +99,9 @@ export function ContextMenuItems({
     {
       icon: Calendar,
       label: 'Change dates',
-      onClick: handleDates,
+      onClick: onDates,
     },
-    
+
     // Card management actions
     {
       icon: ArrowRight,
@@ -123,7 +123,7 @@ export function ContextMenuItems({
       label: 'Mirror',
       onClick: handleMirror,
     },
-    
+
     // Destructive action
     {
       icon: Archive,
@@ -138,14 +138,14 @@ export function ContextMenuItems({
       {menuItems.map((item, index) => {
         // Add dividers before certain sections
         const shouldAddDivider = index === 1 || index === 5 || index === 9;
-        
+
         return (
           <React.Fragment key={index}>
             {shouldAddDivider && (
               <div className="border-t border-slate-200 dark:border-slate-600 my-1" />
             )}
-            <ContextMenuItem 
-              config={item} 
+            <ContextMenuItem
+              config={item}
               disabled={isProcessing}
             />
           </React.Fragment>

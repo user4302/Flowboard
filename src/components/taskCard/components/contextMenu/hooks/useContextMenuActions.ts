@@ -8,7 +8,7 @@ import { generateCardUrl, copyToClipboard } from '../utils';
  * Provides loading state and error handling for async operations
  */
 export function useContextMenuActions(card: CardType, onActionComplete?: () => void) {
-  const { currentBoardId, duplicateCard, archiveCard, moveCard, getCurrentBoard } = useBoardStore();
+  const { currentBoardId, duplicateCard, archiveCard, moveCard, updateCard, getCurrentBoard } = useBoardStore();
   const [isProcessing, setIsProcessing] = useState(false);
 
   /**
@@ -57,6 +57,20 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
   }, [currentBoardId, card.id]);
 
   /**
+   * Handles updating card dates
+   * Updates the start and due dates for the card
+   */
+  const handleDatesChange = useCallback(async (startDate?: Date, dueDate?: Date) => {
+    if (currentBoardId) {
+      updateCard(currentBoardId, card.id, {
+        startDate,
+        dueDate,
+        updatedAt: new Date(),
+      });
+    }
+  }, [currentBoardId, card.id, updateCard]);
+
+  /**
    * Placeholder handler for moving cards between lists
    * TODO: Implement move dialog with list selection
    */
@@ -84,15 +98,6 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
   }, []);
 
   /**
-   * Placeholder handler for editing card dates
-   * TODO: Implement date picker component
-   */
-  const handleDates = useCallback(() => {
-    // TODO: Implement date picker
-    alert('Date picker coming soon!');
-  }, []);
-
-  /**
    * Placeholder handler for mirroring cards
    * TODO: Implement mirror functionality (requires backend support)
    */
@@ -107,10 +112,10 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
     handleDuplicate,
     handleArchive,
     handleCopyLink,
+    handleDatesChange,
     handleMove,
     handleMembers,
     handleCover,
-    handleDates,
     handleMirror,
   };
 }

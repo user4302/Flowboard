@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive JSDoc documentation for CardContextMenu component
 - Enhanced API documentation with component and hook references
 - Updated usage guide with context menu and archived cards workflows
+- Functional date picker modal for editing card start and due dates
+- Date picker positioning with viewport boundary detection
+- Real-time date updates with optimistic UI feedback
 
 ### Changed
 - Refactored click outside detection to use centralized hook
@@ -36,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Consolidated constants in component-specific constants files
 - Enhanced documentation with comprehensive API reference and usage examples
 - Refactored CardContextMenu into modular component architecture with separate utilities, hooks, and types
+- Replaced placeholder date functionality with functional date picker modal
 
 ### Fixed
 
