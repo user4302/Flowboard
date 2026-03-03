@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-03-03
+
 ### Added
 - Generic useClickOutside hook for click outside detection
 - Escape key handling for dropdown menus
@@ -43,10 +45,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved label manager portal structure with proper backdrop and z-index handling
 - Enhanced label click interactions in task modal with cursor pointer styling
 - Fixed event propagation issues in label manager components
-
-### Fixed
-
-### Refactoring 
 
 ## [1.2.0] - 2026-03-03
 
