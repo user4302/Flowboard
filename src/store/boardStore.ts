@@ -278,6 +278,7 @@ export const useBoardStore = create<BoardState>()(
         const newCard: Card = {
           id: generateId(),
           title: cardData.title || 'Untitled Card',
+          description: cardData.description,
           listId,
           labelIds: cardData.labelIds || [],
           members: cardData.members || [],

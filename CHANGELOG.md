@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected version number from 1.6.0 to 1.3.0
 - Improved JSON parsing error handling in clipboard detection to prevent console errors
 - Removed emoji from Features heading in README for cleaner formatting
+- Add missing description field in createCardFromData to prevent data loss during card creation
 
 ### Added
 - Card JSON import/export functionality with clipboard detection
