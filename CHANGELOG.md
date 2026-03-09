@@ -38,6 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced utility functions with better type annotations and import cleanup
 - Implemented local-first checklist management in task modal for better performance
 - Added batch synchronization for checklist changes to reduce store operations
+- Enhanced checklist UI with progress tracking and visual progress bar
+- Added real-time completion percentage display with animated progress indicator
 - Improved clipboard detection with better focus handling for context menus
 - Enhanced paste UX with loading states and always-visible paste button
 - Optimized kanban performance with memoized filtered cards
