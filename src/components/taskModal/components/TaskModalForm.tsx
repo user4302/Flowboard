@@ -56,8 +56,12 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
       {/* Title - Required field with validation */}
       <div className="flex items-center gap-3">
         <TaskCardCardCompletion
-          completed={card.completed}
-          onToggle={onToggleCompleted}
+          completed={card?.completed || false}
+          onToggle={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onToggleCompleted?.();
+          }}
           size="medium"
         />
         <div className="flex-1">
@@ -66,7 +70,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
             placeholder="Card title"
             className={cn(
               "text-lg font-semibold",
-              card.completed && "line-through opacity-60"
+              card?.completed && "line-through opacity-60"
             )}
           />
           {errors.title && (

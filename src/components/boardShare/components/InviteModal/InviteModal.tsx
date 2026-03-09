@@ -5,7 +5,7 @@
 
 'use client';
 
-import { InviteModalProps } from '@/lib/types';
+import { InviteModalProps } from '../../types';
 import { useInviteModal } from '../../hooks';
 import { InviteForm } from './InviteForm';
 

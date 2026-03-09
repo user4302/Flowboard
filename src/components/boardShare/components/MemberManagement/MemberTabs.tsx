@@ -2,7 +2,7 @@
  * Tab navigation component for MemberManagement
  */
 
-import { ActiveTab } from '@/lib/types';
+import { ActiveTab } from '../../types';
 
 interface MemberTabsProps {
   activeTab: ActiveTab;
@@ -22,8 +22,8 @@ export function MemberTabs({
       <button
         onClick={() => onTabChange('pending')}
         className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'pending'
-            ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400'
-            : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
+          ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400'
+          : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
           }`}
       >
         Pending Requests ({pendingCount})
@@ -31,8 +31,8 @@ export function MemberTabs({
       <button
         onClick={() => onTabChange('members')}
         className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === 'members'
-            ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400'
-            : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
+          ? 'border-b-2 border-indigo-500 text-indigo-600 dark:text-indigo-400'
+          : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
           }`}
       >
         Members ({membersCount})

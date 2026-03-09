@@ -6,7 +6,7 @@
 'use client';
 
 import { Button } from '@/components/ui';
-import { JoinBoardModalProps } from '@/lib/types';
+import { JoinBoardModalProps } from '../../types';
 import { useJoinBoardModal } from '../../hooks';
 import { JoinForm } from './JoinForm';
 import { JoinAlert } from './JoinAlert';

@@ -48,7 +48,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
       // Map saved IDs to actual list objects
       .map(id => board?.lists.find(l => l.id === id))
       // Filter out any lists that no longer exist (type guard for TypeScript)
-      .filter((list): list is typeof list => list !== undefined)
+      .filter((list): list is NonNullable<typeof list> => list !== undefined)
     : board?.lists || []; // Fallback to default order
 
   // Custom hook for comprehensive drag and drop functionality

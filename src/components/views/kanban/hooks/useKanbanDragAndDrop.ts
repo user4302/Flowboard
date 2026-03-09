@@ -8,6 +8,7 @@ import {
   KeyboardSensor,
   PointerSensor,
   useSensor,
+  SensorDescriptor,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useBoardStore } from '@/store';
@@ -30,7 +31,7 @@ interface UseKanbanDragAndDropProps {
  */
 interface UseKanbanDragAndDropReturn {
   /** Configured drag and drop sensors */
-  sensors: unknown[];
+  sensors: SensorDescriptor<any>[];
   /** ID of the currently dragged item */
   activeId: string | null;
   /** Type of item being dragged (card or list) */

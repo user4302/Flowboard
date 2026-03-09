@@ -66,7 +66,7 @@ export function ArchiveModal({ isOpen, onClose }: ArchiveModalProps) {
                     onUnarchive={handleUnarchive}
                     onPermanentlyDelete={handlePermanentlyDelete}
                     isProcessing={isProcessing}
-                    currentBoard={currentBoard}
+                    currentBoard={currentBoard!}
                     formatDate={formatDate}
                   />
                 ))}

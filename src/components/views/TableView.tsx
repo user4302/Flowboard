@@ -111,8 +111,8 @@ export function TableView({ boardId }: TableViewProps) {
           bValue = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
           break;
         case 'progress':
-          aValue = getChecklistProgress(a.checklist);
-          bValue = getChecklistProgress(b.checklist);
+          aValue = getChecklistProgress(a.checklists);
+          bValue = getChecklistProgress(b.checklists);
           break;
         case 'priority':
           aValue = a.priority || 0;
@@ -382,16 +382,16 @@ export function TableView({ boardId }: TableViewProps) {
                 {/* Progress */}
                 {visibleColumns.has('progress') && (
                   <td className="px-4 py-3">
-                    {card.checklist.length > 0 ? (
+                    {(card.checklists?.length || 0) > 0 ? (
                       <div className="flex items-center gap-2">
                         <div className="flex-1 bg-slate-200 rounded-full h-2 dark:bg-slate-700">
                           <div
                             className="bg-indigo-600 h-2 rounded-full"
-                            style={{ width: `${getChecklistProgress(card.checklist)}%` }}
+                            style={{ width: `${getChecklistProgress(card.checklists)}%` }}
                           />
                         </div>
                         <span className="text-xs text-slate-600 dark:text-slate-400">
-                          {getChecklistProgress(card.checklist)}%
+                          {getChecklistProgress(card.checklists)}%
                         </span>
                       </div>
                     ) : (

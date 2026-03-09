@@ -1,4 +1,4 @@
-export { LabelManager } from './LabelManager';
-export { LabelList } from './LabelList';
-export { LabelForm } from './LabelForm';
-export { useLabelManager } from './hooks/useLabelManager';
+export * from './TaskModalLabelManager';
+export * from './TaskModalLabelList';
+export * from './TaskModalLabelForm';
+export * from './hooks/useTaskModalLabelManager';

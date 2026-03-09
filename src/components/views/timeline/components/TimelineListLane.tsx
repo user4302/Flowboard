@@ -24,7 +24,7 @@ interface ListLaneProps {
   openCardModal: (cardId: string) => void;
   toggleTimelineLane: (boardId: string, listId: string) => void;
   // Logic utilities
-  getTaskPosition: (card: Card, allCards: Card[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => { left: number; width: number; };
+  getTaskPosition: (card: Card, allCards: Card[], cardIndex: number) => { left: string; width: string; top: string; };
   calculateTimelineHeight: (cards: Card[], dateRange: Date[]) => number;
   // State
   isCollapsed: boolean;

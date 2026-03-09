@@ -36,8 +36,8 @@ export interface FilterOption {
   value: string;
   /** Display label for the option */
   label: string;
-  /** Optional icon component */
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  /** Optional icon identifier string */
+  icon?: string;
 }
 
 /**

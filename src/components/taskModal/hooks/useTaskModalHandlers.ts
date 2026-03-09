@@ -43,8 +43,10 @@ export function useTaskModalHandlers(
     } else if (currentBoardId && foundCard) {
       // Update existing card
       handleSaveCard(currentBoardId, foundCard.id, data, closeCardModal);
-      // Sync checklist changes to store
-      checklist.syncChecklistToStore();
+      // Sync checklist items if not in JSON import mode
+      if (!isJSONImportMode) {
+        checklist.syncChecklistToStore();
+      }
     }
   }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleSaveCard, closeCardModal, checklist]);
 

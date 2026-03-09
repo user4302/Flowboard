@@ -37,7 +37,7 @@ interface TaskLaneProps {
   /** Function to open task modal */
   onOpenTaskModal: (taskId: string) => void;
   /** Function to calculate task positioning */
-  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => { left: number; width: number; };
+  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number) => { left: string; width: string; top: string; };
   /** Function to get task color from labels */
   getTaskColor: (task: Card, boardLabels?: Label[]) => { background: string; text: string };
   /** Function to calculate timeline height */

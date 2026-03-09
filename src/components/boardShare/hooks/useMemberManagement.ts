@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import { useSharingStore } from '@/store/sharingStore';
-import { ActiveTab } from '@/lib/types';
+import { ActiveTab } from '../types';
 
 export function useMemberManagement() {
   // Store hooks for sharing functionality and user data

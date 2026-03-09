@@ -199,13 +199,23 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
                 });
               });
 
-              // Add checklist items and their completion status
-              cardData.checklist?.forEach((item: { id: string; text: string; done: boolean }) => {
-                useBoardStore.getState().addChecklistItem(newBoard.id, card!.id, item.text);
-                if (item.done) {
-                  useBoardStore.getState().updateChecklistItem(newBoard.id, card!.id, item.id, { done: true });
-                }
-              });
+              // Add checklist items as a complete checklist object
+              if (cardData.checklist && cardData.checklist.length > 0) {
+                const { generateId } = require('@/lib/utils');
+                const checklists = [{
+                  id: generateId(),
+                  name: 'Checklist',
+                  items: cardData.checklist.map((item: { text: string; done: boolean }) => ({
+                    id: generateId(),
+                    text: item.text,
+                    done: item.done
+                  })),
+                  position: 0,
+                  createdAt: new Date(),
+                  updatedAt: new Date()
+                }];
+                useBoardStore.getState().updateCard(newBoard.id, card!.id, { checklists });
+              }
             }
           });
         });

@@ -102,7 +102,7 @@ export function cardToJSON(card: Card, boardLabels: Label[], boardMembers: User[
     members,
     startDate: card.startDate?.toISOString(),
     dueDate: card.dueDate?.toISOString(),
-    checklist: card.checklist.map(item => ({
+    checklist: (card.checklists || []).flatMap(c => c.items).map(item => ({
       text: item.text,
       done: item.done
     }))
@@ -141,11 +141,18 @@ export function jsonToCardData(
     .filter((id): id is string => id !== undefined);
 
   // Convert checklist items
-  const checklist: ChecklistItem[] = cardJSON.checklist.map((item, index) => ({
-    id: `checklist-${index}`, // Temporary ID, will be replaced by store
-    text: item.text,
-    done: item.done
-  }));
+  const checklists: import('./types').Checklist[] = [{
+    id: `checklist-imported`, // Temporary ID
+    name: 'Checklist',
+    items: cardJSON.checklist.map((item, index) => ({
+      id: `checklist-item-${index}`,
+      text: item.text,
+      done: item.done
+    })),
+    position: 0,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }];
 
   return {
     title: cardJSON.title,
@@ -154,7 +161,7 @@ export function jsonToCardData(
     members,
     startDate: cardJSON.startDate ? new Date(cardJSON.startDate) : undefined,
     dueDate: cardJSON.dueDate ? new Date(cardJSON.dueDate) : undefined,
-    checklist,
+    checklists,
     completed: false
   };
 }

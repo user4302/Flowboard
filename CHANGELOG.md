@@ -40,6 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added batch synchronization for checklist changes to reduce store operations
 - Enhanced checklist UI with progress tracking and visual progress bar
 - Added real-time completion percentage display with animated progress indicator
+- Implemented multiple checklists per card with expandable sections and individual progress tracking
+- Refactored board store into modular slice-based architecture for improved maintainability
+- Added data migration support from single checklist to multiple checklists format
+- Created TaskModalMultiChecklistManager for comprehensive checklist management
 - Improved clipboard detection with better focus handling for context menus
 - Enhanced paste UX with loading states and always-visible paste button
 - Optimized kanban performance with memoized filtered cards
