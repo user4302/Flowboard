@@ -82,7 +82,16 @@ export function useClipboardDetection() {
         return null;
       }
 
-      const data = JSON.parse(text);
+      // Try to parse as JSON with better error handling
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseError) {
+        // Silently handle JSON parsing errors - don't log to console
+        // This prevents the SyntaxError from appearing in console
+        return null;
+      }
+
       if (validateCardJSON(data)) {
         return data;
       }

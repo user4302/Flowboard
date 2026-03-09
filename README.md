@@ -7,7 +7,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
 
-## Features ✨
+## Features 
 
 ### Core Functionality
 - **Four Switchable Views**: Kanban (default), Timeline (Gantt-style), Calendar, and Table views
