@@ -34,6 +34,7 @@ interface BoardState {
   updateCard: (boardId: string, cardId: string, updates: Partial<Card>) => void;
   deleteCard: (boardId: string, cardId: string) => void;
   moveCard: (boardId: string, cardId: string, fromListId: string, toListId: string, position: number) => void;
+  moveCardBetweenBoards: (fromBoardId: string, toBoardId: string, cardId: string, fromListId: string, toListId: string, position: number) => void;
   reorderCards: (boardId: string, listId: string, fromIndex: number, toIndex: number) => void;
   duplicateCard: (boardId: string, cardId: string, listId: string) => void;
   archiveCard: (boardId: string, cardId: string) => void;
@@ -413,6 +414,67 @@ export const useBoardStore = create<BoardState>()(
             };
           }),
         }));
+      },
+
+      /**
+       * Move a card between different boards
+       * @param fromBoardId - ID of the source board
+       * @param toBoardId - ID of the target board
+       * @param cardId - ID of the card to move
+       * @param fromListId - ID of the source list
+       * @param toListId - ID of the target list
+       * @param position - Position in the target list
+       */
+      moveCardBetweenBoards: (fromBoardId, toBoardId, cardId, fromListId, toListId, position) => {
+        set((state) => {
+          let cardToMove: Card | null = null;
+
+          // Find and remove the card from the source board
+          const updatedBoards = state.boards.map((board) => {
+            if (board.id === fromBoardId) {
+              const updatedLists = board.lists.map((list) => {
+                if (list.id === fromListId) {
+                  const cardIndex = list.cards.findIndex((c) => c.id === cardId);
+                  if (cardIndex !== -1) {
+                    cardToMove = { ...list.cards[cardIndex], listId: toListId };
+                    return {
+                      ...list,
+                      cards: list.cards.filter((c) => c.id !== cardId).map((c, idx) => ({ ...c, position: idx })),
+                    };
+                  }
+                }
+                return list;
+              });
+              return { ...board, lists: updatedLists, updatedAt: new Date() };
+            }
+            return board;
+          });
+
+          // Add the card to the target board
+          if (cardToMove) {
+            return {
+              boards: updatedBoards.map((board) => {
+                if (board.id === toBoardId) {
+                  const updatedLists = board.lists.map((list) => {
+                    if (list.id === toListId) {
+                      const newCards = Array.from(list.cards);
+                      newCards.splice(position, 0, cardToMove!);
+                      return {
+                        ...list,
+                        cards: newCards.map((c, idx) => ({ ...c, position: idx })),
+                      };
+                    }
+                    return list;
+                  });
+                  return { ...board, lists: updatedLists, updatedAt: new Date() };
+                }
+                return board;
+              }),
+            };
+          }
+
+          return { boards: updatedBoards };
+        });
       },
 
       reorderCards: (boardId, listId, fromIndex, toIndex) => {

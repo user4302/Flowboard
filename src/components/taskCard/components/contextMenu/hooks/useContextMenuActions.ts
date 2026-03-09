@@ -78,12 +78,13 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
   }, [currentBoardId, card.id, updateCard]);
 
   /**
-   * Placeholder handler for moving cards between lists
-   * TODO: Implement move dialog with list selection
+   * Handles moving cards between lists
+   * This is now handled by the MovePortal component
    */
   const handleMove = useCallback(() => {
-    // TODO: Implement move dialog
-    alert('Move dialog coming soon!');
+    // Move functionality is now handled by the MovePortal component
+    // This function is kept for compatibility but the actual move logic
+    // is handled in the MovePortal component
   }, []);
 
   /**

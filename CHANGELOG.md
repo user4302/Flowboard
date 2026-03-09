@@ -30,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - File upload/download support for card JSON data
 - Smart paste button in kanban containers with JSON handling
 - CustomTooltip component for reusable tooltip functionality
+- Card move functionality with cross-board support and nested popup interface
+- MovePortal component for moving cards between lists and boards
+- Cross-board card movement with proper positioning and viewport bounds detection
 - Dedicated card creation buttons (add, upload, paste) in kanban view
 
 ### Changed

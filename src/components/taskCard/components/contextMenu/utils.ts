@@ -107,6 +107,37 @@ export function calculateDatePickerPosition(contextMenuPosition: { x: number; y:
 }
 
 /**
+ * Calculates the optimal position for the move popup relative to the context menu
+ * 
+ * @param contextMenuPosition - The current position of the context menu
+ * @returns Position for the move popup that stays within viewport bounds
+ */
+export function calculateMovePosition(contextMenuPosition: { x: number; y: number }): LabelManagerPosition {
+  const { CONTEXT_MENU_WIDTH, MENU_MARGIN, VIEWPORT_MARGIN } = DIMENSIONS;
+
+  // Estimate move popup dimensions
+  const MOVE_POPUP_WIDTH = 220;
+  const MOVE_POPUP_HEIGHT = 300;
+
+  // Default position: to the right of the context menu
+  let left = contextMenuPosition.x + CONTEXT_MENU_WIDTH + MENU_MARGIN;
+  let top = contextMenuPosition.y;
+
+  // Check if there's enough space on the right side of the screen
+  const spaceRight = window.innerWidth - left;
+  if (spaceRight < MOVE_POPUP_WIDTH) {
+    // Not enough space on right, position to the left instead
+    left = contextMenuPosition.x - MOVE_POPUP_WIDTH - MENU_MARGIN;
+  }
+
+  // Ensure the move popup stays within viewport bounds
+  left = Math.max(VIEWPORT_MARGIN, Math.min(left, window.innerWidth - MOVE_POPUP_WIDTH - VIEWPORT_MARGIN));
+  top = Math.max(VIEWPORT_MARGIN, Math.min(top, window.innerHeight - MOVE_POPUP_HEIGHT - VIEWPORT_MARGIN));
+
+  return { left, top };
+}
+
+/**
  * Generates a shareable URL for a specific card
  * 
  * @param origin - The current origin (window.location.origin)

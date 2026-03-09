@@ -42,6 +42,7 @@ interface ContextMenuItemsProps {
   onOpenCard: () => void;
   onLabels: (e: React.MouseEvent) => void;
   onDates: (e: React.MouseEvent) => void;
+  onMove: (e: React.MouseEvent) => void;
   actionHandlers: {
     handleDuplicate: () => void;
     handleCopyAsJSON: () => void;
@@ -64,6 +65,7 @@ export function ContextMenuItems({
   onOpenCard,
   onLabels,
   onDates,
+  onMove,
   actionHandlers,
   isProcessing,
 }: ContextMenuItemsProps) {
@@ -109,7 +111,7 @@ export function ContextMenuItems({
     {
       icon: ArrowRight,
       label: 'Move',
-      onClick: handleMove,
+      onClick: onMove,
     },
     {
       icon: GitBranch,
