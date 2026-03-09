@@ -51,6 +51,9 @@ export default function Home() {
         setTimeout(() => {
           openCardModal(urlCardId);
         }, 100);
+      } else {
+        // Board not found, redirect to root but maintain clean URL
+        window.history.pushState({}, '', '/');
       }
     }
 

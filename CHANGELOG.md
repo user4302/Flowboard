@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support direct linking to specific cards via /board/[boardId]/card/[cardId] routes
 - Automatically open task modal when card URL is accessed
 - Set current board based on URL parameters
+- Improve URL synchronization and modal handling
+- Increase modal opening delay to ensure board is fully loaded
+- Add URL cleanup logic for invalid board redirects
+- Enhance modal functions with dynamic URL updates
+- Implement proper URL synchronization with browser history
+- Fix circular dependency between UI and board stores
 
 ## [1.4.0] - 2026-03-09
 

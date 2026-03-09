@@ -272,12 +272,25 @@ export const useUIStore = create<UIState>()(
        * Open card modal
        * @param cardId - Optional card ID to edit
        */
-      openCardModal: (cardId) => set({
-        cardModalOpen: true,
-        selectedCardId: cardId || null,
-        cardJSONData: null,
-        targetListId: null,
-      }),
+      openCardModal: (cardId) => {
+        // Import dynamically to avoid circular dependency
+        import('./boardStore').then(({ useBoardStore }) => {
+          const boardStore = useBoardStore.getState();
+
+          // Update URL to include card path if cardId is provided
+          if (cardId && boardStore.currentBoardId) {
+            const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
+            window.history.pushState({}, '', newUrl);
+          }
+        });
+
+        set({
+          cardModalOpen: true,
+          selectedCardId: cardId || null,
+          cardJSONData: null,
+          targetListId: null,
+        });
+      },
 
       /**
        * Open card modal from JSON data for creating a new card
@@ -294,12 +307,27 @@ export const useUIStore = create<UIState>()(
       /**
        * Close card modal
        */
-      closeCardModal: () => set({
-        cardModalOpen: false,
-        selectedCardId: null,
-        cardJSONData: null,
-        targetListId: null,
-      }),
+      closeCardModal: () => {
+        // Import dynamically to avoid circular dependency
+        import('./boardStore').then(({ useBoardStore }) => {
+          const boardStore = useBoardStore.getState();
+
+          // Revert URL to base board URL or root if no board
+          if (boardStore.currentBoardId) {
+            const newUrl = `/board/${boardStore.currentBoardId}`;
+            window.history.pushState({}, '', newUrl);
+          } else {
+            window.history.pushState({}, '', '/');
+          }
+        });
+
+        set({
+          cardModalOpen: false,
+          selectedCardId: null,
+          cardJSONData: null,
+          targetListId: null,
+        });
+      },
 
       /**
        * Initialize theme based on saved preference or system preference

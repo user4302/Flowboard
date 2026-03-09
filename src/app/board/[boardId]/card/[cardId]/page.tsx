@@ -63,7 +63,7 @@ export default function BoardCardPage() {
           // Small delay to ensure board is loaded
           setTimeout(() => {
             openCardModal(cardId);
-          }, 100);
+          }, 500); // Increased delay from 100 to 500
         }
       } else {
         // Board not found, redirect to home
