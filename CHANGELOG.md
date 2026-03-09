@@ -5,14 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-### Fixed
-- Added tooltip to paste button for better UX consistency
-- Corrected version number from 1.6.0 to 1.3.0
-- Improved JSON parsing error handling in clipboard detection to prevent console errors
-- Removed emoji from Features heading in README for cleaner formatting
-- Add missing description field in createCardFromData to prevent data loss during card creation
+## [1.4.0] - 2026-03-09
 
 ### Added
 - Card JSON import/export functionality with clipboard detection
@@ -27,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MovePortal component for moving cards between lists and boards
 - Cross-board card movement with proper positioning and viewport bounds detection
 - Dedicated card creation buttons (add, upload, paste) in kanban view
+- Multiple checklists per card with expandable sections and individual progress tracking
+- TaskModalMultiChecklistManager for comprehensive checklist management
 
 ### Changed
 - Enhanced board store with createCardFromData method for JSON import support
@@ -40,10 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added batch synchronization for checklist changes to reduce store operations
 - Enhanced checklist UI with progress tracking and visual progress bar
 - Added real-time completion percentage display with animated progress indicator
-- Implemented multiple checklists per card with expandable sections and individual progress tracking
 - Refactored board store into modular slice-based architecture for improved maintainability
 - Added data migration support from single checklist to multiple checklists format
-- Created TaskModalMultiChecklistManager for comprehensive checklist management
 - Improved clipboard detection with better focus handling for context menus
 - Enhanced paste UX with loading states and always-visible paste button
 - Optimized kanban performance with memoized filtered cards
@@ -53,6 +46,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplified context menu item labels for cleaner interface
 - Consolidated positioning logic in dedicated utils function
 - Removed unused cover and upload JSON options from context menu
+
+### Fixed
+- Added tooltip to paste button for better UX consistency
+- Improved JSON parsing error handling in clipboard detection to prevent console errors
+- Removed emoji from Features heading in README for cleaner formatting
+- Add missing description field in createCardFromData to prevent data loss during card creation
+
+## [Unreleased]
 
 ## [1.3.0] - 2026-03-03
 
