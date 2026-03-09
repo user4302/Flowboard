@@ -17,6 +17,9 @@ interface TaskModalChecklistSectionProps {
     setShowNewChecklistInput: (value: boolean) => void;
     handleCancelNewItem: () => void;
     handleStartNewItem: () => void;
+    localChecklist: ChecklistItem[];
+    syncChecklistToStore: () => void;
+    resetChecklist: () => void;
   };
 }
 
@@ -34,7 +37,7 @@ export function TaskModalChecklistSection({
       <TaskModalChecklistManager
         cardId={cardId}
         boardId={boardId}
-        checklist={checklist}
+        checklist={checklistHook.localChecklist}
         checklistHook={checklistHook}
       />
     </div>

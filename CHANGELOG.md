@@ -7,13 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- Improved context menu positioning with accurate viewport bounds detection
-- Added scrolling support for menus that exceed viewport height
-- Simplified context menu item labels for cleaner interface
-- Consolidated positioning logic in dedicated utils function
-- Removed unused cover and upload JSON options from context menu
-
 ### Fixed
 - Added tooltip to paste button for better UX consistency
 - Corrected version number from 1.6.0 to 1.3.0
@@ -43,10 +36,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Massive TypeScript cleanup across 58 files with improved type safety
 - Removed hardcoded mock data and optimized component architecture
 - Enhanced utility functions with better type annotations and import cleanup
+- Implemented local-first checklist management in task modal for better performance
+- Added batch synchronization for checklist changes to reduce store operations
 - Improved clipboard detection with better focus handling for context menus
 - Enhanced paste UX with loading states and always-visible paste button
 - Optimized kanban performance with memoized filtered cards
 - Auto-close context menu after successful copy/download actions
+- Improved context menu positioning with accurate viewport bounds detection
+- Added scrolling support for menus that exceed viewport height
+- Simplified context menu item labels for cleaner interface
+- Consolidated positioning logic in dedicated utils function
+- Removed unused cover and upload JSON options from context menu
 
 ## [1.3.0] - 2026-03-03
 

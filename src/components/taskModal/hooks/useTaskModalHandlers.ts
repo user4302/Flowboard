@@ -7,15 +7,24 @@ import { CardJSON } from '@/lib/cardJsonUtils';
 
 export function useTaskModalHandlers(
   currentBoardId: string | null,
-  foundCard: Card | undefined,
+  foundCard: Card | null | undefined,
   form: unknown,
   isJSONImportMode: boolean,
   cardJSONData: CardJSON | null,
-  targetListId: string | null
+  targetListId: string | null,
+  checklist: {
+    syncChecklistToStore: () => void;
+    resetChecklist: () => void;
+  }
 ): CardModalHandlers & { closeCardModal: () => void } {
   const { closeCardModal } = useUIStore();
   const { updateCard, createCard } = useBoardStore();
   const { handleSaveCard } = useTaskModalActions();
+
+  const handleCloseCardModal = useCallback(() => {
+    checklist.resetChecklist();
+    closeCardModal();
+  }, [closeCardModal, checklist]);
 
   const handleSave = useCallback((data: Partial<Card>) => {
     if (isJSONImportMode && currentBoardId && targetListId && cardJSONData) {
@@ -34,8 +43,10 @@ export function useTaskModalHandlers(
     } else if (currentBoardId && foundCard) {
       // Update existing card
       handleSaveCard(currentBoardId, foundCard.id, data, closeCardModal);
+      // Sync checklist changes to store
+      checklist.syncChecklistToStore();
     }
-  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleSaveCard, closeCardModal]);
+  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleSaveCard, closeCardModal, checklist]);
 
   const handleToggleCompleted = useCallback(() => {
     if (currentBoardId && foundCard) {
@@ -46,6 +57,6 @@ export function useTaskModalHandlers(
   return {
     handleSave,
     handleToggleCompleted,
-    closeCardModal
+    closeCardModal: handleCloseCardModal
   };
 }

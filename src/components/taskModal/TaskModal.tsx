@@ -26,8 +26,18 @@ export function TaskModal() {
     form,
     isJSONImportMode,
     cardJSONData,
-    targetListId
+    targetListId,
+    checklist
   );
+
+  const handleFormSubmit = (data: any) => {
+    const cardData = {
+      ...data,
+      startDate: data.startDate ? new Date(data.startDate) : undefined,
+      dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+    };
+    handleSave(cardData);
+  };
 
   // Early return if modal data is not available
   if (!cardModalOpen || (!currentBoard || !currentBoardId)) {
@@ -43,11 +53,11 @@ export function TaskModal() {
     <UIModal open={cardModalOpen} onClose={closeCardModal}>
       <TaskModalHeader onClose={closeCardModal} />
 
-      <form onSubmit={form.handleSubmit(handleSave)}>
+      <form onSubmit={form.handleSubmit(handleFormSubmit)}>
         <ModalBody className="space-y-6">
           {!isJSONImportMode && (
             <TaskModalFormSection
-              card={foundCard}
+              card={foundCard || null}
               form={form}
               errors={form.formState.errors}
               register={form.register}

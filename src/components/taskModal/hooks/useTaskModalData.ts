@@ -33,7 +33,8 @@ export function useTaskModalData(): CardModalData & {
   });
   const checklist = useTaskModalChecklist({
     boardId: currentBoardId || '',
-    cardId: foundCard?.id || ''
+    cardId: foundCard?.id || '',
+    initialChecklist: foundCard?.checklist || []
   });
 
   const boardLabels = useMemo(() => currentBoard?.labels || [], [currentBoard?.labels]);
