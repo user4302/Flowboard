@@ -43,22 +43,7 @@ export function useCardContextMenu() {
       y = event.clientY;
     }
 
-    // Ensure menu stays within viewport
-    const menuWidth = 280; // Approximate menu width
-    const menuHeight = 400; // Approximate menu height
-
-    if (x + menuWidth > window.innerWidth) {
-      x = window.innerWidth - menuWidth - 8;
-    }
-
-    if (y + menuHeight > window.innerHeight) {
-      y = window.innerHeight - menuHeight - 8;
-    }
-
-    // Ensure menu doesn't go off the top or left
-    x = Math.max(8, x);
-    y = Math.max(8, y);
-
+    // Don't do any viewport positioning here - let calculateContextMenuPosition handle it
     setPosition({ x, y });
     setIsOpen(true);
 

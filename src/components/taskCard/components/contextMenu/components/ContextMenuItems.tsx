@@ -91,22 +91,17 @@ export function ContextMenuItems({
     // Label and member actions
     {
       icon: Tag,
-      label: 'Edit labels',
+      label: 'Labels',
       onClick: onLabels,
     },
     {
       icon: Users,
-      label: 'Change members',
+      label: 'Members',
       onClick: handleMembers,
     },
     {
-      icon: Image,
-      label: 'Change cover',
-      onClick: handleCover,
-    },
-    {
       icon: Calendar,
-      label: 'Change dates',
+      label: 'Dates',
       onClick: onDates,
     },
 
@@ -123,22 +118,17 @@ export function ContextMenuItems({
     },
     {
       icon: Copy,
-      label: 'Copy JSON',
+      label: 'Copy',
       onClick: handleCopyAsJSON,
     },
     {
       icon: Download,
-      label: 'Download JSON',
+      label: 'Download',
       onClick: handleDownloadJSON,
     },
     {
-      icon: Upload,
-      label: 'Upload JSON',
-      onClick: handleUploadJSON,
-    },
-    {
       icon: Link,
-      label: 'Copy link',
+      label: 'Link',
       onClick: handleCopyLink,
     },
     {
