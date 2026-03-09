@@ -98,8 +98,8 @@ export function TaskModalMultiChecklistManager({
 
   return (
     <div className="space-y-4">
-      {/* Add new checklist */}
-      {!showNewChecklistInput && (
+      {/* Add new checklist - only show if no checklists exist */}
+      {checklists.length === 0 && !showNewChecklistInput && (
         <Button
           type="button"
           variant="ghost"

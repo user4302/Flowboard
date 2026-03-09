@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- Enhanced checklist management with immediate store synchronization for all CRUD operations
+- Improved "Add checklist" button visibility logic to only show when no checklists exist
+- Added comprehensive JSDoc documentation for useTaskModalChecklist hook
+
 ## [1.4.0] - 2026-03-09
 
 ### Added
@@ -52,8 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved JSON parsing error handling in clipboard detection to prevent console errors
 - Removed emoji from Features heading in README for cleaner formatting
 - Add missing description field in createCardFromData to prevent data loss during card creation
-
-## [Unreleased]
 
 ## [1.3.0] - 2026-03-03
 

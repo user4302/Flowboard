@@ -8,6 +8,19 @@ interface UseChecklistProps {
   initialChecklists: Checklist[];
 }
 
+/**
+ * Hook for managing checklists in a task modal with immediate store synchronization.
+ * 
+ * This hook provides local state management for checklists with real-time persistence
+ * to the global board store. All CRUD operations immediately sync to ensure data
+ * consistency across the application.
+ * 
+ * @param props - Configuration object
+ * @param props.boardId - ID of the board containing the card
+ * @param props.cardId - ID of the card with checklists
+ * @param props.initialChecklists - Initial checklist data from the store
+ * @returns Checklist management functions and local state
+ */
 export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: UseChecklistProps) => {
   const [localChecklists, setLocalChecklists] = useState<Checklist[]>(initialChecklists);
 
@@ -21,6 +34,10 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
       updatedAt: new Date(),
     };
     setLocalChecklists(prev => [...prev, newChecklist]);
+
+    // Immediately sync to store
+    const { addChecklist: storeAddChecklist } = useBoardStore.getState();
+    storeAddChecklist(boardId, cardId, name);
   };
 
   const updateChecklist = (checklistId: string, updates: Partial<Checklist>) => {
@@ -35,6 +52,10 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
 
   const removeChecklist = (checklistId: string) => {
     setLocalChecklists(prev => prev.filter(checklist => checklist.id !== checklistId));
+
+    // Immediately sync to store
+    const { removeChecklist: storeRemoveChecklist } = useBoardStore.getState();
+    storeRemoveChecklist(boardId, cardId, checklistId);
   };
 
   const addChecklistItem = (checklistId: string, text: string) => {
@@ -54,6 +75,10 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
           : checklist
       )
     );
+
+    // Immediately sync to store
+    const { addChecklistItem: storeAddChecklistItem } = useBoardStore.getState();
+    storeAddChecklistItem(boardId, cardId, checklistId, text);
   };
 
   const updateChecklistItem = (checklistId: string, itemId: string, updates: Partial<ChecklistItem>) => {
@@ -72,6 +97,12 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
           : checklist
       )
     );
+
+    // Immediately sync to store if updating done status
+    if (updates.done !== undefined) {
+      const { updateChecklistItem: storeUpdateChecklistItem } = useBoardStore.getState();
+      storeUpdateChecklistItem(boardId, cardId, checklistId, itemId, updates);
+    }
   };
 
   const removeChecklistItem = (checklistId: string, itemId: string) => {
@@ -86,6 +117,10 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
           : checklist
       )
     );
+
+    // Immediately sync to store
+    const { removeChecklistItem: storeRemoveChecklistItem } = useBoardStore.getState();
+    storeRemoveChecklistItem(boardId, cardId, checklistId, itemId);
   };
 
   const syncChecklistToStore = () => {
