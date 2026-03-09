@@ -9,7 +9,9 @@ import {
   Link,
   GitBranch,
   Archive,
-  ExternalLink
+  ExternalLink,
+  Download,
+  Upload
 } from 'lucide-react';
 import { CSS_CLASSES } from '../constants';
 import { MenuItemConfig, ContextMenuItemProps } from '../types';
@@ -40,8 +42,12 @@ interface ContextMenuItemsProps {
   onOpenCard: () => void;
   onLabels: (e: React.MouseEvent) => void;
   onDates: (e: React.MouseEvent) => void;
+  onMove: (e: React.MouseEvent) => void;
   actionHandlers: {
     handleDuplicate: () => void;
+    handleCopyAsJSON: () => void;
+    handleDownloadJSON: () => void;
+    handleUploadJSON: () => void;
     handleArchive: () => void;
     handleCopyLink: () => void;
     handleMove: () => void;
@@ -59,11 +65,15 @@ export function ContextMenuItems({
   onOpenCard,
   onLabels,
   onDates,
+  onMove,
   actionHandlers,
   isProcessing,
 }: ContextMenuItemsProps) {
   const {
     handleDuplicate,
+    handleCopyAsJSON,
+    handleDownloadJSON,
+    handleUploadJSON,
     handleArchive,
     handleCopyLink,
     handleMove,
@@ -83,22 +93,17 @@ export function ContextMenuItems({
     // Label and member actions
     {
       icon: Tag,
-      label: 'Edit labels',
+      label: 'Labels',
       onClick: onLabels,
     },
     {
       icon: Users,
-      label: 'Change members',
+      label: 'Members',
       onClick: handleMembers,
     },
     {
-      icon: Image,
-      label: 'Change cover',
-      onClick: handleCover,
-    },
-    {
       icon: Calendar,
-      label: 'Change dates',
+      label: 'Dates',
       onClick: onDates,
     },
 
@@ -106,16 +111,26 @@ export function ContextMenuItems({
     {
       icon: ArrowRight,
       label: 'Move',
-      onClick: handleMove,
+      onClick: onMove,
     },
     {
-      icon: Copy,
-      label: 'Copy card',
+      icon: GitBranch,
+      label: 'Clone',
       onClick: handleDuplicate,
     },
     {
+      icon: Copy,
+      label: 'Copy',
+      onClick: handleCopyAsJSON,
+    },
+    {
+      icon: Download,
+      label: 'Download',
+      onClick: handleDownloadJSON,
+    },
+    {
       icon: Link,
-      label: 'Copy link',
+      label: 'Link',
       onClick: handleCopyLink,
     },
     {
@@ -137,7 +152,7 @@ export function ContextMenuItems({
     <>
       {menuItems.map((item, index) => {
         // Add dividers before certain sections
-        const shouldAddDivider = index === 1 || index === 5 || index === 9;
+        const shouldAddDivider = index === 1 || index === 5 || index === 11;
 
         return (
           <React.Fragment key={index}>

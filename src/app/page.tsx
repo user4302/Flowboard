@@ -28,8 +28,12 @@ export default function Home() {
     const urlParams = new URLSearchParams(window.location.search);
     const invite = urlParams.get('invite');
     if (invite) {
-      setInviteId(invite);
-      setShowJoinModal(true);
+      // Use setTimeout to avoid calling setState synchronously
+      const timeoutId = setTimeout(() => {
+        setInviteId(invite);
+        setShowJoinModal(true);
+      }, 0);
+      return () => clearTimeout(timeoutId);
     }
 
     return () => clearTimeout(timer);

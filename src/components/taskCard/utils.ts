@@ -15,8 +15,11 @@ export function getCardMetadata(card: CardType) {
   const isOverdue = card.dueDate ? card.dueDate < now && !card.completed : false;
 
   // Calculate checklist progress
-  const totalChecklistItems = card.checklist?.length || 0;
-  const completedChecklistItems = card.checklist?.filter(item => item.done).length || 0;
+  const totalChecklistItems = card.checklists?.reduce((acc, checklist) => acc + checklist.items.length, 0) || 0;
+  const completedChecklistItems = card.checklists?.reduce(
+    (acc, checklist) => acc + checklist.items.filter(item => item.done).length,
+    0
+  ) || 0;
   const checklistProgress = totalChecklistItems > 0
     ? Math.round((completedChecklistItems / totalChecklistItems) * 100)
     : 0;

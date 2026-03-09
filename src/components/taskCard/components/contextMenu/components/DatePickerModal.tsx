@@ -45,59 +45,54 @@ export function DatePickerModal({
   // Local state for form inputs
   const [localStartDate, setLocalStartDate] = useState<string>('');
   const [localDueDate, setLocalDueDate] = useState<string>('');
+  const [hasChanges, setHasChanges] = useState(false);
 
   // Initialize local state when props change
   useEffect(() => {
-    if (startDate) {
-      setLocalStartDate(startDate.toISOString().split('T')[0]);
-    } else {
-      setLocalStartDate('');
-    }
+    // Use setTimeout to avoid calling setState synchronously
+    const timeoutId = setTimeout(() => {
+      if (startDate) {
+        setLocalStartDate(startDate.toISOString().split('T')[0]);
+      } else {
+        setLocalStartDate('');
+      }
 
-    if (dueDate) {
-      setLocalDueDate(dueDate.toISOString().split('T')[0]);
-    } else {
-      setLocalDueDate('');
-    }
+      if (dueDate) {
+        setLocalDueDate(dueDate.toISOString().split('T')[0]);
+      } else {
+        setLocalDueDate('');
+      }
+
+      // Reset changes flag when props change
+      setHasChanges(false);
+    }, 0);
+    return () => clearTimeout(timeoutId);
   }, [startDate, dueDate]);
 
   const handleStartDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isUpdatingRef.current) return;
-    isUpdatingRef.current = true;
-
     const value = e.target.value;
     setLocalStartDate(value);
-
-    if (value) {
-      const newStartDate = new Date(value);
-      onDatesChange(newStartDate, dueDate);
-    } else {
-      onDatesChange(undefined, dueDate);
-    }
-
-    setTimeout(() => {
-      isUpdatingRef.current = false;
-    }, 100);
-  }, [dueDate, onDatesChange]);
+    setHasChanges(true);
+  }, []);
 
   const handleDueDateChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isUpdatingRef.current) return;
-    isUpdatingRef.current = true;
-
     const value = e.target.value;
     setLocalDueDate(value);
+    setHasChanges(true);
+  }, []);
 
-    if (value) {
-      const newDueDate = new Date(value);
-      onDatesChange(startDate, newDueDate);
-    } else {
-      onDatesChange(startDate, undefined);
+  const handleSave = useCallback(() => {
+    if (!hasChanges) {
+      onClose();
+      return;
     }
 
-    setTimeout(() => {
-      isUpdatingRef.current = false;
-    }, 100);
-  }, [startDate, onDatesChange]);
+    const newStartDate = localStartDate ? new Date(localStartDate) : undefined;
+    const newDueDate = localDueDate ? new Date(localDueDate) : undefined;
+
+    onDatesChange(newStartDate, newDueDate);
+    onClose();
+  }, [localStartDate, localDueDate, hasChanges, onDatesChange, onClose]);
 
   // Early return after all hooks
   if (!show) {
@@ -107,7 +102,7 @@ export function DatePickerModal({
   const handleClearDates = () => {
     setLocalStartDate('');
     setLocalDueDate('');
-    onDatesChange(undefined, undefined);
+    setHasChanges(true);
   };
 
   const formatDateForDisplay = (date: Date) => {
@@ -195,12 +190,26 @@ export function DatePickerModal({
         >
           Clear dates
         </button>
-        <button
-          onClick={onClose}
-          className="px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30"
-        >
-          Done
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={onClose}
+            className="px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 rounded hover:bg-slate-200 dark:hover:bg-slate-600"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={!hasChanges}
+            className={cn(
+              "px-3 py-1 text-xs font-medium rounded",
+              hasChanges
+                ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                : "text-slate-400 dark:text-slate-600 bg-slate-100 dark:bg-slate-700 cursor-not-allowed"
+            )}
+          >
+            Save
+          </button>
+        </div>
       </div>
     </div>,
     document.body

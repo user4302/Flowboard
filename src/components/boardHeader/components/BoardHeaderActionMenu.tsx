@@ -14,9 +14,10 @@ import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { useBoardHeaderActions } from '../hooks/useBoardHeaderActions';
 import { useClickOutside } from '@/hooks';
+import { Board } from '@/lib/types';
 
 interface BoardHeaderActionMenuProps {
-  currentBoard: any;
+  currentBoard: Board;
   isOwner: boolean;
   onInviteModalOpen: () => void;
   onMemberManagementOpen: () => void;

@@ -1,12 +1,12 @@
-import { Card, Label } from '@/lib/types';
+import { Card, Label, Board } from '@/lib/types';
 
 export interface CardModalData {
-  currentBoard: any;
+  currentBoard: Board | null;
   foundCard: Card | null | undefined;
   boardLabels: Label[];
 }
 
 export interface CardModalHandlers {
-  handleSave: (data: any) => void;
+  handleSave: (data: Partial<Card>) => void;
   handleToggleCompleted: () => void;
 }

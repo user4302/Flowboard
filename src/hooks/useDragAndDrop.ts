@@ -1,5 +1,4 @@
 import { useBoardStore } from '@/store';
-import { DragItem } from '@/lib/types';
 
 /**
  * useDragAndDrop hook - Handles drag and drop operations for cards and lists

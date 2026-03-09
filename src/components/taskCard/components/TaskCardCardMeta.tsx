@@ -16,7 +16,7 @@ export function TaskCardCardMeta({ card, isOverdue, checklistProgress }: CardMet
         )}
 
         {/* Checklist progress */}
-        {card.checklist.length > 0 && (
+        {card.checklists?.length > 0 && (
           <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
             <CheckSquare className="h-3 w-3" />
             <span>{checklistProgress}%</span>

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Invitation, JoinRequest, PeerInfo } from '@/lib/invitation-utils';
+import { Invitation, JoinRequest, updateJoinRequestStatus } from '@/lib/invitation-utils';
 import { p2pManager, PeerConnection, SyncMessage } from '@/lib/p2p-connection';
 
 /**
@@ -103,7 +103,7 @@ export const useSharingStore = create<SharingState>()(
           const result = await joinBoard(inviteId, email, username, password);
 
           if (result.success) {
-            set(state => ({
+            set(() => ({
               userId: result.userId || '',
               username,
               email,
@@ -131,7 +131,6 @@ export const useSharingStore = create<SharingState>()(
        * @param requestId - ID of the request to approve
        */
       approveJoinRequest: (requestId: string) => {
-        const { updateJoinRequestStatus } = require('@/lib/invitation-utils');
         updateJoinRequestStatus(requestId, 'approved');
 
         set(state => ({
@@ -149,7 +148,6 @@ export const useSharingStore = create<SharingState>()(
        * @param requestId - ID of the request to reject
        */
       rejectJoinRequest: (requestId: string) => {
-        const { updateJoinRequestStatus } = require('@/lib/invitation-utils');
         updateJoinRequestStatus(requestId, 'rejected');
 
         set(state => ({

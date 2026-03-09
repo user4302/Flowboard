@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ViewState, FilterState } from '@/lib/types';
 import { STORAGE_KEYS } from '@/lib/constants';
+import { CardJSON } from '@/lib/cardJsonUtils';
 
 /**
  * UI state interface - Extends view and filter state with modal management
@@ -11,6 +12,8 @@ interface UIState extends ViewState, FilterState {
   // Modal state
   cardModalOpen: boolean;
   selectedCardId: string | null;
+  cardJSONData: CardJSON | null;
+  targetListId: string | null;
 
   // Timeline state (per board)
   timelineState: Record<string, {
@@ -52,6 +55,7 @@ interface UIState extends ViewState, FilterState {
 
   // Modal actions
   openCardModal: (cardId?: string) => void;
+  openCardModalFromJSON: (cardJSON: CardJSON, listId: string) => void;
   closeCardModal: () => void;
 
   // Theme initialization
@@ -83,6 +87,8 @@ export const useUIStore = create<UIState>()(
       // Initial modal state
       cardModalOpen: false,
       selectedCardId: null,
+      cardJSONData: null,
+      targetListId: null,
 
       // Initial timeline state (per board)
       timelineState: {},
@@ -269,6 +275,20 @@ export const useUIStore = create<UIState>()(
       openCardModal: (cardId) => set({
         cardModalOpen: true,
         selectedCardId: cardId || null,
+        cardJSONData: null,
+        targetListId: null,
+      }),
+
+      /**
+       * Open card modal from JSON data for creating a new card
+       * @param cardJSON - Card data to pre-populate the form
+       * @param listId - Target list ID where the card should be created
+       */
+      openCardModalFromJSON: (cardJSON, listId) => set({
+        cardModalOpen: true,
+        selectedCardId: null,
+        cardJSONData: cardJSON,
+        targetListId: listId,
       }),
 
       /**
@@ -277,6 +297,8 @@ export const useUIStore = create<UIState>()(
       closeCardModal: () => set({
         cardModalOpen: false,
         selectedCardId: null,
+        cardJSONData: null,
+        targetListId: null,
       }),
 
       /**

@@ -2,11 +2,13 @@
  * TypeScript types for the BoardSidebar component
  */
 
+import { List, User } from '@/lib/types';
+
 export interface Board {
   id: string;
   name: string;
-  lists: any[];
-  members: any[];
+  lists: List[];
+  members: User[];
 }
 
 export interface SidebarState {

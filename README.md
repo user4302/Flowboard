@@ -1,13 +1,13 @@
-# Flowboard v1.3.0
+# Flowboard v1.4.0
 
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-1.3.0-green.svg)
+![Version](https://img.shields.io/badge/version-1.4.0-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
 
-## Features ✨
+## Features 
 
 ### Core Functionality
 - **Four Switchable Views**: Kanban (default), Timeline (Gantt-style), Calendar, and Table views
@@ -20,6 +20,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions
 - **Board Management**: Create, switch between, and delete boards with confirmation dialogs
 - **Board Export/Import**: Save and load board data as JSON files for backup and sharing
+- **Card JSON Import/Export**: Copy, download, and upload individual cards as JSON with smart paste functionality
 - **Board Sharing & Collaboration**: Invitation-based board sharing with member management and real-time synchronization
 
 ### Data Model
@@ -104,6 +105,14 @@ pnpm dev
 - **Click "Add a list"** to create new columns
 - **Double-click cards** to edit details
 - **Use the search bar** to filter cards instantly
+- **Smart paste**: When valid card JSON is in clipboard, a paste button appears for quick card creation
+- **Dedicated card creation buttons**: Separate buttons for adding cards, uploading JSON files, and pasting from clipboard
+
+### Card JSON Import/Export
+- **Copy JSON**: Right-click card → "Copy JSON" to copy card data to clipboard
+- **Download JSON**: Right-click card → "Download JSON" to save as file
+- **Upload JSON**: Right-click → "Upload JSON" or use smart paste button
+- **Clone Card**: Right-click card → "Clone" to create duplicate with same properties
 
 ### Keyboard Shortcuts
 - `1-5`: Switch timeline zoom levels (Day, Week, 2 Weeks, Month, Year)

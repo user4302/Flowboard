@@ -1,5 +1,4 @@
-import { useUIStore } from '@/store';
-import { Card } from '@/lib/types';
+import { Card, List, Label } from '@/lib/types';
 import { TimelineTaskLane } from './TimelineTaskLane';
 import { useTimelineHiddenTasks } from '../hooks/useTimelineHiddenTasks';
 import { getTaskColor } from '../utils';
@@ -14,7 +13,7 @@ interface ListLaneProps {
   // Board ID
   boardId: string;
   // List object containing list information
-  list: any;
+  list: List;
   // Array of tasks belonging to this list (filtered for date range)
   listTasks: Card[];
   // Date range for the current timeline view
@@ -25,14 +24,14 @@ interface ListLaneProps {
   openCardModal: (cardId: string) => void;
   toggleTimelineLane: (boardId: string, listId: string) => void;
   // Logic utilities
-  getTaskPosition: (card: Card, allCards: Card[], cardIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => any;
+  getTaskPosition: (card: Card, allCards: Card[], cardIndex: number) => { left: string; width: string; top: string; };
   calculateTimelineHeight: (cards: Card[], dateRange: Date[]) => number;
   // State
   isCollapsed: boolean;
   // Tooltip tracking
   setHoveredTask: (hovered: { task: Card; position: 'before' | 'after'; x: number; y: number } | null) => void;
   // Labels available on the board
-  boardLabels: any[];
+  boardLabels: Label[];
 }
 
 /**
@@ -53,6 +52,12 @@ export function TimelineListLane({
   setHoveredTask,
   boardLabels
 }: ListLaneProps) {
+  // Move hook call to the top level of the component
+  const allListTasks = list.cards as Card[];
+  const visibleTaskIds = new Set(listTasks.map((task: Card) => task.id));
+  const trulyHiddenTasks = allListTasks.filter((task: Card) => !visibleTaskIds.has(task.id));
+  const { hiddenTasksBefore, hiddenTasksAfter } = useTimelineHiddenTasks(trulyHiddenTasks, dateRange);
+
   return (
     <div key={list.id} className="border-2 border-slate-200 dark:border-slate-700 rounded-lg mb-4 overflow-visible">
       {/* ... (rest of the component) */}
@@ -81,28 +86,21 @@ export function TimelineListLane({
       {!isCollapsed && (
         <div className="bg-white dark:bg-slate-900">
           {listTasks.length > 0 ? (
-            (() => {
-              const allListTasks = list.cards as Card[];
-              const visibleTaskIds = new Set(listTasks.map((task: Card) => task.id));
-              const trulyHiddenTasks = allListTasks.filter((task: Card) => !visibleTaskIds.has(task.id));
-              const { hiddenTasksBefore, hiddenTasksAfter } = useTimelineHiddenTasks(trulyHiddenTasks, dateRange);
-
-              return listTasks.map((task: Card, taskIndex: number) => (
-                <TimelineTaskLane
-                  key={task.id}
-                  task={task}
-                  dateRange={dateRange}
-                  zoomLevel={zoomLevel}
-                  onOpenTaskModal={openCardModal}
-                  getTaskPosition={getTaskPosition}
-                  getTaskColor={getTaskColor}
-                  calculateTimelineHeight={calculateTimelineHeight}
-                  hiddenTasksBefore={taskIndex === 0 ? hiddenTasksBefore : []}
-                  hiddenTasksAfter={taskIndex === 0 ? hiddenTasksAfter : []}
-                  boardLabels={boardLabels}
-                />
-              ));
-            })()
+            listTasks.map((task: Card, taskIndex: number) => (
+              <TimelineTaskLane
+                key={task.id}
+                task={task}
+                dateRange={dateRange}
+                zoomLevel={zoomLevel}
+                onOpenTaskModal={openCardModal}
+                getTaskPosition={getTaskPosition}
+                getTaskColor={getTaskColor}
+                calculateTimelineHeight={calculateTimelineHeight}
+                hiddenTasksBefore={taskIndex === 0 ? hiddenTasksBefore : []}
+                hiddenTasksAfter={taskIndex === 0 ? hiddenTasksAfter : []}
+                boardLabels={boardLabels}
+              />
+            ))
           ) : (
             list.cards.length > 0 ? (
               <div className="flex border-b border-slate-50 dark:border-slate-700">

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { Card as CardType } from '@/lib/types';
 import { useBoardStore } from '@/store';
 import { generateCardUrl, copyToClipboard } from '../utils';
+import { cardToJSON, downloadCardJSON } from '@/lib/cardJsonUtils';
 
 /**
  * Custom hook that manages all context menu action handlers
@@ -10,6 +11,9 @@ import { generateCardUrl, copyToClipboard } from '../utils';
 export function useContextMenuActions(card: CardType, onActionComplete?: () => void) {
   const { currentBoardId, duplicateCard, archiveCard, moveCard, updateCard, getCurrentBoard } = useBoardStore();
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Get current board for label/member mapping
+  const currentBoard = getCurrentBoard();
 
   /**
    * Generic action handler that manages loading state and error handling
@@ -54,7 +58,10 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
   const handleCopyLink = useCallback(async () => {
     const cardUrl = generateCardUrl(window.location.origin, currentBoardId!, card.id);
     await copyToClipboard(cardUrl);
-  }, [currentBoardId, card.id]);
+
+    // Close context menu after successful copy
+    onActionComplete?.();
+  }, [currentBoardId, card.id, onActionComplete]);
 
   /**
    * Handles updating card dates
@@ -71,12 +78,13 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
   }, [currentBoardId, card.id, updateCard]);
 
   /**
-   * Placeholder handler for moving cards between lists
-   * TODO: Implement move dialog with list selection
+   * Handles moving cards between lists
+   * This is now handled by the MovePortal component
    */
   const handleMove = useCallback(() => {
-    // TODO: Implement move dialog
-    alert('Move dialog coming soon!');
+    // Move functionality is now handled by the MovePortal component
+    // This function is kept for compatibility but the actual move logic
+    // is handled in the MovePortal component
   }, []);
 
   /**
@@ -98,6 +106,70 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
   }, []);
 
   /**
+   * Handles copying the current card as JSON to clipboard
+   * Exports card data in clean JSON format for sharing/importing
+   */
+  const handleCopyAsJSON = useCallback(async () => {
+    try {
+      if (!currentBoard) return;
+
+      const cardJSON = cardToJSON(card, currentBoard.labels || [], currentBoard.members || []);
+      await copyToClipboard(JSON.stringify(cardJSON, null, 2));
+
+      // Close context menu after successful copy
+      onActionComplete?.();
+    } catch (error) {
+      console.error('Failed to copy card as JSON:', error);
+    }
+  }, [card, currentBoard, onActionComplete]);
+
+  /**
+   * Handles downloading the current card as a JSON file
+   * Creates a downloadable .json file with card data
+   */
+  const handleDownloadJSON = useCallback(async () => {
+    try {
+      if (!currentBoard) return;
+
+      const cardJSON = cardToJSON(card, currentBoard.labels || [], currentBoard.members || []);
+      const filename = `${card.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_card.json`;
+      downloadCardJSON(cardJSON, filename);
+
+      // Close context menu after successful download
+      onActionComplete?.();
+    } catch (error) {
+      console.error('Failed to download card JSON:', error);
+    }
+  }, [card, currentBoard, onActionComplete]);
+
+  /**
+   * Handles uploading a card from a JSON file
+   * Opens file picker and processes the selected JSON file
+   */
+  const handleUploadJSON = useCallback(async () => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json,application/json';
+
+      input.onchange = async (event) => {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+
+        const text = await file.text();
+        const cardData = JSON.parse(text);
+
+        // TODO: Process cardData and create new card
+        alert('Upload functionality will be implemented in next phase!');
+      };
+
+      input.click();
+    } catch (error) {
+      console.error('Failed to upload card JSON:', error);
+    }
+  }, []);
+
+  /**
    * Placeholder handler for mirroring cards
    * TODO: Implement mirror functionality (requires backend support)
    */
@@ -110,6 +182,9 @@ export function useContextMenuActions(card: CardType, onActionComplete?: () => v
     isProcessing,
     handleAction,
     handleDuplicate,
+    handleCopyAsJSON,
+    handleDownloadJSON,
+    handleUploadJSON,
     handleArchive,
     handleCopyLink,
     handleDatesChange,

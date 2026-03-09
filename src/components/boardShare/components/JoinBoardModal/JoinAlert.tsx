@@ -14,7 +14,7 @@ export function JoinAlert() {
           <ul className="mt-1 list-disc list-inside space-y-1 text-xs">
             <li>Board owner must approve your request</li>
             <li>Save your credentials for this board</li>
-            <li>You'll need these credentials to access this board</li>
+            <li>You&apos;ll need these credentials to access this board</li>
           </ul>
         </div>
       </div>

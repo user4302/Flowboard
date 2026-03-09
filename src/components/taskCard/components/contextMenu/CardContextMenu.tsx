@@ -3,11 +3,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useBoardStore } from '@/store';
-import { calculateLabelManagerPosition, calculateDatePickerPosition } from './utils';
+import { calculateLabelManagerPosition, calculateDatePickerPosition, calculateContextMenuPosition, calculateMovePosition } from './utils';
 import { useContextMenuActions } from './hooks/useContextMenuActions';
 import { ContextMenuItems } from './components/ContextMenuItems';
 import { LabelManagerPortal } from './components/LabelManagerPortal';
 import { DatePickerModal } from './components/DatePickerModal';
+import { MovePortal } from './components/MovePortal';
 import { Z_INDEX } from './constants';
 import { CardContextMenuProps, LabelManagerPosition, DatePickerState } from './types';
 
@@ -35,6 +36,8 @@ export function CardContextMenu({
   const [labelManagerPosition, setLabelManagerPosition] = useState<LabelManagerPosition>({ left: 0, top: 0 });
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [datePickerPosition, setDatePickerPosition] = useState<LabelManagerPosition>({ left: 0, top: 0 });
+  const [showMovePopup, setShowMovePopup] = useState(false);
+  const [movePosition, setMovePosition] = useState<LabelManagerPosition>({ left: 0, top: 0 });
   const datePickerPositionedRef = useRef(false);
 
   // Action handlers hook
@@ -43,14 +46,33 @@ export function CardContextMenu({
   // Close popups when context menu closes to prevent orphaned UI elements
   useEffect(() => {
     if (!isOpen) {
-      setShowLabelManager(false);
-      setShowDatePicker(false);
-      datePickerPositionedRef.current = false;
+      // Use setTimeout to avoid calling setState synchronously
+      const timeoutId = setTimeout(() => {
+        setShowLabelManager(false);
+        setShowDatePicker(false);
+        setShowMovePopup(false);
+        datePickerPositionedRef.current = false;
+      }, 0);
+      return () => clearTimeout(timeoutId);
     }
   }, [isOpen]);
 
   // Don't render anything if the menu is closed
   if (!isOpen) return null;
+
+  // Calculate optimal position to keep menu within viewport
+  const menuPosition = calculateContextMenuPosition(position);
+
+  /**
+   * Handles opening the move popup for the current card
+   * Positions the move popup next to the context menu
+   * Uses viewport detection to ensure the move popup stays visible
+   */
+  const handleMove = useCallback((e: React.MouseEvent) => {
+    const calculatedPosition = calculateMovePosition(menuPosition);
+    setMovePosition(calculatedPosition);
+    setShowMovePopup(true);
+  }, [menuPosition]);
 
   /**
    * Handles opening the label manager for the current card
@@ -58,16 +80,10 @@ export function CardContextMenu({
    * Uses viewport detection to ensure the label manager stays visible
    */
   const handleLabels = useCallback((e: React.MouseEvent) => {
-    const calculatedPosition = calculateLabelManagerPosition(position);
+    const calculatedPosition = calculateLabelManagerPosition(menuPosition);
     setLabelManagerPosition(calculatedPosition);
     setShowLabelManager(true);
-    console.log('handleLabels called', {
-      boardId: currentBoard?.id,
-      cardId: card.id,
-      position: calculatedPosition,
-      contextMenuPosition: position
-    });
-  }, [position, currentBoard?.id, card.id]);
+  }, [menuPosition, currentBoard?.id, card.id]);
 
   /**
    * Handles opening the date picker for the current card
@@ -77,18 +93,12 @@ export function CardContextMenu({
   const handleDates = useCallback((e: React.MouseEvent) => {
     // Only calculate position once when opening
     if (!datePickerPositionedRef.current) {
-      const calculatedPosition = calculateDatePickerPosition(position);
+      const calculatedPosition = calculateDatePickerPosition(menuPosition);
       setDatePickerPosition(calculatedPosition);
       datePickerPositionedRef.current = true;
     }
     setShowDatePicker(true);
-    console.log('handleDates called', {
-      boardId: currentBoard?.id,
-      cardId: card.id,
-      position: datePickerPosition,
-      contextMenuPosition: position
-    });
-  }, [position, currentBoard?.id, card.id, datePickerPosition]);
+  }, [menuPosition]);
 
   /**
    * Handles clicks on the backdrop area
@@ -115,11 +125,12 @@ export function CardContextMenu({
 
       {/* Context Menu */}
       <div
-        className={`fixed bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-600 py-2 min-w-[200px] max-w-xs`}
+        className={`fixed bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-600 py-2 min-w-[200px] max-w-xs overflow-y-auto`}
         style={{
-          left: `${position.x}px`,
-          top: `${position.y}px`,
+          left: `${menuPosition.x}px`,
+          top: `${menuPosition.y}px`,
           zIndex: Z_INDEX.MODAL,
+          maxHeight: 'calc(100vh - 16px)',
         }}
         onClick={(e) => {
           e.preventDefault();
@@ -130,6 +141,7 @@ export function CardContextMenu({
           onOpenCard={onOpenCard}
           onLabels={handleLabels}
           onDates={handleDates}
+          onMove={handleMove}
           actionHandlers={actionHandlers}
           isProcessing={actionHandlers.isProcessing}
         />
@@ -155,6 +167,13 @@ export function CardContextMenu({
         dueDate={card.dueDate}
         onDatesChange={actionHandlers.handleDatesChange}
         onClose={() => setShowDatePicker(false)}
+      />
+      <MovePortal
+        show={showMovePopup}
+        position={movePosition}
+        cardId={card.id}
+        currentListId={card.listId}
+        onClose={() => setShowMovePopup(false)}
       />
     </>
   );

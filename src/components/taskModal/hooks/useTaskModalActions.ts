@@ -1,6 +1,7 @@
 import { useBoardStore, useUIStore } from '@/store';
+import { Card } from '@/lib/types';
 
-export const useTaskModalCardActions = () => {
+export const useTaskModalActions = () => {
   const { updateCard } = useBoardStore();
   const { openCardModal } = useUIStore();
 
@@ -14,8 +15,8 @@ export const useTaskModalCardActions = () => {
     openCardModal(cardId);
   };
 
-  const handleSaveCard = (boardId: string, cardId: string, data: any, onClose: () => void) => {
-    const updateData: any = {
+  const handleSaveCard = (boardId: string, cardId: string, data: Partial<Card>, onClose: () => void) => {
+    const updateData: Partial<Card> = {
       title: data.title,
       description: data.description,
     };

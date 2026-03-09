@@ -4,7 +4,7 @@
 
 import { User, Mail, Lock } from 'lucide-react';
 import { Button } from '@/components/ui';
-import { JoinFormData } from '@/lib/types';
+import { JoinFormData } from '../../types';
 
 interface JoinFormProps {
   formData: JoinFormData;

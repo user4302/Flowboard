@@ -3,7 +3,6 @@
  * Handles peer-to-peer connections for real-time board synchronization
  * Provides WebRTC-based data channels for collaborative editing
  */
-import { Board, Card, List } from './types';
 
 /**
  * Peer connection interface - Represents a WebRTC peer connection
@@ -34,7 +33,7 @@ export interface SyncMessage {
   // Type of entity being synced
   entityType: 'board' | 'list' | 'card';
   // Payload data for the sync operation
-  data: any;
+  data: Record<string, unknown>;
   // Timestamp of the message
   timestamp: string;
   // ID of the user sending the message
@@ -232,7 +231,7 @@ class P2PManager {
    * @param peerId - ID of the peer to send message to
    * @param message - Signaling message to send
    */
-  private sendSignalingMessage(peerId: string, message: any): void {
+  private sendSignalingMessage(peerId: string, message: Record<string, unknown>): void {
     // In real implementation, send via Netlify function or WebSocket
     console.log(`Signaling to ${peerId}:`, message);
   }

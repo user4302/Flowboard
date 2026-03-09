@@ -1,6 +1,6 @@
 import { isSameDay, isSameWeek, isSameMonth, addDays } from 'date-fns';
 import { normalizeForDisplay } from '@/lib/dateUtils';
-import { Card } from '@/lib/types';
+import { Card, Label } from '@/lib/types';
 
 /**
  * Helper function to calculate timeline height based on task stacking
@@ -478,7 +478,7 @@ const getContrastColor = (bgColor: string): string => {
 /**
  * Get task color and contrasting text color
  */
-export const getTaskColor = (task: Card, boardLabels: any[] = []) => {
+export const getTaskColor = (task: Card, boardLabels: Label[] = []) => {
   if (task.labelIds?.length > 0) {
     const firstLabelId = task.labelIds[0];
     const label = boardLabels.find(l => l.id === firstLabelId);

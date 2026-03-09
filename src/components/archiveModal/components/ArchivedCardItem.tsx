@@ -2,6 +2,7 @@
 
 import { RotateCcw, Trash2, Calendar } from 'lucide-react';
 import { ArchivedCardItemProps } from '../types';
+import { List } from '@/lib/types';
 
 export function ArchivedCardItem({
   archivedCard,
@@ -29,7 +30,7 @@ export function ArchivedCardItem({
               <span>Archived {formatDate(archivedCard.archivedAt)}</span>
             </div>
             <div>
-              From: {currentBoard?.lists.find((l: any) => l.id === archivedCard.originalListId)?.title || 'Unknown list'}
+              From: {currentBoard?.lists.find((l: List) => l.id === archivedCard.originalListId)?.title || 'Unknown list'}
             </div>
           </div>
         </div>

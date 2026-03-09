@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { format, isAfter, isBefore, isToday, isPast, isFuture, formatDistanceToNow } from 'date-fns';
+import { format, isToday, isPast, formatDistanceToNow } from 'date-fns';
 
 /**
  * Utility function for combining CSS classes
@@ -80,10 +80,19 @@ export function isCardDueSoon(card: { dueDate?: Date }, days: number = 3): boole
  * @param checklist - Array of checklist items with done status
  * @returns Percentage of completed items (0-100)
  */
-export function getChecklistProgress(checklist: { done: boolean }[] | undefined | null): number {
-  if (!checklist || checklist.length === 0) return 0;
-  const completed = checklist.filter(item => item.done).length;
-  return Math.round((completed / checklist.length) * 100);
+export function getChecklistProgress(checklists: { items: { done: boolean }[] }[] | undefined | null): number {
+  if (!checklists || checklists.length === 0) return 0;
+
+  let totalItems = 0;
+  let completedItems = 0;
+
+  checklists.forEach(checklist => {
+    totalItems += checklist.items.length;
+    completedItems += checklist.items.filter(item => item.done).length;
+  });
+
+  if (totalItems === 0) return 0;
+  return Math.round((completedItems / totalItems) * 100);
 }
 
 /**
@@ -93,7 +102,7 @@ export function getChecklistProgress(checklist: { done: boolean }[] | undefined 
  * @param wait - Wait time in milliseconds
  * @returns Debounced function
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

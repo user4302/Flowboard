@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { addDays, addWeeks, addMonths, addYears } from 'date-fns';
+import { addDays, addMonths, addYears } from 'date-fns';
 
 /**
  * Timeline zoom level type

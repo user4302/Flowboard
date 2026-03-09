@@ -28,7 +28,7 @@ export function InviteForm({
           Invite to Board
         </h2>
         <p className="text-sm text-slate-600 dark:text-slate-400">
-          Create an invitation link for "{boardName}"
+          Create an invitation link for &ldquo;{boardName}&rdquo;
         </p>
       </div>
 

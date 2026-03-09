@@ -7,7 +7,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { CardProps } from './types';
 import { getCardMembers, getCardMetadata, getCardClasses, getCardTitleClasses } from './utils';
-import { useTaskModalCardActions } from '@/components/taskModal/hooks/useTaskModalCardActions';
+import { useTaskModalActions } from '@/components/taskModal/hooks/useTaskModalActions';
 import { TaskCardCardLabels } from './components/TaskCardCardLabels';
 import { TaskCardCardMembers } from './components/TaskCardCardMembers';
 import { TaskCardCardMeta } from './components/TaskCardCardMeta';
@@ -17,7 +17,7 @@ import { useCardContextMenu } from './hooks/useCardContextMenu';
 
 export function TaskCard({ card, members, onClick }: CardProps) {
   const { boards, currentBoardId } = useBoardStore();
-  const { handleCardClick, handleToggleCompleted } = useTaskModalCardActions();
+  const { handleCardClick, handleToggleCompleted } = useTaskModalActions();
   const { isOpen, position, handleContextMenu, handleButtonClick, closeContextMenu } = useCardContextMenu();
 
   const currentBoard = boards.find(b => b.id === currentBoardId);

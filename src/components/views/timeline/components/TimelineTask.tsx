@@ -1,6 +1,4 @@
-import { Card } from '@/lib/types';
-import { cn } from '@/lib/utils';
-import { addDays } from 'date-fns';
+import { Card, Label } from '@/lib/types';
 
 /**
  * Task Component
@@ -39,11 +37,11 @@ interface TaskProps {
   /** Function to open task modal */
   onOpenTaskModal: (taskId: string) => void;
   /** Function to calculate task positioning */
-  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number, dateRange: Date[], zoomLevel: 'day' | 'week' | '2weeks' | 'month' | 'year') => any;
+  getTaskPosition: (task: Card, allTasks: Card[], taskIndex: number) => { left: string; width: string; top: string; };
   /** Function to get task color from labels */
-  getTaskColor: (task: Card, boardLabels?: any[]) => { background: string; text: string };
+  getTaskColor: (task: Card, boardLabels?: Label[]) => { background: string; text: string };
   /** Labels available on the board */
-  boardLabels: any[];
+  boardLabels: Label[];
 }
 
 /**
@@ -63,26 +61,13 @@ export function TimelineTask({
   getTaskColor,
   boardLabels
 }: TaskProps) {
-  // Only render tasks that are at least partially visible in the timeline
-  // Dates are already Date objects from localStorage conversion
-  const taskStart = task.startDate || new Date();
-  const taskEnd = task.dueDate || addDays(taskStart, 7);
-  const rangeStart = dateRange[0];
-  const rangeEnd = dateRange[dateRange.length - 1];
-
-  // Normalize dates to start of day for comparison (to avoid time-based filtering issues)
-  const cardStartDay = new Date(taskStart.getFullYear(), taskStart.getMonth(), taskStart.getDate());
-  const cardEndDay = new Date(taskEnd.getFullYear(), taskEnd.getMonth(), taskEnd.getDate());
-  const rangeStartDay = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate());
-  const rangeEndDay = new Date(rangeEnd.getFullYear(), rangeEnd.getMonth(), rangeEnd.getDate());
-
   // Skip cards that are completely outside the visible range
   // REMOVED: Let TimelineView handle filtering to avoid mismatches
   // if (cardEndDay < rangeStartDay || cardStartDay > rangeEndDay) {
   //   return null;
   // }
 
-  const position = getTaskPosition(task, allCards, cardIndex, dateRange, zoomLevel);
+  const position = getTaskPosition(task, allCards, cardIndex);
   const colors = getTaskColor(task, boardLabels);
 
   return (

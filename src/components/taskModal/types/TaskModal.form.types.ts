@@ -29,9 +29,9 @@ export interface LabelManagerProps {
 }
 
 export interface ModalFormProps {
-  card: CardType;
+  card?: CardType | null;
   form: any; // react-hook-form return type
   errors: any;
   register: any;
-  onToggleCompleted: () => void;
+  onToggleCompleted?: () => void;
 }

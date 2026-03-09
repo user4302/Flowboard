@@ -1,5 +1,5 @@
 import { Card, Label, User } from '@/lib/types';
-import { isCardOverdue, formatDate } from '@/lib/utils';
+import { isCardOverdue } from '@/lib/utils';
 
 export interface FilterOptions {
   searchTerm: string;

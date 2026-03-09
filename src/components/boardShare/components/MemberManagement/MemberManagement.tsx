@@ -7,7 +7,7 @@
 'use client';
 
 import { Button } from '@/components/ui';
-import { MemberManagementProps } from '@/lib/types';
+import { MemberManagementProps } from '../../types';
 import { useMemberManagement } from '../../hooks';
 import { MemberTabs } from './MemberTabs';
 import { PendingRequests } from './PendingRequests';

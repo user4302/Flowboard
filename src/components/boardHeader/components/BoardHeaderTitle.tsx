@@ -1,9 +1,10 @@
 'use client';
 
 import { useBoardHeaderTitle } from '../hooks/useBoardHeaderTitle';
+import { Board } from '@/lib/types';
 
 interface BoardHeaderTitleProps {
-  currentBoard: any;
+  currentBoard: Board;
 }
 
 /**

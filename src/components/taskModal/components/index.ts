@@ -3,12 +3,12 @@
  * Exports all modal-related components for the Flowboard application
  */
 
-export { TaskModalModalHeader } from './TaskModalModalHeader';
-export { TaskModalModalFormSection } from './TaskModalModalFormSection';
-export { TaskModalModalLabelSection } from './TaskModalModalLabelSection';
-export { TaskModalModalChecklistSection } from './TaskModalModalChecklistSection';
+export { TaskModalHeader } from './TaskModalHeader';
+export { TaskModalFormSection } from './TaskModalFormSection';
+export { TaskModalLabelSection } from './TaskModalLabelSection';
+export { TaskModalChecklistSection } from './TaskModalChecklistSection';
 
 // Moved from card components
 export { TaskModalChecklistManager } from './TaskModalChecklistManager';
-export { TaskModalModalForm } from './TaskModalModalForm';
+export { TaskModalForm } from './TaskModalForm';
 export { TaskModalLabelManager } from './LabelManager/TaskModalLabelManager';

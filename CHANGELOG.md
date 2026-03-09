@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-03-09
+
+### Added
+- Card JSON import/export functionality with clipboard detection
+- Smart paste functionality for creating cards from clipboard JSON data
+- Enhanced context menu with clone, copy JSON, download JSON, and upload JSON options
+- Cross-platform clipboard monitoring hook for valid card JSON detection
+- Card JSON validation and format conversion utilities
+- File upload/download support for card JSON data
+- Smart paste button in kanban containers with JSON handling
+- CustomTooltip component for reusable tooltip functionality
+- Card move functionality with cross-board support and nested popup interface
+- MovePortal component for moving cards between lists and boards
+- Cross-board card movement with proper positioning and viewport bounds detection
+- Dedicated card creation buttons (add, upload, paste) in kanban view
+- Multiple checklists per card with expandable sections and individual progress tracking
+- TaskModalMultiChecklistManager for comprehensive checklist management
+
+### Changed
+- Enhanced board store with createCardFromData method for JSON import support
+- Improved UI store with card JSON data and target list ID state management
+- Refactored TaskModal components for better form organization and JSON pre-population
+- Hardcoded APP_VERSION to avoid package.json import for build stability
+- Massive TypeScript cleanup across 58 files with improved type safety
+- Removed hardcoded mock data and optimized component architecture
+- Enhanced utility functions with better type annotations and import cleanup
+- Implemented local-first checklist management in task modal for better performance
+- Added batch synchronization for checklist changes to reduce store operations
+- Enhanced checklist UI with progress tracking and visual progress bar
+- Added real-time completion percentage display with animated progress indicator
+- Refactored board store into modular slice-based architecture for improved maintainability
+- Added data migration support from single checklist to multiple checklists format
+- Improved clipboard detection with better focus handling for context menus
+- Enhanced paste UX with loading states and always-visible paste button
+- Optimized kanban performance with memoized filtered cards
+- Auto-close context menu after successful copy/download actions
+- Improved context menu positioning with accurate viewport bounds detection
+- Added scrolling support for menus that exceed viewport height
+- Simplified context menu item labels for cleaner interface
+- Consolidated positioning logic in dedicated utils function
+- Removed unused cover and upload JSON options from context menu
+
+### Fixed
+- Added tooltip to paste button for better UX consistency
+- Improved JSON parsing error handling in clipboard detection to prevent console errors
+- Removed emoji from Features heading in README for cleaner formatting
+- Add missing description field in createCardFromData to prevent data loss during card creation
+
 ## [Unreleased]
 
 ## [1.3.0] - 2026-03-03

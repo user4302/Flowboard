@@ -54,8 +54,8 @@ export interface Card {
   startDate?: Date;
   /** Optional due date for the card */
   dueDate?: Date;
-  /** Array of checklist items for subtasks */
-  checklist: ChecklistItem[];
+  /** Array of checklists with multiple items */
+  checklists: Checklist[];
   /** Whether the card is marked as completed */
   completed: boolean;
   /** Position index for ordering cards within a list */
@@ -113,14 +113,32 @@ export interface User {
 }
 
 /**
- * ChecklistItem interface - Represents a subtask within a card
+ * Checklist interface - Represents a named checklist with multiple items
+ */
+export interface Checklist {
+  /** Unique identifier for checklist */
+  id: string;
+  /** Display name/title of checklist */
+  name: string;
+  /** Array of checklist items */
+  items: ChecklistItem[];
+  /** Position index for ordering checklists */
+  position: number;
+  /** Timestamp when checklist was created */
+  createdAt: Date;
+  /** Timestamp when checklist was last updated */
+  updatedAt: Date;
+}
+
+/**
+ * ChecklistItem interface - Represents a subtask within a checklist
  */
 export interface ChecklistItem {
-  /** Unique identifier for the checklist item */
+  /** Unique identifier for checklist item */
   id: string;
-  /** Description text of the checklist item */
+  /** Description text of checklist item */
   text: string;
-  /** Whether the item is completed */
+  /** Whether item is completed */
   done: boolean;
 }
 

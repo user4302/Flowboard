@@ -8,7 +8,7 @@ import { TaskCardCardCompletion } from '@/components/taskCard/components/TaskCar
 import { TaskCardCardMembers } from '@/components/taskCard/components/TaskCardCardMembers';
 import { useState, useRef, useEffect } from 'react';
 
-export function TaskModalModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
+export function TaskModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [descriptionValue, setDescriptionValue] = useState(card?.description || '');
@@ -16,8 +16,10 @@ export function TaskModalModalForm({ card, form, errors, register, onToggleCompl
 
   // Update description when card changes
   useEffect(() => {
-    setDescriptionValue(card?.description || '');
-  }, [card?.id]);
+    // Use setTimeout to avoid calling setState synchronously
+    const timeoutId = setTimeout(() => setDescriptionValue(card?.description || ''), 0);
+    return () => clearTimeout(timeoutId);
+  }, [card?.description, card?.id]);
 
   // Check if content exceeds default height
   useEffect(() => {
@@ -54,8 +56,12 @@ export function TaskModalModalForm({ card, form, errors, register, onToggleCompl
       {/* Title - Required field with validation */}
       <div className="flex items-center gap-3">
         <TaskCardCardCompletion
-          completed={card.completed}
-          onToggle={onToggleCompleted}
+          completed={card?.completed || false}
+          onToggle={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onToggleCompleted?.();
+          }}
           size="medium"
         />
         <div className="flex-1">
@@ -64,7 +70,7 @@ export function TaskModalModalForm({ card, form, errors, register, onToggleCompl
             placeholder="Card title"
             className={cn(
               "text-lg font-semibold",
-              card.completed && "line-through opacity-60"
+              card?.completed && "line-through opacity-60"
             )}
           />
           {errors.title && (

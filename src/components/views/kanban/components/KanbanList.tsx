@@ -1,10 +1,9 @@
-'use client';
-
 import { cn } from '@/lib/utils';
 import { KanbanListHeader } from './KanbanListHeader';
 import { KanbanCardsContainer } from './KanbanCardsContainer';
 import { getFilteredCardCount, FilterOptions } from '@/lib/filterUtils';
 import { useUIStore, useBoardStore } from '@/store';
+import { List, User } from '@/lib/types';
 
 /**
  * Props for the KanbanList component
@@ -12,9 +11,9 @@ import { useUIStore, useBoardStore } from '@/store';
  */
 interface ListProps {
   /** The list data containing cards and metadata */
-  list: any;
+  list: List;
   /** Array of board members for card assignment */
-  members: any[];
+  members: User[];
   /** Callback function when a new card is added to the list */
   onAddCard: (listId: string, title: string) => void;
   /** Callback function when the list is renamed */
@@ -31,8 +30,8 @@ interface ListProps {
   isAnyMenuOpen?: boolean;
   /** Drag handle props for list reordering functionality */
   dragHandleProps?: {
-    attributes: any;
-    listeners: any;
+    attributes: Record<string, unknown>;
+    listeners: Record<string, unknown>;
   };
 }
 

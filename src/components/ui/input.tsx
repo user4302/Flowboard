@@ -2,18 +2,11 @@ import { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 /**
- * Input component props interface
- * Extends standard HTML input attributes
- */
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> { }
-
-/**
  * Input component - A styled input field component
  * Built with Tailwind CSS for consistent form styling
  * Supports all standard HTML input attributes
  */
-export const Input = forwardRef<HTMLInputElement, InputProps>(
+export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
   ({ className, type, ...props }, ref) => {
     return (
       <input

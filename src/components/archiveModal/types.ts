@@ -1,3 +1,5 @@
+import { ArchivedCard, Board } from '@/lib/types';
+
 export interface ArchiveModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,11 +12,11 @@ export interface DeleteConfirmation {
 }
 
 export interface ArchivedCardItemProps {
-  archivedCard: any;
+  archivedCard: ArchivedCard;
   onUnarchive: (archivedCardId: string) => void;
   onPermanentlyDelete: (archivedCardId: string, cardTitle: string) => void;
   isProcessing: boolean;
-  currentBoard: any;
+  currentBoard: Board;
   formatDate: (date: Date) => string;
 }
 

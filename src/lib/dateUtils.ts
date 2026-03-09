@@ -55,7 +55,7 @@ export function toLocalDate(date?: Date | string): Date | undefined {
  * @param date - Date to check
  * @returns True if date is a UTC string
  */
-export function isUTCString(date: any): date is string {
+export function isUTCString(date: unknown): date is string {
   return typeof date === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/.test(date);
 }
 

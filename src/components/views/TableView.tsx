@@ -35,7 +35,6 @@ export function TableView({ boardId }: TableViewProps) {
   } = useUIStore();
 
   const board = boards.find((b) => b.id === boardId);
-  if (!board) return null;
 
   const [sortField, setSortField] = useState<SortField>('title');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
@@ -69,6 +68,8 @@ export function TableView({ boardId }: TableViewProps) {
 
   // Get filtered cards using the utility
   const filteredCards = useMemo<CardWithList[]>(() => {
+    if (!board) return [];
+
     const cardsWithList: CardWithList[] = board.lists.flatMap(list =>
       list.cards.map(card => ({
         ...card,
@@ -88,13 +89,13 @@ export function TableView({ boardId }: TableViewProps) {
     };
 
     return filterCards(cardsWithList, filterOptions, board.labels) as CardWithList[];
-  }, [board.lists, board.labels, searchTerm, selectedLabels, selectedMembers, showOverdue, showCompleted, priorityThreshold, dueDateFilter]);
+  }, [board, searchTerm, selectedLabels, selectedMembers, showOverdue, showCompleted, priorityThreshold, dueDateFilter]);
 
   // Sort cards
   const sortedCards = useMemo(() => {
     const sorted = [...filteredCards].sort((a, b) => {
-      let aValue: any;
-      let bValue: any;
+      let aValue: string | number;
+      let bValue: string | number;
 
       switch (sortField) {
         case 'title':
@@ -110,8 +111,8 @@ export function TableView({ boardId }: TableViewProps) {
           bValue = b.dueDate ? new Date(b.dueDate).getTime() : Infinity;
           break;
         case 'progress':
-          aValue = getChecklistProgress(a.checklist);
-          bValue = getChecklistProgress(b.checklist);
+          aValue = getChecklistProgress(a.checklists);
+          bValue = getChecklistProgress(b.checklists);
           break;
         case 'priority':
           aValue = a.priority || 0;
@@ -132,6 +133,9 @@ export function TableView({ boardId }: TableViewProps) {
 
     return sorted;
   }, [filteredCards, sortField, sortDirection]);
+
+  // Early return after all hooks are called
+  if (!board) return null;
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -216,7 +220,6 @@ export function TableView({ boardId }: TableViewProps) {
           <thead className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
             <tr>
               {columns.filter(column => visibleColumns.has(column.key)).map((column) => {
-                const Icon = column.icon;
                 return (
                   <th
                     key={column.key}
@@ -379,16 +382,16 @@ export function TableView({ boardId }: TableViewProps) {
                 {/* Progress */}
                 {visibleColumns.has('progress') && (
                   <td className="px-4 py-3">
-                    {card.checklist.length > 0 ? (
+                    {(card.checklists?.length || 0) > 0 ? (
                       <div className="flex items-center gap-2">
                         <div className="flex-1 bg-slate-200 rounded-full h-2 dark:bg-slate-700">
                           <div
                             className="bg-indigo-600 h-2 rounded-full"
-                            style={{ width: `${getChecklistProgress(card.checklist)}%` }}
+                            style={{ width: `${getChecklistProgress(card.checklists)}%` }}
                           />
                         </div>
                         <span className="text-xs text-slate-600 dark:text-slate-400">
-                          {getChecklistProgress(card.checklist)}%
+                          {getChecklistProgress(card.checklists)}%
                         </span>
                       </div>
                     ) : (
