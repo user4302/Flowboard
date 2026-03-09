@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix checklist renaming by adding immediate store synchronization
 - Prevent button click conflicts with header toggle using event.stopPropagation
 
+### Added
+- Add URL parameter support for direct task modal access
+- Support direct linking to specific cards via /board/[boardId]/card/[cardId] routes
+- Automatically open task modal when card URL is accessed
+- Set current board based on URL parameters
+
 ## [1.4.0] - 2026-03-09
 
 ### Added

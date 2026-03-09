@@ -14,6 +14,7 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Drag-and-Drop**: Full drag-and-drop support for cards between lists and list reordering using @dnd-kit
 - **Rich Card Management**: Detailed card editing with descriptions, labels, members, dates, checklists, and priority
 - **Context Menu Actions**: Right-click context menu for quick card operations (duplicate, archive, copy link, edit labels)
+- **Direct Card Links**: Share direct links to specific cards via URL parameters for quick access
 - **Card Archiving**: Archive completed cards with restore and permanent delete options
 - **Real-time Search**: Filter cards by title, description, labels, and members
 - **Dark/Light Theme**: System preference detection with manual toggle
