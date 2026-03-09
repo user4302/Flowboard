@@ -317,7 +317,8 @@ export const useUIStore = create<UIState>()(
             const newUrl = `/board/${boardStore.currentBoardId}`;
             window.history.pushState({}, '', newUrl);
           } else {
-            window.history.pushState({}, '', '/');
+            const newUrl = '/';
+            window.history.pushState({}, '', newUrl);
           }
         });
 

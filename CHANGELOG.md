@@ -28,6 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhance modal functions with dynamic URL updates
 - Implement proper URL synchronization with browser history
 - Fix circular dependency between UI and board stores
+- Enhance URL synchronization across board operations
+- Add URL updates when switching between boards
+- Preserve card URLs during board navigation
+- Navigate to new board URLs after board creation
+- Handle URL redirection when deleting current board
+- Switch to next available board or root when current board is deleted
+- Fix variable name inconsistency in UI store close modal function
 
 ## [1.4.0] - 2026-03-09
 
