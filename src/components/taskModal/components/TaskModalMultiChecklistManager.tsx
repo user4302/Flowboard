@@ -112,6 +112,20 @@ export function TaskModalMultiChecklistManager({
         </Button>
       )}
 
+      {/* Add another checklist - show when checklists exist */}
+      {checklists.length > 0 && !showNewChecklistInput && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowNewChecklistInput(true)}
+          className="w-full justify-start"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add another checklist
+        </Button>
+      )}
+
       {showNewChecklistInput && (
         <div className="flex items-center gap-2">
           <Input
@@ -163,21 +177,18 @@ export function TaskModalMultiChecklistManager({
         return (
           <div key={checklist.id} className="border border-slate-200 dark:border-slate-600 rounded-lg">
             {/* Checklist header */}
-            <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-t-lg">
+            <div
+              className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-t-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              onClick={() => !isEditing && toggleChecklistExpanded(checklist.id)}
+            >
               <div className="flex items-center gap-2 flex-1">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleChecklistExpanded(checklist.id)}
-                  className="p-1"
-                >
+                <div className="p-1">
                   {isExpanded ? (
                     <ChevronUp className="h-4 w-4" />
                   ) : (
                     <ChevronDown className="h-4 w-4" />
                   )}
-                </Button>
+                </div>
 
                 {isEditing ? (
                   <Input
@@ -213,7 +224,10 @@ export function TaskModalMultiChecklistManager({
                     <Button
                       type="button"
                       size="sm"
-                      onClick={() => handleSaveChecklistName(checklist.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSaveChecklistName(checklist.id);
+                      }}
                       disabled={!editingChecklistName.trim()}
                     >
                       Save
@@ -222,7 +236,10 @@ export function TaskModalMultiChecklistManager({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={handleCancelEditChecklist}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCancelEditChecklist();
+                      }}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -233,7 +250,10 @@ export function TaskModalMultiChecklistManager({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleStartEditChecklist(checklist)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStartEditChecklist(checklist);
+                      }}
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -241,7 +261,10 @@ export function TaskModalMultiChecklistManager({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      onClick={() => onRemoveChecklist(checklist.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveChecklist(checklist.id);
+                      }}
                       className="text-red-500 hover:text-red-600"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -251,12 +274,12 @@ export function TaskModalMultiChecklistManager({
               </div>
             </div>
 
-            {/* Progress bar */}
+            {/* Progress bar - full height section */}
             {checklist.items.length > 0 && (
-              <div className="px-3 pb-2">
-                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
+              <div className="px-3 py-2 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
+                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                   <div
-                    className="bg-green-600 dark:bg-green-500 h-1.5 rounded-full transition-all duration-300 ease-out"
+                    className="bg-green-600 dark:bg-green-500 h-2 rounded-full transition-all duration-300 ease-out"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -265,7 +288,7 @@ export function TaskModalMultiChecklistManager({
 
             {/* Checklist items */}
             {isExpanded && (
-              <div className="p-3 pt-0 space-y-2">
+              <div className="p-3 space-y-2">
                 {checklist.items.map((item) => (
                   <div key={item.id} className="flex items-center gap-2">
                     <input

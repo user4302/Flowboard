@@ -48,6 +48,10 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
           : checklist
       )
     );
+
+    // Immediately sync to store
+    const { updateChecklist: storeUpdateChecklist } = useBoardStore.getState();
+    storeUpdateChecklist(boardId, cardId, checklistId, updates);
   };
 
   const removeChecklist = (checklistId: string) => {

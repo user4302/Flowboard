@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
 - Improved "Add checklist" button visibility logic to only show when no checklists exist
 - Added comprehensive JSDoc documentation for useTaskModalChecklist hook
+- Make entire checklist header clickable for expand/collapse functionality
+- Add "Add another checklist" button when checklists already exist
+- Enhance progress bar with full-height section and distinct background
+- Fix checklist renaming by adding immediate store synchronization
+- Prevent button click conflicts with header toggle using event.stopPropagation
 
 ## [1.4.0] - 2026-03-09
 
