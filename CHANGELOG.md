@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Improved context menu positioning with accurate viewport bounds detection
+- Added scrolling support for menus that exceed viewport height
+- Simplified context menu item labels for cleaner interface
+- Consolidated positioning logic in dedicated utils function
+- Removed unused cover and upload JSON options from context menu
+
 ### Fixed
 - Added tooltip to paste button for better UX consistency
 - Corrected version number from 1.6.0 to 1.3.0
