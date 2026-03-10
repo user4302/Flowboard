@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { BoardSidebar } from '@/components/boardSidebar';
 import { BoardHeader } from '@/components/boardHeader';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
@@ -11,7 +11,7 @@ import { useSharingStore } from '@/store/sharingStore';
 
 export default function Home() {
   const { currentBoard, currentBoardId, createBoard, boards, setCurrentBoard } = useBoard();
-  const { currentView, initializeTheme, openCardModal, closeCardModalWithoutUrlUpdate } = useUIStore();
+  const { currentView, initializeTheme, openCardModal } = useUIStore();
   const { showJoinModal, setShowJoinModal } = useSharingStore();
   const [inviteId, setInviteId] = useState<string | null>(null);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
@@ -60,34 +60,6 @@ export default function Home() {
 
     return () => clearTimeout(timer);
   }, [initializeTheme, setShowJoinModal, boards, setCurrentBoard, openCardModal]);
-
-  const handleCloseCardModal = useCallback(() => {
-    setIsClosingModal(true);
-
-    // Set global flag IMMEDIATELY to prevent dynamic route from reopening modal
-    (window as any).__isClosingModal = true;
-
-    closeCardModalWithoutUrlUpdate();
-
-    // Update URL after a short delay and reset closing flag
-    setTimeout(() => {
-      import('@/store/boardStore').then(({ useBoardStore }) => {
-        const boardStore = useBoardStore.getState();
-        if (boardStore.currentBoardId) {
-          const newUrl = `/board/${boardStore.currentBoardId}`;
-          window.history.pushState({}, '', newUrl);
-        } else {
-          window.history.pushState({}, '', '/');
-        }
-      });
-
-      // Reset flags after a longer delay to ensure URL change is processed
-      setTimeout(() => {
-        setIsClosingModal(false);
-        (window as any).__isClosingModal = false;
-      }, 200);
-    }, 100);
-  }, [closeCardModalWithoutUrlUpdate]);
 
   const handleCreateBoard = () => {
     const board = createBoard('New Board');

@@ -43,8 +43,8 @@ export function useTaskModalHandlers(
       // Reset flags after a longer delay to ensure URL change is processed
       setTimeout(() => {
         (window as any).__isClosingModal = false;
-      }, 200);
-    }, 100);
+      }, 300); // Increased from 200ms to 300ms
+    }, 50); // Reduced from 100ms to 50ms for faster response
   }, [closeCardModalWithoutUrlUpdate, checklist]);
 
   const handleSave = useCallback((data: Partial<Card>) => {
