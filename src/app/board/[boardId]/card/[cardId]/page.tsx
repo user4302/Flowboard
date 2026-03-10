@@ -27,6 +27,7 @@ export default function BoardCardPage() {
   const [inviteId, setInviteId] = useState<string | null>(null);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [isBoardLoading, setIsBoardLoading] = useState(true);
+  const [isClosingModal, setIsClosingModal] = useState(false);
 
   useEffect(() => {
     initializeTheme();
@@ -51,26 +52,27 @@ export default function BoardCardPage() {
   }, [initializeTheme, setShowJoinModal]);
 
   useEffect(() => {
-    // Set the current board from URL parameter
+    // Set current board from URL parameter
     if (boardId) {
+      const globalIsClosingModal = (window as any).__isClosingModal || false;
       const board = getBoardById(boardId);
       if (board) {
         setCurrentBoard(boardId);
         setIsBoardLoading(false);
 
-        // Open the task modal for the specific card
-        if (cardId) {
+        // Open task modal for the specific card (only if not closing modal)
+        if (cardId && !isClosingModal && !globalIsClosingModal) {
           // Small delay to ensure board is loaded
           setTimeout(() => {
             openCardModal(cardId);
-          }, 500); // Increased delay from 100 to 500
+          }, 500);
         }
       } else {
         // Board not found, redirect to home
         router.push('/');
       }
     }
-  }, [boardId, cardId, getBoardById, setCurrentBoard, router, openCardModal]);
+  }, [boardId, cardId, getBoardById, setCurrentBoard, router, openCardModal, isClosingModal]);
 
   const currentBoard = boardId ? getBoardById(boardId) : null;
 

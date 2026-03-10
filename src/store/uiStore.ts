@@ -57,6 +57,7 @@ interface UIState extends ViewState, FilterState {
   openCardModal: (cardId?: string) => void;
   openCardModalFromJSON: (cardJSON: CardJSON, listId: string) => void;
   closeCardModal: () => void;
+  closeCardModalWithoutUrlUpdate: () => void;
 
   // Theme initialization
   initializeTheme: () => void;
@@ -306,6 +307,7 @@ export const useUIStore = create<UIState>()(
 
       /**
        * Close card modal
+       * @param cardId - Optional card ID to edit
        */
       closeCardModal: () => {
         // Import dynamically to avoid circular dependency
@@ -317,11 +319,22 @@ export const useUIStore = create<UIState>()(
             const newUrl = `/board/${boardStore.currentBoardId}`;
             window.history.pushState({}, '', newUrl);
           } else {
-            const newUrl = '/';
-            window.history.pushState({}, '', newUrl);
+            window.history.pushState({}, '', '/');
           }
         });
 
+        set({
+          cardModalOpen: false,
+          selectedCardId: null,
+          cardJSONData: null,
+          targetListId: null,
+        });
+      },
+
+      /**
+       * Close card modal without updating URL (used to prevent URL parsing loops)
+       */
+      closeCardModalWithoutUrlUpdate: () => {
         set({
           cardModalOpen: false,
           selectedCardId: null,

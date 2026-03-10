@@ -36,6 +36,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switch to next available board or root when current board is deleted
 - Fix variable name inconsistency in UI store close modal function
 
+### Fixed
+- Prevent URL parsing loops when closing task modal
+- Add closeCardModalWithoutUrlUpdate function to avoid immediate URL changes
+- Implement global closing flags to prevent dynamic route reopening
+- Add delayed URL updates with proper timing to ensure modal closes first
+- Fix infinite loop between modal close and URL parsing logic
+- Update all modal handlers to use custom close logic
+
 ## [1.4.0] - 2026-03-09
 
 ### Added
