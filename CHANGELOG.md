@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add comprehensive Jest testing framework with Testing Library integration
+- Configure test coverage thresholds (80%) and Next.js compatibility
+- Add test suites for board store, UI store, hooks, and utility functions
+- Include proper mocking setup for Next.js router and browser APIs
+
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
 - Improved "Add checklist" button visibility logic to only show when no checklists exist
