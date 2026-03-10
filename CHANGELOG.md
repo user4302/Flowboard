@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test component composition, conditional rendering, and user interaction scenarios for board components
 - Add comprehensive archive modal test coverage for ArchiveModal and ArchivedCardItem components
 - Test modal rendering, archived cards display, delete confirmation, and unarchive functionality
+- Add comprehensive board sharing test coverage for InviteModal, JoinBoardModal, and MemberManagement components
+- Test invite creation, board joining workflows, and member management functionality
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
