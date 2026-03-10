@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Include proper mocking setup for Next.js router and browser APIs
 - Add comprehensive UI component test coverage for button, modal, drag-overlay, inline-input, and input components
 - Cover all component variants, sizes, accessibility features, and edge cases in UI tests
+- Add comprehensive board component test coverage for BoardHeader, BoardSidebar, TaskCard, and TaskModal
+- Test component composition, conditional rendering, and user interaction scenarios for board components
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
