@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test search functionality, filtering options, input handling, and portal rendering
 - Add comprehensive view component test coverage for KanbanView, CalendarView, TimelineView, and TableView components
 - Test all board view types with proper data rendering, user interactions, and view-specific functionality
+- Add comprehensive app component test coverage for main page and root layout components
+- Test page rendering, component composition, layout structure, and Next.js app integration
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
