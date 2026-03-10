@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test modal rendering, archived cards display, delete confirmation, and unarchive functionality
 - Add comprehensive board sharing test coverage for InviteModal, JoinBoardModal, and MemberManagement components
 - Test invite creation, board joining workflows, and member management functionality
+- Add comprehensive search and filter test coverage for SearchAndFilter, SearchAndFilterInput, and SearchAndFilterPortal components
+- Test search functionality, filtering options, input handling, and portal rendering
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
