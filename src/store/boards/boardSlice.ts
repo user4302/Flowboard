@@ -2,17 +2,23 @@ import { Board } from '@/lib/types';
 import { generateId } from '@/lib/utils';
 import { BoardStateCreator, BoardSlice } from './types';
 
-export const createBoardSlice: BoardStateCreator<BoardSlice> = (set) => ({
+export const createBoardSlice: BoardStateCreator<BoardSlice> = (set, get) => ({
     boards: [],
     currentBoardId: null,
     isLoading: false,
     error: null,
 
     setCurrentBoard: (boardId) => {
+        // Check global flag to prevent modal reopening during board switches
+        const isClosingModal = (window as any).__isClosingModal || false;
+
+        // Only update URL if board is actually changing and not during modal operations
+        const isBoardChanging = boardId !== get().currentBoardId;
+
         set({ currentBoardId: boardId });
 
-        // Update URL to reflect current board
-        if (boardId) {
+        // Update URL to reflect current board only if board is actually changing
+        if (boardId && !isClosingModal && isBoardChanging) {
             const currentPath = window.location.pathname;
             const pathSegments = currentPath.split('/');
 
@@ -25,7 +31,7 @@ export const createBoardSlice: BoardStateCreator<BoardSlice> = (set) => ({
                 // Just update to board URL
                 window.history.pushState({}, '', `/board/${boardId}`);
             }
-        } else {
+        } else if (!boardId) {
             // No board selected, go to root
             window.history.pushState({}, '', '/');
         }

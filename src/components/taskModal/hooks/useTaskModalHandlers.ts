@@ -26,7 +26,7 @@ export function useTaskModalHandlers(
     (window as any).__isClosingModal = true;
 
     checklist.resetChecklist();
-    closeCardModalWithoutUrlUpdate();
+    closeCardModal(); // Use regular closeCardModal to properly reset state
 
     // Update URL after a short delay to prevent parsing loop
     setTimeout(() => {
@@ -45,7 +45,7 @@ export function useTaskModalHandlers(
         (window as any).__isClosingModal = false;
       }, 300); // Increased from 200ms to 300ms
     }, 50); // Reduced from 100ms to 50ms for faster response
-  }, [closeCardModalWithoutUrlUpdate, checklist]);
+  }, [closeCardModal, checklist]);
 
   const handleSave = useCallback((data: Partial<Card>) => {
     if (isJSONImportMode && currentBoardId && targetListId && cardJSONData) {

@@ -22,7 +22,7 @@ interface UseChecklistProps {
  * @returns Checklist management functions and local state
  */
 export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: UseChecklistProps) => {
-  const [localChecklists, setLocalChecklists] = useState<Checklist[]>(initialChecklists);
+  const [localChecklists, setLocalChecklists] = useState<Checklist[]>([]); // Start with empty array instead of initialChecklists
 
   const addChecklist = (name: string) => {
     const newChecklist: Checklist = {
@@ -135,6 +135,11 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
     const currentBoard = useBoardStore.getState().boards.find(b => b.id === boardId);
     const currentCard = currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === cardId);
     const currentChecklists = currentCard?.checklists || [];
+
+    // Only sync if card exists (prevents errors when card is deleted)
+    if (!currentCard) {
+      return;
+    }
 
     // Sync checklists (add, update, remove)
     localChecklists.forEach(localChecklist => {

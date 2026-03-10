@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove duplicate modal closing logic and optimize timing
 - Clean up unused imports and state in main page component
 - Optimize modal closing timing for faster response and proper sequencing
+- Improve URL handling and prevent modal parsing loops
+- Add explicit type definitions for UI state interface properties
+- Prevent checklist sync errors when card is deleted
+- Enhance setCurrentBoard with global flag checking to prevent modal reopening
+- Only update URLs when board actually changes and not during modal operations
+- Restructure modal functions to set state first, then update URL
+- Add isJSONImportMode state property for better state management
+- Fix JSDoc comment parameter name inconsistency
 
 ### Added
 - Add URL parameter support for direct task modal access

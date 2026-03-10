@@ -9,11 +9,26 @@ import { CardJSON } from '@/lib/cardJsonUtils';
  * Combines view preferences, filter options, and modal state management
  */
 interface UIState extends ViewState, FilterState {
+  // View preferences
+  currentView: 'kanban' | 'timeline' | 'calendar' | 'table';
+  sidebarOpen: boolean;
+  theme: 'light' | 'dark';
+
+  // Filter state
+  searchTerm: string;
+  selectedLabels: string[];
+  selectedMembers: string[];
+  showOverdue: boolean;
+  showCompleted: 'all' | 'completed' | 'incomplete';
+  priorityThreshold: number | null;
+  dueDateFilter: 'all' | 'overdue' | 'today' | 'week' | 'month';
+
   // Modal state
   cardModalOpen: boolean;
   selectedCardId: string | null;
   cardJSONData: CardJSON | null;
   targetListId: string | null;
+  isJSONImportMode: boolean;
 
   // Timeline state (per board)
   timelineState: Record<string, {
@@ -90,6 +105,7 @@ export const useUIStore = create<UIState>()(
       selectedCardId: null,
       cardJSONData: null,
       targetListId: null,
+      isJSONImportMode: false,
 
       // Initial timeline state (per board)
       timelineState: {},
@@ -265,8 +281,6 @@ export const useUIStore = create<UIState>()(
         selectedMembers: [],
         showOverdue: false,
         showCompleted: 'all',
-        priorityThreshold: null,
-        dueDateFilter: 'all',
       }),
 
       /**
@@ -274,22 +288,21 @@ export const useUIStore = create<UIState>()(
        * @param cardId - Optional card ID to edit
        */
       openCardModal: (cardId) => {
-        // Import dynamically to avoid circular dependency
-        import('./boardStore').then(({ useBoardStore }) => {
-          const boardStore = useBoardStore.getState();
-
-          // Update URL to include card path if cardId is provided
-          if (cardId && boardStore.currentBoardId) {
-            const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
-            window.history.pushState({}, '', newUrl);
-          }
-        });
-
         set({
           cardModalOpen: true,
           selectedCardId: cardId || null,
           cardJSONData: null,
           targetListId: null,
+        });
+
+        // Update URL to include card path if cardId is provided
+        import('./boardStore').then(({ useBoardStore }) => {
+          const boardStore = useBoardStore.getState();
+
+          if (cardId && boardStore.currentBoardId) {
+            const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
+            window.history.pushState({}, '', newUrl);
+          }
         });
       },
 
@@ -307,27 +320,24 @@ export const useUIStore = create<UIState>()(
 
       /**
        * Close card modal
-       * @param cardId - Optional card ID to edit
        */
       closeCardModal: () => {
-        // Import dynamically to avoid circular dependency
+        set({
+          cardModalOpen: false,
+          selectedCardId: null,
+          cardJSONData: null,
+          targetListId: null,
+        });
+
+        // Update URL to board URL or root
         import('./boardStore').then(({ useBoardStore }) => {
           const boardStore = useBoardStore.getState();
-
-          // Revert URL to base board URL or root if no board
           if (boardStore.currentBoardId) {
             const newUrl = `/board/${boardStore.currentBoardId}`;
             window.history.pushState({}, '', newUrl);
           } else {
             window.history.pushState({}, '', '/');
           }
-        });
-
-        set({
-          cardModalOpen: false,
-          selectedCardId: null,
-          cardJSONData: null,
-          targetListId: null,
         });
       },
 
