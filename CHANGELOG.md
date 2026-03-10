@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configure test coverage thresholds (80%) and Next.js compatibility
 - Add test suites for board store, UI store, hooks, and utility functions
 - Include proper mocking setup for Next.js router and browser APIs
+- Add comprehensive UI component test coverage for button, modal, drag-overlay, inline-input, and input components
+- Cover all component variants, sizes, accessibility features, and edge cases in UI tests
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
