@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test invite creation, board joining workflows, and member management functionality
 - Add comprehensive search and filter test coverage for SearchAndFilter, SearchAndFilterInput, and SearchAndFilterPortal components
 - Test search functionality, filtering options, input handling, and portal rendering
+- Add comprehensive view component test coverage for KanbanView, CalendarView, TimelineView, and TableView components
+- Test all board view types with proper data rendering, user interactions, and view-specific functionality
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
