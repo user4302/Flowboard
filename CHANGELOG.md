@@ -31,6 +31,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhance TaskModalForm test coverage with date inputs, validation, and completed styling tests
 - Add comprehensive test suites for kanban components, task modal sub-components, and search/filter components
 - Improve overall test coverage to meet 80% threshold requirements across all metrics
+- Add URL parameter support for direct task modal access
+- Support direct linking to specific cards via /board/[boardId]/card/[cardId] routes
+- Automatically open task modal when card URL is accessed
+- Set current board based on URL parameters
+- Improve URL synchronization and modal handling
+- Increase modal opening delay to ensure board is fully loaded
+- Add URL cleanup logic for invalid board redirects
+- Enhance modal functions with dynamic URL updates
+- Implement proper URL synchronization with browser history
+- Fix circular dependency between UI and board stores
+- Enhance URL synchronization across board operations
+- Add URL updates when switching between boards
+- Preserve card URLs during board navigation
+- Navigate to new board URLs after board creation
+- Handle URL redirection when deleting current board
+- Switch to next available board or root when current board is deleted
+- Fix variable name inconsistency in UI store close modal function
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
@@ -53,24 +70,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add isJSONImportMode state property for better state management
 - Fix JSDoc comment parameter name inconsistency
 
-### Added
-- Add URL parameter support for direct task modal access
-- Support direct linking to specific cards via /board/[boardId]/card/[cardId] routes
-- Automatically open task modal when card URL is accessed
-- Set current board based on URL parameters
-- Improve URL synchronization and modal handling
-- Increase modal opening delay to ensure board is fully loaded
-- Add URL cleanup logic for invalid board redirects
-- Enhance modal functions with dynamic URL updates
-- Implement proper URL synchronization with browser history
-- Fix circular dependency between UI and board stores
-- Enhance URL synchronization across board operations
-- Add URL updates when switching between boards
-- Preserve card URLs during board navigation
-- Navigate to new board URLs after board creation
-- Handle URL redirection when deleting current board
-- Switch to next available board or root when current board is deleted
-- Fix variable name inconsistency in UI store close modal function
 
 ### Fixed
 - Prevent URL parsing loops when closing task modal
