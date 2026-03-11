@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test all board view types with proper data rendering, user interactions, and view-specific functionality
 - Add comprehensive app component test coverage for main page and root layout components
 - Test page rendering, component composition, layout structure, and Next.js app integration
+- Add component and utility test coverage for TaskModalForm, InviteForm, and filterUtils
+- Fix inline-input test to properly handle Escape key behavior and form interactions
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
