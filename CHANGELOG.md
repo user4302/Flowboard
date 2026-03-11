@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+### Changed
+
+### Fixed
+
+## [1.5.0] - 2026-03-11
+
+### Added
 - Add comprehensive Jest testing framework with Testing Library integration
 - Configure test coverage thresholds (80%) and Next.js compatibility
 - Add test suites for board store, UI store, hooks, and utility functions
