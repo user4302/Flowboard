@@ -1,0 +1,130 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { BoardSidebar } from '@/components/boardSidebar';
+import { BoardHeader } from '@/components/boardHeader';
+import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
+import { TaskModal } from '@/components/taskModal';
+import { JoinBoardModal } from '@/components/boardShare';
+import { useBoard, useUIStore } from '@/hooks';
+import { useBoardStore } from '@/store/boardStore';
+import { useSharingStore } from '@/store/sharingStore';
+
+export default function BoardPage() {
+  const params = useParams();
+  const router = useRouter();
+  const { boardId } = params as { boardId: string };
+
+  const { boards, setCurrentBoard } = useBoard();
+  const { currentView, initializeTheme } = useUIStore();
+  const { showJoinModal, setShowJoinModal } = useSharingStore();
+
+  // Helper function to find board by ID
+  const getBoardById = (id: string) => boards.find(board => board.id === id) || null;
+
+  const [inviteId, setInviteId] = useState<string | null>(null);
+  const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
+  const [isBoardLoading, setIsBoardLoading] = useState(true);
+
+  useEffect(() => {
+    initializeTheme();
+
+    // Auto-hide welcome screen after 2 seconds
+    const timer = setTimeout(() => {
+      setShowWelcomeScreen(false);
+    }, 500);
+
+    // Check for invitation in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const invite = urlParams.get('invite');
+    if (invite) {
+      const timeoutId = setTimeout(() => {
+        setInviteId(invite);
+        setShowJoinModal(true);
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+
+    return () => clearTimeout(timer);
+  }, [initializeTheme, setShowJoinModal]);
+
+  useEffect(() => {
+    // Set current board from URL parameter
+    if (boardId) {
+      const board = getBoardById(boardId);
+      if (board) {
+        setCurrentBoard(boardId);
+        setIsBoardLoading(false);
+      } else {
+        // Board not found, redirect to home
+        router.push('/');
+      }
+    }
+  }, [boardId, getBoardById, setCurrentBoard, router]);
+
+  const currentBoard = boardId ? getBoardById(boardId) : null;
+
+  if (isBoardLoading) {
+    return (
+      <div className="flex h-screen bg-slate-50 dark:bg-slate-900 items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
+            Loading Board...
+          </h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentBoard || !boardId) {
+    return (
+      <div className="flex h-screen bg-slate-50 dark:bg-slate-900 items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
+            Board Not Found
+          </h2>
+          <p className="text-slate-500 dark:text-slate-500">
+            The requested board could not be found.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'kanban':
+        return <KanbanView boardId={boardId} />;
+      case 'timeline':
+        return <TimelineView boardId={boardId} />;
+      case 'calendar':
+        return <CalendarView boardId={boardId} />;
+      case 'table':
+        return <TableView boardId={boardId} />;
+      default:
+        return <KanbanView boardId={boardId} />;
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
+      <BoardSidebar />
+
+      <div className="flex flex-1 flex-col lg:ml-64">
+        <BoardHeader />
+
+        <main className="flex-1 overflow-hidden">
+          {renderCurrentView()}
+        </main>
+      </div>
+
+      <TaskModal />
+      <JoinBoardModal
+        isOpen={showJoinModal}
+        onClose={() => setShowJoinModal(false)}
+        inviteId={inviteId || undefined}
+      />
+    </div>
+  );
+}

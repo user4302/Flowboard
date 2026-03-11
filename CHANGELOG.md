@@ -5,6 +5,88 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+### Changed
+
+### Fixed
+
+## [1.5.0] - 2026-03-11
+
+### Added
+- Add comprehensive Jest testing framework with Testing Library integration
+- Configure test coverage thresholds (80%) and Next.js compatibility
+- Add test suites for board store, UI store, hooks, and utility functions
+- Include proper mocking setup for Next.js router and browser APIs
+- Add comprehensive UI component test coverage for button, modal, drag-overlay, inline-input, and input components
+- Cover all component variants, sizes, accessibility features, and edge cases in UI tests
+- Add comprehensive board component test coverage for BoardHeader, BoardSidebar, TaskCard, and TaskModal
+- Test component composition, conditional rendering, and user interaction scenarios for board components
+- Add comprehensive archive modal test coverage for ArchiveModal and ArchivedCardItem components
+- Test modal rendering, archived cards display, delete confirmation, and unarchive functionality
+- Add comprehensive board sharing test coverage for InviteModal, JoinBoardModal, and MemberManagement components
+- Test invite creation, board joining workflows, and member management functionality
+- Add comprehensive search and filter test coverage for SearchAndFilter, SearchAndFilterInput, and SearchAndFilterPortal components
+- Test search functionality, filtering options, input handling, and portal rendering
+- Add comprehensive view component test coverage for KanbanView, CalendarView, TimelineView, and TableView components
+- Test all board view types with proper data rendering, user interactions, and view-specific functionality
+- Add comprehensive app component test coverage for main page and root layout components
+- Test page rendering, component composition, layout structure, and Next.js app integration
+- Add component and utility test coverage for TaskModalForm, InviteForm, and filterUtils
+- Fix inline-input test to properly handle Escape key behavior and form interactions
+- Enhance TaskModalForm test coverage with date inputs, validation, and completed styling tests
+- Add comprehensive test suites for kanban components, task modal sub-components, and search/filter components
+- Improve overall test coverage to meet 80% threshold requirements across all metrics
+- Add URL parameter support for direct task modal access
+- Support direct linking to specific cards via /board/[boardId]/card/[cardId] routes
+- Automatically open task modal when card URL is accessed
+- Set current board based on URL parameters
+- Improve URL synchronization and modal handling
+- Increase modal opening delay to ensure board is fully loaded
+- Add URL cleanup logic for invalid board redirects
+- Enhance modal functions with dynamic URL updates
+- Implement proper URL synchronization with browser history
+- Fix circular dependency between UI and board stores
+- Enhance URL synchronization across board operations
+- Add URL updates when switching between boards
+- Preserve card URLs during board navigation
+- Navigate to new board URLs after board creation
+- Handle URL redirection when deleting current board
+- Switch to next available board or root when current board is deleted
+- Fix variable name inconsistency in UI store close modal function
+
+### Changed
+- Enhanced checklist management with immediate store synchronization for all CRUD operations
+- Improved "Add checklist" button visibility logic to only show when no checklists exist
+- Added comprehensive JSDoc documentation for useTaskModalChecklist hook
+- Make entire checklist header clickable for expand/collapse functionality
+- Add "Add another checklist" button when checklists already exist
+- Enhance progress bar with full-height section and distinct background
+- Fix checklist renaming by adding immediate store synchronization
+- Prevent button click conflicts with header toggle using event.stopPropagation
+- Remove duplicate modal closing logic and optimize timing
+- Clean up unused imports and state in main page component
+- Optimize modal closing timing for faster response and proper sequencing
+- Improve URL handling and prevent modal parsing loops
+- Add explicit type definitions for UI state interface properties
+- Prevent checklist sync errors when card is deleted
+- Enhance setCurrentBoard with global flag checking to prevent modal reopening
+- Only update URLs when board actually changes and not during modal operations
+- Restructure modal functions to set state first, then update URL
+- Add isJSONImportMode state property for better state management
+- Fix JSDoc comment parameter name inconsistency
+
+
+### Fixed
+- Prevent URL parsing loops when closing task modal
+- Add closeCardModalWithoutUrlUpdate function to avoid immediate URL changes
+- Implement global closing flags to prevent dynamic route reopening
+- Add delayed URL updates with proper timing to ensure modal closes first
+- Fix infinite loop between modal close and URL parsing logic
+- Update all modal handlers to use custom close logic
+
 ## [1.4.0] - 2026-03-09
 
 ### Added
@@ -52,8 +134,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved JSON parsing error handling in clipboard detection to prevent console errors
 - Removed emoji from Features heading in README for cleaner formatting
 - Add missing description field in createCardFromData to prevent data loss during card creation
-
-## [Unreleased]
 
 ## [1.3.0] - 2026-03-03
 

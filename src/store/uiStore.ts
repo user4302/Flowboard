@@ -9,11 +9,26 @@ import { CardJSON } from '@/lib/cardJsonUtils';
  * Combines view preferences, filter options, and modal state management
  */
 interface UIState extends ViewState, FilterState {
+  // View preferences
+  currentView: 'kanban' | 'timeline' | 'calendar' | 'table';
+  sidebarOpen: boolean;
+  theme: 'light' | 'dark';
+
+  // Filter state
+  searchTerm: string;
+  selectedLabels: string[];
+  selectedMembers: string[];
+  showOverdue: boolean;
+  showCompleted: 'all' | 'completed' | 'incomplete';
+  priorityThreshold: number | null;
+  dueDateFilter: 'all' | 'overdue' | 'today' | 'week' | 'month';
+
   // Modal state
   cardModalOpen: boolean;
   selectedCardId: string | null;
   cardJSONData: CardJSON | null;
   targetListId: string | null;
+  isJSONImportMode: boolean;
 
   // Timeline state (per board)
   timelineState: Record<string, {
@@ -57,6 +72,7 @@ interface UIState extends ViewState, FilterState {
   openCardModal: (cardId?: string) => void;
   openCardModalFromJSON: (cardJSON: CardJSON, listId: string) => void;
   closeCardModal: () => void;
+  closeCardModalWithoutUrlUpdate: () => void;
 
   // Theme initialization
   initializeTheme: () => void;
@@ -89,6 +105,7 @@ export const useUIStore = create<UIState>()(
       selectedCardId: null,
       cardJSONData: null,
       targetListId: null,
+      isJSONImportMode: false,
 
       // Initial timeline state (per board)
       timelineState: {},
@@ -264,20 +281,30 @@ export const useUIStore = create<UIState>()(
         selectedMembers: [],
         showOverdue: false,
         showCompleted: 'all',
-        priorityThreshold: null,
-        dueDateFilter: 'all',
       }),
 
       /**
        * Open card modal
        * @param cardId - Optional card ID to edit
        */
-      openCardModal: (cardId) => set({
-        cardModalOpen: true,
-        selectedCardId: cardId || null,
-        cardJSONData: null,
-        targetListId: null,
-      }),
+      openCardModal: (cardId) => {
+        set({
+          cardModalOpen: true,
+          selectedCardId: cardId || null,
+          cardJSONData: null,
+          targetListId: null,
+        });
+
+        // Update URL to include card path if cardId is provided
+        import('./boardStore').then(({ useBoardStore }) => {
+          const boardStore = useBoardStore.getState();
+
+          if (cardId && boardStore.currentBoardId) {
+            const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
+            window.history.pushState({}, '', newUrl);
+          }
+        });
+      },
 
       /**
        * Open card modal from JSON data for creating a new card
@@ -294,12 +321,37 @@ export const useUIStore = create<UIState>()(
       /**
        * Close card modal
        */
-      closeCardModal: () => set({
-        cardModalOpen: false,
-        selectedCardId: null,
-        cardJSONData: null,
-        targetListId: null,
-      }),
+      closeCardModal: () => {
+        set({
+          cardModalOpen: false,
+          selectedCardId: null,
+          cardJSONData: null,
+          targetListId: null,
+        });
+
+        // Update URL to board URL or root
+        import('./boardStore').then(({ useBoardStore }) => {
+          const boardStore = useBoardStore.getState();
+          if (boardStore.currentBoardId) {
+            const newUrl = `/board/${boardStore.currentBoardId}`;
+            window.history.pushState({}, '', newUrl);
+          } else {
+            window.history.pushState({}, '', '/');
+          }
+        });
+      },
+
+      /**
+       * Close card modal without updating URL (used to prevent URL parsing loops)
+       */
+      closeCardModalWithoutUrlUpdate: () => {
+        set({
+          cardModalOpen: false,
+          selectedCardId: null,
+          cardJSONData: null,
+          targetListId: null,
+        });
+      },
 
       /**
        * Initialize theme based on saved preference or system preference

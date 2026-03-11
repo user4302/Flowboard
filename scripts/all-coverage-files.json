@@ -1,0 +1,938 @@
+[
+  {
+    "path": "src\\components\\archiveModal\\index.ts",
+    "statements": 10,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\archiveModal\\utils.ts",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardHeader\\index.ts",
+    "statements": 13,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardHeader\\components\\BoardHeaderActionMenu.tsx",
+    "statements": 24,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardHeader\\components\\BoardHeaderTitle.tsx",
+    "statements": 4,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardHeader\\components\\BoardHeaderViewNavigation.tsx",
+    "statements": 8,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardHeader\\components\\index.ts",
+    "statements": 6,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardHeader\\hooks\\useBoardHeaderActions.ts",
+    "statements": 13,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardHeader\\hooks\\useBoardHeaderTitle.ts",
+    "statements": 22,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardHeader\\services\\BoardHeaderImportExport.ts",
+    "statements": 84,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\index.ts",
+    "statements": 21,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\utils.ts",
+    "statements": 25,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\index.ts",
+    "statements": 20,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\InviteModal\\InviteInfo.tsx",
+    "statements": 2,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\JoinBoardModal\\JoinAlert.tsx",
+    "statements": 2,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\JoinBoardModal\\JoinForm.tsx",
+    "statements": 5,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\MemberManagement\\MemberTabs.tsx",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\MemberManagement\\MembersList.tsx",
+    "statements": 4,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\MemberManagement\\PendingRequests.tsx",
+    "statements": 8,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\index.ts",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\useInviteModal.ts",
+    "statements": 14,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\useJoinBoardModal.ts",
+    "statements": 28,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\useMemberManagement.ts",
+    "statements": 14,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\index.ts",
+    "statements": 11,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarBackdrop.tsx",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarBoardList.tsx",
+    "statements": 9,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarCreationForm.tsx",
+    "statements": 21,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarHeader.tsx",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarItem.tsx",
+    "statements": 6,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\index.ts",
+    "statements": 10,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\hooks\\index.ts",
+    "statements": 4,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\hooks\\useBoardSidebarActions.ts",
+    "statements": 14,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\hooks\\useBoardSidebarState.ts",
+    "statements": 5,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\constants.ts",
+    "statements": 10,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\index.ts",
+    "statements": 27,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\components\\SearchAndFilterButton.tsx",
+    "statements": 4,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\components\\SearchAndFilterDropdown.tsx",
+    "statements": 16,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\components\\SearchAndFilterPanel.tsx",
+    "statements": 20,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\components\\SearchAndFilterPriority.tsx",
+    "statements": 13,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\components\\SearchAndFilterStatus.tsx",
+    "statements": 6,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\components\\SearchAndFilterTimeline.tsx",
+    "statements": 8,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\hooks\\useSearchAndFilterClickOutside.ts",
+    "statements": 17,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\hooks\\useSearchAndFilterDropdownPosition.ts",
+    "statements": 12,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\index.ts",
+    "statements": 11,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\utils.ts",
+    "statements": 30,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\TaskCardCardCompletion.tsx",
+    "statements": 5,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\TaskCardCardLabels.tsx",
+    "statements": 10,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\TaskCardCardMembers.tsx",
+    "statements": 5,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\TaskCardCardMeta.tsx",
+    "statements": 4,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\CardContextMenu.tsx",
+    "statements": 57,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\components\\MovePortal.tsx",
+    "statements": 60,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\hooks\\useCardContextMenu.ts",
+    "statements": 37,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\index.ts",
+    "statements": 6,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\TaskModalChecklistManager.tsx",
+    "statements": 17,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\TaskModalChecklistSection.tsx",
+    "statements": 2,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\TaskModalFormSection.tsx",
+    "statements": 2,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\TaskModalHeader.tsx",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\TaskModalLabelSection.tsx",
+    "statements": 22,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\TaskModalMultiChecklistManager.tsx",
+    "statements": 90,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\index.ts",
+    "statements": 14,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\LabelManager\\index.ts",
+    "statements": 4,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\hooks\\index.ts",
+    "statements": 10,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\hooks\\useTaskModalChecklist.ts",
+    "statements": 86,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\hooks\\useTaskModalData.ts",
+    "statements": 19,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\hooks\\useTaskModalForm.ts",
+    "statements": 15,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\types\\TaskModal.form.types.ts",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskModal\\types\\index.ts",
+    "statements": 2,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\ui\\ConfirmationModal.tsx",
+    "statements": 12,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\ui\\custom-tooltip.tsx",
+    "statements": 6,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\index.ts",
+    "statements": 8,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\kanban\\index.ts",
+    "statements": 13,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\kanban\\components\\KanbanList.tsx",
+    "statements": 14,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\kanban\\components\\KanbanListHeader.tsx",
+    "statements": 49,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\kanban\\components\\SortableKanbanList.tsx",
+    "statements": 6,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\kanban\\hooks\\useKanbanDragAndDrop.ts",
+    "statements": 112,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\index.ts",
+    "statements": 25,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\utils.ts",
+    "statements": 266,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\components\\TimelineGrid.tsx",
+    "statements": 22,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\components\\TimelineHeader.tsx",
+    "statements": 27,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\components\\TimelineListLane.tsx",
+    "statements": 31,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\components\\TimelineQueue.tsx",
+    "statements": 16,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\components\\TimelineTask.tsx",
+    "statements": 5,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\components\\TimelineTaskLane.tsx",
+    "statements": 7,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\components\\TimelineTooltip.tsx",
+    "statements": 8,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\hooks\\useTimelineDateRange.ts",
+    "statements": 20,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\hooks\\useTimelineHiddenTasks.ts",
+    "statements": 20,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\hooks\\useTimelinePositioning.ts",
+    "statements": 159,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\views\\timeline\\hooks\\useTimelineShortcuts.ts",
+    "statements": 39,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\lib\\validations.ts",
+    "statements": 13,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\utils.ts",
+    "statements": 57,
+    "covered": 1,
+    "coverage": 1.7543859649122806
+  },
+  {
+    "path": "src\\lib\\invitation-utils.ts",
+    "statements": 45,
+    "covered": 1,
+    "coverage": 2.2222222222222223
+  },
+  {
+    "path": "src\\hooks\\useDragAndDrop.ts",
+    "statements": 21,
+    "covered": 1,
+    "coverage": 4.761904761904762
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\LabelManager\\hooks\\useTaskModalLabelManager.ts",
+    "statements": 45,
+    "covered": 3,
+    "coverage": 6.666666666666667
+  },
+  {
+    "path": "src\\store\\boards\\checklistSlice.ts",
+    "statements": 47,
+    "covered": 4,
+    "coverage": 8.51063829787234
+  },
+  {
+    "path": "src\\hooks\\useClipboardDetection.ts",
+    "statements": 78,
+    "covered": 7,
+    "coverage": 8.974358974358974
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\components\\DatePickerModal.tsx",
+    "statements": 49,
+    "covered": 5,
+    "coverage": 10.204081632653061
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\hooks\\useContextMenuActions.ts",
+    "statements": 78,
+    "covered": 9,
+    "coverage": 11.538461538461538
+  },
+  {
+    "path": "src\\lib\\p2p-connection.ts",
+    "statements": 77,
+    "covered": 10,
+    "coverage": 12.987012987012985
+  },
+  {
+    "path": "src\\store\\sharingStore.ts",
+    "statements": 74,
+    "covered": 12,
+    "coverage": 16.216216216216218
+  },
+  {
+    "path": "src\\hooks\\useLocalStorage.ts",
+    "statements": 29,
+    "covered": 6,
+    "coverage": 20.689655172413794
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\LabelManager\\TaskModalLabelList.tsx",
+    "statements": 13,
+    "covered": 3,
+    "coverage": 23.076923076923077
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\components\\ContextMenuItems.tsx",
+    "statements": 10,
+    "covered": 3,
+    "coverage": 30
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\LabelManager\\TaskModalLabelForm.tsx",
+    "statements": 10,
+    "covered": 3,
+    "coverage": 30
+  },
+  {
+    "path": "src\\components\\taskModal\\hooks\\useTaskModalHandlers.ts",
+    "statements": 35,
+    "covered": 11,
+    "coverage": 31.428571428571427
+  },
+  {
+    "path": "src\\store\\boards\\cardSlice.ts",
+    "statements": 176,
+    "covered": 57,
+    "coverage": 32.38636363636363
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\LabelManager\\TaskModalLabelManager.tsx",
+    "statements": 12,
+    "covered": 4,
+    "coverage": 33.33333333333333
+  },
+  {
+    "path": "src\\store\\boardStore.ts",
+    "statements": 69,
+    "covered": 24,
+    "coverage": 34.78260869565217
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\components\\LabelManagerPortal.tsx",
+    "statements": 8,
+    "covered": 3,
+    "coverage": 37.5
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\index.ts",
+    "statements": 20,
+    "covered": 8,
+    "coverage": 40
+  },
+  {
+    "path": "src\\components\\taskModal\\hooks\\useTaskModalActions.ts",
+    "statements": 22,
+    "covered": 9,
+    "coverage": 40.909090909090914
+  },
+  {
+    "path": "src\\lib\\filterUtils.ts",
+    "statements": 89,
+    "covered": 38,
+    "coverage": 42.69662921348314
+  },
+  {
+    "path": "src\\components\\views\\KanbanView.tsx",
+    "statements": 57,
+    "covered": 26,
+    "coverage": 45.614035087719294
+  },
+  {
+    "path": "src\\components\\boardSidebar\\BoardSidebar.tsx",
+    "statements": 27,
+    "covered": 13,
+    "coverage": 48.148148148148145
+  },
+  {
+    "path": "src\\components\\views\\TableView.tsx",
+    "statements": 92,
+    "covered": 45,
+    "coverage": 48.91304347826087
+  },
+  {
+    "path": "src\\components\\views\\kanban\\components\\KanbanCardsContainer.tsx",
+    "statements": 67,
+    "covered": 33,
+    "coverage": 49.25373134328358
+  },
+  {
+    "path": "src\\components\\taskCard\\components\\contextMenu\\constants.ts",
+    "statements": 6,
+    "covered": 3,
+    "coverage": 50
+  },
+  {
+    "path": "src\\components\\ui\\index.ts",
+    "statements": 14,
+    "covered": 7,
+    "coverage": 50
+  },
+  {
+    "path": "src\\hooks\\index.ts",
+    "statements": 10,
+    "covered": 5,
+    "coverage": 50
+  },
+  {
+    "path": "src\\store\\boards\\labelSlice.ts",
+    "statements": 33,
+    "covered": 17,
+    "coverage": 51.515151515151516
+  },
+  {
+    "path": "src\\hooks\\useClickOutside.ts",
+    "statements": 20,
+    "covered": 12,
+    "coverage": 60
+  },
+  {
+    "path": "src\\components\\boardShare\\constants.ts",
+    "statements": 6,
+    "covered": 4,
+    "coverage": 66.66666666666666
+  },
+  {
+    "path": "src\\components\\boardHeader\\BoardHeader.tsx",
+    "statements": 29,
+    "covered": 20,
+    "coverage": 68.96551724137932
+  },
+  {
+    "path": "src\\components\\taskModal\\TaskModal.tsx",
+    "statements": 14,
+    "covered": 10,
+    "coverage": 71.42857142857143
+  },
+  {
+    "path": "src\\components\\views\\TimelineView.tsx",
+    "statements": 84,
+    "covered": 61,
+    "coverage": 72.61904761904762
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\JoinBoardModal\\JoinBoardModal.tsx",
+    "statements": 12,
+    "covered": 9,
+    "coverage": 75
+  },
+  {
+    "path": "src\\store\\boards\\boardSlice.ts",
+    "statements": 33,
+    "covered": 25,
+    "coverage": 75.75757575757575
+  },
+  {
+    "path": "src\\components\\archiveModal\\hooks\\useArchiveModal.ts",
+    "statements": 46,
+    "covered": 35,
+    "coverage": 76.08695652173914
+  },
+  {
+    "path": "src\\components\\views\\CalendarView.tsx",
+    "statements": 48,
+    "covered": 37,
+    "coverage": 77.08333333333334
+  },
+  {
+    "path": "src\\components\\ui\\inline-input.tsx",
+    "statements": 54,
+    "covered": 44,
+    "coverage": 81.48148148148148
+  },
+  {
+    "path": "src\\components\\taskCard\\TaskCard.tsx",
+    "statements": 29,
+    "covered": 24,
+    "coverage": 82.75862068965517
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\InviteModal\\InviteForm.tsx",
+    "statements": 6,
+    "covered": 5,
+    "coverage": 83.33333333333334
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\TaskModalForm.tsx",
+    "statements": 37,
+    "covered": 33,
+    "coverage": 89.1891891891892
+  },
+  {
+    "path": "src\\store\\uiStore.ts",
+    "statements": 70,
+    "covered": 64,
+    "coverage": 91.42857142857143
+  },
+  {
+    "path": "src\\store\\boards\\utilsSlice.ts",
+    "statements": 24,
+    "covered": 22,
+    "coverage": 91.66666666666666
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\SearchAndFilter.tsx",
+    "statements": 28,
+    "covered": 26,
+    "coverage": 92.85714285714286
+  },
+  {
+    "path": "src\\components\\archiveModal\\ArchiveModal.tsx",
+    "statements": 11,
+    "covered": 11,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\archiveModal\\components\\ArchivedCardItem.tsx",
+    "statements": 5,
+    "covered": 5,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\archiveModal\\components\\EmptyState.tsx",
+    "statements": 2,
+    "covered": 2,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\InviteModal\\InviteModal.tsx",
+    "statements": 6,
+    "covered": 6,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\MemberManagement\\MemberManagement.tsx",
+    "statements": 9,
+    "covered": 9,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\components\\SearchAndFilterInput.tsx",
+    "statements": 5,
+    "covered": 5,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\components\\SearchAndFilterPortal.tsx",
+    "statements": 10,
+    "covered": 10,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\ui\\button.tsx",
+    "statements": 7,
+    "covered": 7,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\ui\\drag-overlay.tsx",
+    "statements": 6,
+    "covered": 6,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\ui\\input.tsx",
+    "statements": 5,
+    "covered": 5,
+    "coverage": 100
+  },
+  {
+    "path": "src\\components\\ui\\modal.tsx",
+    "statements": 15,
+    "covered": 15,
+    "coverage": 100
+  },
+  {
+    "path": "src\\hooks\\useBoard.ts",
+    "statements": 11,
+    "covered": 11,
+    "coverage": 100
+  },
+  {
+    "path": "src\\lib\\cardJsonUtils.ts",
+    "statements": 69,
+    "covered": 69,
+    "coverage": 100
+  },
+  {
+    "path": "src\\lib\\constants.ts",
+    "statements": 15,
+    "covered": 15,
+    "coverage": 100
+  },
+  {
+    "path": "src\\lib\\dateUtils.ts",
+    "statements": 29,
+    "covered": 29,
+    "coverage": 100
+  },
+  {
+    "path": "src\\lib\\utils.ts",
+    "statements": 68,
+    "covered": 68,
+    "coverage": 100
+  },
+  {
+    "path": "src\\store\\index.ts",
+    "statements": 6,
+    "covered": 6,
+    "coverage": 100
+  },
+  {
+    "path": "src\\store\\boards\\index.ts",
+    "statements": 15,
+    "covered": 15,
+    "coverage": 100
+  },
+  {
+    "path": "src\\store\\boards\\listSlice.ts",
+    "statements": 26,
+    "covered": 26,
+    "coverage": 100
+  },
+  {
+    "path": "src\\store\\boards\\memberSlice.ts",
+    "statements": 11,
+    "covered": 11,
+    "coverage": 100
+  },
+  {
+    "path": "src\\store\\boards\\types.ts",
+    "statements": 6,
+    "covered": 6,
+    "coverage": 100
+  }
+]

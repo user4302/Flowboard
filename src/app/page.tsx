@@ -10,11 +10,12 @@ import { useBoard, useUIStore } from '@/hooks';
 import { useSharingStore } from '@/store/sharingStore';
 
 export default function Home() {
-  const { currentBoard, currentBoardId, createBoard, boards } = useBoard();
-  const { currentView, initializeTheme } = useUIStore();
+  const { currentBoard, currentBoardId, createBoard, boards, setCurrentBoard } = useBoard();
+  const { currentView, initializeTheme, openCardModal } = useUIStore();
   const { showJoinModal, setShowJoinModal } = useSharingStore();
   const [inviteId, setInviteId] = useState<string | null>(null);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
+  const [isClosingModal, setIsClosingModal] = useState(false);
 
   useEffect(() => {
     initializeTheme();
@@ -36,8 +37,29 @@ export default function Home() {
       return () => clearTimeout(timeoutId);
     }
 
+    // Check for task modal parameters in URL
+    const pathSegments = window.location.pathname.split('/');
+    if (pathSegments.length >= 5 && pathSegments[1] === 'board' && pathSegments[3] === 'card' && !isClosingModal) {
+      const urlBoardId = pathSegments[2];
+      const urlCardId = pathSegments[4];
+
+      // Find the board and set it as current
+      const board = boards.find(b => b.id === urlBoardId);
+      if (board) {
+        setCurrentBoard(urlBoardId);
+
+        // Open the task modal after a short delay
+        setTimeout(() => {
+          openCardModal(urlCardId);
+        }, 100);
+      } else {
+        // Board not found, redirect to root but maintain clean URL
+        window.history.pushState({}, '', '/');
+      }
+    }
+
     return () => clearTimeout(timer);
-  }, [initializeTheme, setShowJoinModal]);
+  }, [initializeTheme, setShowJoinModal, boards, setCurrentBoard, openCardModal]);
 
   const handleCreateBoard = () => {
     const board = createBoard('New Board');

@@ -17,13 +17,34 @@ export function useTaskModalHandlers(
     resetChecklist: () => void;
   }
 ): CardModalHandlers & { closeCardModal: () => void } {
-  const { closeCardModal } = useUIStore();
+  const { closeCardModal, closeCardModalWithoutUrlUpdate } = useUIStore();
   const { updateCard, createCard } = useBoardStore();
   const { handleSaveCard } = useTaskModalActions();
 
   const handleCloseCardModal = useCallback(() => {
+    // Set global flag IMMEDIATELY to prevent dynamic route from reopening modal
+    (window as any).__isClosingModal = true;
+
     checklist.resetChecklist();
-    closeCardModal();
+    closeCardModal(); // Use regular closeCardModal to properly reset state
+
+    // Update URL after a short delay to prevent parsing loop
+    setTimeout(() => {
+      import('@/store/boardStore').then(({ useBoardStore }) => {
+        const boardStore = useBoardStore.getState();
+        if (boardStore.currentBoardId) {
+          const newUrl = `/board/${boardStore.currentBoardId}`;
+          window.history.pushState({}, '', newUrl);
+        } else {
+          window.history.pushState({}, '', '/');
+        }
+      });
+
+      // Reset flags after a longer delay to ensure URL change is processed
+      setTimeout(() => {
+        (window as any).__isClosingModal = false;
+      }, 300); // Increased from 200ms to 300ms
+    }, 50); // Reduced from 100ms to 50ms for faster response
   }, [closeCardModal, checklist]);
 
   const handleSave = useCallback((data: Partial<Card>) => {
@@ -38,17 +59,17 @@ export function useTaskModalHandlers(
           dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
           priority: data.priority,
         });
-        closeCardModal();
+        handleCloseCardModal(); // Use our custom handler
       }
     } else if (currentBoardId && foundCard) {
       // Update existing card
-      handleSaveCard(currentBoardId, foundCard.id, data, closeCardModal);
+      handleSaveCard(currentBoardId, foundCard.id, data, handleCloseCardModal); // Use our custom handler
       // Sync checklist items if not in JSON import mode
       if (!isJSONImportMode) {
         checklist.syncChecklistToStore();
       }
     }
-  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleSaveCard, closeCardModal, checklist]);
+  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleSaveCard, handleCloseCardModal, checklist]);
 
   const handleToggleCompleted = useCallback(() => {
     if (currentBoardId && foundCard) {
