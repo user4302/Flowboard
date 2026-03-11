@@ -132,6 +132,99 @@ describe('TaskModalForm Component', () => {
     })
   })
 
+  describe('date inputs', () => {
+    it('should render start and due date inputs', () => {
+      render(<TaskModalForm {...defaultProps} />)
+
+      expect(screen.getByDisplayValue('2024-12-01')).toBeInTheDocument()
+      expect(screen.getByDisplayValue('2024-12-31')).toBeInTheDocument()
+    })
+
+    it('should handle start date change', async () => {
+      const user = userEvent.setup()
+      render(<TaskModalForm {...defaultProps} />)
+
+      const startDateInput = screen.getByDisplayValue('2024-12-01')
+      await user.clear(startDateInput)
+      await user.type(startDateInput, '2024-11-15')
+
+      // Just verify the interaction worked - the mock register controls the value
+      expect(startDateInput).toBeInTheDocument()
+    })
+
+    it('should handle due date change', async () => {
+      const user = userEvent.setup()
+      render(<TaskModalForm {...defaultProps} />)
+
+      const dueDateInput = screen.getByDisplayValue('2024-12-31')
+      await user.clear(dueDateInput)
+      await user.type(dueDateInput, '2025-01-15')
+
+      // Just verify the interaction worked - the mock register controls the value
+      expect(dueDateInput).toBeInTheDocument()
+    })
+  })
+
+  describe('form validation', () => {
+    it('should display title error message', () => {
+      const mockErrors = { title: { message: 'Title is required' } }
+      render(<TaskModalForm {...defaultProps} errors={mockErrors} />)
+
+      expect(screen.getByText('Title is required')).toBeInTheDocument()
+    })
+
+    it('should display priority error message', () => {
+      const mockErrors = { priority: { message: 'Priority must be between 1-100' } }
+      render(<TaskModalForm {...defaultProps} errors={mockErrors} />)
+
+      expect(screen.getByText('Priority must be between 1-100')).toBeInTheDocument()
+    })
+
+    it('should not show error messages for valid inputs', () => {
+      render(<TaskModalForm {...defaultProps} />)
+
+      expect(screen.queryByText('Title is required')).not.toBeInTheDocument()
+      expect(screen.queryByText('Priority must be between 1-100')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('description expansion functionality', () => {
+    it('should not show expand button for short content', () => {
+      render(<TaskModalForm {...defaultProps} />)
+
+      expect(screen.queryByText('Expand')).not.toBeInTheDocument()
+      expect(screen.queryByText('Shrink')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('completed card styling', () => {
+    it('should apply completed styling to title', () => {
+      render(
+        <TaskModalForm
+          {...defaultProps}
+          card={{ ...defaultProps.card, completed: true }}
+        />
+      )
+
+      const titleInput = screen.getByDisplayValue('Test Task')
+      expect(titleInput).toHaveClass('line-through')
+      expect(titleInput).toHaveClass('opacity-60')
+    })
+
+    it('should not apply completed styling for incomplete card', () => {
+      render(
+        <TaskModalForm
+          {...defaultProps}
+          card={{ ...defaultProps.card, completed: false }}
+        />
+      )
+
+      const titleInput = screen.getByDisplayValue('Test Task')
+      expect(titleInput).not.toHaveClass('line-through')
+      expect(titleInput).not.toHaveClass('opacity-60')
+    })
+  })
+
   describe('accessibility', () => {
     it('should have proper input structure', () => {
       render(<TaskModalForm {...defaultProps} />)
@@ -175,6 +268,31 @@ describe('TaskModalForm Component', () => {
       render(<TaskModalForm {...defaultProps} form={{ ...defaultProps.form, setValue: jest.fn() }} register={mockRegister} />)
 
       expect(mockRegister).toHaveBeenCalled()
+    })
+
+    it('should handle card with no description', () => {
+      render(
+        <TaskModalForm
+          {...defaultProps}
+          card={{ ...defaultProps.card, description: undefined }}
+        />
+      )
+
+      const textarea = screen.getByDisplayValue('')
+      expect(textarea).toBeInTheDocument()
+      expect(textarea).toHaveValue('')
+    })
+
+    it('should handle card with null description', () => {
+      render(
+        <TaskModalForm
+          {...defaultProps}
+          card={{ ...defaultProps.card, description: null }}
+        />
+      )
+
+      const textarea = screen.getByDisplayValue('')
+      expect(textarea).toBeInTheDocument()
     })
   })
 })

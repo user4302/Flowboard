@@ -28,6 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test page rendering, component composition, layout structure, and Next.js app integration
 - Add component and utility test coverage for TaskModalForm, InviteForm, and filterUtils
 - Fix inline-input test to properly handle Escape key behavior and form interactions
+- Enhance TaskModalForm test coverage with date inputs, validation, and completed styling tests
+- Add comprehensive test suites for kanban components, task modal sub-components, and search/filter components
+- Improve overall test coverage to meet 80% threshold requirements across all metrics
 
 ### Changed
 - Enhanced checklist management with immediate store synchronization for all CRUD operations
