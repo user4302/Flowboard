@@ -8,10 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Comprehensive test coverage analysis scripts and utilities for coverage optimization
 
 ### Changed
+- Organize coverage analysis files by moving scripts to dedicated scripts/ folder
+- Improve project structure by consolidating coverage tools and utilities
 
 ### Fixed
+- Clean up temporary files and documentation from coverage optimization process
+- Remove duplicate coverage files and outdated test snapshots
 
 ## [1.5.0] - 2026-03-11
 
