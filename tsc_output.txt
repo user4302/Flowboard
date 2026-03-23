@@ -1,6 +1,0 @@
-src/components/views/timeline/components/Tooltip.tsx(61,13): error TS2551: Property 'labels' does not exist on type 'Card'. Did you mean 'labelIds'?
-src/components/views/timeline/components/Tooltip.tsx(61,28): error TS2551: Property 'labels' does not exist on type 'Card'. Did you mean 'labelIds'?
-src/components/views/timeline/components/Tooltip.tsx(63,17): error TS2551: Property 'labels' does not exist on type 'Card'. Did you mean 'labelIds'?
-src/components/views/timeline/utils/utils.ts(448,12): error TS2551: Property 'labels' does not exist on type 'Card'. Did you mean 'labelIds'?
-src/components/views/timeline/utils/utils.ts(448,27): error TS2551: Property 'labels' does not exist on type 'Card'. Did you mean 'labelIds'?
-src/components/views/timeline/utils/utils.ts(449,17): error TS2551: Property 'labels' does not exist on type 'Card'. Did you mean 'labelIds'?
