@@ -1,121 +1,64 @@
-import { renderHook, act } from '@testing-library/react'
-import { useJoinBoardModal } from '../useJoinBoardModal'
+import { renderHook, act } from '@testing-library/react';
+import { useJoinBoardModal } from '../useJoinBoardModal';
 
-describe('useJoinBoardModal', () => {
-  it('should export useJoinBoardModal hook', () => {
-    expect(typeof useJoinBoardModal).toBe('function')
-  })
+describe('useJoinBoardModal Hook', () => {
+  it('returns initial form state correctly', () => {
+    const { result } = renderHook(() => useJoinBoardModal('invite-123'));
 
-  it('should return join board modal state and controls', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
+    expect(result.current.formData).toEqual({
+      email: '',
+      username: '',
+      password: ''
+    });
+    expect(result.current.isLoading).toBe(false);
+    expect(typeof result.current.updateFormData).toBe('function');
+    expect(typeof result.current.handleJoin).toBe('function');
+    expect(typeof result.current.handleKeyPress).toBe('function');
+  });
 
-    expect(result.current).toBeDefined()
-    expect(typeof result.current).toBe('object')
-  })
-
-  it('should provide formData state', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
-
-    expect(result.current.formData).toBeDefined()
-    expect(typeof result.current.formData).toBe('object')
-    expect(result.current.formData.email).toBe('')
-    expect(result.current.formData.username).toBe('')
-    expect(result.current.formData.password).toBe('')
-  })
-
-  it('should provide isLoading state', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
-
-    expect(result.current.isLoading).toBeDefined()
-    expect(typeof result.current.isLoading).toBe('boolean')
-    expect(result.current.isLoading).toBe(false)
-  })
-
-  it('should provide updateFormData function', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
-
-    expect(typeof result.current.updateFormData).toBe('function')
-  })
-
-  it('should provide handleJoin function', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
-
-    expect(typeof result.current.handleJoin).toBe('function')
-  })
-
-  it('should provide handleKeyPress function', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
-
-    expect(typeof result.current.handleKeyPress).toBe('function')
-  })
-
-  it('should handle inviteId parameter', () => {
-    const { result } = renderHook(() => useJoinBoardModal('invite123'))
-
-    expect(result.current).toBeDefined()
-  })
-
-  it('should handle updateFormData calls', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
-
-    expect(() => {
-      act(() => {
-        result.current.updateFormData('email', 'test@example.com')
-      })
-    }).not.toThrow()
-
-    expect(() => {
-      act(() => {
-        result.current.updateFormData('username', 'testuser')
-      })
-    }).not.toThrow()
-
-    expect(() => {
-      act(() => {
-        result.current.updateFormData('password', 'password123')
-      })
-    }).not.toThrow()
-  })
-
-  it('should update formData correctly', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
+  it('updates form data correctly', () => {
+    const { result } = renderHook(() => useJoinBoardModal('invite-123'));
 
     act(() => {
-      result.current.updateFormData('email', 'test@example.com')
-    })
-    expect(result.current.formData.email).toBe('test@example.com')
+      result.current.updateFormData('email', 'test@example.com');
+    });
+
+    expect(result.current.formData.email).toBe('test@example.com');
+    expect(result.current.formData.username).toBe('');
+    expect(result.current.formData.password).toBe('');
+  });
+
+  it('updates all form fields', () => {
+    const { result } = renderHook(() => useJoinBoardModal('invite-123'));
 
     act(() => {
-      result.current.updateFormData('username', 'testuser')
-    })
-    expect(result.current.formData.username).toBe('testuser')
+      result.current.updateFormData('email', 'test@example.com');
+      result.current.updateFormData('username', 'testuser');
+      result.current.updateFormData('password', 'password123');
+    });
 
-    act(() => {
-      result.current.updateFormData('password', 'password123')
-    })
-    expect(result.current.formData.password).toBe('password123')
-  })
+    expect(result.current.formData).toEqual({
+      email: 'test@example.com',
+      username: 'testuser',
+      password: 'password123'
+    });
+  });
 
-  it('should handle handleJoin call', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
+  it('does not join when no invite ID provided', async () => {
+    const { result } = renderHook(() => useJoinBoardModal());
 
-    expect(() => result.current.handleJoin()).not.toThrow()
-  })
+    const response = await result.current.handleJoin();
+    expect(response).toBeUndefined();
+  });
 
-  it('should handle handleKeyPress call', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
+  it('works without invite ID', () => {
+    const { result } = renderHook(() => useJoinBoardModal());
 
-    const mockEvent = {
-      key: 'Enter'
-    } as any
-
-    expect(() => result.current.handleKeyPress(mockEvent)).not.toThrow()
-  })
-
-  it('should work without inviteId', () => {
-    const { result } = renderHook(() => useJoinBoardModal())
-
-    expect(result.current).toBeDefined()
-    expect(typeof result.current.formData).toBe('object')
-  })
-})
+    expect(result.current.formData).toEqual({
+      email: '',
+      username: '',
+      password: ''
+    });
+    expect(result.current.isLoading).toBe(false);
+  });
+});

@@ -1,0 +1,130 @@
+[
+  {
+    "path": "src\\components\\boardShare\\components\\MemberManagement\\MemberTabs.tsx",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0,
+    "loc": 36,
+    "hasTest": true
+  },
+  {
+    "path": "src\\lib\\invitation-utils.ts",
+    "statements": 45,
+    "covered": 1,
+    "coverage": 2.22,
+    "loc": 138,
+    "hasTest": true
+  },
+  {
+    "path": "src\\hooks\\useDragAndDrop.ts",
+    "statements": 21,
+    "covered": 1,
+    "coverage": 4.76,
+    "loc": 29,
+    "hasTest": true
+  },
+  {
+    "path": "src\\components\\views\\timeline\\hooks\\useTimelineShortcuts.ts",
+    "statements": 39,
+    "covered": 2,
+    "coverage": 5.13,
+    "loc": 71,
+    "hasTest": true
+  },
+  {
+    "path": "src\\components\\taskModal\\components\\LabelManager\\hooks\\useTaskModalLabelManager.ts",
+    "statements": 45,
+    "covered": 3,
+    "coverage": 6.67,
+    "loc": 83,
+    "hasTest": false
+  },
+  {
+    "path": "src\\components\\boardSidebar\\hooks\\useBoardSidebarActions.ts",
+    "statements": 14,
+    "covered": 1,
+    "coverage": 7.14,
+    "loc": 26,
+    "hasTest": true
+  },
+  {
+    "path": "src\\hooks\\useClipboardDetection.ts",
+    "statements": 78,
+    "covered": 7,
+    "coverage": 8.97,
+    "loc": 106,
+    "hasTest": false
+  },
+  {
+    "path": "src\\components\\views\\timeline\\hooks\\useTimelineDateRange.ts",
+    "statements": 20,
+    "covered": 2,
+    "coverage": 10,
+    "loc": 41,
+    "hasTest": true
+  },
+  {
+    "path": "src\\components\\views\\timeline\\hooks\\useTimelineHiddenTasks.ts",
+    "statements": 20,
+    "covered": 2,
+    "coverage": 10,
+    "loc": 28,
+    "hasTest": true
+  },
+  {
+    "path": "src\\components\\searchAndFilter\\hooks\\useSearchAndFilterClickOutside.ts",
+    "statements": 17,
+    "covered": 2,
+    "coverage": 11.76,
+    "loc": 27,
+    "hasTest": true
+  },
+  {
+    "path": "src\\components\\views\\timeline\\components\\TimelineTooltip.tsx",
+    "statements": 8,
+    "covered": 1,
+    "coverage": 12.5,
+    "loc": 51,
+    "hasTest": true
+  },
+  {
+    "path": "src\\store\\boards\\checklistSlice.ts",
+    "statements": 47,
+    "covered": 6,
+    "coverage": 12.77,
+    "loc": 217,
+    "hasTest": false
+  },
+  {
+    "path": "src\\lib\\p2p-connection.ts",
+    "statements": 77,
+    "covered": 10,
+    "coverage": 12.99,
+    "loc": 165,
+    "hasTest": false
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\useMemberManagement.ts",
+    "statements": 14,
+    "covered": 2,
+    "coverage": 14.29,
+    "loc": 32,
+    "hasTest": true
+  },
+  {
+    "path": "src\\components\\views\\kanban\\hooks\\useKanbanDragAndDrop.ts",
+    "statements": 112,
+    "covered": 17,
+    "coverage": 15.18,
+    "loc": 156,
+    "hasTest": true
+  },
+  {
+    "path": "src\\store\\sharingStore.ts",
+    "statements": 74,
+    "covered": 12,
+    "coverage": 16.22,
+    "loc": 168,
+    "hasTest": false
+  }
+]

@@ -1,0 +1,639 @@
+PASS src/components/taskModal/__tests__/index.test.ts (9.652 s)
+PASS src/components/boardSidebar/__tests__/index.test.ts (10.582 s)
+PASS src/components/views/__tests__/index.test.ts (13.996 s)
+PASS src/components/boardSidebar/components/__tests__/BoardSidebarBackdrop.test.tsx
+PASS src/components/boardShare/components/InviteModal/__tests__/InviteForm.test.tsx (18.12 s)
+PASS src/components/boardSidebar/hooks/__tests__/useBoardSidebarActions.test.ts (5.839 s)
+PASS src/components/ui/__tests__/input.test.tsx (20.317 s)
+  ΓùÅ Console
+
+    console.error
+      You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.
+
+      263 |   describe('edge cases', () => {
+      264 |     it('should handle empty value', () => {
+    > 265 |       render(<Input value="" />)
+          |             ^
+      266 |       
+      267 |       const input = screen.getByRole('textbox')
+      268 |       expect(input).toHaveValue('')
+
+      at checkControlledValueProps (node_modules/react-dom/cjs/react-dom-client.development.js:1425:21)
+      at setInitialProperties (node_modules/react-dom/cjs/react-dom-client.development.js:20534:11)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12662:18)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/components/ui/__tests__/input.test.tsx:265:13)
+
+PASS src/components/taskModal/components/__tests__/TaskModalForm.test.tsx (20.201 s)
+PASS src/components/boardHeader/__tests__/index.test.ts (5.607 s)
+PASS src/components/taskCard/__tests__/TaskCard.test.tsx (7.109 s)
+PASS src/components/searchAndFilter/__tests__/SearchAndFilter.test.tsx
+PASS src/components/boardShare/components/__tests__/index.test.ts
+PASS src/components/ui/__tests__/button.test.tsx (5.842 s)
+PASS src/components/archiveModal/__tests__/ArchiveModal.test.tsx
+PASS src/components/ui/__tests__/inline-input.test.tsx (24.868 s)
+PASS src/components/ui/__tests__/modal.test.tsx
+PASS src/components/views/__tests__/CalendarView.test.tsx
+PASS src/components/views/timeline/__tests__/index.test.ts
+PASS src/components/boardSidebar/components/__tests__/BoardSidebarItem.test.tsx
+PASS src/components/searchAndFilter/components/__tests__/SearchAndFilterInput.test.tsx
+PASS src/components/boardSidebar/components/__tests__/BoardSidebarBoardList.test.tsx
+PASS src/components/views/__tests__/TableView.test.tsx
+PASS src/components/taskCard/components/contextMenu/__tests__/CardContextMenu.test.tsx
+PASS src/components/boardShare/hooks/__tests__/useInviteModal.test.ts
+PASS src/components/archiveModal/components/__tests__/ArchivedCardItem.test.tsx
+PASS src/components/boardShare/components/JoinBoardModal/__tests__/JoinBoardModal.test.tsx
+PASS src/components/taskModal/__tests__/TaskModal.test.tsx
+PASS src/components/views/__tests__/TimelineView.test.tsx
+PASS src/components/taskCard/__tests__/index.test.ts
+PASS src/components/ui/__tests__/drag-overlay.test.tsx
+PASS src/components/taskModal/components/__tests__/TaskModalMultiChecklistManager.test.tsx
+PASS src/components/boardShare/components/MemberManagement/__tests__/PendingRequests.test.tsx
+PASS src/app/__tests__/page.test.tsx
+PASS src/components/views/kanban/components/__tests__/KanbanList.test.tsx
+PASS src/components/boardShare/components/MemberManagement/__tests__/MemberTabs.test.tsx
+PASS src/components/taskModal/components/__tests__/TaskModalFormSection.test.tsx
+PASS src/components/taskModal/components/__tests__/TaskModalHeader.test.tsx
+PASS src/lib/__tests__/invitation-utils.test.ts
+PASS src/components/boardShare/hooks/__tests__/useJoinBoardModal.basic.test.ts
+  ΓùÅ Console
+
+    console.log
+      Hook result: {
+        formData: { email: '', username: '', password: '' },
+        isLoading: false,
+        updateFormData: [Function: updateFormData],
+        handleJoin: [AsyncFunction: handleJoin],
+        handleKeyPress: [Function: handleKeyPress]
+      }
+
+      at Object.log (src/components/boardShare/hooks/__tests__/useJoinBoardModal.basic.test.ts:9:13)
+
+PASS src/components/taskModal/hooks/__tests__/useTaskModalChecklist.test.ts (5.706 s)
+  ΓùÅ Console
+
+    console.error
+      An update to TestComponent inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      34 |       updatedAt: new Date(),
+      35 |     };
+    > 36 |     setLocalChecklists(prev => [...prev, newChecklist]);
+         |     ^
+      37 |
+      38 |     // Immediately sync to store
+      39 |     const { addChecklist: storeAddChecklist } = useBoardStore.getState();
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at Object.setLocalChecklists [as addChecklist] (src/components/taskModal/hooks/useTaskModalChecklist.ts:36:5)
+      at addChecklist (src/components/taskModal/hooks/__tests__/useTaskModalChecklist.test.ts:71:33)
+      at Object.<anonymous> (node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:2235:93)
+      at Object.toThrow (src/components/taskModal/hooks/__tests__/useTaskModalChecklist.test.ts:71:69)
+
+PASS src/components/boardShare/components/MemberManagement/__tests__/MemberManagement.test.tsx (7.545 s)
+PASS src/components/boardSidebar/components/__tests__/BoardSidebarCreationForm.test.tsx
+PASS src/components/boardHeader/__tests__/BoardHeader.test.tsx (5.065 s)
+PASS src/components/boardSidebar/__tests__/BoardSidebar.test.tsx (6.171 s)
+PASS src/components/boardHeader/hooks/__tests__/useBoardHeaderActions.test.ts (5.379 s)
+PASS src/components/searchAndFilter/components/__tests__/SearchAndFilterPanel.test.tsx (5.776 s)
+PASS src/components/views/timeline/__tests__/utils.test.ts
+PASS src/components/taskModal/components/__tests__/TaskModalLabelSection.test.tsx
+PASS src/app/__tests__/layout.test.tsx
+  ΓùÅ Console
+
+    console.error
+      In HTML, <html> cannot be a child of <div>.
+      This will cause a hydration error.
+
+      25 |   describe('basic rendering', () => {
+      26 |     it('should render html element with lang attribute', () => {
+    > 27 |       render(
+         |             ^
+      28 |         <RootLayout>
+      29 |           <div>Test Content</div>
+      30 |         </RootLayout>
+
+      at validateDOMNesting (node_modules/react-dom/cjs/react-dom-client.development.js:2598:19)
+      at resolveSingletonInstance (node_modules/react-dom/cjs/react-dom-client.development.js:22598:9)
+      at completeWork (node_modules/react-dom/cjs/react-dom-client.development.js:12525:29)
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at completeUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17777:19)
+      at performUnitOfWork (node_modules/react-dom/cjs/react-dom-client.development.js:17658:11)
+      at workLoopSync (node_modules/react-dom/cjs/react-dom-client.development.js:17469:41)
+      at renderRootSync (node_modules/react-dom/cjs/react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (node_modules/react-dom/cjs/react-dom-client.development.js:16504:11)
+      at performWorkOnRootViaSchedulerTask (node_modules/react-dom/cjs/react-dom-client.development.js:18957:7)
+      at flushActQueue (node_modules/react/cjs/react.development.js:590:34)
+      at process.env.NODE_ENV.exports.act (node_modules/react/cjs/react.development.js:884:10)
+      at node_modules/@testing-library/react/dist/act-compat.js:46:25
+      at renderRoot (node_modules/@testing-library/react/dist/pure.js:189:26)
+      at render (node_modules/@testing-library/react/dist/pure.js:291:10)
+      at Object.<anonymous> (src/app/__tests__/layout.test.tsx:27:13)
+
+PASS src/hooks/__tests__/useDragAndDrop.test.ts
+PASS src/components/ui/__tests__/custom-tooltip.test.tsx
+PASS src/components/boardHeader/services/__tests__/BoardHeaderImportExport.test.ts
+  ΓùÅ Console
+
+    console.error
+      Error: Not implemented: window.alert
+          at alert (D:\Projects\Web\NextJS\flowboard\src\components\boardHeader\services\BoardHeaderImportExport.ts:94:5)
+          at <unknown> (D:\Projects\Web\NextJS\flowboard\src\components\boardHeader\services\__tests__\BoardHeaderImportExport.test.ts:134:30)
+          at Object.toThrow (D:\Projects\Web\NextJS\flowboard\src\components\boardHeader\services\__tests__\BoardHeaderImportExport.test.ts:134:67)
+          at new Promise (<anonymous>) {
+        type: 'not implemented'
+      }
+
+      92 | export const importData = (file: File, setCurrentBoard: (boardId: string) => void) => {
+      93 |   if (file.type !== 'application/json') {
+    > 94 |     alert('Please select a valid JSON file');
+         |     ^
+      95 |     return;
+      96 |   }
+      97 |
+
+      at VirtualConsole.<anonymous> (node_modules/@jest/environment-jsdom-abstract/build/index.js:87:23)
+      at module.exports (node_modules/jsdom/lib/jsdom/browser/not-implemented.js:12:26)
+      at node_modules/jsdom/lib/jsdom/browser/Window.js:960:7
+      at alert (src/components/boardHeader/services/BoardHeaderImportExport.ts:94:5)
+      at src/components/boardHeader/services/__tests__/BoardHeaderImportExport.test.ts:134:30
+      at Object.<anonymous> (node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:2235:93)
+      at Object.toThrow (src/components/boardHeader/services/__tests__/BoardHeaderImportExport.test.ts:134:67)
+
+PASS src/components/searchAndFilter/components/__tests__/SearchAndFilterPriority.test.tsx
+PASS src/components/boardShare/__tests__/index.test.ts
+PASS src/components/boardHeader/hooks/__tests__/useBoardHeaderTitle.test.ts
+PASS src/components/views/kanban/__tests__/index.test.ts
+PASS src/components/views/__tests__/KanbanView.test.tsx
+PASS src/components/archiveModal/components/__tests__/EmptyState.test.tsx
+PASS src/components/views/kanban/components/__tests__/KanbanListHeader.test.tsx (5.57 s)
+PASS src/hooks/__tests__/useBoard.test.ts (5.212 s)
+PASS src/components/taskModal/hooks/__tests__/useTaskModalData.test.ts (5.493 s)
+PASS src/components/boardShare/components/MemberManagement/__tests__/MembersList.test.tsx (5.479 s)
+PASS src/components/taskCard/components/__tests__/TaskCardCardMeta.test.tsx (5.186 s)
+PASS src/components/taskModal/components/__tests__/TaskModalChecklistSection.test.tsx (5.534 s)
+PASS src/components/searchAndFilter/components/__tests__/SearchAndFilterDropdown.test.tsx
+PASS src/components/taskModal/components/LabelManager/__tests__/index.test.ts
+PASS src/hooks/__tests__/useClickOutside.test.ts
+PASS src/store/__tests__/uiStore.test.ts
+PASS src/components/boardShare/hooks/__tests__/index.test.ts
+PASS src/components/views/timeline/hooks/__tests__/useTimelineDateRange.test.ts
+PASS src/components/views/kanban/hooks/__tests__/useKanbanDragAndDrop.test.ts
+PASS src/components/taskCard/components/__tests__/TaskCardCardLabels.test.tsx
+PASS src/components/taskModal/types/__tests__/index.test.ts
+PASS src/lib/__tests__/cardJsonUtils.test.ts
+PASS src/components/views/timeline/components/__tests__/TimelineHeader.test.tsx
+PASS src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx
+  ΓùÅ Console
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:31:12)
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:40:12)
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:55:12)
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:74:12)
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:121:12)
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:140:12)
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:157:12)
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:172:12)
+
+    console.error
+      An update to SearchAndFilterPortal inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      11 |   useEffect(() => {
+      12 |     // Use setTimeout to avoid calling setState synchronously
+    > 13 |     const timeoutId = setTimeout(() => setMounted(true), 0);
+         |                                        ^
+      14 |     return () => clearTimeout(timeoutId);
+      15 |   }, []);
+      16 |   return mounted ? createPortal(children, document.body) : null;
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setMounted (src/components/searchAndFilter/components/SearchAndFilterPortal.tsx:13:40)
+      at callTimer (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:825:24)
+      at Object.next (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1626:17)
+      at Object.runAll (node_modules/@sinonjs/fake-timers/src/fake-timers-src.js:1687:23)
+      at FakeTimers.runAllTimers (node_modules/@jest/fake-timers/build/index.js:532:19)
+      at Object.runAllTimers (src/components/searchAndFilter/components/__tests__/SearchAndFilterPortal.test.tsx:202:12)
+
+PASS src/components/searchAndFilter/components/__tests__/SearchAndFilterButton.test.tsx (7.709 s)
+PASS src/components/searchAndFilter/components/__tests__/SearchAndFilterTimeline.test.tsx (8.319 s)
+PASS src/components/boardShare/hooks/__tests__/useJoinBoardModal.test.ts (6.129 s)
+PASS src/components/taskCard/components/__tests__/TaskCardCardCompletion.test.tsx (6.807 s)
+PASS src/components/taskCard/hooks/__tests__/useCardContextMenu.test.ts
+  ΓùÅ Console
+
+    console.error
+      An update to TestComponent inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      45 |
+      46 |     // Don't do any viewport positioning here - let calculateContextMenuPosition handle it
+    > 47 |     setPosition({ x, y });
+         |     ^
+      48 |     setIsOpen(true);
+      49 |
+      50 |     // Reset the flag after a short delay
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setPosition (src/components/taskCard/hooks/useCardContextMenu.ts:47:5)
+      at Object.openContextMenu [as handleContextMenu] (src/components/taskCard/hooks/useCardContextMenu.ts:61:5)
+      at handleContextMenu (src/components/taskCard/hooks/__tests__/useCardContextMenu.test.ts:78:33)
+      at Object.<anonymous> (node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:2235:93)
+      at Object.toThrow (src/components/taskCard/hooks/__tests__/useCardContextMenu.test.ts:78:67)
+
+    console.error
+      An update to TestComponent inside a test was not wrapped in act(...).
+      
+      When testing, code that causes React state updates should be wrapped into act(...):
+      
+      act(() => {
+        /* fire events that update state */
+      });
+      /* assert on the output */
+      
+      This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+      46 |     // Don't do any viewport positioning here - let calculateContextMenuPosition handle it
+      47 |     setPosition({ x, y });
+    > 48 |     setIsOpen(true);
+         |     ^
+      49 |
+      50 |     // Reset the flag after a short delay
+      51 |     setTimeout(() => {
+
+      at node_modules/react-dom/cjs/react-dom-client.development.js:18758:19
+      at runWithFiberInDEV (node_modules/react-dom/cjs/react-dom-client.development.js:874:13)
+      at warnIfUpdatesNotWrappedWithActDEV (node_modules/react-dom/cjs/react-dom-client.development.js:18757:9)
+      at scheduleUpdateOnFiber (node_modules/react-dom/cjs/react-dom-client.development.js:16409:11)
+      at dispatchSetStateInternal (node_modules/react-dom/cjs/react-dom-client.development.js:9170:13)
+      at dispatchSetState (node_modules/react-dom/cjs/react-dom-client.development.js:9127:7)
+      at setIsOpen (src/components/taskCard/hooks/useCardContextMenu.ts:48:5)
+      at Object.openContextMenu [as handleContextMenu] (src/components/taskCard/hooks/useCardContextMenu.ts:61:5)
+      at handleContextMenu (src/components/taskCard/hooks/__tests__/useCardContextMenu.test.ts:78:33)
+      at Object.<anonymous> (node_modules/expect/build/index.js:1824:9)
+      at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:2235:93)
+      at Object.toThrow (src/components/taskCard/hooks/__tests__/useCardContextMenu.test.ts:78:67)
+
+PASS src/components/archiveModal/hooks/__tests__/useArchiveModal.test.ts
+PASS src/store/__tests__/boardStore.test.ts
+PASS src/components/views/timeline/components/__tests__/TimelineGrid.test.tsx
+PASS src/components/views/kanban/components/__tests__/SortableKanbanList.test.tsx (7.946 s)
+PASS src/components/views/kanban/components/__tests__/KanbanCardsContainer.test.tsx (7.864 s)
+ ΓÇ║ 1 snapshot obsolete.
+   ΓÇó KanbanCardsContainer Component basic rendering should render snapshot correctly 1
+PASS src/components/searchAndFilter/__tests__/index.test.ts
+PASS src/components/taskModal/components/__tests__/index.test.ts
+PASS src/components/taskModal/types/__tests__/TaskModal.form.types.test.ts
+PASS src/components/views/timeline/components/__tests__/TimelineListLane.test.tsx
+PASS src/components/taskCard/components/__tests__/TaskCardCardMembers.test.tsx
+PASS src/components/views/timeline/hooks/__tests__/useTimelineHiddenTasks.test.ts
+PASS src/components/archiveModal/__tests__/index.test.ts
+PASS src/components/searchAndFilter/components/__tests__/SearchAndFilterStatus.test.tsx
+PASS src/components/boardShare/components/InviteModal/__tests__/InviteModal.test.tsx
+PASS src/components/taskCard/components/contextMenu/components/__tests__/MovePortal.test.tsx
+PASS src/components/taskModal/hooks/__tests__/index.test.ts
+PASS src/components/views/timeline/components/__tests__/TimelineQueue.test.tsx
+PASS src/components/views/timeline/hooks/__tests__/useTimelinePositioning.test.ts
+PASS src/components/boardSidebar/components/__tests__/index.test.ts
+PASS src/components/boardShare/components/InviteModal/__tests__/InviteInfo.test.tsx
+PASS src/lib/__tests__/utils.test.ts
+PASS src/components/boardSidebar/hooks/__tests__/index.test.ts
+PASS src/components/boardSidebar/components/__tests__/BoardSidebarHeader.test.tsx
+PASS src/components/views/timeline/components/__tests__/TimelineTask.test.tsx
+PASS src/components/taskModal/hooks/__tests__/useTaskModalForm.test.ts
+PASS src/lib/__tests__/constants.test.ts
+PASS src/lib/__tests__/filterUtils.test.js
+PASS src/components/views/timeline/hooks/__tests__/useTimelineShortcuts.test.ts
+PASS src/components/boardShare/components/JoinBoardModal/__tests__/JoinAlert.test.tsx
+PASS src/components/taskModal/components/__tests__/TaskModalChecklistManager.test.tsx
+PASS src/lib/__tests__/dateUtils.test.ts
+PASS src/components/views/timeline/components/__tests__/TimelineTaskLane.test.tsx
+PASS src/components/taskCard/__tests__/utils.test.ts
+PASS src/components/boardShare/hooks/__tests__/useMemberManagement.test.ts
+PASS src/components/searchAndFilter/hooks/__tests__/useSearchAndFilterDropdownPosition.test.ts
+PASS src/components/ui/__tests__/ConfirmationModal.test.tsx
+PASS src/lib/__tests__/validations.test.ts
+PASS src/components/boardSidebar/hooks/__tests__/useBoardSidebarState.test.ts
+PASS src/components/searchAndFilter/hooks/__tests__/useSearchAndFilterClickOutside.test.ts
+PASS src/components/views/timeline/components/__tests__/TimelineTooltip.test.tsx
+PASS src/components/searchAndFilter/__tests__/constants.test.ts
+PASS src/components/boardShare/__tests__/utils.test.ts
+
+Snapshot Summary
+ ΓÇ║ 1 snapshot obsolete from 1 test suite. To remove it, run `npm test -- -u`.
+   Γå│ src/components/views/kanban/components/__tests__/KanbanCardsContainer.test.tsx
+       ΓÇó KanbanCardsContainer Component basic rendering should render snapshot correctly 1
+
+Test Suites: 123 passed, 123 total
+Tests:       1182 passed, 1182 total
+Snapshots:   1 obsolete, 0 total
+Time:        76.736 s
+Ran all test suites.

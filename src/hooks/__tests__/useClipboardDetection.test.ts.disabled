@@ -1,0 +1,353 @@
+import { renderHook, act } from '@testing-library/react';
+import { useClipboardDetection } from '../useClipboardDetection';
+import { validateCardJSON } from '@/lib/cardJsonUtils';
+
+// Mock cardJsonUtils
+jest.mock('@/lib/cardJsonUtils');
+
+// Mock navigator.clipboard
+const mockClipboard = {
+  readText: jest.fn()
+};
+
+Object.defineProperty(navigator, 'clipboard', {
+  writable: true,
+  value: mockClipboard
+});
+
+// Mock document.hidden
+Object.defineProperty(document, 'hidden', {
+  writable: true,
+  value: false
+});
+
+describe('useClipboardDetection', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  describe('initial state', () => {
+    it('should return initial state values', () => {
+      const { result } = renderHook(() => useClipboardDetection());
+
+      expect(result.current.hasValidCardJSON).toBe(false);
+      expect(result.current.isChecking).toBe(false);
+      expect(result.current.isPasting).toBe(false);
+      expect(typeof result.current.checkClipboard).toBe('function');
+      expect(typeof result.current.getCardJSONFromClipboard).toBe('function');
+    });
+  });
+
+  describe('checkClipboard', () => {
+    it('should handle browsers without clipboard API', async () => {
+      Object.defineProperty(navigator, 'clipboard', {
+        writable: true,
+        value: undefined
+      });
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      await act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.hasValidCardJSON).toBe(false);
+      expect(result.current.isChecking).toBe(false);
+    });
+
+    it('should handle hidden document', async () => {
+      Object.defineProperty(document, 'hidden', {
+        writable: true,
+        value: true
+      });
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      await act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.hasValidCardJSON).toBe(false);
+      expect(mockClipboard.readText).not.toHaveBeenCalled();
+    });
+
+    it('should handle empty clipboard', async () => {
+      mockClipboard.readText.mockResolvedValue('');
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      await act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.hasValidCardJSON).toBe(false);
+      expect(result.current.isChecking).toBe(false);
+    });
+
+    it('should handle invalid JSON', async () => {
+      mockClipboard.readText.mockResolvedValue('invalid json');
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      await act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.hasValidCardJSON).toBe(false);
+      expect(result.current.isChecking).toBe(false);
+    });
+
+    it('should handle valid card JSON', async () => {
+      const validCardData = { id: 'card-123', title: 'Test Card' };
+      mockClipboard.readText.mockResolvedValue(JSON.stringify(validCardData));
+      (validateCardJSON as unknown as jest.Mock).mockReturnValue(true);
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      await act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.hasValidCardJSON).toBe(true);
+      expect(result.current.isChecking).toBe(false);
+      expect(validateCardJSON).toHaveBeenCalledWith(validCardData);
+    });
+
+    it('should handle invalid card JSON', async () => {
+      const invalidCardData = { id: 'card-123' };
+      mockClipboard.readText.mockResolvedValue(JSON.stringify(invalidCardData));
+      (validateCardJSON as unknown as jest.Mock).mockReturnValue(false);
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      await act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.hasValidCardJSON).toBe(false);
+      expect(result.current.isChecking).toBe(false);
+    });
+
+    it('should handle NotAllowedError gracefully', async () => {
+      const notAllowedError = new Error('Permission denied');
+      notAllowedError.name = 'NotAllowedError';
+      mockClipboard.readText.mockRejectedValue(notAllowedError);
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      await act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.hasValidCardJSON).toBe(false);
+      expect(consoleSpy).not.toHaveBeenCalled();
+      consoleSpy.mockRestore();
+    });
+
+    it('should handle other errors', async () => {
+      const genericError = new Error('Generic error');
+      mockClipboard.readText.mockRejectedValue(genericError);
+
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      await act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.hasValidCardJSON).toBe(false);
+      expect(consoleSpy).toHaveBeenCalledWith('Error checking clipboard:', genericError);
+      consoleSpy.mockRestore();
+    });
+
+    it('should set checking state during operation', async () => {
+      mockClipboard.readText.mockImplementation(() =>
+        new Promise(resolve => setTimeout(() => resolve(''), 100))
+      );
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      expect(result.current.isChecking).toBe(false);
+
+      const checkPromise = act(async () => {
+        await result.current.checkClipboard();
+      });
+
+      expect(result.current.isChecking).toBe(true);
+
+      await checkPromise;
+      expect(result.current.isChecking).toBe(false);
+    });
+  });
+
+  describe('getCardJSONFromClipboard', () => {
+    it('should return null when clipboard API is not available', async () => {
+      Object.defineProperty(navigator, 'clipboard', {
+        writable: true,
+        value: undefined
+      });
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      const cardData = await act(async () => {
+        return await result.current.getCardJSONFromClipboard();
+      });
+
+      expect(cardData).toBeNull();
+    });
+
+    it('should return null when document is hidden', async () => {
+      Object.defineProperty(document, 'hidden', {
+        writable: true,
+        value: true
+      });
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      const cardData = await act(async () => {
+        return await result.current.getCardJSONFromClipboard();
+      });
+
+      expect(cardData).toBeNull();
+      expect(mockClipboard.readText).not.toHaveBeenCalled();
+    });
+
+    it('should return null for empty clipboard', async () => {
+      mockClipboard.readText.mockResolvedValue('');
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      const cardData = await act(async () => {
+        return await result.current.getCardJSONFromClipboard();
+      });
+
+      expect(cardData).toBeNull();
+    });
+
+    it('should return null for invalid JSON', async () => {
+      mockClipboard.readText.mockResolvedValue('invalid json');
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      const cardData = await act(async () => {
+        return await result.current.getCardJSONFromClipboard();
+      });
+
+      expect(cardData).toBeNull();
+    });
+
+    it('should return null for invalid card JSON', async () => {
+      const invalidCardData = { id: 'card-123' };
+      mockClipboard.readText.mockResolvedValue(JSON.stringify(invalidCardData));
+      (validateCardJSON as unknown as jest.Mock).mockReturnValue(false);
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      const cardData = await act(async () => {
+        return await result.current.getCardJSONFromClipboard();
+      });
+
+      expect(cardData).toBeNull();
+    });
+
+    it('should return card data for valid card JSON', async () => {
+      const validCardData = { id: 'card-123', title: 'Test Card' };
+      mockClipboard.readText.mockResolvedValue(JSON.stringify(validCardData));
+      (validateCardJSON as unknown as jest.Mock).mockReturnValue(true);
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      const cardData = await act(async () => {
+        return await result.current.getCardJSONFromClipboard();
+      });
+
+      expect(cardData).toEqual(validCardData);
+    });
+
+    it('should handle NotAllowedError gracefully', async () => {
+      const notAllowedError = new Error('Permission denied');
+      notAllowedError.name = 'NotAllowedError';
+      mockClipboard.readText.mockRejectedValue(notAllowedError);
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      const cardData = await act(async () => {
+        return await result.current.getCardJSONFromClipboard();
+      });
+
+      expect(cardData).toBeNull();
+    });
+
+    it('should set pasting state during operation', async () => {
+      mockClipboard.readText.mockImplementation(() =>
+        new Promise(resolve => setTimeout(() => resolve('{}'), 100))
+      );
+
+      const { result } = renderHook(() => useClipboardDetection());
+
+      expect(result.current.isPasting).toBe(false);
+
+      const pastePromise = act(async () => {
+        return await result.current.getCardJSONFromClipboard();
+      });
+
+      expect(result.current.isPasting).toBe(true);
+
+      await pastePromise;
+      expect(result.current.isPasting).toBe(false);
+    });
+  });
+
+  describe('effect setup', () => {
+    it('should set up event listeners on mount', () => {
+      const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
+      const docAddEventListenerSpy = jest.spyOn(document, 'addEventListener');
+
+      renderHook(() => useClipboardDetection());
+
+      expect(addEventListenerSpy).toHaveBeenCalledWith('focus', expect.any(Function));
+      expect(docAddEventListenerSpy).toHaveBeenCalledWith('visibilitychange', expect.any(Function));
+
+      addEventListenerSpy.mockRestore();
+      docAddEventListenerSpy.mockRestore();
+    });
+
+    it('should check clipboard on initial mount', async () => {
+      mockClipboard.readText.mockResolvedValue('');
+      const { result } = renderHook(() => useClipboardDetection());
+
+      // Wait for initial check to complete
+      await act(async () => {
+        await new Promise(resolve => setTimeout(resolve, 0));
+      });
+
+      expect(mockClipboard.readText).toHaveBeenCalled();
+    });
+
+    it('should clean up on unmount', () => {
+      const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
+      const docRemoveEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+      const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
+
+      const { unmount } = renderHook(() => useClipboardDetection());
+
+      unmount();
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('focus', expect.any(Function));
+      expect(docRemoveEventListenerSpy).toHaveBeenCalledWith('visibilitychange', expect.any(Function));
+      expect(clearIntervalSpy).toHaveBeenCalled();
+
+      removeEventListenerSpy.mockRestore();
+      docRemoveEventListenerSpy.mockRestore();
+      clearIntervalSpy.mockRestore();
+    });
+  });
+});
