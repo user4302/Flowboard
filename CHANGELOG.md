@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add comprehensive test coverage for board sharing components (InviteModal, JoinBoardModal, MemberManagement)
 - Add test utilities and hooks for clipboard detection, drag-and-drop, and invitation utilities
 - Add workflow documentation for code review processes
+- Prevent context menu from reopening when right-clicking on backdrop overlay
 
 ### Changed
 - Organize coverage analysis files by moving scripts to dedicated scripts/ folder
