@@ -9,14 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Comprehensive test coverage analysis scripts and utilities for coverage optimization
+- Add comprehensive test suites for Timeline components (TimelineGrid, TimelineHeader, TimelineTask, TimelineTooltip)
+- Add extensive board component test coverage for BoardHeader, BoardShare, and BoardSidebar components
+- Add comprehensive test coverage for board sharing components (InviteModal, JoinBoardModal, MemberManagement)
+- Add test utilities and hooks for clipboard detection, drag-and-drop, and invitation utilities
+- Add workflow documentation for code review processes
 
 ### Changed
 - Organize coverage analysis files by moving scripts to dedicated scripts/ folder
 - Improve project structure by consolidating coverage tools and utilities
+- Enhance existing test suites with edge cases, component structure validation, and interaction testing
+- Fix inline-input test behavior to properly handle Escape key interactions
 
 ### Fixed
 - Clean up temporary files and documentation from coverage optimization process
 - Remove duplicate coverage files and outdated test snapshots
+- Remove outdated KanbanCardsContainer test snapshot
 
 ## [1.5.0] - 2026-03-11
 
