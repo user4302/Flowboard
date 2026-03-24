@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { useUIStore, useBoardStore } from '@/store';
 import { Button } from '@/components/ui';
@@ -35,7 +35,13 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
   const [showFilters, setShowFilters] = useState(false);
   const dropdownRef1 = useRef<HTMLDivElement>(null);
   const dropdownRef2 = useRef<HTMLDivElement>(null);
-  const dropdownRefs = [dropdownRef1, dropdownRef2];
+  const [portalDropdownRefs, setPortalDropdownRefs] = useState<React.RefObject<HTMLDivElement | null>[]>([]);
+
+  const handlePortalDropdownRefs = useCallback((refs: React.RefObject<HTMLDivElement | null>[]) => {
+    setPortalDropdownRefs(refs);
+  }, []);
+
+  const dropdownRefs = [dropdownRef1, dropdownRef2, ...portalDropdownRefs];
 
   const board = boards.find(b => b.id === boardId);
 
@@ -109,6 +115,7 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
           selectedMembers={selectedMembers}
           setSelectedMembers={setSelectedMembers}
           board={board}
+          onPortalDropdownRef={handlePortalDropdownRefs}
         />
       )}
     </div>

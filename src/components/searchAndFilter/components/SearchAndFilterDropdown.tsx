@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SearchAndFilterPortal } from './SearchAndFilterPortal';
@@ -17,6 +17,7 @@ interface SearchAndFilterDropdownProps {
   }>;
   onToggle: (id: string) => void;
   itemType: 'label' | 'member';
+  onPortalRef?: (ref: React.RefObject<HTMLDivElement | null>) => void;
 }
 
 export function SearchAndFilterDropdown({
@@ -25,11 +26,19 @@ export function SearchAndFilterDropdown({
   selectedItems,
   items,
   onToggle,
-  itemType
+  itemType,
+  onPortalRef
 }: SearchAndFilterDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const portalDropdownRef = useRef<HTMLDivElement>(null);
   const { triggerRect, triggerRef } = useSearchAndFilterDropdownPosition(isOpen);
+
+  // Register portal ref with parent when dropdown opens
+  useEffect(() => {
+    if (isOpen && onPortalRef && portalDropdownRef) {
+      onPortalRef(portalDropdownRef);
+    }
+  }, [isOpen, onPortalRef]);
 
   const renderSelectedItem = (item: { id: string; text?: string; color?: string; name?: string }) => {
     if (itemType === 'label') {
