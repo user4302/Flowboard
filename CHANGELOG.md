@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Prevent context menu from reopening when right-clicking on backdrop overlay
 - Add comprehensive unit tests for context menu right-click prevention behavior
 - Add Archive button to task modal footer with destructive styling and proper danger zone placement
+- Add comprehensive unit tests for archive functionality in task modal handlers
 
 ### Changed
 - Organize coverage analysis files by moving scripts to dedicated scripts/ folder

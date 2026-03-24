@@ -16,12 +16,14 @@ delete (window as any).history;
 // Mock stores
 const mockUpdateCard = jest.fn();
 const mockCreateCard = jest.fn();
+const mockArchiveCard = jest.fn();
 const mockCloseCardModalWithoutUrlUpdate = jest.fn();
 
 jest.mock('@/store', () => ({
   useBoardStore: () => ({
     updateCard: mockUpdateCard,
     createCard: mockCreateCard,
+    archiveCard: mockArchiveCard,
   }),
   useUIStore: () => ({
     closeCardModalWithoutUrlUpdate: mockCloseCardModalWithoutUrlUpdate,
@@ -351,6 +353,159 @@ describe('useTaskModalHandlers', () => {
       });
 
       expect(mockChecklist.syncChecklistToStore).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handleArchive', () => {
+    it('should archive card and close modal when boardId and card exist', () => {
+      const { result } = renderHook(() =>
+        useTaskModalHandlers(
+          mockCurrentBoardId,
+          mockFoundCard,
+          mockForm as any,
+          false,
+          null,
+          null,
+          mockChecklist
+        )
+      );
+
+      act(() => {
+        result.current.handleArchive();
+      });
+
+      expect(mockArchiveCard).toHaveBeenCalledWith(mockCurrentBoardId, mockFoundCard.id);
+      expect(mockCloseCardModalWithoutUrlUpdate).toHaveBeenCalled();
+      expect(mockChecklist.resetChecklist).toHaveBeenCalled();
+    });
+
+    it('should not archive card when boardId is null', () => {
+      const { result } = renderHook(() =>
+        useTaskModalHandlers(
+          null,
+          mockFoundCard,
+          mockForm as any,
+          false,
+          null,
+          null,
+          mockChecklist
+        )
+      );
+
+      act(() => {
+        result.current.handleArchive();
+      });
+
+      expect(mockArchiveCard).not.toHaveBeenCalled();
+      expect(mockCloseCardModalWithoutUrlUpdate).not.toHaveBeenCalled();
+    });
+
+    it('should not archive card when foundCard is null', () => {
+      const { result } = renderHook(() =>
+        useTaskModalHandlers(
+          mockCurrentBoardId,
+          null,
+          mockForm as any,
+          false,
+          null,
+          null,
+          mockChecklist
+        )
+      );
+
+      act(() => {
+        result.current.handleArchive();
+      });
+
+      expect(mockArchiveCard).not.toHaveBeenCalled();
+      expect(mockCloseCardModalWithoutUrlUpdate).not.toHaveBeenCalled();
+    });
+
+    it('should not archive card when foundCard is undefined', () => {
+      const { result } = renderHook(() =>
+        useTaskModalHandlers(
+          mockCurrentBoardId,
+          undefined,
+          mockForm as any,
+          false,
+          null,
+          null,
+          mockChecklist
+        )
+      );
+
+      act(() => {
+        result.current.handleArchive();
+      });
+
+      expect(mockArchiveCard).not.toHaveBeenCalled();
+      expect(mockCloseCardModalWithoutUrlUpdate).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handleToggleCompleted', () => {
+    it('should toggle completed status of existing card', () => {
+      const { result } = renderHook(() =>
+        useTaskModalHandlers(
+          mockCurrentBoardId,
+          mockFoundCard,
+          mockForm as any,
+          false,
+          null,
+          null,
+          mockChecklist
+        )
+      );
+
+      act(() => {
+        result.current.handleToggleCompleted();
+      });
+
+      expect(mockUpdateCard).toHaveBeenCalledWith(
+        mockCurrentBoardId,
+        mockFoundCard.id,
+        { completed: !mockFoundCard.completed }
+      );
+    });
+
+    it('should not toggle completed when boardId is null', () => {
+      const { result } = renderHook(() =>
+        useTaskModalHandlers(
+          null,
+          mockFoundCard,
+          mockForm as any,
+          false,
+          null,
+          null,
+          mockChecklist
+        )
+      );
+
+      act(() => {
+        result.current.handleToggleCompleted();
+      });
+
+      expect(mockUpdateCard).not.toHaveBeenCalled();
+    });
+
+    it('should not toggle completed when foundCard is null', () => {
+      const { result } = renderHook(() =>
+        useTaskModalHandlers(
+          mockCurrentBoardId,
+          null,
+          mockForm as any,
+          false,
+          null,
+          null,
+          mockChecklist
+        )
+      );
+
+      act(() => {
+        result.current.handleToggleCompleted();
+      });
+
+      expect(mockUpdateCard).not.toHaveBeenCalled();
     });
   });
 
