@@ -7,9 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-- Fix modal reopening issue when saving cards by preventing URL-based reopening race conditions
-
 ### Added
 - Comprehensive test coverage analysis scripts and utilities for coverage optimization
 - Add comprehensive test suites for Timeline components (TimelineGrid, TimelineHeader, TimelineTask, TimelineTooltip)
@@ -30,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clean up temporary files and documentation from coverage optimization process
 - Remove duplicate coverage files and outdated test snapshots
 - Remove outdated KanbanCardsContainer test snapshot
+- Fix modal reopening issue when saving cards by preventing URL-based reopening race conditions
 
 ## [1.5.0] - 2026-03-11
 
