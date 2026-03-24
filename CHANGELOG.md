@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove duplicate coverage files and outdated test snapshots
 - Remove outdated KanbanCardsContainer test snapshot
 - Fix modal reopening issue when saving cards by preventing URL-based reopening race conditions
+- Resolve task modal race condition for newly created cards with polling mechanism
 
 ## [1.5.0] - 2026-03-11
 

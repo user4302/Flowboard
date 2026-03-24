@@ -67,6 +67,21 @@ export function useTaskModalData(): CardModalData & {
     initialChecklists: foundCard?.checklists || []
   });
 
+  // Force form re-initialization when a newly created card is found
+  useEffect(() => {
+    if (foundCard && selectedCardId && !isWaitingForCard) {
+      // This ensures the form is properly initialized with the card data
+      // when it becomes available after the race condition resolves
+      form.reset({
+        title: foundCard.title || '',
+        description: foundCard.description || '',
+        startDate: foundCard.startDate ? foundCard.startDate.toISOString().split('T')[0] : '',
+        dueDate: foundCard.dueDate ? foundCard.dueDate.toISOString().split('T')[0] : '',
+        priority: foundCard.priority || null,
+      });
+    }
+  }, [foundCard, selectedCardId, isWaitingForCard, form.reset]);
+
   const boardLabels = useMemo(() => currentBoard?.labels || [], [currentBoard?.labels]);
 
   return useMemo(() => ({
