@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useBoardStore, useUIStore } from '@/store';
-import { useTaskModalActions } from './useTaskModalActions';
 import { CardModalHandlers } from '../types/TaskModal.modal.types';
 import { Card } from '@/lib/types';
 import { CardJSON } from '@/lib/cardJsonUtils';
@@ -19,57 +18,97 @@ export function useTaskModalHandlers(
 ): CardModalHandlers & { closeCardModal: () => void } {
   const { closeCardModal, closeCardModalWithoutUrlUpdate } = useUIStore();
   const { updateCard, createCard } = useBoardStore();
-  const { handleSaveCard } = useTaskModalActions();
 
   const handleCloseCardModal = useCallback(() => {
-    // Set global flag IMMEDIATELY to prevent dynamic route from reopening modal
+    console.log('handleCloseCardModal called');
+    // Set global flag IMMEDIATELY to prevent URL-based reopening
     (window as any).__isClosingModal = true;
+    console.log('Set __isClosingModal to true');
 
     checklist.resetChecklist();
-    closeCardModal(); // Use regular closeCardModal to properly reset state
+    closeCardModalWithoutUrlUpdate();
 
-    // Update URL after a short delay to prevent parsing loop
+    // Update URL to remove card ID with longer delay
     setTimeout(() => {
+      console.log('Updating URL to remove card ID');
       import('@/store/boardStore').then(({ useBoardStore }) => {
         const boardStore = useBoardStore.getState();
         if (boardStore.currentBoardId) {
           const newUrl = `/board/${boardStore.currentBoardId}`;
+          console.log('Pushing URL without card:', newUrl);
           window.history.pushState({}, '', newUrl);
-        } else {
-          window.history.pushState({}, '', '/');
         }
       });
 
-      // Reset flags after a longer delay to ensure URL change is processed
+      // Reset flag after much longer delay to ensure URL change is fully processed
       setTimeout(() => {
+        console.log('Resetting __isClosingModal to false');
         (window as any).__isClosingModal = false;
-      }, 300); // Increased from 200ms to 300ms
+      }, 500); // Increased from 200ms to 500ms
     }, 50); // Reduced from 100ms to 50ms for faster response
-  }, [closeCardModal, checklist]);
+  }, [closeCardModalWithoutUrlUpdate, checklist]);
 
   const handleSave = useCallback((data: Partial<Card>) => {
+    console.log('handleSave called with data:', data);
     if (isJSONImportMode && currentBoardId && targetListId && cardJSONData) {
       // Create new card from JSON data
       const newCard = createCard(currentBoardId, targetListId, data.title || 'Untitled Card');
       if (newCard) {
         // Update the new card with additional data
-        updateCard(currentBoardId, newCard.id, {
+        const updateData: Partial<Card> = {
           description: data.description,
-          startDate: data.startDate ? new Date(data.startDate) : undefined,
-          dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
-          priority: data.priority,
-        });
-        handleCloseCardModal(); // Use our custom handler
+        };
+
+        if (data.startDate) {
+          updateData.startDate = new Date(data.startDate);
+        }
+
+        if (data.dueDate) {
+          updateData.dueDate = new Date(data.dueDate);
+        }
+
+        // Only include priority if it's not null/undefined
+        if (data.priority !== null && data.priority !== undefined) {
+          updateData.priority = data.priority;
+        }
+
+        updateCard(currentBoardId, newCard.id, updateData);
+        console.log('JSON import: calling handleCloseCardModal');
+        handleCloseCardModal();
       }
     } else if (currentBoardId && foundCard) {
-      // Update existing card
-      handleSaveCard(currentBoardId, foundCard.id, data, handleCloseCardModal); // Use our custom handler
-      // Sync checklist items if not in JSON import mode
+      console.log('Updating existing card:', foundCard.id);
+      // Update existing card directly without going through handleSaveCard
+      const updateData: Partial<Card> = {
+        title: data.title,
+        description: data.description,
+      };
+
+      if (data.startDate) {
+        updateData.startDate = new Date(data.startDate);
+      }
+
+      if (data.dueDate) {
+        updateData.dueDate = new Date(data.dueDate);
+      }
+
+      // Only include priority if it's not null/undefined
+      if (data.priority !== null && data.priority !== undefined) {
+        updateData.priority = data.priority;
+      }
+
+      // Sync checklist items first if not in JSON import mode
       if (!isJSONImportMode) {
         checklist.syncChecklistToStore();
       }
+
+      // Update the card
+      updateCard(currentBoardId, foundCard.id, updateData);
+      console.log('Card updated, calling handleCloseCardModal');
+      // Close modal using the same logic as cancel button
+      handleCloseCardModal();
     }
-  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleSaveCard, handleCloseCardModal, checklist]);
+  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleCloseCardModal, checklist]);
 
   const handleToggleCompleted = useCallback(() => {
     if (currentBoardId && foundCard) {

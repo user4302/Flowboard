@@ -28,6 +28,7 @@ export default function BoardCardPage() {
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [isBoardLoading, setIsBoardLoading] = useState(true);
   const [isClosingModal, setIsClosingModal] = useState(false);
+  const [hasOpenedModal, setHasOpenedModal] = useState(false);
 
   useEffect(() => {
     initializeTheme();
@@ -51,7 +52,13 @@ export default function BoardCardPage() {
     return () => clearTimeout(timer);
   }, [initializeTheme, setShowJoinModal]);
 
+  // Reset hasOpenedModal when cardId changes
   useEffect(() => {
+    setHasOpenedModal(false);
+  }, [cardId]);
+
+  useEffect(() => {
+    console.log('BoardCardPage useEffect triggered', { boardId, cardId, isClosingModal, globalIsClosingModal: (window as any).__isClosingModal || false, hasOpenedModal });
     // Set current board from URL parameter
     if (boardId) {
       const globalIsClosingModal = (window as any).__isClosingModal || false;
@@ -60,19 +67,28 @@ export default function BoardCardPage() {
         setCurrentBoard(boardId);
         setIsBoardLoading(false);
 
-        // Open task modal for the specific card (only if not closing modal)
-        if (cardId && !isClosingModal && !globalIsClosingModal) {
-          // Small delay to ensure board is loaded
-          setTimeout(() => {
-            openCardModal(cardId);
-          }, 500);
-        }
+        // Open task modal for specific card (only if not closing modal AND we haven't opened it yet)
+        // Add small delay to ensure __isClosingModal flag is properly set
+        setTimeout(() => {
+          const currentGlobalFlag = (window as any).__isClosingModal || false;
+          if (cardId && !isClosingModal && !currentGlobalFlag && !hasOpenedModal) {
+            console.log('Opening card modal for:', cardId, { isClosingModal, globalIsClosingModal: currentGlobalFlag, hasOpenedModal });
+            setHasOpenedModal(true); // Mark that we've opened the modal
+            // Small delay to ensure board is loaded
+            setTimeout(() => {
+              console.log('Calling openCardModal for:', cardId);
+              openCardModal(cardId);
+            }, 100);
+          } else {
+            console.log('NOT opening card modal. cardId:', cardId, 'isClosingModal:', isClosingModal, 'globalIsClosingModal:', currentGlobalFlag, 'hasOpenedModal:', hasOpenedModal);
+          }
+        }, 50); // Small delay to check flag
       } else {
         // Board not found, redirect to home
         router.push('/');
       }
     }
-  }, [boardId, cardId, getBoardById, setCurrentBoard, router, openCardModal, isClosingModal]);
+  }, [boardId, cardId, getBoardById, setCurrentBoard, router, openCardModal, isClosingModal, hasOpenedModal]);
 
   const currentBoard = boardId ? getBoardById(boardId) : null;
 

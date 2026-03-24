@@ -288,22 +288,32 @@ export const useUIStore = create<UIState>()(
        * @param cardId - Optional card ID to edit
        */
       openCardModal: (cardId) => {
+        console.log('openCardModal called with cardId:', cardId, 'stack:', new Error().stack);
         set({
           cardModalOpen: true,
           selectedCardId: cardId || null,
           cardJSONData: null,
           targetListId: null,
         });
+        console.log('Modal state set to open');
 
-        // Update URL to include card path if cardId is provided
-        import('./boardStore').then(({ useBoardStore }) => {
-          const boardStore = useBoardStore.getState();
-
-          if (cardId && boardStore.currentBoardId) {
-            const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
-            window.history.pushState({}, '', newUrl);
-          }
-        });
+        // Only update URL if we're not already on a card page
+        if (cardId && !window.location.pathname.includes('/card/')) {
+          console.log('Updating URL for card:', cardId);
+          // Small delay to ensure modal state is set first
+          setTimeout(() => {
+            import('./boardStore').then(({ useBoardStore }) => {
+              const boardStore = useBoardStore.getState();
+              if (boardStore.currentBoardId) {
+                const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
+                console.log('Pushing URL:', newUrl);
+                window.history.pushState({}, '', newUrl);
+              }
+            });
+          }, 50);
+        } else {
+          console.log('Already on card page or no cardId, not updating URL');
+        }
       },
 
       /**

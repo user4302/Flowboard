@@ -39,7 +39,8 @@ export default function Home() {
 
     // Check for task modal parameters in URL
     const pathSegments = window.location.pathname.split('/');
-    if (pathSegments.length >= 5 && pathSegments[1] === 'board' && pathSegments[3] === 'card' && !isClosingModal) {
+    const globalIsClosingModal = (window as any).__isClosingModal || false;
+    if (pathSegments.length >= 5 && pathSegments[1] === 'board' && pathSegments[3] === 'card' && !isClosingModal && !globalIsClosingModal) {
       const urlBoardId = pathSegments[2];
       const urlCardId = pathSegments[4];
 

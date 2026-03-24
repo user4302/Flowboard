@@ -133,7 +133,14 @@ export function KanbanView({ boardId }: KanbanViewProps) {
    * @param title - Title for the new card
    */
   const handleCreateCard = (listId: string, title: string) => {
-    createCard(boardId, listId, title);
+    const newCard = createCard(boardId, listId, title);
+    // Open the modal for editing the newly created card
+    if (newCard) {
+      import('@/store/uiStore').then(({ useUIStore }) => {
+        const uiStore = useUIStore.getState();
+        uiStore.openCardModal(newCard.id);
+      });
+    }
   };
 
   /**

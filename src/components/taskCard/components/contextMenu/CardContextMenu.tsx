@@ -128,6 +128,7 @@ export function CardContextMenu({
     <>
       {/* Backdrop */}
       <div
+        data-testid="context-menu-backdrop"
         className={`fixed inset-0 bg-black/50`}
         style={{ zIndex: Z_INDEX.BACKDROP }}
         onClick={handleBackdropClick}
@@ -136,6 +137,7 @@ export function CardContextMenu({
 
       {/* Context Menu */}
       <div
+        data-testid="context-menu"
         className={`fixed bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-600 py-2 min-w-[200px] max-w-xs overflow-y-auto`}
         style={{
           left: `${menuPosition.x}px`,
