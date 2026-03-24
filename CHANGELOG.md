@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Comprehensive test coverage analysis scripts and utilities for coverage optimization
+- Implement per-board filters instead of global filters to prevent cross-board confusion
+- Add board-specific filter state storage with individual selector patterns
+- Add getFilterState helper function for accessing board-specific filter settings
 - Add comprehensive test suites for Timeline components (TimelineGrid, TimelineHeader, TimelineTask, TimelineTooltip)
 - Add extensive board component test coverage for BoardHeader, BoardShare, and BoardSidebar components
 - Add comprehensive test coverage for board sharing components (InviteModal, JoinBoardModal, MemberManagement)
@@ -24,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix inline-input test behavior to properly handle Escape key interactions
 
 ### Fixed
+- Fix infinite loop and "Maximum update depth exceeded" errors in filter components
+- Replace object-creating selectors with stable individual selectors to prevent re-renders
 - Clean up temporary files and documentation from coverage optimization process
 - Remove duplicate coverage files and outdated test snapshots
 - Remove outdated KanbanCardsContainer test snapshot

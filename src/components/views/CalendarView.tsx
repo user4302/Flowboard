@@ -6,6 +6,17 @@ import { useBoardStore, useUIStore } from '@/store';
 import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
 
+// Default filter state to avoid creating new objects
+const DEFAULT_FILTER_STATE = {
+  searchTerm: '',
+  selectedLabels: [],
+  selectedMembers: [],
+  showOverdue: false,
+  showCompleted: 'all' as const,
+  priorityThreshold: null,
+  dueDateFilter: 'all' as const
+};
+
 /**
  * CalendarView component props interface
  * Defines the props for the calendar view component
@@ -24,15 +35,17 @@ export function CalendarView({ boardId }: CalendarViewProps) {
   // Store hooks for board data and UI state
   const { boards } = useBoardStore();
   const {
-    searchTerm,
-    selectedLabels,
-    selectedMembers,
-    showOverdue,
-    showCompleted,
-    priorityThreshold,
-    dueDateFilter,
     openCardModal
   } = useUIStore();
+
+  // Get filter state for this specific board using individual selectors
+  const searchTerm = useUIStore((state) => state.filterState[boardId]?.searchTerm ?? DEFAULT_FILTER_STATE.searchTerm);
+  const selectedLabels = useUIStore((state) => state.filterState[boardId]?.selectedLabels ?? DEFAULT_FILTER_STATE.selectedLabels);
+  const selectedMembers = useUIStore((state) => state.filterState[boardId]?.selectedMembers ?? DEFAULT_FILTER_STATE.selectedMembers);
+  const showOverdue = useUIStore((state) => state.filterState[boardId]?.showOverdue ?? DEFAULT_FILTER_STATE.showOverdue);
+  const showCompleted = useUIStore((state) => state.filterState[boardId]?.showCompleted ?? DEFAULT_FILTER_STATE.showCompleted);
+  const priorityThreshold = useUIStore((state) => state.filterState[boardId]?.priorityThreshold ?? DEFAULT_FILTER_STATE.priorityThreshold);
+  const dueDateFilter = useUIStore((state) => state.filterState[boardId]?.dueDateFilter ?? DEFAULT_FILTER_STATE.dueDateFilter);
 
   // Find the current board
   const board = boards.find((b) => b.id === boardId);
@@ -64,9 +77,9 @@ export function CalendarView({ boardId }: CalendarViewProps) {
       selectedLabels,
       selectedMembers,
       showOverdue,
-      showCompleted,
+      showCompleted: showCompleted as 'all' | 'completed' | 'incomplete',
       priorityThreshold,
-      dueDateFilter
+      dueDateFilter: dueDateFilter as 'all' | 'overdue' | 'today' | 'week' | 'month'
     };
 
     const filtered = filterCards(allCards, filterOptions, board.labels || []);
@@ -81,7 +94,8 @@ export function CalendarView({ boardId }: CalendarViewProps) {
     showOverdue,
     showCompleted,
     priorityThreshold,
-    dueDateFilter
+    dueDateFilter,
+    currentMonth
   ]);
 
   // Early return after all hooks are called
