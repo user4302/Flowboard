@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fix modal reopening issue when saving cards by preventing URL-based reopening race conditions
+
 ### Added
 - Comprehensive test coverage analysis scripts and utilities for coverage optimization
 - Add comprehensive test suites for Timeline components (TimelineGrid, TimelineHeader, TimelineTask, TimelineTooltip)
@@ -16,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add workflow documentation for code review processes
 - Prevent context menu from reopening when right-clicking on backdrop overlay
 - Add comprehensive unit tests for context menu right-click prevention behavior
-- Fix modal reopening issue when saving cards by preventing URL-based reopening race conditions
 
 ### Changed
 - Organize coverage analysis files by moving scripts to dedicated scripts/ folder
