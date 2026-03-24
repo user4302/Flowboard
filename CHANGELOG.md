@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add comprehensive unit tests for context menu right-click prevention behavior
 - Add Archive button to task modal footer with destructive styling and proper danger zone placement
 - Add comprehensive unit tests for archive functionality in task modal handlers
+- Add comprehensive unit tests for kanban scroll position functionality (28 tests across 5 test suites)
+- Add test coverage for scroll position storage, restoration, and click handler propagation in kanban components
 
 ### Changed
 - Organize coverage analysis files by moving scripts to dedicated scripts/ folder
