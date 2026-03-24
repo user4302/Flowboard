@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix inline-input test behavior to properly handle Escape key interactions
 
 ### Fixed
+- Fix kanban view scroll position reset when opening card modals
+- Prevent visual jank by maintaining persistent scroll container structure
+- Implement scroll position tracking in UI store for consistent state management
+- Add proper card click handlers throughout kanban component hierarchy
 - Fix infinite loop and "Maximum update depth exceeded" errors in filter components
 - Replace object-creating selectors with stable individual selectors to prevent re-renders
 - Clean up temporary files and documentation from coverage optimization process

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useBoardStore, useUIStore } from '@/store';
@@ -31,11 +31,40 @@ interface KanbanViewProps {
 export function KanbanView({ boardId }: KanbanViewProps) {
   // Store hooks for board operations and UI state management
   const { boards, createList, createCard, updateList, deleteList } = useBoardStore();
-  const { cardModalOpen, getColumnOrder, setColumnOrder } = useUIStore();
+  const { cardModalOpen, getColumnOrder, setColumnOrder, setScrollPosition, getScrollPosition } = useUIStore();
 
   // Local state to track which list's dropdown menu is currently open
   // This prevents multiple menus from being open simultaneously
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+
+  // Ref for the scroll container to preserve scroll position
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Store scroll position when modal opens
+  const scrollPositionRef = useRef<{ left: number; top: number }>({ left: 0, top: 0 });
+
+  // Function to store scroll position before modal opens
+  const storeScrollPosition = () => {
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      const scrollLeft = scrollContainer.scrollLeft;
+      const scrollTop = scrollContainer.scrollTop;
+      const position = { left: scrollLeft, top: scrollTop };
+      setScrollPosition(boardId, position);
+      console.log('Storing scroll position to UI store:', position);
+    } else {
+      console.log('Scroll container ref not available when trying to store position');
+    }
+  };
+
+  // Wrapper function for card clicks to preserve scroll position
+  const handleCardClickWrapper = (cardId: string) => {
+    storeScrollPosition();
+    import('@/store/uiStore').then(({ useUIStore }) => {
+      const uiStore = useUIStore.getState();
+      uiStore.openCardModal(cardId);
+    });
+  };
 
   // Find the current board from the boards array
   const board = boards.find((b) => b.id === boardId);
@@ -66,6 +95,34 @@ export function KanbanView({ boardId }: KanbanViewProps) {
 
   // Early return after all hooks are called
   if (!board) return null;
+
+  // Effect to preserve scroll position when modal opens/closes
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    if (!cardModalOpen) {
+      // Restore scroll position when modal closes with a small delay
+      // to ensure the DOM has updated
+      const storedPosition = getScrollPosition(boardId);
+      console.log('Modal closing - attempting to restore scroll position from UI store:', storedPosition);
+      console.log('Current scroll position before restore:', {
+        left: scrollContainer.scrollLeft,
+        top: scrollContainer.scrollTop
+      });
+
+      setTimeout(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollLeft = storedPosition.left;
+          scrollContainerRef.current.scrollTop = storedPosition.top;
+          console.log('Scroll position after restore attempt:', {
+            left: scrollContainerRef.current.scrollLeft,
+            top: scrollContainerRef.current.scrollTop
+          });
+        }
+      }, 50);
+    }
+  }, [cardModalOpen, boardId, getScrollPosition]);
 
   /**
    * Enhanced drag end handler that wraps the original handler
@@ -133,6 +190,9 @@ export function KanbanView({ boardId }: KanbanViewProps) {
    * @param title - Title for the new card
    */
   const handleCreateCard = (listId: string, title: string) => {
+    // Store scroll position before modal opens
+    storeScrollPosition();
+
     const newCard = createCard(boardId, listId, title);
     // Open the modal for editing the newly created card
     if (newCard) {
@@ -193,14 +253,17 @@ export function KanbanView({ boardId }: KanbanViewProps) {
 
   return (
     <div className="flex h-full flex-col max-w-full">
-      {/* Main Kanban Board with drag-and-drop context - only render when card modal is not open */}
-      {cardModalOpen ? (
-        // Render without DndContext when modal is open
-        <>
-          {/* Scrollable container for kanban lists */}
-          <div className="flex-1 overflow-hidden relative">
-            <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0">
-              <div className="flex gap-4 h-full min-w-max">
+      {/* Persistent scroll container - always rendered */}
+      <div className="flex-1 overflow-hidden relative">
+        <div
+          ref={scrollContainerRef}
+          className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0"
+        >
+          <div className="flex gap-4 h-full min-w-max">
+            {/* Main Kanban Board with drag-and-drop context */}
+            {cardModalOpen ? (
+              // Render without DndContext when modal is open
+              <>
                 {/* Render each list without sortable context */}
                 {orderedLists.map((list) => (
                   <KanbanList
@@ -210,6 +273,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                     onAddCard={handleCreateCard}
                     onRenameList={handleRenameList}
                     onDeleteList={handleDeleteList}
+                    onCardClick={handleCardClickWrapper}
                     // Pass menu toggle handler with the specific list ID
                     onMenuToggle={(isOpen) => handleMenuToggle(list.id, isOpen)}
                     // Disable menu if another list's menu is open
@@ -226,25 +290,18 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                   className="flex-shrink-0 h-fit"
                   onAdd={handleCreateList}
                 />
-              </div>
-            </div>
-          </div>
-        </>
-      ) : (
-        // Render with DndContext when modal is closed
-        <DndContext
-          // Use stable sensors reference
-          sensors={sensors}
-          // Use closest center collision detection for better drop zone accuracy
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-        >
-          {/* Scrollable container for kanban lists */}
-          <div className="flex-1 overflow-hidden relative">
-            <div className="flex gap-4 h-full overflow-x-auto p-4 lg:p-6 absolute inset-0">
-              <div className="flex gap-4 h-full min-w-max">
+              </>
+            ) : (
+              // Render with DndContext when modal is closed
+              <DndContext
+                // Use stable sensors reference
+                sensors={sensors}
+                // Use closest center collision detection for better drop zone accuracy
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragEnd={handleDragEnd}
+              >
                 {/* Sortable context for list reordering */}
                 <SortableContext
                   items={orderedLists.map((l) => l.id)}
@@ -259,6 +316,7 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                       onAddCard={handleCreateCard}
                       onRenameList={handleRenameList}
                       onDeleteList={handleDeleteList}
+                      onCardClick={handleCardClickWrapper}
                       // Pass menu toggle handler with the specific list ID
                       onMenuToggle={(isOpen) => handleMenuToggle(list.id, isOpen)}
                       // Disable menu if another list's menu is open
@@ -276,11 +334,11 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                   className="flex-shrink-0 h-fit"
                   onAdd={handleCreateList}
                 />
-              </div>
-            </div>
+              </DndContext>
+            )}
           </div>
-        </DndContext>
-      )}
+        </div>
+      </div>
 
       {/* Drag overlay for visual feedback during drag operations */}
       <DragOverlayWrapper activeId={activeId}>

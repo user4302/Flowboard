@@ -31,6 +31,8 @@ interface ListProps {
   onRenameList: (listId: string, newTitle: string) => void;
   /** Callback function when the list is deleted */
   onDeleteList: (listId: string) => void;
+  /** Callback function when a card is clicked */
+  onCardClick?: (cardId: string) => void;
   /** Search term to filter cards within the list */
   searchTerm?: string;
   /** Additional CSS class names */
@@ -74,6 +76,7 @@ export function KanbanList({
   onAddCard,
   onRenameList,
   onDeleteList,
+  onCardClick,
   searchTerm = '',
   className,
   onMenuToggle,
@@ -130,6 +133,7 @@ export function KanbanList({
         listId={list.id}
         members={members}
         onAddCard={onAddCard}
+        onCardClick={onCardClick}
         searchTerm={searchTerm}
       />
     </div>

@@ -31,6 +31,7 @@ interface KanbanCardsContainerProps {
   listId: string;
   members: User[];
   onAddCard: (listId: string, title: string) => void;
+  onCardClick?: (cardId: string) => void;
   searchTerm?: string;
   className?: string;
 }
@@ -43,6 +44,7 @@ export function KanbanCardsContainer({
   listId,
   members,
   onAddCard,
+  onCardClick,
   searchTerm = '',
   className
 }: KanbanCardsContainerProps) {
@@ -140,7 +142,7 @@ export function KanbanCardsContainer({
             key={card.id}
             card={card}
             members={members}
-            onClick={() => { }}
+            onClick={() => onCardClick?.(card.id)}
           />
         ))}
       </SortableContext>

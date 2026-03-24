@@ -42,6 +42,9 @@ interface UIState extends ViewState {
   // Column order state (per board)
   columnOrder: Record<string, string[]>;
 
+  // Scroll position state (per board)
+  scrollPosition: Record<string, { left: number; top: number }>;
+
   // View actions
   setCurrentView: (view: ViewState['currentView']) => void;
   toggleSidebar: () => void;
@@ -59,6 +62,10 @@ interface UIState extends ViewState {
   // Column order actions
   setColumnOrder: (boardId: string, order: string[]) => void;
   getColumnOrder: (boardId: string) => string[];
+
+  // Scroll position actions
+  setScrollPosition: (boardId: string, position: { left: number; top: number }) => void;
+  getScrollPosition: (boardId: string) => { left: number; top: number };
 
   // Filter actions
   setSearchTerm: (boardId: string, term: string) => void;
@@ -117,6 +124,9 @@ export const useUIStore = create<UIState>()(
 
       // Initial column order state (per board)
       columnOrder: {},
+
+      // Initial scroll position state (per board)
+      scrollPosition: {},
 
       /**
        * Set the current view mode
@@ -213,6 +223,28 @@ export const useUIStore = create<UIState>()(
       getColumnOrder: (boardId: string) => {
         const state = get();
         return state.columnOrder[boardId] || [];
+      },
+
+      /**
+       * Set scroll position for a board
+       * @param boardId - Board ID
+       * @param position - Scroll position with left and top values
+       */
+      setScrollPosition: (boardId: string, position: { left: number; top: number }) => set((state: UIState) => ({
+        scrollPosition: {
+          ...state.scrollPosition,
+          [boardId]: position
+        }
+      })),
+
+      /**
+       * Get scroll position for a board
+       * @param boardId - Board ID
+       * @returns Scroll position with left and top values
+       */
+      getScrollPosition: (boardId: string) => {
+        const state = get();
+        return state.scrollPosition[boardId] || { left: 0, top: 0 };
       },
 
       /**
@@ -382,31 +414,25 @@ export const useUIStore = create<UIState>()(
        * @param cardId - Optional card ID to edit
        */
       openCardModal: (cardId) => {
-        console.log('openCardModal called with cardId:', cardId, 'stack:', new Error().stack);
         set({
           cardModalOpen: true,
           selectedCardId: cardId || null,
           cardJSONData: null,
           targetListId: null,
         });
-        console.log('Modal state set to open');
 
         // Only update URL if we're not already on a card page
         if (cardId && !window.location.pathname.includes('/card/')) {
-          console.log('Updating URL for card:', cardId);
           // Small delay to ensure modal state is set first
           setTimeout(() => {
             import('./boardStore').then(({ useBoardStore }) => {
               const boardStore = useBoardStore.getState();
               if (boardStore.currentBoardId) {
                 const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
-                console.log('Pushing URL:', newUrl);
                 window.history.pushState({}, '', newUrl);
               }
             });
           }, 50);
-        } else {
-          console.log('Already on card page or no cardId, not updating URL');
         }
       },
 

@@ -58,33 +58,29 @@ export default function BoardCardPage() {
   }, [cardId]);
 
   useEffect(() => {
-    console.log('BoardCardPage useEffect triggered', { boardId, cardId, isClosingModal, globalIsClosingModal: (window as any).__isClosingModal || false, hasOpenedModal });
     // Set current board from URL parameter
     if (boardId) {
       const globalIsClosingModal = (window as any).__isClosingModal || false;
       const board = getBoardById(boardId);
+
       if (board) {
         setCurrentBoard(boardId);
         setIsBoardLoading(false);
 
-        // Open task modal for specific card (only if not closing modal AND we haven't opened it yet)
-        // Add small delay to ensure __isClosingModal flag is properly set
+        // Only open modal if we're not in the process of closing it
+        // and haven't already opened it for this navigation
         setTimeout(() => {
           const currentGlobalFlag = (window as any).__isClosingModal || false;
           if (cardId && !isClosingModal && !currentGlobalFlag && !hasOpenedModal) {
-            console.log('Opening card modal for:', cardId, { isClosingModal, globalIsClosingModal: currentGlobalFlag, hasOpenedModal });
             setHasOpenedModal(true); // Mark that we've opened the modal
             // Small delay to ensure board is loaded
             setTimeout(() => {
-              console.log('Calling openCardModal for:', cardId);
               openCardModal(cardId);
             }, 100);
-          } else {
-            console.log('NOT opening card modal. cardId:', cardId, 'isClosingModal:', isClosingModal, 'globalIsClosingModal:', currentGlobalFlag, 'hasOpenedModal:', hasOpenedModal);
           }
         }, 50); // Small delay to check flag
       } else {
-        // Board not found, redirect to home
+        // Board not found, redirect to root but maintain clean URL
         router.push('/');
       }
     }
