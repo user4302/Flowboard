@@ -17,7 +17,7 @@ export function useTaskModalHandlers(
   }
 ): CardModalHandlers & { closeCardModal: () => void } {
   const { closeCardModal, closeCardModalWithoutUrlUpdate } = useUIStore();
-  const { updateCard, createCard } = useBoardStore();
+  const { updateCard, createCard, archiveCard } = useBoardStore();
 
   const handleCloseCardModal = useCallback(() => {
     console.log('handleCloseCardModal called');
@@ -116,9 +116,17 @@ export function useTaskModalHandlers(
     }
   }, [currentBoardId, foundCard, updateCard]);
 
+  const handleArchive = useCallback(() => {
+    if (currentBoardId && foundCard) {
+      archiveCard(currentBoardId, foundCard.id);
+      handleCloseCardModal();
+    }
+  }, [currentBoardId, foundCard, archiveCard, handleCloseCardModal]);
+
   return {
     handleSave,
     handleToggleCompleted,
+    handleArchive,
     closeCardModal: handleCloseCardModal
   };
 }

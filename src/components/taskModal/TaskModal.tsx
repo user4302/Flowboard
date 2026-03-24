@@ -20,7 +20,7 @@ export function TaskModal() {
     isJSONImportMode
   } = useTaskModalData();
 
-  const { handleSave, handleToggleCompleted, closeCardModal } = useTaskModalHandlers(
+  const { handleSave, handleToggleCompleted, handleArchive, closeCardModal } = useTaskModalHandlers(
     currentBoardId,
     foundCard,
     form,
@@ -113,6 +113,16 @@ export function TaskModal() {
           <Button type="button" variant="ghost" onClick={closeCardModal}>
             Cancel
           </Button>
+          {!isJSONImportMode && foundCard && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleArchive}
+              className="ml-auto"
+            >
+              Archive
+            </Button>
+          )}
         </ModalFooter>
       </form>
     </UIModal>
