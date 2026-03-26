@@ -42,10 +42,12 @@ interface ImportedBoardData {
  * 
  * Creates a downloadable JSON file containing:
  * - Name and export timestamp
+ * - Board-level labels array
  * - All lists with their cards
- * - Complete card data including labels, members, dates, etc.
+ * - Complete card data including labelIds, members, dates, etc.
+ * - Note: Cards include labelIds but exclude labels property to prevent import duplication
  * 
- * @param data - The data object to export
+ * @param data - The board data object to export
  */
 export const exportData = (data: Board) => {
   // Structure the data for export
@@ -56,7 +58,20 @@ export const exportData = (data: Board) => {
     lists: data.lists.map((list: List) => ({
       title: list.title,
       cards: list.cards.map((card: Card) => ({
-        ...card // Spread entire card object to include all fields like completed, etc.
+        id: card.id,
+        title: card.title,
+        description: card.description,
+        labelIds: card.labelIds,
+        members: card.members,
+        checklists: card.checklists,
+        startDate: card.startDate,
+        dueDate: card.dueDate,
+        completed: card.completed,
+        position: card.position,
+        listId: card.listId,
+        priority: card.priority,
+        createdAt: card.createdAt,
+        updatedAt: card.updatedAt
       }))
     }))
   };

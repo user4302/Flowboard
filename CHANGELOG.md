@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Prevent label duplication when importing exported boards by excluding labels property from card exports
+
 ## [1.6.0] - 2026-03-27
 
 ### Added

@@ -1,0 +1,950 @@
+{
+  "name": "D&D Online Play App - Full Development Roadmap",
+  "exportDate": "2026-03-27T01:14:00Z",
+  "labels": [
+    {
+      "id": "1c4f573f784345aab",
+      "text": "Phase 1",
+      "color": "bg-blue-600"
+    },
+    {
+      "id": "27aee1df70b44a68a",
+      "text": "Phase 2",
+      "color": "bg-emerald-600"
+    },
+    {
+      "id": "4464af5d878940fab",
+      "text": "Phase 3",
+      "color": "bg-violet-600"
+    },
+    {
+      "id": "bde8a226821947269",
+      "text": "Phase 4",
+      "color": "bg-amber-600"
+    },
+    {
+      "id": "e91d19e7571f4916b",
+      "text": "Frontend",
+      "color": "bg-indigo-500"
+    },
+    {
+      "id": "f350e809ba9c4731b",
+      "text": "Backend",
+      "color": "bg-red-500"
+    },
+    {
+      "id": "77ec9f7c07bf457b9",
+      "text": "Design",
+      "color": "bg-purple-500"
+    },
+    {
+      "id": "68ca3c66311a4db78",
+      "text": "Core",
+      "color": "bg-teal-500"
+    },
+    {
+      "id": "c4d7e03b41224b30a",
+      "text": "Combat",
+      "color": "bg-rose-500"
+    },
+    {
+      "id": "08f87a0675c84404b",
+      "text": "Homebrew",
+      "color": "bg-orange-500"
+    },
+    {
+      "id": "5a4a469b83af4d859",
+      "text": "Testing",
+      "color": "bg-yellow-500"
+    },
+    {
+      "id": "ad97ee9b6ab44320b",
+      "text": "UI/UX",
+      "color": "bg-cyan-500"
+    }
+  ],
+  "lists": [
+    {
+      "title": "Backlog",
+      "cards": []
+    },
+    {
+      "title": "Phase 1: Core Setup and Minimum Viable Campaign",
+      "cards": [
+        {
+          "id": "3bc431e652624b2eb",
+          "title": "Campaign Selection Home & Lobby",
+          "listId": "phase1-list",
+          "labels": [
+            {"id": "1c4f573f784345aab", "text": "Phase 1", "color": "bg-blue-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "77ec9f7c07bf457b9", "text": "Design", "color": "bg-purple-500"},
+            {"id": "68ca3c66311a4db78", "text": "Core", "color": "bg-teal-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 0,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Main landing page where users create or join campaigns. Includes campaign list, invite links, and basic lobby chat.",
+          "startDate": "2026-03-27T00:00:00Z",
+          "dueDate": "2026-04-17T00:00:00Z",
+          "completed": false,
+          "checklists": [
+            {
+              "id": "3a8d5f0919da4b01a",
+              "name": "Tasks",
+              "items": [
+                {"id": "085a954e45b24925a", "text": "Create new campaign UI", "done": false},
+                {"id": "08038a6111d84999a", "text": "Join by code/invite", "done": false},
+                {"id": "ef6922075c2a4f68a", "text": "Lobby UI with player list", "done": false},
+                {"id": "02e54bce9af947a29", "text": "Basic real-time connection", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "e0781d81c40947769",
+          "title": "Full 5-step Character Creator flow",
+          "listId": "phase1-list",
+          "labels": [
+            {"id": "1c4f573f784345aab", "text": "Phase 1", "color": "bg-blue-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "77ec9f7c07bf457b9", "text": "Design", "color": "bg-purple-500"},
+            {"id": "68ca3c66311a4db78", "text": "Core", "color": "bg-teal-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 1,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Guided character creation wizard following 5e steps: Race, Class, Background, Ability Scores, Equipment & Final Review. Includes step-by-step guidance as a Dungeon Master would provide.",
+          "startDate": "2026-03-29T00:00:00Z",
+          "dueDate": "2026-04-19T00:00:00Z",
+          "completed": false,
+          "labelIds": ["1c4f573f784345aab","e91d19e7571f4916b","77ec9f7c07bf457b9","68ca3c66311a4db78"],
+          "checklists": [
+            {
+              "id": "2857c6d81e5f4886b",
+              "name": "Tasks",
+              "items": [
+                {"id": "a85fd596490a4488a", "text": "Step 1: Race selection", "done": false},
+                {"id": "67767da997174e2d9", "text": "Step 2-5 implementation", "done": false},
+                {"id": "12db0d34326f442fa", "text": "Ability score calculator", "done": false},
+                {"id": "3986cabe2853489d8", "text": "Character preview & export", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "182defb45824486cb",
+          "title": "Character Dashboard (Standard & Dark)",
+          "listId": "phase1-list",
+          "labels": [
+            {"id": "1c4f573f784345aab", "text": "Phase 1", "color": "bg-blue-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "ad97ee9b6ab44320b", "text": "UI/UX", "color": "bg-cyan-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 2,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Main player hub showing HP, AC, stats, portrait, quick links, and support for both light and dark themes.",
+          "startDate": "2026-03-31T00:00:00Z",
+          "dueDate": "2026-04-21T00:00:00Z",
+          "completed": true,
+          "labelIds": ["1c4f573f784345aab","e91d19e7571f4916b","ad97ee9b6ab44320b"],
+          "checklists": [
+            {
+              "id": "3eacc34572a7452a8",
+              "name": "Tasks",
+              "items": [
+                {"id": "33509661bc6047eda", "text": "Core stats display", "done": true},
+                {"id": "aebaf9a18a014d00b", "text": "Dark mode toggle", "done": true},
+                {"id": "1530f86a9baf478f8", "text": "Quick action buttons", "done": true}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "da43e6fb88824c998",
+          "title": "Party Overview & Initiative Trackers",
+          "listId": "inprogress-list",
+          "labels": [
+            {"id": "1c4f573f784345aab", "text": "Phase 1", "color": "bg-blue-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "c4d7e03b41224b30a", "text": "Combat", "color": "bg-rose-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 3,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-28T00:00:00Z",
+          "description": "Shows all party members with status and a draggable initiative order tracker for combat turns (handles action economy perfectly).",
+          "startDate": "2026-04-02T00:00:00Z",
+          "dueDate": "2026-04-23T00:00:00Z",
+          "completed": false,
+          "labelIds": ["1c4f573f784345aab","e91d19e7571f4916b","c4d7e03b41224b30a"],
+          "checklists": [
+            {
+              "id": "b2a14c5bd2fc4c62b",
+              "name": "Tasks",
+              "items": [
+                {"id": "d45fbb7660f74442a", "text": "Party member cards", "done": false},
+                {"id": "1691bb9f70b24b7a9", "text": "Drag & drop initiative", "done": false},
+                {"id": "a130ade792164fd4b", "text": "Round counter & turn highlighting", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "6847f246e9944bd0a",
+          "title": "Real-time Campaign Log",
+          "listId": "phase1-list",
+          "labels": [
+            {"id": "1c4f573f784345aab", "text": "Phase 1", "color": "bg-blue-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "f350e809ba9c4731b", "text": "Backend", "color": "bg-red-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 4,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Shared live log of session events, DM notes, and player contributions that updates in real time for the entire party.",
+          "startDate": "2026-04-04T00:00:00Z",
+          "dueDate": "2026-04-25T00:00:00Z",
+          "completed": false,
+          "labelIds": ["1c4f573f784345aab","f350e809ba9c4731b","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "eaa70c09d0f64e578",
+              "name": "Tasks",
+              "items": [
+                {"id": "a9a406de87984f29a", "text": "Real-time sync via WebSocket", "done": false},
+                {"id": "97d8da1ef2434692b", "text": "Message formatting & timestamps", "done": false},
+                {"id": "db6a6321eead4fa19", "text": "DM-only private notes", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Phase 2: Gameplay Enhancements",
+      "cards": [
+        {
+          "id": "d400f50e564845a29",
+          "title": "Spellbook & Inventory (Standard & Dark)",
+          "listId": "inprogress-list",
+          "labels": [
+            {"id": "27aee1df70b44a68a", "text": "Phase 2", "color": "bg-emerald-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "ad97ee9b6ab44320b", "text": "UI/UX", "color": "bg-cyan-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 0,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-28T00:00:00Z",
+          "description": "Interactive spellbook with prepared/known spells, spell slot tracking, and full inventory management including weight and encumbrance.",
+          "startDate": "2026-03-27T00:00:00Z",
+          "dueDate": "2026-04-17T00:00:00Z",
+          "completed": false,
+          "labelIds": ["27aee1df70b44a68a","e91d19e7571f4916b","ad97ee9b6ab44320b"],
+          "checklists": [
+            {
+              "id": "8528935bde8444d0a",
+              "name": "Tasks",
+              "items": [
+                {"id": "2c67457aeb854d749", "text": "Spell filtering by level/class", "done": false},
+                {"id": "b6298df92f1741c18", "text": "Slot usage tracker", "done": false},
+                {"id": "0ab639f79f7e48db9", "text": "Inventory drag & drop", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "d7e9e632b4c147f5b",
+          "title": "Skills & Proficiencies & Class Feature Trackers",
+          "listId": "phase2-list",
+          "labels": [
+            {"id": "27aee1df70b44a68a", "text": "Phase 2", "color": "bg-emerald-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 1,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Dynamic trackers for skills, saving throws, proficiencies, and class features with usage counters (Rage, Bardic Inspiration, etc.).",
+          "startDate": "2026-03-29T00:00:00Z",
+          "dueDate": "2026-04-19T00:00:00Z",
+          "completed": false,
+          "labelIds": ["27aee1df70b44a68a","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "6ef9709418e84f7ab",
+              "name": "Tasks",
+              "items": [
+                {"id": "684356ba6c984eedb", "text": "Skill check quick roller", "done": false},
+                {"id": "767574ddb96748aca", "text": "Feature cooldowns & limited uses", "done": false},
+                {"id": "375ef29c13dc4f518", "text": "Passive perception & insight display", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "011f60a5341c4a0ab",
+          "title": "World Lore, Quest & Map Pin Managers",
+          "listId": "phase2-list",
+          "labels": [
+            {"id": "27aee1df70b44a68a", "text": "Phase 2", "color": "bg-emerald-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "f350e809ba9c4731b", "text": "Backend", "color": "bg-red-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 2,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "DM tools to manage world lore, active quests, and place pins on campaign maps with rich descriptions.",
+          "startDate": "2026-03-31T00:00:00Z",
+          "dueDate": "2026-04-21T00:00:00Z",
+          "completed": false,
+          "labelIds": ["27aee1df70b44a68a","f350e809ba9c4731b","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "0ae673adcba04f86b",
+              "name": "Tasks",
+              "items": [
+                {"id": "dac3a484fc1d4f5ba", "text": "Lore database & search", "done": false},
+                {"id": "483bb4c777424431b", "text": "Quest progress tracking", "done": false},
+                {"id": "5157c892ad384e028", "text": "Map pin system", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "280c8be66fe54a73a",
+          "title": "Tactical Map Viewer",
+          "listId": "phase2-list",
+          "labels": [
+            {"id": "27aee1df70b44a68a", "text": "Phase 2", "color": "bg-emerald-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "77ec9f7c07bf457b9", "text": "Design", "color": "bg-purple-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 3,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Grid-based tactical map with fog of war, token placement, and movement tools for precise combat positioning.",
+          "startDate": "2026-04-02T00:00:00Z",
+          "dueDate": "2026-04-23T00:00:00Z",
+          "completed": false,
+          "labelIds": ["27aee1df70b44a68a","e91d19e7571f4916b","77ec9f7c07bf457b9"],
+          "checklists": [
+            {
+              "id": "77ccc093e3374b8e8",
+              "name": "Tasks",
+              "items": [
+                {"id": "c94ad6ffbc0946379", "text": "Grid rendering (5ft squares)", "done": false},
+                {"id": "a4c68f75e66a43e1a", "text": "Token drag & drop", "done": false},
+                {"id": "48bb6d3ac2654d669", "text": "Fog of war toggle", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "c803d97ba4e04072a",
+          "title": "Calendar & Timeline",
+          "listId": "phase2-list",
+          "labels": [
+            {"id": "27aee1df70b44a68a", "text": "Phase 2", "color": "bg-emerald-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 4,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "In-game calendar and timeline tracker for days, months, downtime activities, and long-term campaign events.",
+          "startDate": "2026-04-04T00:00:00Z",
+          "dueDate": "2026-04-25T00:00:00Z",
+          "completed": false,
+          "labelIds": ["27aee1df70b44a68a","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "0c608bf386d44c53a",
+              "name": "Tasks",
+              "items": [
+                {"id": "dffffcceeecf41cf9", "text": "Calendar UI", "done": false},
+                {"id": "a12eafb50bad46309", "text": "Event logging", "done": false},
+                {"id": "93086e79ee964fceb", "text": "Downtime activity selector", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Phase 3: Quality of Life Improvements",
+      "cards": [
+        {
+          "id": "86f2eeecdb6c4610b",
+          "title": "Global Search & Help Center",
+          "listId": "phase3-list",
+          "labels": [
+            {"id": "4464af5d878940fab", "text": "Phase 3", "color": "bg-violet-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "ad97ee9b6ab44320b", "text": "UI/UX", "color": "bg-cyan-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 0,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Powerful search across rules, characters, spells, and in-app help referencing official D&D mechanics.",
+          "startDate": "2026-03-27T00:00:00Z",
+          "dueDate": "2026-04-17T00:00:00Z",
+          "completed": false,
+          "labelIds": ["4464af5d878940fab","e91d19e7571f4916b","ad97ee9b6ab44320b"],
+          "checklists": [
+            {
+              "id": "dc30a74d0f964e56b",
+              "name": "Tasks",
+              "items": [
+                {"id": "84d6ad405d4e44d7b", "text": "Search index", "done": false},
+                {"id": "015a27be2b3a47088", "text": "Rulebook snippets", "done": false},
+                {"id": "2278e3eebe5d45179", "text": "Contextual help", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "951bbce4c57a44f1b",
+          "title": "Player Session Journal",
+          "listId": "phase3-list",
+          "labels": [
+            {"id": "4464af5d878940fab", "text": "Phase 3", "color": "bg-violet-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 1,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Personal journal for each player to note backstory developments, roleplay moments, and session recaps.",
+          "startDate": "2026-03-29T00:00:00Z",
+          "dueDate": "2026-04-19T00:00:00Z",
+          "completed": false,
+          "labelIds": ["4464af5d878940fab","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "1cfa04a8f867439fa",
+              "name": "Tasks",
+              "items": [
+                {"id": "a0659bf8374148d39", "text": "Rich text editor", "done": false},
+                {"id": "f52497d374774c83b", "text": "Private vs shared entries", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "175ccacdab014d149",
+          "title": "Combat History & NPC Generator",
+          "listId": "testing-list",
+          "labels": [
+            {"id": "4464af5d878940fab", "text": "Phase 3", "color": "bg-violet-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "f350e809ba9c4731b", "text": "Backend", "color": "bg-red-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 2,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Log of past combats with summary stats and quick NPC creator with random traits.",
+          "startDate": "2026-03-31T00:00:00Z",
+          "dueDate": "2026-04-21T00:00:00Z",
+          "completed": false,
+          "labelIds": ["4464af5d878940fab","f350e809ba9c4731b","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "a955cf104fbd45499",
+              "name": "Tasks",
+              "items": [
+                {"id": "ae62c1b847c24db78", "text": "Combat recap cards", "done": false},
+                {"id": "dd542dd27a5344ea9", "text": "NPC stat block generator", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "ef229f9babb24521a",
+          "title": "Settings, Profile, and Export tools",
+          "listId": "phase3-list",
+          "labels": [
+            {"id": "4464af5d878940fab", "text": "Phase 3", "color": "bg-violet-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 3,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "User profile, app settings (themes, notifications), and export options for character sheets as PDF/JSON.",
+          "startDate": "2026-04-02T00:00:00Z",
+          "dueDate": "2026-04-23T00:00:00Z",
+          "completed": false,
+          "labelIds": ["4464af5d878940fab","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "10a3206cf09a47588",
+              "name": "Tasks",
+              "items": [
+                {"id": "e7a29d89b2fc47b29", "text": "Profile management", "done": false},
+                {"id": "3143f743d8b542158", "text": "Theme switcher", "done": false},
+                {"id": "f4f7d08765fb40b4a", "text": "PDF & JSON export", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Phase 4: Advanced Expansions",
+      "cards": [
+        {
+          "id": "24a4682ae0e84cb18",
+          "title": "Encounter & Loot Generators",
+          "listId": "phase4-list",
+          "labels": [
+            {"id": "bde8a226821947269", "text": "Phase 4", "color": "bg-amber-600"},
+            {"id": "f350e809ba9c4731b", "text": "Backend", "color": "bg-red-500"},
+            {"id": "08f87a0675c84404b", "text": "Homebrew", "color": "bg-orange-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 0,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Smart generators for balanced encounters by CR and random loot tables based on encounter difficulty.",
+          "startDate": "2026-03-27T00:00:00Z",
+          "dueDate": "2026-04-17T00:00:00Z",
+          "completed": false,
+          "labelIds": ["bde8a226821947269","f350e809ba9c4731b","08f87a0675c84404b"],
+          "checklists": [
+            {
+              "id": "3c27e67f02894c67a",
+              "name": "Tasks",
+              "items": [
+                {"id": "c98306d57e3347699", "text": "CR calculator", "done": false},
+                {"id": "21820b1943ff4bf68", "text": "Loot table integration", "done": false},
+                {"id": "ca52e56efd2144d8b", "text": "Customization options", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "b2fb1e34d6204ba89",
+          "title": "Monster Codex (Standard & Dark)",
+          "listId": "phase4-list",
+          "labels": [
+            {"id": "bde8a226821947269", "text": "Phase 4", "color": "bg-amber-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "f350e809ba9c4731b", "text": "Backend", "color": "bg-red-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 1,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Searchable database of official monsters with full stat blocks, searchable by type, CR, and environment.",
+          "startDate": "2026-03-29T00:00:00Z",
+          "dueDate": "2026-04-19T00:00:00Z",
+          "completed": false,
+          "labelIds": ["bde8a226821947269","e91d19e7571f4916b","f350e809ba9c4731b"],
+          "checklists": [
+            {
+              "id": "5c47a016e11744bfb",
+              "name": "Tasks",
+              "items": [
+                {"id": "3a4c7d8913ee4c5db", "text": "Monster search", "done": false},
+                {"id": "6f7a5a573dc04a1b8", "text": "Stat block display", "done": false},
+                {"id": "e8c3cc7ab68d4ecfa", "text": "Dark mode support", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "7b8691962eb4413fb",
+          "title": "Homebrew Spell & Item Creators",
+          "listId": "phase4-list",
+          "labels": [
+            {"id": "bde8a226821947269", "text": "Phase 4", "color": "bg-amber-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "08f87a0675c84404b", "text": "Homebrew", "color": "bg-orange-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 2,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Tools for players and DMs to create and balance custom spells, magic items, and subclasses.",
+          "startDate": "2026-03-31T00:00:00Z",
+          "dueDate": "2026-04-21T00:00:00Z",
+          "completed": false,
+          "labelIds": ["bde8a226821947269","e91d19e7571f4916b","08f87a0675c84404b"],
+          "checklists": [
+            {
+              "id": "b5ff4397160e4ac0a",
+              "name": "Tasks",
+              "items": [
+                {"id": "294b06bf9ca549e18", "text": "Form-based creator", "done": false},
+                {"id": "11294107f93b42b3b", "text": "Balance suggestions", "done": false},
+                {"id": "6347df2a588c4f339", "text": "Share homebrew with party", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "97183d16aca74ce49",
+          "title": "Bard's Soundboard & Random Encounter tool",
+          "listId": "phase4-list",
+          "labels": [
+            {"id": "bde8a226821947269", "text": "Phase 4", "color": "bg-amber-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 3,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Audio soundboard with D&D-themed tracks and a button for instant random encounters during sessions.",
+          "startDate": "2026-04-02T00:00:00Z",
+          "dueDate": "2026-04-23T00:00:00Z",
+          "completed": false,
+          "labelIds": ["bde8a226821947269","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "43f74a083b8548dc9",
+              "name": "Tasks",
+              "items": [
+                {"id": "bbfc62c328bb45d28", "text": "Sound upload/playback", "done": false},
+                {"id": "98f57cbf14664a558", "text": "Random encounter generator", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "21eff24715e040128",
+          "title": "Store",
+          "listId": "phase4-list",
+          "labels": [
+            {"id": "bde8a226821947269", "text": "Phase 4", "color": "bg-amber-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "f350e809ba9c4731b", "text": "Backend", "color": "bg-red-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 4,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "In-app store for purchasing official D&D content, premium themes, or additional map assets.",
+          "startDate": "2026-04-04T00:00:00Z",
+          "dueDate": "2026-04-25T00:00:00Z",
+          "completed": false,
+          "labelIds": ["bde8a226821947269","e91d19e7571f4916b","f350e809ba9c4731b"],
+          "checklists": [
+            {
+              "id": "94d8d19ff29a4fc5b",
+              "name": "Tasks",
+              "items": [
+                {"id": "63b1a54ae7c749c2a", "text": "Product catalog", "done": false},
+                {"id": "ed8d0f76dd3a44da9", "text": "Payment integration", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "7b1ace000a564587a",
+          "title": "Dice Roller with Animations",
+          "listId": "phase4-list",
+          "labels": [
+            {"id": "bde8a226821947269", "text": "Phase 4", "color": "bg-amber-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "ad97ee9b6ab44320b", "text": "UI/UX", "color": "bg-cyan-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 5,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Beautiful animated dice roller supporting all standard D&D dice, advantage/disadvantage, and saving rolls.",
+          "startDate": "2026-04-06T00:00:00Z",
+          "dueDate": "2026-04-27T00:00:00Z",
+          "completed": false,
+          "labelIds": ["bde8a226821947269","e91d19e7571f4916b","ad97ee9b6ab44320b"],
+          "checklists": [
+            {
+              "id": "00b43124adbb4dc5a",
+              "name": "Tasks",
+              "items": [
+                {"id": "bbbd7570efb142b18", "text": "3D dice animation", "done": false},
+                {"id": "16f6505eb2014f989", "text": "Multi-dice rolls", "done": false},
+                {"id": "3ca73e1f1a4e44929", "text": "Roll history", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "f436f589e9f94615b",
+          "title": "Condition & Buff/Debuff Tracker",
+          "listId": "phase4-list",
+          "labels": [
+            {"id": "bde8a226821947269", "text": "Phase 4", "color": "bg-amber-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "c4d7e03b41224b30a", "text": "Combat", "color": "bg-rose-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 6,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Visual tracker for conditions (poisoned, prone, etc.) and temporary buffs/debuffs on characters and monsters.",
+          "startDate": "2026-04-08T00:00:00Z",
+          "dueDate": "2026-04-29T00:00:00Z",
+          "completed": false,
+          "labelIds": ["bde8a226821947269","c4d7e03b41224b30a","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "478e4e74191144a9a",
+              "name": "Tasks",
+              "items": [
+                {"id": "172bdd873b7f47a6b", "text": "Condition icons", "done": false},
+                {"id": "5d8fbee5293e4e6cb", "text": "Duration timers", "done": false},
+                {"id": "ffe28c18870f4fe7b", "text": "Auto-apply from spells", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "In Progress",
+      "cards": [
+        {
+          "id": "da43e6fb88824c998",
+          "title": "Party Overview & Initiative Trackers",
+          "listId": "inprogress-list",
+          "labels": [
+            {"id": "1c4f573f784345aab", "text": "Phase 1", "color": "bg-blue-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "c4d7e03b41224b30a", "text": "Combat", "color": "bg-rose-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 0,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-28T00:00:00Z",
+          "description": "Shows all party members with status and a draggable initiative order tracker for combat turns.",
+          "startDate": "2026-04-02T00:00:00Z",
+          "dueDate": "2026-04-23T00:00:00Z",
+          "completed": false,
+          "labelIds": ["1c4f573f784345aab","e91d19e7571f4916b","c4d7e03b41224b30a"],
+          "checklists": [
+            {
+              "id": "b2a14c5bd2fc4c62b",
+              "name": "Tasks",
+              "items": [
+                {"id": "d45fbb7660f74442a", "text": "Party member cards", "done": false},
+                {"id": "1691bb9f70b24b7a9", "text": "Drag & drop initiative", "done": false},
+                {"id": "a130ade792164fd4b", "text": "Round counter", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        },
+        {
+          "id": "d400f50e564845a29",
+          "title": "Spellbook & Inventory (Standard & Dark)",
+          "listId": "inprogress-list",
+          "labels": [
+            {"id": "27aee1df70b44a68a", "text": "Phase 2", "color": "bg-emerald-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "ad97ee9b6ab44320b", "text": "UI/UX", "color": "bg-cyan-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 1,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-28T00:00:00Z",
+          "description": "Interactive spellbook with prepared/known spells, slots tracking, and inventory management with weight/encumbrance.",
+          "startDate": "2026-03-27T00:00:00Z",
+          "dueDate": "2026-04-17T00:00:00Z",
+          "completed": false,
+          "labelIds": ["27aee1df70b44a68a","e91d19e7571f4916b","ad97ee9b6ab44320b"],
+          "checklists": [
+            {
+              "id": "8528935bde8444d0a",
+              "name": "Tasks",
+              "items": [
+                {"id": "2c67457aeb854d749", "text": "Spell filtering by level/class", "done": false},
+                {"id": "b6298df92f1741c18", "text": "Slot usage tracker", "done": false},
+                {"id": "0ab639f79f7e48db9", "text": "Inventory drag & drop", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Testing",
+      "cards": [
+        {
+          "id": "175ccacdab014d149",
+          "title": "Combat History & NPC Generator",
+          "listId": "testing-list",
+          "labels": [
+            {"id": "4464af5d878940fab", "text": "Phase 3", "color": "bg-violet-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "f350e809ba9c4731b", "text": "Backend", "color": "bg-red-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 0,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Log of past combats with summary stats and quick NPC creator with random traits.",
+          "startDate": "2026-03-31T00:00:00Z",
+          "dueDate": "2026-04-21T00:00:00Z",
+          "completed": false,
+          "labelIds": ["4464af5d878940fab","f350e809ba9c4731b","e91d19e7571f4916b"],
+          "checklists": [
+            {
+              "id": "a955cf104fbd45499",
+              "name": "Tasks",
+              "items": [
+                {"id": "ae62c1b847c24db78", "text": "Combat recap cards", "done": false},
+                {"id": "dd542dd27a5344ea9", "text": "NPC stat block generator", "done": false}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Done",
+      "cards": [
+        {
+          "id": "182defb45824486cb",
+          "title": "Character Dashboard (Standard & Dark)",
+          "listId": "phase1-list",
+          "labels": [
+            {"id": "1c4f573f784345aab", "text": "Phase 1", "color": "bg-blue-600"},
+            {"id": "e91d19e7571f4916b", "text": "Frontend", "color": "bg-indigo-500"},
+            {"id": "ad97ee9b6ab44320b", "text": "UI/UX", "color": "bg-cyan-500"}
+          ],
+          "members": [],
+          "checklist": [],
+          "position": 0,
+          "createdAt": "2026-02-25T00:00:00Z",
+          "updatedAt": "2026-03-27T01:14:00Z",
+          "description": "Main player hub showing HP, AC, stats, portrait, and quick links to sheet sections. Supports light/dark theme.",
+          "startDate": "2026-03-31T00:00:00Z",
+          "dueDate": "2026-04-21T00:00:00Z",
+          "completed": true,
+          "labelIds": ["1c4f573f784345aab","e91d19e7571f4916b","ad97ee9b6ab44320b"],
+          "checklists": [
+            {
+              "id": "3eacc34572a7452a8",
+              "name": "Tasks",
+              "items": [
+                {"id": "33509661bc6047eda", "text": "Core stats display", "done": true},
+                {"id": "aebaf9a18a014d00b", "text": "Dark mode toggle", "done": true},
+                {"id": "1530f86a9baf478f8", "text": "Quick action buttons", "done": true}
+              ],
+              "position": 0,
+              "createdAt": "2026-02-25T00:00:00Z",
+              "updatedAt": "2026-03-27T01:14:00Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
