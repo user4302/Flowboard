@@ -8,20 +8,22 @@ import { CardJSON } from '@/lib/cardJsonUtils';
  * UI state interface - Extends view and filter state with modal management
  * Combines view preferences, filter options, and modal state management
  */
-interface UIState extends ViewState, FilterState {
+interface UIState extends ViewState {
   // View preferences
   currentView: 'kanban' | 'timeline' | 'calendar' | 'table';
   sidebarOpen: boolean;
   theme: 'light' | 'dark';
 
-  // Filter state
-  searchTerm: string;
-  selectedLabels: string[];
-  selectedMembers: string[];
-  showOverdue: boolean;
-  showCompleted: 'all' | 'completed' | 'incomplete';
-  priorityThreshold: number | null;
-  dueDateFilter: 'all' | 'overdue' | 'today' | 'week' | 'month';
+  // Filter state (per board)
+  filterState: Record<string, {
+    searchTerm: string;
+    selectedLabels: string[];
+    selectedMembers: string[];
+    showOverdue: boolean;
+    showCompleted: 'all' | 'completed' | 'incomplete';
+    priorityThreshold: number | null;
+    dueDateFilter: 'all' | 'overdue' | 'today' | 'week' | 'month';
+  }>;
 
   // Modal state
   cardModalOpen: boolean;
@@ -39,6 +41,9 @@ interface UIState extends ViewState, FilterState {
 
   // Column order state (per board)
   columnOrder: Record<string, string[]>;
+
+  // Scroll position state (per board)
+  scrollPosition: Record<string, { left: number; top: number }>;
 
   // View actions
   setCurrentView: (view: ViewState['currentView']) => void;
@@ -58,15 +63,28 @@ interface UIState extends ViewState, FilterState {
   setColumnOrder: (boardId: string, order: string[]) => void;
   getColumnOrder: (boardId: string) => string[];
 
+  // Scroll position actions
+  setScrollPosition: (boardId: string, position: { left: number; top: number }) => void;
+  getScrollPosition: (boardId: string) => { left: number; top: number };
+
   // Filter actions
-  setSearchTerm: (term: string) => void;
-  setSelectedLabels: (labels: string[]) => void;
-  setSelectedMembers: (members: string[]) => void;
-  setShowOverdue: (show: boolean) => void;
-  setShowCompleted: (status: 'all' | 'completed' | 'incomplete') => void;
-  setPriorityThreshold: (threshold: number | null) => void;
-  setDueDateFilter: (filter: 'all' | 'overdue' | 'today' | 'week' | 'month') => void;
-  clearFilters: () => void;
+  setSearchTerm: (boardId: string, term: string) => void;
+  setSelectedLabels: (boardId: string, labels: string[]) => void;
+  setSelectedMembers: (boardId: string, members: string[]) => void;
+  setShowOverdue: (boardId: string, show: boolean) => void;
+  setShowCompleted: (boardId: string, status: 'all' | 'completed' | 'incomplete') => void;
+  setPriorityThreshold: (boardId: string, threshold: number | null) => void;
+  setDueDateFilter: (boardId: string, filter: 'all' | 'overdue' | 'today' | 'week' | 'month') => void;
+  clearFilters: (boardId: string) => void;
+  getFilterState: (boardId: string) => {
+    searchTerm: string;
+    selectedLabels: string[];
+    selectedMembers: string[];
+    showOverdue: boolean;
+    showCompleted: 'all' | 'completed' | 'incomplete';
+    priorityThreshold: number | null;
+    dueDateFilter: 'all' | 'overdue' | 'today' | 'week' | 'month';
+  };
 
   // Modal actions
   openCardModal: (cardId?: string) => void;
@@ -91,14 +109,8 @@ export const useUIStore = create<UIState>()(
       sidebarOpen: true,
       theme: 'light',
 
-      // Initial filter state
-      searchTerm: '',
-      selectedLabels: [],
-      selectedMembers: [],
-      showOverdue: false,
-      showCompleted: 'all',
-      priorityThreshold: null,
-      dueDateFilter: 'all',
+      // Initial filter state (per board)
+      filterState: {},
 
       // Initial modal state
       cardModalOpen: false,
@@ -112,6 +124,9 @@ export const useUIStore = create<UIState>()(
 
       // Initial column order state (per board)
       columnOrder: {},
+
+      // Initial scroll position state (per board)
+      scrollPosition: {},
 
       /**
        * Set the current view mode
@@ -211,6 +226,28 @@ export const useUIStore = create<UIState>()(
       },
 
       /**
+       * Set scroll position for a board
+       * @param boardId - Board ID
+       * @param position - Scroll position with left and top values
+       */
+      setScrollPosition: (boardId: string, position: { left: number; top: number }) => set((state: UIState) => ({
+        scrollPosition: {
+          ...state.scrollPosition,
+          [boardId]: position
+        }
+      })),
+
+      /**
+       * Get scroll position for a board
+       * @param boardId - Board ID
+       * @returns Scroll position with left and top values
+       */
+      getScrollPosition: (boardId: string) => {
+        const state = get();
+        return state.scrollPosition[boardId] || { left: 0, top: 0 };
+      },
+
+      /**
        * Set sidebar visibility
        * @param open - Whether sidebar should be open
        */
@@ -232,56 +269,145 @@ export const useUIStore = create<UIState>()(
 
       /**
        * Set search term for filtering
+       * @param boardId - Board ID
        * @param term - Search term to set
        */
-      setSearchTerm: (term) => set({ searchTerm: term }),
+      setSearchTerm: (boardId: string, term: string) => set((state: UIState) => ({
+        filterState: {
+          ...state.filterState,
+          [boardId]: {
+            ...state.filterState[boardId],
+            searchTerm: term
+          }
+        }
+      })),
 
       /**
        * Set selected labels for filtering
+       * @param boardId - Board ID
        * @param labels - Array of label IDs
        */
-      setSelectedLabels: (labels) => set({ selectedLabels: labels }),
+      setSelectedLabels: (boardId: string, labels: string[]) => set((state: UIState) => ({
+        filterState: {
+          ...state.filterState,
+          [boardId]: {
+            ...state.filterState[boardId],
+            selectedLabels: labels
+          }
+        }
+      })),
 
       /**
        * Set selected members for filtering
+       * @param boardId - Board ID
        * @param members - Array of member IDs
        */
-      setSelectedMembers: (members) => set({ selectedMembers: members }),
+      setSelectedMembers: (boardId: string, members: string[]) => set((state: UIState) => ({
+        filterState: {
+          ...state.filterState,
+          [boardId]: {
+            ...state.filterState[boardId],
+            selectedMembers: members
+          }
+        }
+      })),
 
       /**
        * Set overdue filter visibility
+       * @param boardId - Board ID
        * @param show - Whether to show overdue cards
        */
-      setShowOverdue: (show) => set({ showOverdue: show }),
+      setShowOverdue: (boardId: string, show: boolean) => set((state: UIState) => ({
+        filterState: {
+          ...state.filterState,
+          [boardId]: {
+            ...state.filterState[boardId],
+            showOverdue: show
+          }
+        }
+      })),
 
       /**
        * Set completed status filter
+       * @param boardId - Board ID
        * @param status - Completed status filter
        */
-      setShowCompleted: (status) => set({ showCompleted: status }),
+      setShowCompleted: (boardId: string, status: 'all' | 'completed' | 'incomplete') => set((state: UIState) => ({
+        filterState: {
+          ...state.filterState,
+          [boardId]: {
+            ...state.filterState[boardId],
+            showCompleted: status
+          }
+        }
+      })),
 
       /**
        * Set priority threshold for filtering (1-100)
+       * @param boardId - Board ID
        * @param threshold - Minimum priority to show
        */
-      setPriorityThreshold: (threshold) => set({ priorityThreshold: threshold }),
+      setPriorityThreshold: (boardId: string, threshold: number | null) => set((state: UIState) => ({
+        filterState: {
+          ...state.filterState,
+          [boardId]: {
+            ...state.filterState[boardId],
+            priorityThreshold: threshold
+          }
+        }
+      })),
 
       /**
        * Set due date filter
+       * @param boardId - Board ID
        * @param filter - Due date filter type
        */
-      setDueDateFilter: (filter) => set({ dueDateFilter: filter }),
+      setDueDateFilter: (boardId: string, filter: 'all' | 'overdue' | 'today' | 'week' | 'month') => set((state: UIState) => ({
+        filterState: {
+          ...state.filterState,
+          [boardId]: {
+            ...state.filterState[boardId],
+            dueDateFilter: filter
+          }
+        }
+      })),
 
       /**
-       * Clear all filters
+       * Get filter state for a board
+       * @param boardId - Board ID
+       * @returns Filter state for the board
        */
-      clearFilters: () => set({
-        searchTerm: '',
-        selectedLabels: [],
-        selectedMembers: [],
-        showOverdue: false,
-        showCompleted: 'all',
-      }),
+      getFilterState: (boardId: string) => {
+        const state = get();
+        return state.filterState[boardId] || {
+          searchTerm: '',
+          selectedLabels: [],
+          selectedMembers: [],
+          showOverdue: false,
+          showCompleted: 'all',
+          priorityThreshold: null,
+          dueDateFilter: 'all'
+        };
+      },
+
+      /**
+       * Clear all filters for a board
+       * @param boardId - Board ID
+       */
+      clearFilters: (boardId: string) => set((state: UIState) => ({
+        filterState: {
+          ...state.filterState,
+          [boardId]: {
+            searchTerm: '',
+            selectedLabels: [],
+            selectedMembers: [],
+            showOverdue: false,
+            showCompleted: 'all',
+            priorityThreshold: null,
+            dueDateFilter: 'all'
+          }
+        }
+      })),
 
       /**
        * Open card modal
@@ -295,15 +421,19 @@ export const useUIStore = create<UIState>()(
           targetListId: null,
         });
 
-        // Update URL to include card path if cardId is provided
-        import('./boardStore').then(({ useBoardStore }) => {
-          const boardStore = useBoardStore.getState();
-
-          if (cardId && boardStore.currentBoardId) {
-            const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
-            window.history.pushState({}, '', newUrl);
-          }
-        });
+        // Only update URL if we're not already on a card page
+        if (cardId && !window.location.pathname.includes('/card/')) {
+          // Small delay to ensure modal state is set first
+          setTimeout(() => {
+            import('./boardStore').then(({ useBoardStore }) => {
+              const boardStore = useBoardStore.getState();
+              if (boardStore.currentBoardId) {
+                const newUrl = `/board/${boardStore.currentBoardId}/card/${cardId}`;
+                window.history.pushState({}, '', newUrl);
+              }
+            });
+          }, 50);
+        }
       },
 
       /**
@@ -379,13 +509,7 @@ export const useUIStore = create<UIState>()(
         currentView: state.currentView,
         sidebarOpen: state.sidebarOpen,
         theme: state.theme,
-        searchTerm: state.searchTerm,
-        selectedLabels: state.selectedLabels,
-        selectedMembers: state.selectedMembers,
-        showOverdue: state.showOverdue,
-        showCompleted: state.showCompleted,
-        priorityThreshold: state.priorityThreshold,
-        dueDateFilter: state.dueDateFilter,
+        filterState: state.filterState,
         timelineState: state.timelineState,
         columnOrder: state.columnOrder,
       }),

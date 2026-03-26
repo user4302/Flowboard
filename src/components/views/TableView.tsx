@@ -9,6 +9,17 @@ import { cn } from '@/lib/utils';
 
 import { Card } from '@/lib/types';
 
+// Default filter state to avoid creating new objects
+const DEFAULT_FILTER_STATE = {
+  searchTerm: '',
+  selectedLabels: [],
+  selectedMembers: [],
+  showOverdue: false,
+  showCompleted: 'all' as const,
+  priorityThreshold: null,
+  dueDateFilter: 'all' as const
+};
+
 interface TableViewProps {
   boardId: string;
 }
@@ -24,15 +35,17 @@ type SortDirection = 'asc' | 'desc';
 export function TableView({ boardId }: TableViewProps) {
   const { boards } = useBoardStore();
   const {
-    searchTerm,
-    selectedLabels,
-    selectedMembers,
-    showOverdue,
-    showCompleted,
-    priorityThreshold,
-    dueDateFilter,
     openCardModal
   } = useUIStore();
+
+  // Get filter state for this specific board using individual selectors
+  const searchTerm = useUIStore((state) => state.filterState[boardId]?.searchTerm ?? DEFAULT_FILTER_STATE.searchTerm);
+  const selectedLabels = useUIStore((state) => state.filterState[boardId]?.selectedLabels ?? DEFAULT_FILTER_STATE.selectedLabels);
+  const selectedMembers = useUIStore((state) => state.filterState[boardId]?.selectedMembers ?? DEFAULT_FILTER_STATE.selectedMembers);
+  const showOverdue = useUIStore((state) => state.filterState[boardId]?.showOverdue ?? DEFAULT_FILTER_STATE.showOverdue);
+  const showCompleted = useUIStore((state) => state.filterState[boardId]?.showCompleted ?? DEFAULT_FILTER_STATE.showCompleted);
+  const priorityThreshold = useUIStore((state) => state.filterState[boardId]?.priorityThreshold ?? DEFAULT_FILTER_STATE.priorityThreshold);
+  const dueDateFilter = useUIStore((state) => state.filterState[boardId]?.dueDateFilter ?? DEFAULT_FILTER_STATE.dueDateFilter);
 
   const board = boards.find((b) => b.id === boardId);
 
@@ -83,9 +96,9 @@ export function TableView({ boardId }: TableViewProps) {
       selectedLabels,
       selectedMembers,
       showOverdue,
-      showCompleted,
+      showCompleted: showCompleted as 'all' | 'completed' | 'incomplete',
       priorityThreshold,
-      dueDateFilter
+      dueDateFilter: dueDateFilter as 'all' | 'overdue' | 'today' | 'week' | 'month'
     };
 
     return filterCards(cardsWithList, filterOptions, board.labels) as CardWithList[];

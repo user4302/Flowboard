@@ -29,7 +29,8 @@ export const useTaskModalActions = () => {
       updateData.dueDate = new Date(data.dueDate);
     }
 
-    if (data.priority) {
+    // Only include priority if it's not null/undefined
+    if (data.priority !== null && data.priority !== undefined) {
       updateData.priority = data.priority;
     }
 

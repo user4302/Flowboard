@@ -1,0 +1,98 @@
+[
+  {
+    "path": "src\\components\\boardShare\\components\\MemberManagement\\MemberTabs.tsx",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\MemberManagement\\MembersList.tsx",
+    "statements": 4,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\components\\MemberManagement\\PendingRequests.tsx",
+    "statements": 8,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\index.ts",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\useInviteModal.ts",
+    "statements": 14,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\useJoinBoardModal.ts",
+    "statements": 28,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardShare\\hooks\\useMemberManagement.ts",
+    "statements": 14,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\index.ts",
+    "statements": 11,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarBackdrop.tsx",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarBoardList.tsx",
+    "statements": 9,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarCreationForm.tsx",
+    "statements": 21,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarHeader.tsx",
+    "statements": 3,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\BoardSidebarItem.tsx",
+    "statements": 6,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\components\\index.ts",
+    "statements": 10,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\hooks\\index.ts",
+    "statements": 4,
+    "covered": 0,
+    "coverage": 0
+  },
+  {
+    "path": "src\\components\\boardSidebar\\hooks\\useBoardSidebarActions.ts",
+    "statements": 14,
+    "covered": 0,
+    "coverage": 0
+  }
+]

@@ -28,6 +28,7 @@ export default function BoardCardPage() {
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [isBoardLoading, setIsBoardLoading] = useState(true);
   const [isClosingModal, setIsClosingModal] = useState(false);
+  const [hasOpenedModal, setHasOpenedModal] = useState(false);
 
   useEffect(() => {
     initializeTheme();
@@ -51,28 +52,39 @@ export default function BoardCardPage() {
     return () => clearTimeout(timer);
   }, [initializeTheme, setShowJoinModal]);
 
+  // Reset hasOpenedModal when cardId changes
+  useEffect(() => {
+    setHasOpenedModal(false);
+  }, [cardId]);
+
   useEffect(() => {
     // Set current board from URL parameter
     if (boardId) {
       const globalIsClosingModal = (window as any).__isClosingModal || false;
       const board = getBoardById(boardId);
+
       if (board) {
         setCurrentBoard(boardId);
         setIsBoardLoading(false);
 
-        // Open task modal for the specific card (only if not closing modal)
-        if (cardId && !isClosingModal && !globalIsClosingModal) {
-          // Small delay to ensure board is loaded
-          setTimeout(() => {
-            openCardModal(cardId);
-          }, 500);
-        }
+        // Only open modal if we're not in the process of closing it
+        // and haven't already opened it for this navigation
+        setTimeout(() => {
+          const currentGlobalFlag = (window as any).__isClosingModal || false;
+          if (cardId && !isClosingModal && !currentGlobalFlag && !hasOpenedModal) {
+            setHasOpenedModal(true); // Mark that we've opened the modal
+            // Small delay to ensure board is loaded
+            setTimeout(() => {
+              openCardModal(cardId);
+            }, 100);
+          }
+        }, 50); // Small delay to check flag
       } else {
-        // Board not found, redirect to home
+        // Board not found, redirect to root but maintain clean URL
         router.push('/');
       }
     }
-  }, [boardId, cardId, getBoardById, setCurrentBoard, router, openCardModal, isClosingModal]);
+  }, [boardId, cardId, getBoardById, setCurrentBoard, router, openCardModal, isClosingModal, hasOpenedModal]);
 
   const currentBoard = boardId ? getBoardById(boardId) : null;
 

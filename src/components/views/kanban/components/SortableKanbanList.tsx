@@ -20,6 +20,8 @@ interface SortableKanbanListProps {
   onRenameList: (listId: string, newTitle: string) => void;
   /** Callback function when the list is deleted */
   onDeleteList: (listId: string) => void;
+  /** Callback function when a card is clicked */
+  onCardClick?: (cardId: string) => void;
   /** Search term to filter cards within the list */
   searchTerm?: string;
   /** Additional CSS class names */
@@ -57,6 +59,7 @@ export function SortableKanbanList({
   onAddCard,
   onRenameList,
   onDeleteList,
+  onCardClick,
   searchTerm = '',
   className,
   onMenuToggle,
@@ -98,6 +101,7 @@ export function SortableKanbanList({
         onAddCard={onAddCard}
         onRenameList={onRenameList}
         onDeleteList={onDeleteList}
+        onCardClick={onCardClick}
         searchTerm={searchTerm}
         className={className}
         onMenuToggle={onMenuToggle}

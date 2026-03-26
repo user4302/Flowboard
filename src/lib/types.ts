@@ -63,7 +63,7 @@ export interface Card {
   /** ID of the list containing this card */
   listId: string;
   /** Optional priority level (higher numbers = higher priority) */
-  priority?: number;
+  priority: number | null | undefined;
   /** Timestamp when the card was created */
   createdAt: Date;
   /** Timestamp when the card was last updated */

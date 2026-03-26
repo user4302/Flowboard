@@ -20,7 +20,7 @@ export function TaskModal() {
     isJSONImportMode
   } = useTaskModalData();
 
-  const { handleSave, handleToggleCompleted, closeCardModal } = useTaskModalHandlers(
+  const { handleSave, handleToggleCompleted, handleArchive, closeCardModal } = useTaskModalHandlers(
     currentBoardId,
     foundCard,
     form,
@@ -46,6 +46,17 @@ export function TaskModal() {
 
   // For JSON import mode, we don't need a foundCard
   if (!isJSONImportMode && !foundCard) {
+    // Show loading state while waiting for newly created card
+    if (selectedCardId) {
+      return (
+        <UIModal open={cardModalOpen} onClose={closeCardModal}>
+          <div className="p-6 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading card...</p>
+          </div>
+        </UIModal>
+      );
+    }
     return null;
   }
 
@@ -102,6 +113,16 @@ export function TaskModal() {
           <Button type="button" variant="ghost" onClick={closeCardModal}>
             Cancel
           </Button>
+          {!isJSONImportMode && foundCard && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleArchive}
+              className="ml-auto"
+            >
+              Archive
+            </Button>
+          )}
         </ModalFooter>
       </form>
     </UIModal>

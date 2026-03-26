@@ -9,4 +9,5 @@ export interface CardModalData {
 export interface CardModalHandlers {
   handleSave: (data: Partial<Card>) => void;
   handleToggleCompleted: () => void;
+  handleArchive: () => void;
 }

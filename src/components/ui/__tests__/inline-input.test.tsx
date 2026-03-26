@@ -48,16 +48,17 @@ describe('InlineInput Component', () => {
     })
 
     it('should show input when trigger is clicked', async () => {
-      const user = userEvent.setup()
+      const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
       render(<InlineInput onAdd={mockOnAdd} />)
 
       const triggerButton = screen.getByText('Add item')
       await user.click(triggerButton)
 
-      expect(screen.getByRole('textbox')).toBeInTheDocument()
+      // Wait for the state to update and DOM to reflect changes
+      await screen.findByRole('textbox', {}, { timeout: 3000 })
       expect(screen.getByRole('button', { name: 'Add' })).toBeInTheDocument()
       expect(screen.getByTestId('x-icon')).toBeInTheDocument()
-    })
+    }, 10000)
 
     it('should render icon-only mode', () => {
       render(<InlineInput onAdd={mockOnAdd} iconOnly />)

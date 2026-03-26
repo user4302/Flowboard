@@ -7,11 +7,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-03-27
+
 ### Added
+- Implement per-board filters instead of global filters to prevent cross-board confusion
+- Add board-specific filter state storage with individual selector patterns
+- Add getFilterState helper function for accessing board-specific filter settings
+- Add comprehensive test suites for Timeline components (TimelineGrid, TimelineHeader, TimelineTask, TimelineTooltip)
+- Add extensive board component test coverage for BoardHeader, BoardShare, and BoardSidebar components
+- Add comprehensive test coverage for board sharing components (InviteModal, JoinBoardModal, MemberManagement)
+- Add test utilities and hooks for clipboard detection, drag-and-drop, and invitation utilities
+- Add workflow documentation for code review processes
+- Prevent context menu from reopening when right-clicking on backdrop overlay
+- Add comprehensive unit tests for context menu right-click prevention behavior
+- Extend task priority range from 1-100 to 0-100 to support lowest priority level
+- Add proper handling for empty priority values in task modal form
+- Add comprehensive test coverage for priority field validation and edge cases
+- Add Archive button to task modal footer with destructive styling and proper danger zone placement
+- Add comprehensive unit tests for archive functionality in task modal handlers
+- Add comprehensive unit tests for kanban scroll position functionality (28 tests across 5 test suites)
+- Add test coverage for scroll position storage, restoration, and click handler propagation in kanban components
 
 ### Changed
+- Organize coverage analysis files by moving scripts to dedicated scripts/ folder
+- Improve project structure by consolidating coverage tools and utilities
+- Enhance existing test suites with edge cases, component structure validation, and interaction testing
+- Fix inline-input test behavior to properly handle Escape key interactions
 
 ### Fixed
+- Fix kanban view scroll position reset when opening card modals
+- Prevent visual jank by maintaining persistent scroll container structure
+- Implement scroll position tracking in UI store for consistent state management
+- Add proper card click handlers throughout kanban component hierarchy
+- Fix infinite loop and "Maximum update depth exceeded" errors in filter components
+- Replace object-creating selectors with stable individual selectors to prevent re-renders
+- Clean up temporary files and documentation from coverage optimization process
+- Remove duplicate coverage files and outdated test snapshots
+- Remove outdated KanbanCardsContainer test snapshot
+- Fix modal reopening issue when saving cards by preventing URL-based reopening race conditions
+- Resolve task modal race condition for newly created cards with polling mechanism
+- Enhance search and filter dropdown positioning with portal management and viewport boundary detection
 
 ## [1.5.0] - 2026-03-11
 
@@ -36,6 +71,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test page rendering, component composition, layout structure, and Next.js app integration
 - Add component and utility test coverage for TaskModalForm, InviteForm, and filterUtils
 - Fix inline-input test to properly handle Escape key behavior and form interactions
+- Add comprehensive timeline component test coverage for TimelineGrid, TimelineHeader, TimelineTask, and TimelineTooltip
+- Enhance board component test suites with edge cases and interaction testing
+- Improve board sharing and sidebar component test coverage
+- Remove outdated KanbanCardsContainer test snapshot
 - Enhance TaskModalForm test coverage with date inputs, validation, and completed styling tests
 - Add comprehensive test suites for kanban components, task modal sub-components, and search/filter components
 - Improve overall test coverage to meet 80% threshold requirements across all metrics

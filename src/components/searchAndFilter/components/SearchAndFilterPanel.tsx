@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { forwardRef } from 'react';
+import { forwardRef, useState, useEffect, useCallback } from 'react';
 import { SearchAndFilterStatus } from './SearchAndFilterStatus';
 import { SearchAndFilterPriority } from './SearchAndFilterPriority';
 import { SearchAndFilterTimeline } from './SearchAndFilterTimeline';
@@ -21,6 +21,7 @@ interface SearchAndFilterPanelProps {
     labels: Array<{ id: string; text: string; color: string }>;
     members: Array<{ id: string; name: string }>;
   };
+  onPortalDropdownRef?: (refs: React.RefObject<HTMLDivElement | null>[]) => void;
 }
 
 export const SearchAndFilterPanel = forwardRef<HTMLDivElement, SearchAndFilterPanelProps>(({
@@ -34,8 +35,11 @@ export const SearchAndFilterPanel = forwardRef<HTMLDivElement, SearchAndFilterPa
   setSelectedLabels,
   selectedMembers,
   setSelectedMembers,
-  board
+  board,
+  onPortalDropdownRef
 }, ref) => {
+  const [portalDropdownRefs, setPortalDropdownRefs] = useState<React.RefObject<HTMLDivElement | null>[]>([]);
+
   const toggleLabel = (labelId: string) => {
     if (selectedLabels.includes(labelId)) {
       setSelectedLabels(selectedLabels.filter(id => id !== labelId));
@@ -51,6 +55,23 @@ export const SearchAndFilterPanel = forwardRef<HTMLDivElement, SearchAndFilterPa
       setSelectedMembers([...selectedMembers, memberId]);
     }
   };
+
+  const registerPortalRef = useCallback((ref: React.RefObject<HTMLDivElement | null>) => {
+    setPortalDropdownRefs((prev: React.RefObject<HTMLDivElement | null>[]) => {
+      // Check if ref is already in the array to avoid unnecessary updates
+      if (prev.some(r => r === ref)) {
+        return prev;
+      }
+      return [...prev, ref];
+    });
+  }, []);
+
+  // Pass portal refs to parent
+  useEffect(() => {
+    if (onPortalDropdownRef) {
+      onPortalDropdownRef(portalDropdownRefs);
+    }
+  }, [portalDropdownRefs, onPortalDropdownRef]);
 
   return (
     <div
@@ -75,6 +96,7 @@ export const SearchAndFilterPanel = forwardRef<HTMLDivElement, SearchAndFilterPa
           items={board.labels}
           onToggle={toggleLabel}
           itemType="label"
+          onPortalRef={registerPortalRef}
         />
 
         <SearchAndFilterDropdown
@@ -84,6 +106,7 @@ export const SearchAndFilterPanel = forwardRef<HTMLDivElement, SearchAndFilterPa
           items={board.members}
           onToggle={toggleMember}
           itemType="member"
+          onPortalRef={registerPortalRef}
         />
       </div>
     </div>

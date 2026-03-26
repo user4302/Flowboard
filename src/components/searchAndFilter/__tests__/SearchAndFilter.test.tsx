@@ -92,7 +92,14 @@ jest.mock('../components/SearchAndFilterButton', () => ({
 }))
 
 jest.mock('../components/SearchAndFilterPanel', () => ({
-  SearchAndFilterPanel: React.forwardRef(function SearchAndFilterPanel({ showCompleted, setShowCompleted, priorityThreshold, setPriorityThreshold, dueDateFilter, setDueDateFilter, selectedLabels, setSelectedLabels, selectedMembers, setSelectedMembers, board }: any, ref: any) {
+  SearchAndFilterPanel: React.forwardRef(function SearchAndFilterPanel({ showCompleted, setShowCompleted, priorityThreshold, setPriorityThreshold, dueDateFilter, setDueDateFilter, selectedLabels, setSelectedLabels, selectedMembers, setSelectedMembers, board, onPortalDropdownRef }: any, ref: any) {
+    // Simulate portal ref registration
+    React.useEffect(() => {
+      if (onPortalDropdownRef) {
+        onPortalDropdownRef([{ current: document.createElement('div') }])
+      }
+    }, [onPortalDropdownRef])
+
     return (
       <div data-testid="filter-panel" ref={ref}>
         <div data-testid="panel-board">{board?.name}</div>
@@ -311,6 +318,47 @@ describe('SearchAndFilter Component', () => {
       render(<SearchAndFilter boardId={mockBoardId} />)
 
       expect(useSearchAndFilterClickOutside).toHaveBeenCalled()
+    })
+
+    it('should handle portal dropdown refs correctly', async () => {
+      const user = userEvent.setup()
+      const { useSearchAndFilterClickOutside } = require('../hooks/useSearchAndFilterClickOutside')
+
+      render(<SearchAndFilter boardId={mockBoardId} />)
+
+      // Open filter panel
+      const filterButton = screen.getByTestId('filter-button')
+      await user.click(filterButton)
+
+      // Should have called click outside hook with some refs
+      expect(useSearchAndFilterClickOutside).toHaveBeenCalled()
+
+      // Get the last call which should include portal refs
+      const lastCall = useSearchAndFilterClickOutside.mock.calls[useSearchAndFilterClickOutside.mock.calls.length - 1]
+      const refs = lastCall[0]
+
+      // Should have at least the main refs
+      expect(refs).toBeDefined()
+      expect(Array.isArray(refs)).toBe(true)
+      expect(refs.length).toBeGreaterThanOrEqual(2)
+    })
+
+    it('should not crash when portal refs are updated', async () => {
+      const user = userEvent.setup()
+
+      render(<SearchAndFilter boardId={mockBoardId} />)
+
+      // Open and close filter panel multiple times
+      const filterButton = screen.getByTestId('filter-button')
+
+      await user.click(filterButton)
+      expect(screen.getByTestId('filter-panel')).toBeInTheDocument()
+
+      await user.click(filterButton)
+      expect(screen.queryByTestId('filter-panel')).not.toBeInTheDocument()
+
+      await user.click(filterButton)
+      expect(screen.getByTestId('filter-panel')).toBeInTheDocument()
     })
   })
 })

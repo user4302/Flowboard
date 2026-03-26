@@ -15,11 +15,23 @@ import { Card, User } from '@/lib/types';
 import { CardJSON } from '@/lib/cardJsonUtils';
 import { Upload, Plus, ClipboardPaste, Loader2 } from 'lucide-react';
 
+// Default filter state to avoid creating new objects
+const DEFAULT_FILTER_STATE = {
+  searchTerm: '',
+  selectedLabels: [],
+  selectedMembers: [],
+  showOverdue: false,
+  showCompleted: 'all' as const,
+  priorityThreshold: null,
+  dueDateFilter: 'all' as const
+};
+
 interface KanbanCardsContainerProps {
   cards: Card[];
   listId: string;
   members: User[];
   onAddCard: (listId: string, title: string) => void;
+  onCardClick?: (cardId: string) => void;
   searchTerm?: string;
   className?: string;
 }
@@ -32,6 +44,7 @@ export function KanbanCardsContainer({
   listId,
   members,
   onAddCard,
+  onCardClick,
   searchTerm = '',
   className
 }: KanbanCardsContainerProps) {
@@ -40,16 +53,25 @@ export function KanbanCardsContainer({
   });
 
   // Get filter options from UI store
-  const {
-    searchTerm: globalSearchTerm,
-    selectedLabels,
-    selectedMembers,
-    showCompleted,
-    priorityThreshold,
-    dueDateFilter
-  } = useUIStore();
-
   const { boards, currentBoardId, createCardFromData } = useBoardStore();
+  const globalSearchTerm = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.searchTerm ?? DEFAULT_FILTER_STATE.searchTerm : DEFAULT_FILTER_STATE.searchTerm
+  );
+  const selectedLabels = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.selectedLabels ?? DEFAULT_FILTER_STATE.selectedLabels : DEFAULT_FILTER_STATE.selectedLabels
+  );
+  const selectedMembers = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.selectedMembers ?? DEFAULT_FILTER_STATE.selectedMembers : DEFAULT_FILTER_STATE.selectedMembers
+  );
+  const showCompleted = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.showCompleted ?? DEFAULT_FILTER_STATE.showCompleted : DEFAULT_FILTER_STATE.showCompleted
+  );
+  const priorityThreshold = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.priorityThreshold ?? DEFAULT_FILTER_STATE.priorityThreshold : DEFAULT_FILTER_STATE.priorityThreshold
+  );
+  const dueDateFilter = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.dueDateFilter ?? DEFAULT_FILTER_STATE.dueDateFilter : DEFAULT_FILTER_STATE.dueDateFilter
+  );
   const currentBoard = boards.find(b => b.id === currentBoardId);
 
   // Smart paste detection - removed for performance
@@ -60,9 +82,9 @@ export function KanbanCardsContainer({
     searchTerm: globalSearchTerm || searchTerm,
     selectedLabels,
     selectedMembers,
-    showCompleted,
+    showCompleted: showCompleted as 'all' | 'completed' | 'incomplete',
     priorityThreshold,
-    dueDateFilter
+    dueDateFilter: dueDateFilter as 'all' | 'overdue' | 'today' | 'week' | 'month'
   };
 
   // Memoize filtered cards to prevent excessive re-renders
@@ -120,7 +142,7 @@ export function KanbanCardsContainer({
             key={card.id}
             card={card}
             members={members}
-            onClick={() => { }}
+            onClick={() => onCardClick?.(card.id)}
           />
         ))}
       </SortableContext>

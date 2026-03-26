@@ -111,6 +111,16 @@ export function CardContextMenu({
   };
 
   /**
+   * Handles right-clicks on the backdrop area
+   * Prevents context menu from reopening when right-clicking on overlay
+   */
+  const handleBackdropContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClose();
+  };
+
+  /**
    * Renders the context menu content including backdrop and menu items
    * Uses fixed positioning and portals to render outside normal component tree
    */
@@ -118,13 +128,16 @@ export function CardContextMenu({
     <>
       {/* Backdrop */}
       <div
+        data-testid="context-menu-backdrop"
         className={`fixed inset-0 bg-black/50`}
         style={{ zIndex: Z_INDEX.BACKDROP }}
         onClick={handleBackdropClick}
+        onContextMenu={handleBackdropContextMenu}
       />
 
       {/* Context Menu */}
       <div
+        data-testid="context-menu"
         className={`fixed bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-600 py-2 min-w-[200px] max-w-xs overflow-y-auto`}
         style={{
           left: `${menuPosition.x}px`,

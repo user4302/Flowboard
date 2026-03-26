@@ -5,6 +5,17 @@ import { getFilteredCardCount, FilterOptions } from '@/lib/filterUtils';
 import { useUIStore, useBoardStore } from '@/store';
 import { List, User } from '@/lib/types';
 
+// Default filter state to avoid creating new objects
+const DEFAULT_FILTER_STATE = {
+  searchTerm: '',
+  selectedLabels: [],
+  selectedMembers: [],
+  showOverdue: false,
+  showCompleted: 'all' as const,
+  priorityThreshold: null,
+  dueDateFilter: 'all' as const
+};
+
 /**
  * Props for the KanbanList component
  * @interface ListProps
@@ -20,6 +31,8 @@ interface ListProps {
   onRenameList: (listId: string, newTitle: string) => void;
   /** Callback function when the list is deleted */
   onDeleteList: (listId: string) => void;
+  /** Callback function when a card is clicked */
+  onCardClick?: (cardId: string) => void;
   /** Search term to filter cards within the list */
   searchTerm?: string;
   /** Additional CSS class names */
@@ -63,6 +76,7 @@ export function KanbanList({
   onAddCard,
   onRenameList,
   onDeleteList,
+  onCardClick,
   searchTerm = '',
   className,
   onMenuToggle,
@@ -70,26 +84,34 @@ export function KanbanList({
   dragHandleProps
 }: ListProps) {
   // Get global filter options from UI store for card filtering
-  const {
-    searchTerm: globalSearchTerm,    // Global search term across all lists
-    selectedLabels,                  // Selected label filters
-    selectedMembers,                 // Selected member filters
-    showCompleted,                   // Whether to show completed cards
-    priorityThreshold,               // Minimum priority threshold
-    dueDateFilter                    // Due date filter options
-  } = useUIStore();
-
-  // Get board data for context
   const { boards, currentBoardId } = useBoardStore();
+  const globalSearchTerm = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.searchTerm ?? DEFAULT_FILTER_STATE.searchTerm : DEFAULT_FILTER_STATE.searchTerm
+  );
+  const selectedLabels = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.selectedLabels ?? DEFAULT_FILTER_STATE.selectedLabels : DEFAULT_FILTER_STATE.selectedLabels
+  );
+  const selectedMembers = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.selectedMembers ?? DEFAULT_FILTER_STATE.selectedMembers : DEFAULT_FILTER_STATE.selectedMembers
+  );
+  const showCompleted = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.showCompleted ?? DEFAULT_FILTER_STATE.showCompleted : DEFAULT_FILTER_STATE.showCompleted
+  );
+  const priorityThreshold = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.priorityThreshold ?? DEFAULT_FILTER_STATE.priorityThreshold : DEFAULT_FILTER_STATE.priorityThreshold
+  );
+  const dueDateFilter = useUIStore((state) =>
+    currentBoardId ? state.filterState[currentBoardId]?.dueDateFilter ?? DEFAULT_FILTER_STATE.dueDateFilter : DEFAULT_FILTER_STATE.dueDateFilter
+  );
   const currentBoard = boards.find(b => b.id === currentBoardId);
 
   const filterOptions: FilterOptions = {
     searchTerm: globalSearchTerm || searchTerm,
     selectedLabels,
     selectedMembers,
-    showCompleted,
+    showCompleted: showCompleted as 'all' | 'completed' | 'incomplete',
     priorityThreshold,
-    dueDateFilter
+    dueDateFilter: dueDateFilter as 'all' | 'overdue' | 'today' | 'week' | 'month'
   };
 
   const filteredCardCount = getFilteredCardCount(list.cards, filterOptions, currentBoard?.labels || []);
@@ -111,6 +133,7 @@ export function KanbanList({
         listId={list.id}
         members={members}
         onAddCard={onAddCard}
+        onCardClick={onCardClick}
         searchTerm={searchTerm}
       />
     </div>

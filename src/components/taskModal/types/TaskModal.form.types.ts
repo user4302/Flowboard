@@ -10,7 +10,16 @@ export const cardSchema = z.object({
   description: z.string().optional(),
   startDate: z.string().optional(),
   dueDate: z.string().optional(),
-  priority: z.number().min(1, 'Priority must be between 1-100').max(100, 'Priority must be between 1-100').optional(),
+  priority: z.preprocess(
+    (value) => {
+      if (value === '' || value === null || value === undefined) {
+        return null;
+      }
+      const num = Number(value);
+      return isNaN(num) ? null : num;
+    },
+    z.number().min(0, 'Priority must be between 0-100').max(100, 'Priority must be between 0-100').nullable().optional()
+  ),
 });
 
 /**

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useBoardStore, useUIStore } from '@/store';
 import { useTaskModalForm } from './useTaskModalForm';
 import { useTaskModalChecklist } from './useTaskModalChecklist';
@@ -19,12 +19,42 @@ export function useTaskModalData(): CardModalData & {
   const { cardModalOpen, selectedCardId, cardJSONData, targetListId } = useUIStore();
   const { boards, currentBoardId } = useBoardStore();
 
+  // State to track when we're waiting for a newly created card
+  const [isWaitingForCard, setIsWaitingForCard] = useState(false);
+
   // Find current board and selected card
   const currentBoard = boards.find(b => b.id === currentBoardId);
   const foundCard = currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId);
 
   // Determine if we're in JSON import mode
   const isJSONImportMode = !!cardJSONData && !!targetListId;
+
+  // Handle race condition for newly created cards
+  useEffect(() => {
+    if (selectedCardId && cardModalOpen && !foundCard && !isJSONImportMode && !isWaitingForCard) {
+      setIsWaitingForCard(true);
+      // Give store more time to update and try multiple times
+      let attempts = 0;
+      const maxAttempts = 10;
+
+      const checkForCard = () => {
+        attempts++;
+        // Re-check if card is found
+        const currentBoard = boards.find(b => b.id === currentBoardId);
+        const card = currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId);
+
+        if (card || attempts >= maxAttempts) {
+          setIsWaitingForCard(false);
+        } else {
+          setTimeout(checkForCard, 100);
+        }
+      };
+
+      checkForCard();
+    } else if (foundCard && isWaitingForCard) {
+      setIsWaitingForCard(false);
+    }
+  }, [selectedCardId, cardModalOpen, foundCard, isJSONImportMode, isWaitingForCard, currentBoardId, boards]);
 
   // Custom hooks - Pass safe defaults that hooks can handle
   const form = useTaskModalForm({
@@ -36,6 +66,21 @@ export function useTaskModalData(): CardModalData & {
     cardId: foundCard?.id || '',
     initialChecklists: foundCard?.checklists || []
   });
+
+  // Force form re-initialization when a newly created card is found
+  useEffect(() => {
+    if (foundCard && selectedCardId && !isWaitingForCard) {
+      // This ensures the form is properly initialized with the card data
+      // when it becomes available after the race condition resolves
+      form.reset({
+        title: foundCard.title || '',
+        description: foundCard.description || '',
+        startDate: foundCard.startDate ? foundCard.startDate.toISOString().split('T')[0] : '',
+        dueDate: foundCard.dueDate ? foundCard.dueDate.toISOString().split('T')[0] : '',
+        priority: foundCard.priority !== undefined ? foundCard.priority : null,
+      });
+    }
+  }, [foundCard, selectedCardId, isWaitingForCard, form.reset]);
 
   const boardLabels = useMemo(() => currentBoard?.labels || [], [currentBoard?.labels]);
 

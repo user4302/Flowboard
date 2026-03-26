@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { useUIStore, useBoardStore } from '@/store';
 import { Button } from '@/components/ui';
@@ -12,20 +12,32 @@ import { SearchAndFilterInput } from './components/SearchAndFilterInput';
 import { SearchAndFilterButton } from './components/SearchAndFilterButton';
 import { SearchAndFilterPanel } from './components/SearchAndFilterPanel';
 
+// Default filter state to avoid creating new objects
+const DEFAULT_FILTER_STATE = {
+  searchTerm: '',
+  selectedLabels: [],
+  selectedMembers: [],
+  showOverdue: false,
+  showCompleted: 'all' as const,
+  priorityThreshold: null,
+  dueDateFilter: 'all' as const
+};
+
 export function SearchAndFilter({ boardId, className, compact = false }: SearchAndFilterProps) {
+  // Use individual selectors to avoid object creation
+  const searchTerm = useUIStore((state) => state.filterState[boardId]?.searchTerm ?? DEFAULT_FILTER_STATE.searchTerm);
+  const selectedLabels = useUIStore((state) => state.filterState[boardId]?.selectedLabels ?? DEFAULT_FILTER_STATE.selectedLabels);
+  const selectedMembers = useUIStore((state) => state.filterState[boardId]?.selectedMembers ?? DEFAULT_FILTER_STATE.selectedMembers);
+  const showOverdue = useUIStore((state) => state.filterState[boardId]?.showOverdue ?? DEFAULT_FILTER_STATE.showOverdue);
+  const showCompleted = useUIStore((state) => state.filterState[boardId]?.showCompleted ?? DEFAULT_FILTER_STATE.showCompleted);
+  const priorityThreshold = useUIStore((state) => state.filterState[boardId]?.priorityThreshold ?? DEFAULT_FILTER_STATE.priorityThreshold);
+  const dueDateFilter = useUIStore((state) => state.filterState[boardId]?.dueDateFilter ?? DEFAULT_FILTER_STATE.dueDateFilter);
   const {
-    searchTerm,
     setSearchTerm,
-    selectedLabels,
     setSelectedLabels,
-    selectedMembers,
     setSelectedMembers,
-    showOverdue,
-    showCompleted,
     setShowCompleted,
-    priorityThreshold,
     setPriorityThreshold,
-    dueDateFilter,
     setDueDateFilter,
     clearFilters
   } = useUIStore();
@@ -35,7 +47,13 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
   const [showFilters, setShowFilters] = useState(false);
   const dropdownRef1 = useRef<HTMLDivElement>(null);
   const dropdownRef2 = useRef<HTMLDivElement>(null);
-  const dropdownRefs = [dropdownRef1, dropdownRef2];
+  const [portalDropdownRefs, setPortalDropdownRefs] = useState<React.RefObject<HTMLDivElement | null>[]>([]);
+
+  const handlePortalDropdownRefs = useCallback((refs: React.RefObject<HTMLDivElement | null>[]) => {
+    setPortalDropdownRefs(refs);
+  }, []);
+
+  const dropdownRefs = [dropdownRef1, dropdownRef2, ...portalDropdownRefs];
 
   const board = boards.find(b => b.id === boardId);
 
@@ -57,7 +75,7 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
   const hasActiveFiltersValue = hasActiveFilters(filters);
 
   const handleClearAllFilters = () => {
-    clearFilters();
+    clearFilters(boardId);
   };
 
   return (
@@ -68,7 +86,7 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
       )}>
         <SearchAndFilterInput
           value={searchTerm}
-          onChange={setSearchTerm}
+          onChange={(term) => setSearchTerm(boardId, term)}
           compact={compact}
         />
 
@@ -99,16 +117,17 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
         <SearchAndFilterPanel
           ref={dropdownRef1}
           showCompleted={showCompleted}
-          setShowCompleted={setShowCompleted as (value: string) => void}
+          setShowCompleted={(status) => setShowCompleted(boardId, status as 'all' | 'completed' | 'incomplete')}
           priorityThreshold={priorityThreshold}
-          setPriorityThreshold={setPriorityThreshold}
+          setPriorityThreshold={(threshold) => setPriorityThreshold(boardId, threshold)}
           dueDateFilter={dueDateFilter}
-          setDueDateFilter={setDueDateFilter as (value: string) => void}
+          setDueDateFilter={(filter) => setDueDateFilter(boardId, filter as 'all' | 'overdue' | 'today' | 'week' | 'month')}
           selectedLabels={selectedLabels}
-          setSelectedLabels={setSelectedLabels}
+          setSelectedLabels={(labels) => setSelectedLabels(boardId, labels)}
           selectedMembers={selectedMembers}
-          setSelectedMembers={setSelectedMembers}
+          setSelectedMembers={(members) => setSelectedMembers(boardId, members)}
           board={board}
+          onPortalDropdownRef={handlePortalDropdownRefs}
         />
       )}
     </div>
