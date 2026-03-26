@@ -55,6 +55,8 @@ jest.mock('@/store', () => ({
     cardModalOpen: false,
     getColumnOrder: jest.fn(() => []),
     setColumnOrder: jest.fn(),
+    getScrollPosition: jest.fn(() => ({ left: 0, top: 0 })),
+    setScrollPosition: jest.fn(),
   }),
 }))
 

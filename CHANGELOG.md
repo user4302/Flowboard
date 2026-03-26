@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Prevent label duplication when importing exported boards by excluding labels property from card exports
+- Fix failing unit tests across multiple components by updating test mocks and expectations
+- Update SearchAndFilter tests to handle board-scoped UI store selectors correctly
+- Add missing scroll position functions to KanbanView test mocks
+- Fix TaskModal form type test to expect null instead of undefined for priority validation
+- Refactor UIStore tests to use boardId parameter and proper filterState structure
 
 ## [1.6.0] - 2026-03-27
 
