@@ -77,7 +77,7 @@ export function useTaskModalData(): CardModalData & {
         description: foundCard.description || '',
         startDate: foundCard.startDate ? foundCard.startDate.toISOString().split('T')[0] : '',
         dueDate: foundCard.dueDate ? foundCard.dueDate.toISOString().split('T')[0] : '',
-        priority: foundCard.priority || null,
+        priority: foundCard.priority !== undefined ? foundCard.priority : null,
       });
     }
   }, [foundCard, selectedCardId, isWaitingForCard, form.reset]);

@@ -67,10 +67,8 @@ export function useTaskModalHandlers(
           updateData.dueDate = new Date(data.dueDate);
         }
 
-        // Only include priority if it's not null/undefined
-        if (data.priority !== null && data.priority !== undefined) {
-          updateData.priority = data.priority;
-        }
+        // Explicitly set priority - include null/undefined to clear the field
+        updateData.priority = data.priority;
 
         updateCard(currentBoardId, newCard.id, updateData);
         console.log('JSON import: calling handleCloseCardModal');
@@ -92,10 +90,8 @@ export function useTaskModalHandlers(
         updateData.dueDate = new Date(data.dueDate);
       }
 
-      // Only include priority if it's not null/undefined
-      if (data.priority !== null && data.priority !== undefined) {
-        updateData.priority = data.priority;
-      }
+      // Explicitly set priority - include null/undefined to clear the field
+      updateData.priority = data.priority;
 
       // Sync checklist items first if not in JSON import mode
       if (!isJSONImportMode) {

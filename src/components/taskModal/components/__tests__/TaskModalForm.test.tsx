@@ -118,7 +118,47 @@ describe('TaskModalForm Component', () => {
       await user.type(priorityInput, '75')
 
       // Check that register was called with priority and validation options
-      expect(defaultProps.register).toHaveBeenCalledWith('priority', { valueAsNumber: true })
+      expect(defaultProps.register).toHaveBeenCalledWith('priority', {
+        valueAsNumber: false,
+        setValueAs: expect.any(Function)
+      })
+    })
+
+    it('should handle priority zero value', async () => {
+      const user = userEvent.setup()
+      render(<TaskModalForm {...defaultProps} />)
+
+      const priorityInput = screen.getByDisplayValue('50')
+      await user.clear(priorityInput)
+      await user.type(priorityInput, '0')
+
+      // Check that register was called with priority and validation options
+      expect(defaultProps.register).toHaveBeenCalledWith('priority', {
+        valueAsNumber: false,
+        setValueAs: expect.any(Function)
+      })
+    })
+
+    it('should handle empty priority value', async () => {
+      const user = userEvent.setup()
+      render(<TaskModalForm {...defaultProps} />)
+
+      const priorityInput = screen.getByDisplayValue('50')
+      await user.clear(priorityInput)
+      // Input is now empty, should not show validation error
+
+      // Check that register was called with priority and validation options
+      expect(defaultProps.register).toHaveBeenCalledWith('priority', {
+        valueAsNumber: false,
+        setValueAs: expect.any(Function)
+      })
+    })
+
+    it('should show correct placeholder and help text', () => {
+      render(<TaskModalForm {...defaultProps} />)
+
+      expect(screen.getByPlaceholderText('Enter priority (0-100)')).toBeInTheDocument()
+      expect(screen.getByText('Optional: Enter a number between 0-100 (higher numbers = higher priority)')).toBeInTheDocument()
     })
 
     it('should handle completion toggle', async () => {
@@ -174,17 +214,17 @@ describe('TaskModalForm Component', () => {
     })
 
     it('should display priority error message', () => {
-      const mockErrors = { priority: { message: 'Priority must be between 1-100' } }
+      const mockErrors = { priority: { message: 'Priority must be between 0-100' } }
       render(<TaskModalForm {...defaultProps} errors={mockErrors} />)
 
-      expect(screen.getByText('Priority must be between 1-100')).toBeInTheDocument()
+      expect(screen.getByText('Priority must be between 0-100')).toBeInTheDocument()
     })
 
     it('should not show error messages for valid inputs', () => {
       render(<TaskModalForm {...defaultProps} />)
 
       expect(screen.queryByText('Title is required')).not.toBeInTheDocument()
-      expect(screen.queryByText('Priority must be between 1-100')).not.toBeInTheDocument()
+      expect(screen.queryByText('Priority must be between 0-100')).not.toBeInTheDocument()
     })
   })
 
@@ -202,7 +242,11 @@ describe('TaskModalForm Component', () => {
       render(
         <TaskModalForm
           {...defaultProps}
-          card={{ ...defaultProps.card, completed: true }}
+          card={{
+            ...defaultProps.card!,
+            id: defaultProps.card!.id,
+            completed: true
+          }}
         />
       )
 
@@ -215,7 +259,11 @@ describe('TaskModalForm Component', () => {
       render(
         <TaskModalForm
           {...defaultProps}
-          card={{ ...defaultProps.card, completed: false }}
+          card={{
+            ...defaultProps.card!,
+            id: defaultProps.card!.id,
+            completed: false
+          }}
         />
       )
 
@@ -231,7 +279,7 @@ describe('TaskModalForm Component', () => {
 
       expect(screen.getByPlaceholderText('Card title')).toBeInTheDocument()
       expect(screen.getByDisplayValue('Test Description')).toBeInTheDocument()
-      expect(screen.getByPlaceholderText('Enter priority (1-100)')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText('Enter priority (0-100)')).toBeInTheDocument()
     })
 
     it('should have accessible labels', () => {
@@ -274,7 +322,11 @@ describe('TaskModalForm Component', () => {
       render(
         <TaskModalForm
           {...defaultProps}
-          card={{ ...defaultProps.card, description: undefined }}
+          card={{
+            ...defaultProps.card!,
+            id: defaultProps.card!.id,
+            description: undefined
+          }}
         />
       )
 
@@ -287,7 +339,11 @@ describe('TaskModalForm Component', () => {
       render(
         <TaskModalForm
           {...defaultProps}
-          card={{ ...defaultProps.card, description: null }}
+          card={{
+            ...defaultProps.card!,
+            id: defaultProps.card!.id,
+            description: null as any
+          }}
         />
       )
 

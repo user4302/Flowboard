@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add workflow documentation for code review processes
 - Prevent context menu from reopening when right-clicking on backdrop overlay
 - Add comprehensive unit tests for context menu right-click prevention behavior
+- Extend task priority range from 1-100 to 0-100 to support lowest priority level
+- Add proper handling for empty priority values in task modal form
+- Add comprehensive test coverage for priority field validation and edge cases
 - Add Archive button to task modal footer with destructive styling and proper danger zone placement
 - Add comprehensive unit tests for archive functionality in task modal handlers
 - Add comprehensive unit tests for kanban scroll position functionality (28 tests across 5 test suites)

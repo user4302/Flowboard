@@ -28,7 +28,7 @@ export const useTaskModalForm = ({ card, cardJSON }: UseCardFormProps) => {
       description: card?.description || '',
       startDate: card?.startDate ? card.startDate.toISOString().split('T')[0] : '',
       dueDate: card?.dueDate ? card.dueDate.toISOString().split('T')[0] : '',
-      priority: card?.priority || null,
+      priority: card?.priority !== undefined ? card.priority : null,
     };
   };
 

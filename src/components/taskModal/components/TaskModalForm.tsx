@@ -135,17 +135,20 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
         </label>
         <input
           type="number"
-          min="1"
+          min="0"
           max="100"
-          placeholder="Enter priority (1-100)"
-          {...register('priority', { valueAsNumber: true })}
+          placeholder="Enter priority (0-100)"
+          {...register('priority', {
+            valueAsNumber: false,
+            setValueAs: (value: string | number | null | undefined) => value === '' ? null : (value !== null && value !== undefined ? Number(value) : null)
+          })}
           className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
         />
         {errors.priority && (
           <p className="mt-1 text-sm text-red-600">{errors.priority.message}</p>
         )}
         <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-          Enter a number between 1-100 (higher numbers = higher priority)
+          Optional: Enter a number between 0-100 (higher numbers = higher priority)
         </p>
       </div>
 
