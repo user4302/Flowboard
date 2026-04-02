@@ -194,16 +194,26 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
               });
 
               // Add by text/color logic for old format
-              importedLabels.forEach((labelData: ImportedLabel) => {
-                const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
-                if (existing) {
-                  useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, existing.id);
-                } else {
-                  const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
-                    text: labelData.text,
-                    color: labelData.color
-                  });
-                  useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, newLabel.id);
+              importedLabels.forEach((labelData: any) => {
+                // Handle case where labels is an array of strings (label IDs)
+                if (typeof labelData === 'string') {
+                  const newId = labelMap.get(labelData);
+                  if (newId) {
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, newId);
+                  }
+                }
+                // Handle case where labels is an array of label objects
+                else if (labelData && typeof labelData === 'object' && labelData.text && labelData.color) {
+                  const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
+                  if (existing) {
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, existing.id);
+                  } else {
+                    const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
+                      text: labelData.text,
+                      color: labelData.color
+                    });
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, newLabel.id);
+                  }
                 }
               });
 
