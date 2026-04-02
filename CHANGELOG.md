@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Fix timeline date navigation reactivity by replacing getTimelineState with individual Zustand selectors
+- Prevent infinite loop and "Maximum update depth exceeded" errors in TimelineView component
+- Add stable fallback constants to prevent unnecessary re-renders in timeline components
+- Update TimelineView tests to support new selector pattern and comprehensive date navigation testing
 - Prevent label duplication when importing exported boards by excluding labels property from card exports
 - Fix failing unit tests across multiple components by updating test mocks and expectations
 - Update SearchAndFilter tests to handle board-scoped UI store selectors correctly

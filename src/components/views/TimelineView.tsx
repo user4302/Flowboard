@@ -35,6 +35,11 @@ const DEFAULT_FILTER_STATE = {
   dueDateFilter: 'all' as const
 };
 
+// Stable fallback values to prevent infinite loops
+const DEFAULT_CURRENT_DATE = new Date().toISOString();
+const DEFAULT_ZOOM_LEVEL = 'week';
+const DEFAULT_COLLAPSED_LANES: string[] = [];
+
 /**
  * Props interface for TimelineView component
  */
@@ -57,19 +62,19 @@ interface TimelineViewProps {
  * - Keyboard shortcuts for navigation
  * - Responsive design with tooltips
  * 
- * @param boardId - ID of the board to display
+ * @param boardId - ID of board to display
  */
 export function TimelineView({ boardId }: TimelineViewProps) {
   const { boards } = useBoardStore();
   const {
     openCardModal,
-    getTimelineState,
     setTimelineCurrentDate,
     setTimelineZoomLevel,
     toggleTimelineLane
   } = useUIStore();
 
   // Get filter state for this specific board using individual selectors
+  // Using individual selectors ensures reactivity - component re-renders when specific state changes
   const searchTerm = useUIStore((state) => state.filterState[boardId]?.searchTerm ?? DEFAULT_FILTER_STATE.searchTerm);
   const selectedLabels = useUIStore((state) => state.filterState[boardId]?.selectedLabels ?? DEFAULT_FILTER_STATE.selectedLabels);
   const selectedMembers = useUIStore((state) => state.filterState[boardId]?.selectedMembers ?? DEFAULT_FILTER_STATE.selectedMembers);
@@ -77,29 +82,35 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   const showCompleted = useUIStore((state) => state.filterState[boardId]?.showCompleted ?? DEFAULT_FILTER_STATE.showCompleted);
   const priorityThreshold = useUIStore((state) => state.filterState[boardId]?.priorityThreshold ?? DEFAULT_FILTER_STATE.priorityThreshold);
   const dueDateFilter = useUIStore((state) => state.filterState[boardId]?.dueDateFilter ?? DEFAULT_FILTER_STATE.dueDateFilter);
-  // Get timeline state for this specific board
-  const timelineState = getTimelineState(boardId);
 
-  const { currentDate: timelineCurrentDate, zoomLevel: timelineZoomLevel, collapsedLanes: timelineCollapsedLanes } = timelineState;
+  // Get timeline state for this specific board using optimized selectors
+  // Individual selectors prevent infinite loops by avoiding object creation on each render
+  const timelineCurrentDate = useUIStore((state) => state.timelineState[boardId]?.currentDate);
+  const timelineZoomLevel = useUIStore((state) => state.timelineState[boardId]?.zoomLevel);
+  const timelineCollapsedLanes = useUIStore((state) => state.timelineState[boardId]?.collapsedLanes);
 
   const board = boards.find((b) => b.id === boardId);
   const currentDate = useMemo(() => {
+    const dateStr = timelineCurrentDate || DEFAULT_CURRENT_DATE;
     try {
-      const date = new Date(timelineCurrentDate);
-      // Check if date is valid
+      const date = new Date(dateStr);
+      // Check if date is valid - prevents crashes from corrupted date strings
       if (isNaN(date.getTime())) {
-        console.warn('Invalid timeline date detected, using current date:', timelineCurrentDate);
+        console.warn('Invalid timeline date detected, using current date:', dateStr);
         return new Date(); // Return fallback date, state update will be handled by useEffect
       }
       return date;
     } catch (error) {
-      console.error('Error parsing timeline date:', error, timelineCurrentDate);
+      console.error('Error parsing timeline date:', error, dateStr);
       return new Date(); // Return fallback date, state update will be handled by useEffect
     }
   }, [timelineCurrentDate]);
 
   // Handle invalid timeline date by resetting state
+  // This useEffect acts as a recovery mechanism for corrupted date state
   useEffect(() => {
+    if (!timelineCurrentDate) return;
+
     try {
       const date = new Date(timelineCurrentDate);
       if (isNaN(date.getTime())) {
@@ -112,8 +123,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
     }
   }, [timelineCurrentDate, boardId, setTimelineCurrentDate]);
 
-  const zoomLevel = timelineZoomLevel || 'week'; // Fallback to week if undefined
-  const collapsedLanes = useMemo(() => new Set(timelineCollapsedLanes), [timelineCollapsedLanes]);
+  const zoomLevel = timelineZoomLevel || DEFAULT_ZOOM_LEVEL; // Fallback to week if undefined
+  const collapsedLanes = useMemo(() => new Set(timelineCollapsedLanes || DEFAULT_COLLAPSED_LANES), [timelineCollapsedLanes]);
   const [hoveredTask, setHoveredTask] = useState<{ task: Card; position: 'before' | 'after'; x: number; y: number } | null>(null); // Track hovered task for tooltip
 
   // Generate date range based on zoom level and current date using custom hook
@@ -130,7 +141,7 @@ export function TimelineView({ boardId }: TimelineViewProps) {
   const tasksWithDates = useMemo(() => {
     if (!board) return [];
 
-    // Get all cards from all lists in the board
+    // Get all cards from all lists in board
     const allCards = board.lists.flatMap(list => list.cards);
 
     // Filter using global filter options (reactive state)
@@ -197,7 +208,8 @@ export function TimelineView({ boardId }: TimelineViewProps) {
       setTimelineCurrentDate(boardId, date.toISOString());
     } else {
       // Handle functional update: apply function to current date
-      const newDate = date(new Date(timelineCurrentDate));
+      const currentDateString = timelineCurrentDate || DEFAULT_CURRENT_DATE;
+      const newDate = date(new Date(currentDateString));
       setTimelineCurrentDate(boardId, newDate.toISOString());
     }
   };
