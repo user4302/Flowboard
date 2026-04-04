@@ -30,6 +30,7 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
   const [labelColor, setLabelColor] = useState<typeof LABEL_COLORS[number]>(LABEL_COLORS[0]);
 
   const filteredLabels = boardLabels.filter(label =>
+    label && label.text && typeof label.text === 'string' &&
     label.text.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
