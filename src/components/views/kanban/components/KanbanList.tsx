@@ -125,7 +125,7 @@ export function KanbanList({
 
   return (
     <div
-      className={cn("flex w-80 flex-shrink-0 flex-col gap-3 h-full rounded-lg border border-slate-200 dark:border-slate-700", className)}
+      className={cn("flex w-80 flex-shrink-0 flex-col gap-3 h-full rounded-lg", className)}
       style={listStyle}
     >
       <KanbanListHeader

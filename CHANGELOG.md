@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Create DayTasksModal component with proper label color coding and task click functionality
 - Add modal stacking behavior so closing task modal returns to list modal instead of calendar
 - Enhance day tasks modal with colored indicator bars on left edge of task items
+- Remove unwanted border from kanban lists by eliminating border classes from KanbanList container
 - Refactor modal styling from inline CSS to Tailwind classes with proper color mapping
 - Add comprehensive RGB color mapping for proper CSS color values in indicator bars
 - Fix flaky ColorPicker test by adding proper async handling and focus management
