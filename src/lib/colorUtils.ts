@@ -182,8 +182,9 @@ export function getContrastColor(hexColor: string): 'white' | 'black' {
 
   const luminance = getLuminance(rgb);
 
-  // WCAG threshold: if luminance > 0.5, use black text
-  return luminance > 0.5 ? 'black' : 'white';
+  // Adjusted threshold: if luminance > 0.35, use black text
+  // This provides better contrast for medium-light colors
+  return luminance > 0.35 ? 'black' : 'white';
 }
 
 /**

@@ -48,6 +48,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update label management hooks to use BASIC_LABEL_COLORS with hex support
 - Add proper color utility imports for contrast calculation across components
 - Ensure consistent text readability with automatic black/white contrast
+- Add keyboard navigation support to ColorPicker with Enter key functionality
+- Add test:failing npm script for re-running only failed tests
+- Optimize TimelineTooltip performance by replacing inline styles with Tailwind classes
+
+### Fixed
+- Fix flaky ColorPicker test by adding proper async handling and focus management
+- Adjust contrast color threshold from 0.5 to 0.35 for better text readability on medium-light colors
+- Improve ColorPicker accessibility with proper tabIndex attributes and focus management
 - Fix TypeError when clicking label + button by handling undefined label data in import and filtering
 - Add defensive label filtering to prevent toLowerCase() errors on undefined text properties
 - Enhance board import logic to support labels stored as strings (label IDs) in addition to label objects

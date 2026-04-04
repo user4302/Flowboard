@@ -229,6 +229,7 @@ export function ColorPicker({
                     key={color}
                     type="button"
                     onClick={() => handleBasicColorSelect(color)}
+                    tabIndex={-1}
                     className={cn(
                       'w-12 h-12 rounded-md border-2 transition-all hover:scale-105',
                       'border-slate-200 dark:border-slate-600',
@@ -316,7 +317,15 @@ export function ColorPicker({
                     value={hexInput}
                     onChange={handleHexInputChange}
                     onBlur={handleHexInputBlur}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && isValidHex(hexInput)) {
+                        onChange(hexInput);
+                        saveToRecent(hexInput);
+                        setIsOpen(false);
+                      }
+                    }}
                     placeholder="#000000"
+                    tabIndex={0}
                     className={cn(
                       'w-full pl-10 pr-3 py-2 border rounded-md text-sm',
                       'border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',

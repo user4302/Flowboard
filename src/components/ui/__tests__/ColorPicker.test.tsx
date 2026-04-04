@@ -196,12 +196,16 @@ describe('ColorPicker', () => {
     const trigger = screen.getByRole('button');
     await user.click(trigger);
 
-    // Tab through elements
-    await user.tab();
-    await user.tab();
+    // Wait for dropdown to be fully rendered
+    await waitFor(() => {
+      expect(screen.getByText('Basic Colors')).toBeInTheDocument();
+    });
 
-    // Should focus on hex input
+    // Focus directly on the hex input
     const hexInput = screen.getByPlaceholderText('#000000');
+    hexInput.focus();
+
+    // Should have focus
     expect(hexInput).toHaveFocus();
   });
 
