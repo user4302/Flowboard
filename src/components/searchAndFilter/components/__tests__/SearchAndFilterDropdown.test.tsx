@@ -78,8 +78,8 @@ describe('SearchAndFilterDropdown', () => {
     const props = {
       ...mockProps,
       items: [
-        { id: 'item1', text: 'Item 1', color: 'bg-red-500' },
-        { id: 'item2', text: 'Item 2', color: 'bg-blue-500' }
+        { id: 'item1', text: 'Item 1', color: '#ef4444' },
+        { id: 'item2', text: 'Item 2', color: '#3b82f6' }
       ]
     }
 

@@ -23,6 +23,10 @@ interface ColorPickerProps {
   maxRecentColors?: number;
   /** Custom class names */
   className?: string;
+  /** Existing labels for color suggestions */
+  existingLabels?: Array<{ color: string; text: string }>;
+  /** Whether to show color suggestions */
+  showColorSuggestions?: boolean;
 }
 
 /**
@@ -45,12 +49,20 @@ export function ColorPicker({
   placeholder = 'Select a color',
   showRecentColors = true,
   maxRecentColors = 5,
-  className
+  className,
+  existingLabels = [],
+  showColorSuggestions = true
 }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showCustomPicker, setShowCustomPicker] = useState(false);
   const [hexInput, setHexInput] = useState(value);
   const [recentColors, setRecentColors] = useState<string[]>([]);
+
+  // Generate color suggestions from existing labels
+  const colorSuggestions = existingLabels
+    .map(label => label.color)
+    .filter((color, index, arr) => color && arr.indexOf(color) === index) // Remove duplicates
+    .slice(0, 8); // Limit to 8 suggestions
 
   // Load recent colors from localStorage
   useEffect(() => {
@@ -81,13 +93,13 @@ export function ColorPicker({
     setRecentColors(prev => {
       const filtered = prev.filter(c => c !== color);
       const updated = [color, ...filtered].slice(0, maxRecentColors);
-      
+
       try {
         localStorage.setItem(RECENT_COLORS_KEY, JSON.stringify(updated));
       } catch (error) {
         console.warn('Failed to save recent colors:', error);
       }
-      
+
       return updated;
     });
   }, [showRecentColors, maxRecentColors]);
@@ -114,7 +126,7 @@ export function ColorPicker({
   const handleHexInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     setHexInput(input);
-    
+
     if (isValidHex(input)) {
       onChange(input);
     }
@@ -130,6 +142,13 @@ export function ColorPicker({
 
   // Handle recent color selection
   const handleRecentColorSelect = useCallback((color: string) => {
+    onChange(color);
+    saveToRecent(color);
+    setIsOpen(false);
+  }, [onChange, saveToRecent]);
+
+  // Handle suggested color selection
+  const handleSuggestedColorSelect = useCallback((color: string) => {
     onChange(color);
     saveToRecent(color);
     setIsOpen(false);
@@ -181,16 +200,16 @@ export function ColorPicker({
         aria-haspopup="listbox"
       >
         {/* Color Preview */}
-        <div 
+        <div
           className="w-4 h-4 rounded border border-slate-300 dark:border-slate-600"
           style={{ backgroundColor: value || '#ffffff' }}
         />
-        
+
         {/* Color Text */}
         <span className="text-slate-700 dark:text-slate-300">
           {value || placeholder}
         </span>
-        
+
         {/* Dropdown Arrow */}
         <ChevronDown className="h-4 w-4 text-slate-400 ml-auto" />
       </button>
@@ -221,6 +240,31 @@ export function ColorPicker({
                 ))}
               </div>
             </div>
+
+            {/* Color Suggestions */}
+            {showColorSuggestions && colorSuggestions.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Suggested Colors
+                </label>
+                <div className="grid grid-cols-8 gap-1.5">
+                  {colorSuggestions.map((color) => (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => handleSuggestedColorSelect(color)}
+                      className={cn(
+                        'w-8 h-8 rounded border-2 transition-all hover:scale-105',
+                        'border-slate-200 dark:border-slate-600',
+                        value === color && 'border-indigo-500 ring-1 ring-indigo-200 dark:ring-indigo-800'
+                      )}
+                      style={{ backgroundColor: color }}
+                      title={color}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Custom Color Picker */}
             <div>
@@ -263,7 +307,7 @@ export function ColorPicker({
               </label>
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <div 
+                  <div
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded border border-slate-300 dark:border-slate-600"
                     style={{ backgroundColor: hexInput || '#ffffff' }}
                   />

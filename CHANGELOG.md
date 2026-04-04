@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add BASIC_LABEL_COLORS and LIST_COLORS_HEX constants with curated hex palettes
 - Add extensive test coverage for color system (1600+ tests)
 - Install react-color package for advanced color selection functionality
+- Complete list color system with hex support and contrast calculation in KanbanList components
+- Convert SearchAndFilterDropdown from Tailwind classes to inline hex styles
+- Enhance ColorPicker with smart color suggestions based on existing board labels
+- Update TaskModalLabelForm to pass existing labels for color suggestions
+- Fix test mocks and expectations for hex-based color system
 
 ### Fixed
 - Fix timeline date navigation reactivity by replacing getTimelineState with individual Zustand selectors

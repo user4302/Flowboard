@@ -16,6 +16,7 @@ interface TaskModalLabelFormProps {
   onDelete: () => void;
   onBack: () => void;
   onClose: () => void;
+  existingLabels?: Array<{ color: string; text: string }>;
 }
 
 export function TaskModalLabelForm({
@@ -28,7 +29,8 @@ export function TaskModalLabelForm({
   onUpdate,
   onDelete,
   onBack,
-  onClose
+  onClose,
+  existingLabels = []
 }: TaskModalLabelFormProps) {
   return (
     <div className="flex flex-col h-full space-y-4 overflow-hidden">
@@ -65,6 +67,8 @@ export function TaskModalLabelForm({
           placeholder="Select a label color"
           showRecentColors={true}
           maxRecentColors={5}
+          existingLabels={existingLabels}
+          showColorSuggestions={true}
         />
       </div>
 

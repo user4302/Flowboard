@@ -4,6 +4,7 @@ import { KanbanCardsContainer } from './KanbanCardsContainer';
 import { getFilteredCardCount, FilterOptions } from '@/lib/filterUtils';
 import { useUIStore, useBoardStore } from '@/store';
 import { List, User } from '@/lib/types';
+import { getContrastColor } from '@/lib/colorUtils';
 
 // Default filter state to avoid creating new objects
 const DEFAULT_FILTER_STATE = {
@@ -116,8 +117,17 @@ export function KanbanList({
 
   const filteredCardCount = getFilteredCardCount(list.cards, filterOptions, currentBoard?.labels || []);
 
+  // Apply list color if present
+  const listStyle = list.color ? {
+    backgroundColor: list.color,
+    color: getContrastColor(list.color)
+  } : {};
+
   return (
-    <div className={cn("flex w-80 flex-shrink-0 flex-col gap-3 h-full", className)}>
+    <div
+      className={cn("flex w-80 flex-shrink-0 flex-col gap-3 h-full rounded-lg border border-slate-200 dark:border-slate-700", className)}
+      style={listStyle}
+    >
       <KanbanListHeader
         title={list.title}
         cardCount={filteredCardCount}

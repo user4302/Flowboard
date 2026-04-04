@@ -13,6 +13,7 @@ export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClo
     labelColor,
     filteredLabels,
     editingLabel,
+    boardLabels,
     setView,
     setSearchTerm,
     setLabelTitle,
@@ -83,6 +84,7 @@ export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClo
             onDelete={() => editingLabel && handleDeleteLabel(editingLabel.id)}
             onBack={() => setView('list')}
             onClose={onClose}
+            existingLabels={boardLabels}
           />
         )}
       </div>
