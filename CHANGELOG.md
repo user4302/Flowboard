@@ -8,13 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add calendar overflow modal for viewing all tasks when day cells contain more than 3 tasks
-- Implement clickable "+N more" indicator with hover effects in calendar view
-- Create DayTasksModal component with proper label color coding and task click functionality
-- Add modal stacking behavior so closing task modal returns to list modal instead of calendar
-- Enhance day tasks modal with colored indicator bars on left edge of task items
-- Refactor modal styling from inline CSS to Tailwind classes with proper color mapping
-- Add comprehensive RGB color mapping for proper CSS color values in indicator bars
+- Implement comprehensive hex color system to replace Tailwind CSS classes
+- Add hybrid ColorPicker component with basic colors and custom color wheel
+- Create color utility functions for conversion, contrast calculation, and brightness adjustment
+- Implement data migration utilities for backward compatibility with existing Tailwind colors
+- Add BASIC_LABEL_COLORS and LIST_COLORS_HEX constants with curated hex palettes
+- Add extensive test coverage for color system (1600+ tests)
+- Install react-color package for advanced color selection functionality
 
 ### Fixed
 - Fix timeline date navigation reactivity by replacing getTimelineState with individual Zustand selectors
@@ -28,6 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix TaskModal form type test to expect null instead of undefined for priority validation
 - Refactor UIStore tests to use boardId parameter and proper filterState structure
 - Prevent vertical layout shift in calendar view when navigating between months with different name lengths
+- Add calendar overflow modal for viewing all tasks when day cells contain more than 3 tasks
+- Implement clickable "+N more" indicator with hover effects in calendar view
+- Create DayTasksModal component with proper label color coding and task click functionality
+- Add modal stacking behavior so closing task modal returns to list modal instead of calendar
+- Enhance day tasks modal with colored indicator bars on left edge of task items
+- Refactor modal styling from inline CSS to Tailwind classes with proper color mapping
+- Add comprehensive RGB color mapping for proper CSS color values in indicator bars
 - Fix TypeError when clicking label + button by handling undefined label data in import and filtering
 - Add defensive label filtering to prevent toLowerCase() errors on undefined text properties
 - Enhance board import logic to support labels stored as strings (label IDs) in addition to label objects

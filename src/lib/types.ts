@@ -94,7 +94,7 @@ export interface Label {
   id: string;
   /** Display text/title of the label */
   text: string;
-  /** Color value (Tailwind class or hex code) */
+  /** Color value in hex format (e.g., '#ef4444') */
   color: string;
 }
 

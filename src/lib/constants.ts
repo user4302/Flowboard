@@ -12,8 +12,27 @@ import packageJson from '../../package.json';
 export const APP_VERSION = packageJson.version;
 
 /**
- * Available label colors for cards
- * Provides a consistent color palette for card labels
+ * Basic label colors for user selection
+ * Provides a curated palette of commonly used colors
+ * Users can also select custom colors via the color picker
+ */
+export const BASIC_LABEL_COLORS = [
+  '#ef4444', // red-500
+  '#f97316', // orange-500  
+  '#eab308', // yellow-500
+  '#84cc16', // lime-500
+  '#22c55e', // green-500
+  '#06b6d4', // cyan-500
+  '#3b82f6', // blue-500
+  '#8b5cf6', // violet-500
+  '#ec4899', // pink-500
+  '#64748b', // slate-500
+] as const;
+
+/**
+ * @deprecated Use BASIC_LABEL_COLORS instead
+ * Legacy Tailwind CSS color classes for labels
+ * Kept for backward compatibility during migration
  */
 export const LABEL_COLORS = [
   // Greens
@@ -48,6 +67,19 @@ export const LIST_COLORS = [
   'bg-yellow-50',
   'bg-purple-50',
   'bg-pink-50',
+] as const;
+
+/**
+ * List background colors in hex format
+ * Provides subtle background colors for list differentiation
+ */
+export const LIST_COLORS_HEX = [
+  '#f1f5f9', // slate-100
+  '#eff6ff', // blue-50
+  '#f0fdf4', // green-50
+  '#fefce8', // yellow-50
+  '#faf5ff', // purple-50
+  '#fdf2f8', // pink-50
 ] as const;
 
 /**
