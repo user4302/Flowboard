@@ -46,7 +46,8 @@ A modern, feature-rich project management application inspired by Trello, built 
 ### Calendar Enhancements 📅
 - **Overflow Modal**: Click "+N more" to view all tasks when day cells contain more than 3 tasks
 - **Interactive Task List**: Full task modal access from overflow modal with proper navigation flow
-- **Label Color Coding**: Maintains consistent color coding in overflow view
+- **Visual Color Indicators**: Colored bars on left edge of task items for quick label identification
+- **Enhanced Design**: Improved spacing, hover effects, and modern card-based layout
 - **Mobile-Inspired Design**: Modal-based navigation similar to mobile calendar applications
 
 ## Tech Stack / Built With 🛠️
