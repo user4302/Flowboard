@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add label name tooltips on hover for existing colors in ColorPicker
+- Increase custom color button plus symbol size for better visibility
+
+### Changed
+- Rename "Suggested Colors" to "Existing Colors" for clarity
+- Keep ColorPicker dropdown open for continuous color selection
+- Replace small X close button with prominent Close button
+- Remove redundant Apply button (colors apply automatically)
+
 ## [1.7.0] - 2026-04-05
 
 ### Added

@@ -72,6 +72,19 @@ export function ColorPicker({
     .filter((color, index, arr) => color && arr.indexOf(color) === index) // Remove duplicates
     .slice(0, 8); // Limit to 8 suggestions
 
+  /**
+   * Returns a comma-separated list of label names that use the specified color
+   * Used for displaying tooltips on existing color buttons
+   * @param color - The hex color value to look up
+   * @returns Comma-separated label names, or empty string if none found
+   */
+  const getLabelsByColor = useCallback((color: string) => {
+    return existingLabels
+      .filter(label => label.color === color)
+      .map(label => label.text)
+      .join(', ');
+  }, [existingLabels]);
+
   // Load recent colors from localStorage
   useEffect(() => {
     if (showRecentColors) {
@@ -145,14 +158,14 @@ export function ColorPicker({
   const handleRecentColorSelect = useCallback((color: string) => {
     onChange(color);
     saveToRecent(color);
-    setIsOpen(false);
+    // Keep dropdown open for continuous color selection
   }, [onChange, saveToRecent]);
 
   // Handle suggested color selection
   const handleSuggestedColorSelect = useCallback((color: string) => {
     onChange(color);
     saveToRecent(color);
-    setIsOpen(false);
+    // Keep dropdown open for continuous color selection
   }, [onChange, saveToRecent]);
 
   // Calculate dropdown position when opening
@@ -244,23 +257,32 @@ export function ColorPicker({
             {showColorSuggestions && colorSuggestions.length > 0 && (
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Suggested Colors
+                  Existing Colors
                 </label>
                 <div className="grid grid-cols-8 gap-1.5">
-                  {colorSuggestions.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => handleSuggestedColorSelect(color)}
-                      className={cn(
-                        'w-8 h-8 rounded border-2 transition-all hover:scale-105',
-                        'border-slate-200 dark:border-slate-600',
-                        value === color && 'border-indigo-500 ring-1 ring-indigo-200 dark:ring-indigo-800'
-                      )}
-                      style={{ backgroundColor: color }}
-                      title={color}
-                    />
-                  ))}
+                  {colorSuggestions.map((color) => {
+                    const labelNames = getLabelsByColor(color);
+                    return (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => handleSuggestedColorSelect(color)}
+                        className={cn(
+                          'w-8 h-8 rounded border-2 transition-all hover:scale-105 relative group',
+                          'border-slate-200 dark:border-slate-600',
+                          value === color && 'border-indigo-500 ring-1 ring-indigo-200 dark:ring-indigo-800'
+                        )}
+                        style={{ backgroundColor: color }}
+                        title={labelNames || color}
+                      >
+                        {labelNames && (
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                            {labelNames}
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -319,7 +341,7 @@ export function ColorPicker({
                       if (e.key === 'Enter' && isValidHex(hexInput)) {
                         onChange(hexInput);
                         saveToRecent(hexInput);
-                        setIsOpen(false);
+                        // Keep dropdown open for continuous color selection
                       }
                     }}
                     placeholder="#000000"
@@ -332,24 +354,6 @@ export function ColorPicker({
                     )}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isValidHex(hexInput)) {
-                      onChange(hexInput);
-                      saveToRecent(hexInput);
-                      setIsOpen(false);
-                    }
-                  }}
-                  disabled={!isValidHex(hexInput)}
-                  className={cn(
-                    'px-4 py-2 text-sm font-medium rounded-md transition-colors',
-                    'bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
-                    'disabled:opacity-50 disabled:cursor-not-allowed'
-                  )}
-                >
-                  Apply
-                </button>
               </div>
               {!isValidHex(hexInput) && (
                 <p className="mt-1 text-xs text-red-600 dark:text-red-400">
@@ -385,13 +389,18 @@ export function ColorPicker({
           </div>
 
           {/* Close Button */}
-          <div className="flex justify-end p-2 pt-0">
+          <div className="flex justify-end p-3 pt-0">
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              className={cn(
+                'px-3 py-2 text-sm font-medium rounded-md transition-colors',
+                'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800',
+                'dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300 dark:hover:text-slate-100',
+                'border border-slate-200 dark:border-slate-600'
+              )}
             >
-              <X className="h-4 w-4" />
+              Close
             </button>
           </div>
         </div>
