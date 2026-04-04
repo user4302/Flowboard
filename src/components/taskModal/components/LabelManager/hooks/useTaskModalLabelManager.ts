@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useBoardStore } from '@/store';
 import { Label } from '@/lib/types';
-import { LABEL_COLORS } from '@/lib/constants';
+import { BASIC_LABEL_COLORS } from '@/lib/constants';
 import { LabelManagerView } from '../../../types/TaskModal.form.types';
 
 interface UseTaskModalLabelManagerProps {
@@ -27,9 +27,10 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
   const [searchTerm, setSearchTerm] = useState('');
   const [editingLabel, setEditingLabel] = useState<Label | null>(null);
   const [labelTitle, setLabelTitle] = useState('');
-  const [labelColor, setLabelColor] = useState<typeof LABEL_COLORS[number]>(LABEL_COLORS[0]);
+  const [labelColor, setLabelColor] = useState<string>(BASIC_LABEL_COLORS[0]);
 
   const filteredLabels = boardLabels.filter(label =>
+    label && label.text && typeof label.text === 'string' &&
     label.text.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -69,7 +70,7 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
 
   const openCreate = () => {
     setLabelTitle('');
-    setLabelColor(LABEL_COLORS[0]);
+    setLabelColor(BASIC_LABEL_COLORS[0]);
     setView('create');
   };
 

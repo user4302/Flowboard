@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
+import { getContrastColor } from '@/lib/colorUtils';
 import { useBoardHeaderActions } from '../hooks/useBoardHeaderActions';
 import { useClickOutside } from '@/hooks';
 import { Board } from '@/lib/types';
@@ -89,11 +90,11 @@ export function BoardHeaderActionMenu({
             {/* Invite Members - Owner only */}
             {isOwner && (
               <button
+                className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
                 onClick={() => {
                   onInviteModalOpen();
                   setShowActionMenu(false);
                 }}
-                className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
               >
                 <Share2 className="h-4 w-4" />
                 <span>Invite Members</span>
@@ -103,11 +104,11 @@ export function BoardHeaderActionMenu({
             {/* Member Management - Owner only */}
             {isOwner && (
               <button
+                className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
                 onClick={() => {
                   onMemberManagementOpen();
                   setShowActionMenu(false);
                 }}
-                className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-700"
               >
                 <UserPlus className="h-4 w-4" />
                 <span>Member Management</span>

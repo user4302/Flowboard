@@ -108,18 +108,19 @@ export function KanbanListHeader({ title, cardCount, onRename, onDelete, classNa
 
   return (
     <div
-      className={cn("flex items-center justify-between group p-2 -m-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-move", className)}
+      className={cn("flex items-center justify-between group p-2 -m-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-move", className)}
+      style={{ color: 'inherit' }}
       {...dragHandleProps?.attributes}
       {...dragHandleProps?.listeners}
     >
       <div className="flex items-center gap-2">
-        <div className="w-1 h-4 bg-slate-300 dark:bg-slate-600 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-        <h3 className="font-medium text-slate-900 dark:text-slate-100">
+        <div className="w-1 h-4 bg-black/20 dark:bg-white/20 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+        <h3 className="font-medium" style={{ color: 'inherit' }}>
           {title}
         </h3>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm text-slate-500 dark:text-slate-400">
+        <span className="text-sm" style={{ color: 'inherit', opacity: 0.7 }}>
           {cardCount}
         </span>
         <div className="relative" ref={menuRef}>

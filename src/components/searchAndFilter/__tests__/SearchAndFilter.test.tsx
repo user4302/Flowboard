@@ -6,22 +6,34 @@ import { SearchAndFilter } from '../SearchAndFilter'
 
 // Mock dependencies
 jest.mock('@/store', () => ({
-  useUIStore: () => ({
-    searchTerm: 'test search',
-    setSearchTerm: jest.fn(),
-    selectedLabels: ['label1', 'label2'],
-    setSelectedLabels: jest.fn(),
-    selectedMembers: ['member1'],
-    setSelectedMembers: jest.fn(),
-    showOverdue: false,
-    showCompleted: true,
-    setShowCompleted: jest.fn(),
-    priorityThreshold: 'medium',
-    setPriorityThreshold: jest.fn(),
-    dueDateFilter: 'week',
-    setDueDateFilter: jest.fn(),
-    clearFilters: jest.fn(),
-  }),
+  useUIStore: (selector?: any) => {
+    const store = {
+      searchTerm: 'test search',
+      setSearchTerm: jest.fn(),
+      selectedLabels: ['label1', 'label2'],
+      setSelectedLabels: jest.fn(),
+      selectedMembers: ['member1'],
+      setSelectedMembers: jest.fn(),
+      showOverdue: false,
+      showCompleted: true,
+      setShowCompleted: jest.fn(),
+      priorityThreshold: 'medium',
+      setPriorityThreshold: jest.fn(),
+      dueDateFilter: 'week',
+      setDueDateFilter: jest.fn(),
+      clearFilters: jest.fn(),
+    };
+
+    if (typeof selector === 'function') {
+      return selector({
+        filterState: {
+          'board-1': store
+        }
+      });
+    }
+
+    return store;
+  },
   useBoardStore: () => ({
     boards: [
       {
@@ -102,12 +114,12 @@ jest.mock('../components/SearchAndFilterPanel', () => ({
 
     return (
       <div data-testid="filter-panel" ref={ref}>
-        <div data-testid="panel-board">{board?.name}</div>
-        <div data-testid="panel-show-completed">{showCompleted}</div>
-        <div data-testid="panel-priority">{priorityThreshold}</div>
-        <div data-testid="panel-due-date">{dueDateFilter}</div>
-        <div data-testid="panel-labels">{selectedLabels.join(',')}</div>
-        <div data-testid="panel-members">{selectedMembers.join(',')}</div>
+        <div data-testid="panel-board">{board?.name || 'No board'}</div>
+        <div data-testid="panel-show-completed">{typeof showCompleted === 'boolean' ? showCompleted.toString() : ''}</div>
+        <div data-testid="panel-priority">{priorityThreshold || ''}</div>
+        <div data-testid="panel-due-date">{dueDateFilter || ''}</div>
+        <div data-testid="panel-labels">{Array.isArray(selectedLabels) ? selectedLabels.join(',') : ''}</div>
+        <div data-testid="panel-members">{Array.isArray(selectedMembers) ? selectedMembers.join(',') : ''}</div>
       </div>
     )
   }),

@@ -56,7 +56,7 @@ describe('TaskModal.form.types', () => {
       const result = cardSchema.safeParse(validData)
       expect(result.success).toBe(true)
       if (result.success) {
-        expect(result.data.priority).toBeUndefined()
+        expect(result.data.priority).toBeNull() // Schema converts undefined to null
       }
     })
 

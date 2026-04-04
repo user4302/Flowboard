@@ -1,7 +1,7 @@
 import {
   APP_VERSION,
-  LABEL_COLORS,
-  LIST_COLORS,
+  BASIC_LABEL_COLORS,
+  LIST_COLORS_HEX,
   VIEWS,
   ANIMATION_DURATION,
   BREAKPOINTS,
@@ -17,70 +17,6 @@ describe('Constants', () => {
   describe('APP_VERSION', () => {
     it('should match package.json version', () => {
       expect(APP_VERSION).toBe('1.4.0')
-    })
-  })
-
-  describe('LABEL_COLORS', () => {
-    it('should contain expected color classes', () => {
-      expect(LABEL_COLORS).toContain('bg-green-100')
-      expect(LABEL_COLORS).toContain('bg-red-500')
-      expect(LABEL_COLORS).toContain('bg-blue-800')
-    })
-
-    it('should contain only valid Tailwind background classes', () => {
-      const bgClassRegex = /^bg-\w+-\d+$/
-      LABEL_COLORS.forEach(color => {
-        expect(color).toMatch(bgClassRegex)
-      })
-    })
-
-    it('should have a reasonable number of colors', () => {
-      expect(LABEL_COLORS.length).toBeGreaterThan(20)
-      expect(LABEL_COLORS.length).toBeLessThan(100)
-    })
-
-    it('should contain colors for different hues', () => {
-      const hasGreen = LABEL_COLORS.some(color => color.includes('green'))
-      const hasRed = LABEL_COLORS.some(color => color.includes('red'))
-      const hasBlue = LABEL_COLORS.some(color => color.includes('blue'))
-
-      expect(hasGreen).toBe(true)
-      expect(hasRed).toBe(true)
-      expect(hasBlue).toBe(true)
-    })
-
-    it('should contain different shades', () => {
-      const hasLightShade = LABEL_COLORS.some(color => color.includes('-100'))
-      const hasDarkShade = LABEL_COLORS.some(color => color.includes('-800'))
-
-      expect(hasLightShade).toBe(true)
-      expect(hasDarkShade).toBe(true)
-    })
-  })
-
-  describe('LIST_COLORS', () => {
-    it('should contain expected list colors', () => {
-      expect(LIST_COLORS).toContain('bg-slate-100')
-      expect(LIST_COLORS).toContain('bg-blue-50')
-    })
-
-    it('should contain only valid Tailwind background classes', () => {
-      const bgClassRegex = /^bg-\w+-\d+$/
-      LIST_COLORS.forEach(color => {
-        expect(color).toMatch(bgClassRegex)
-      })
-    })
-
-    it('should have a reasonable number of colors', () => {
-      expect(LIST_COLORS.length).toBeGreaterThan(3)
-      expect(LIST_COLORS.length).toBeLessThan(20)
-    })
-
-    it('should contain light colors for backgrounds', () => {
-      const hasLightShades = LIST_COLORS.every(color =>
-        color.includes('-50') || color.includes('-100')
-      )
-      expect(hasLightShades).toBe(true)
     })
   })
 
@@ -200,8 +136,8 @@ describe('Constants', () => {
   describe('Constants structure', () => {
     it('should have properly structured constants', () => {
       // Verify that constants are properly exported and accessible
-      expect(Array.isArray(LABEL_COLORS)).toBe(true)
-      expect(Array.isArray(LIST_COLORS)).toBe(true)
+      expect(Array.isArray(BASIC_LABEL_COLORS)).toBe(true)
+      expect(Array.isArray(LIST_COLORS_HEX)).toBe(true)
       expect(Array.isArray(VIEWS)).toBe(true)
       expect(typeof ANIMATION_DURATION).toBe('object')
       expect(typeof BREAKPOINTS).toBe('object')

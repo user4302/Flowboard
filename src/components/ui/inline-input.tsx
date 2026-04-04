@@ -4,6 +4,7 @@ import { Plus, X, ClipboardPaste } from 'lucide-react';
 import { Button } from './button';
 import { Input } from './input';
 import { cn } from '@/lib/utils';
+import { getContrastColor } from '@/lib/colorUtils';
 import { useClipboardDetection } from '@/hooks/useClipboardDetection';
 
 export interface InlineInputProps {
@@ -188,7 +189,7 @@ export const InlineInput = forwardRef<HTMLButtonElement, InlineInputProps>(
             className={cn(
               iconOnly
                 ? "flex w-8 h-8 items-center justify-center rounded-xl transition-colors border border-slate-200 dark:border-slate-600 text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300"
-                : "flex items-center gap-2 rounded-xl p-2 text-left text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-300",
+                : "flex items-center gap-2 rounded-xl p-2 text-left text-slate-500 transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-300",
               className
             )}
             style={iconOnly ? {} : { width: containerWidth === "auto" ? "auto" : containerWidth }}

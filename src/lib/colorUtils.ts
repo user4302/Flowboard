@@ -1,0 +1,155 @@
+/**
+ * Color Utility Functions
+ * 
+ * Provides utilities for working with hex colors,
+ * calculating contrast, and adjusting color brightness.
+ * 
+ * Used throughout the application for consistent color handling.
+ */
+
+/**
+ * Validates if a string is a valid hex color
+ * @param color - The color string to validate
+ * @returns True if valid hex color, false otherwise
+ */
+export function isValidHex(color: string): boolean {
+  if (!color || typeof color !== 'string') {
+    return false;
+  }
+
+  // Remove # if present
+  const hex = color.startsWith('#') ? color.slice(1) : color;
+
+  // Check if it's 3 or 6 hex characters
+  return /^[0-9A-Fa-f]{3}$/.test(hex) || /^[0-9A-Fa-f]{6}$/.test(hex);
+}
+
+/**
+ * Converts hex color to RGB values
+ * @param hex - The hex color code (e.g., '#ef4444')
+ * @returns Object with r, g, b values (0-255)
+ */
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  if (!isValidHex(hex)) {
+    return null;
+  }
+
+  // Remove # if present
+  const cleanHex = hex.startsWith('#') ? hex.slice(1) : hex;
+
+  // Convert 3-digit hex to 6-digit
+  const fullHex = cleanHex.length === 3
+    ? cleanHex.split('').map(c => c + c).join('')
+    : cleanHex;
+
+  const r = parseInt(fullHex.slice(0, 2), 16);
+  const g = parseInt(fullHex.slice(2, 4), 16);
+  const b = parseInt(fullHex.slice(4, 6), 16);
+
+  return { r, g, b };
+}
+
+/**
+ * Calculates the relative luminance of a color
+ * Used for determining contrast ratios
+ * @param rgb - Object with r, g, b values (0-255)
+ * @returns The relative luminance (0-1)
+ */
+function getLuminance(rgb: { r: number; g: number; b: number }): number {
+  const { r, g, b } = rgb;
+
+  // Normalize to 0-1 range
+  const rNorm = r / 255;
+  const gNorm = g / 255;
+  const bNorm = b / 255;
+
+  // Apply gamma correction
+  const rGamma = rNorm <= 0.03928 ? rNorm / 12.92 : Math.pow((rNorm + 0.055) / 1.055, 2.4);
+  const gGamma = gNorm <= 0.03928 ? gNorm / 12.92 : Math.pow((gNorm + 0.055) / 1.055, 2.4);
+  const bGamma = bNorm <= 0.03928 ? bNorm / 12.92 : Math.pow((bNorm + 0.055) / 1.055, 2.4);
+
+  return 0.2126 * rGamma + 0.7152 * gGamma + 0.0722 * bGamma;
+}
+
+/**
+ * Determines the optimal text color for a given background color
+ * Uses WCAG contrast ratio calculations
+ * @param hexColor - The background hex color
+ * @returns 'white' for dark backgrounds, 'black' for light backgrounds
+ */
+export function getContrastColor(hexColor: string): 'white' | 'black' {
+  const rgb = hexToRgb(hexColor);
+  if (!rgb) {
+    return 'black'; // Fallback
+  }
+
+  const luminance = getLuminance(rgb);
+
+  // Adjusted threshold: if luminance > 0.35, use black text
+  // This provides better contrast for medium-light colors
+  return luminance > 0.35 ? 'black' : 'white';
+}
+
+/**
+ * Adjusts the brightness of a hex color
+ * @param hexColor - The original hex color
+ * @param percent - Percentage to adjust (-100 to 100, positive = lighter, negative = darker)
+ * @returns The adjusted hex color
+ */
+export function adjustBrightness(hexColor: string, percent: number): string {
+  const rgb = hexToRgb(hexColor);
+  if (!rgb) {
+    return hexColor; // Return original if invalid
+  }
+
+  const { r, g, b } = rgb;
+
+  // Calculate adjustment factor
+  const factor = percent / 100;
+
+  // Adjust each channel
+  let newR: number;
+  let newG: number;
+  let newB: number;
+
+  if (factor > 0) {
+    // Lighten: move towards white
+    newR = Math.round(r + (255 - r) * factor);
+    newG = Math.round(g + (255 - g) * factor);
+    newB = Math.round(b + (255 - b) * factor);
+  } else {
+    // Darken: move towards black
+    newR = Math.round(r * (1 + factor)); // factor is negative
+    newG = Math.round(g * (1 + factor));
+    newB = Math.round(b * (1 + factor));
+  }
+
+  // Clamp values to 0-255 range
+  newR = Math.max(0, Math.min(255, newR));
+  newG = Math.max(0, Math.min(255, newG));
+  newB = Math.max(0, Math.min(255, newB));
+
+  // Convert back to hex
+  const toHex = (n: number) => n.toString(16).padStart(2, '0');
+  return `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
+}
+
+/**
+ * Gets a lighter version of a color (useful for hover states)
+ * @param hexColor - The original hex color
+ * @param percent - How much lighter (0-100, default 20)
+ * @returns The lighter hex color
+ */
+export function lighten(hexColor: string, percent: number = 20): string {
+  return adjustBrightness(hexColor, percent);
+}
+
+/**
+ * Gets a darker version of a color (useful for active states)
+ * @param hexColor - The original hex color
+ * @param percent - How much darker (0-100, default 20)
+ * @returns The darker hex color
+ */
+export function darken(hexColor: string, percent: number = 20): string {
+  return adjustBrightness(hexColor, -percent);
+}

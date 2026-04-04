@@ -5,6 +5,9 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMont
 import { useBoardStore, useUIStore } from '@/store';
 import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
+import { getContrastColor, lighten } from '@/lib/colorUtils';
+import { MonthYearDisplay } from '@/components/ui/MonthYearDisplay';
+import { DayTasksModal } from './DayTasksModal';
 
 // Default filter state to avoid creating new objects
 const DEFAULT_FILTER_STATE = {
@@ -52,6 +55,17 @@ export function CalendarView({ boardId }: CalendarViewProps) {
 
   // Local state for current month navigation
   const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // State for day tasks modal
+  const [modalState, setModalState] = useState<{
+    open: boolean;
+    selectedDate: Date | null;
+    selectedTasks: any[];
+  }>({
+    open: false,
+    selectedDate: null,
+    selectedTasks: []
+  });
 
   /**
    * Generate calendar days for the current month
@@ -129,6 +143,30 @@ export function CalendarView({ boardId }: CalendarViewProps) {
     openCardModal(cardId);
   };
 
+  /**
+   * Handle opening the day tasks modal
+   * @param day - The selected day
+   * @param tasks - Tasks for that day
+   */
+  const handleOpenDayModal = (day: Date, tasks: any[]) => {
+    setModalState({
+      open: true,
+      selectedDate: day,
+      selectedTasks: tasks
+    });
+  };
+
+  /**
+   * Handle closing the day tasks modal
+   */
+  const handleCloseDayModal = () => {
+    setModalState({
+      open: false,
+      selectedDate: null,
+      selectedTasks: []
+    });
+  };
+
   // Week day headers for calendar grid
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -136,7 +174,8 @@ export function CalendarView({ boardId }: CalendarViewProps) {
     <div className="flex h-full flex-col">
       {/* Calendar header with navigation controls */}
       <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
-        <div className="flex items-center gap-4">
+        {/* Fixed-width container prevents layout shift when month names have different lengths */}
+        <div className="flex items-center justify-between w-96">
           {/* Previous month button */}
           <button
             onClick={() => navigateMonth('prev')}
@@ -144,10 +183,8 @@ export function CalendarView({ boardId }: CalendarViewProps) {
           >
             ←
           </button>
-          {/* Current month display */}
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            {format(currentMonth, 'MMMM yyyy')}
-          </h2>
+          {/* Current month display with stable height */}
+          <MonthYearDisplay currentDate={currentMonth} />
           {/* Next month button */}
           <button
             onClick={() => navigateMonth('next')}
@@ -214,7 +251,10 @@ export function CalendarView({ boardId }: CalendarViewProps) {
                         className={cn(
                           'truncate rounded px-1 py-0.5 text-xs cursor-pointer transition-colors',
                           (card.labelIds?.length ?? 0) > 0 && board.labels.find(l => l.id === card.labelIds![0])
-                            ? board.labels.find(l => l.id === card.labelIds![0])!.color.replace('-500', '-100') + ' text-' + board.labels.find(l => l.id === card.labelIds![0])!.color.replace('bg-', '').replace('-500', '-700')
+                            ? {
+                              backgroundColor: lighten(board.labels.find(l => l.id === card.labelIds![0])!.color, 40),
+                              color: getContrastColor(board.labels.find(l => l.id === card.labelIds![0])!.color)
+                            }
                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                         )}
                         title={card.title}
@@ -223,9 +263,12 @@ export function CalendarView({ boardId }: CalendarViewProps) {
                       </div>
                     ))}
 
-                    {/* Show count for additional cards */}
+                    {/* Show count for additional cards - now clickable */}
                     {dayCards.length > 3 && (
-                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                      <div
+                        onClick={() => handleOpenDayModal(day, dayCards)}
+                        className="text-xs text-slate-500 dark:text-slate-400 cursor-pointer hover:text-slate-700 dark:hover:text-slate-300 underline"
+                      >
                         +{dayCards.length - 3} more
                       </div>
                     )}
@@ -251,6 +294,16 @@ export function CalendarView({ boardId }: CalendarViewProps) {
           </div>
         </div>
       </div>
+
+      {/* Day Tasks Modal */}
+      <DayTasksModal
+        open={modalState.open}
+        onClose={handleCloseDayModal}
+        date={modalState.selectedDate || new Date()}
+        tasks={modalState.selectedTasks}
+        onCardClick={handleCardClick}
+        labels={board?.labels}
+      />
     </div>
   );
 }

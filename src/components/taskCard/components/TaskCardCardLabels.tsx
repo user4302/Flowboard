@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Label } from '@/lib/types';
+import { getContrastColor } from '@/lib/colorUtils';
 import { CardLabelsProps } from '../types';
 
 export function TaskCardCardLabels({ labelIds, labels, onLabelClick }: CardLabelsProps) {
@@ -14,7 +15,11 @@ export function TaskCardCardLabels({ labelIds, labels, onLabelClick }: CardLabel
         return (
           <div
             key={label.id}
-            className={cn('h-1.5 w-10 rounded-full', label.color)}
+            className="h-1.5 w-10 rounded-full"
+            style={{
+              backgroundColor: label.color,
+              color: getContrastColor(label.color)
+            }}
             title={label.text}
             onClick={() => onLabelClick?.(labelId)}
           />

@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useTaskModalLabelManager } from '../useTaskModalLabelManager';
 import { Label } from '@/lib/types';
-import { LABEL_COLORS } from '@/lib/constants';
+import { BASIC_LABEL_COLORS } from '@/lib/constants';
 import type { LabelManagerView } from '../../../../types/TaskModal.form.types';
 
 // Mock the board store
@@ -13,7 +13,7 @@ const mockUseBoardStore = require('@/store').useBoardStore;
 
 // Mock constants
 jest.mock('@/lib/constants', () => ({
-  LABEL_COLORS: ['bg-green-100', 'bg-yellow-100', 'bg-red-100']
+  BASIC_LABEL_COLORS: ['#ef4444', '#f97316', '#eab308']
 }));
 
 describe('useTaskModalLabelManager', () => {
@@ -25,9 +25,9 @@ describe('useTaskModalLabelManager', () => {
     id: mockBoardId,
     name: 'Test Board',
     labels: [
-      { id: 'label-1', text: 'Label 1', color: 'bg-green-100' },
-      { id: 'label-2', text: 'Label 2', color: 'bg-yellow-100' },
-      { id: 'label-3', text: 'Label 3', color: 'bg-red-100' }
+      { id: 'label-1', text: 'Label 1', color: '#ef4444' },
+      { id: 'label-2', text: 'Label 2', color: '#f97316' },
+      { id: 'label-3', text: 'Label 3', color: '#eab308' }
     ]
   };
 
@@ -62,7 +62,7 @@ describe('useTaskModalLabelManager', () => {
     expect(result.current.searchTerm).toBe('');
     expect(result.current.editingLabel).toBeNull();
     expect(result.current.labelTitle).toBe('');
-    expect(result.current.labelColor).toBe('bg-green-100');
+    expect(result.current.labelColor).toBe('#ef4444');
     expect(result.current.boardLabels).toEqual(mockBoard.labels);
     expect(result.current.filteredLabels).toEqual(mockBoard.labels);
   });
@@ -366,7 +366,7 @@ describe('useTaskModalLabelManager', () => {
     // Set some initial state to verify it gets reset
     act(() => {
       result.current.setLabelTitle('Existing Title');
-      result.current.setLabelColor('bg-red-100');
+      result.current.setLabelColor('#eab308');
       result.current.setView('edit');
     });
 
@@ -375,7 +375,7 @@ describe('useTaskModalLabelManager', () => {
     });
 
     expect(result.current.labelTitle).toBe('');
-    expect(result.current.labelColor).toBe('bg-green-100'); // First color in LABEL_COLORS
+    expect(result.current.labelColor).toBe('#ef4444'); // First color in LABEL_COLORS
     expect(result.current.view).toBe('create');
   });
 
@@ -715,7 +715,7 @@ describe('useTaskModalLabelManager', () => {
     expect(result.current.filteredLabels).toHaveLength(0);
   });
 
-  it('should test all LABEL_COLORS are accessible', () => {
+  it('should test all BASIC_LABEL_COLORS are accessible', () => {
     const { result } = renderHook(() =>
       useTaskModalLabelManager({
         boardId: mockBoardId,
@@ -725,7 +725,7 @@ describe('useTaskModalLabelManager', () => {
     );
 
     // Test setting different colors
-    const colors: typeof LABEL_COLORS[number][] = ['bg-green-100', 'bg-yellow-100', 'bg-red-100'];
+    const colors: string[] = ['#ef4444', '#f97316', '#eab308'];
 
     colors.forEach(color => {
       act(() => {

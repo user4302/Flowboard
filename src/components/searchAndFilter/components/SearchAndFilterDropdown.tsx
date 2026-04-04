@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { SearchAndFilterPortal } from './SearchAndFilterPortal';
 import { useSearchAndFilterDropdownPosition } from '../hooks/useSearchAndFilterDropdownPosition';
 import { DROPDOWN_MIN_WIDTH, DROPDOWN_Z_INDEX } from '../constants';
+import { getContrastColor } from '@/lib/colorUtils';
 
 interface SearchAndFilterDropdownProps {
   label: string;
@@ -43,7 +44,13 @@ export function SearchAndFilterDropdown({
   const renderSelectedItem = (item: { id: string; text?: string; color?: string; name?: string }) => {
     if (itemType === 'label') {
       return (
-        <div className={cn("h-3 w-3 rounded-full shrink-0 ring-2 ring-slate-900 group-hover:ring-slate-700 transition-all", item.color)} />
+        <div
+          className="h-3 w-3 rounded-full shrink-0 ring-2 ring-slate-900 group-hover:ring-slate-700 transition-all"
+          style={{
+            backgroundColor: item.color || '#64748b',
+            color: getContrastColor(item.color || '#64748b')
+          }}
+        />
       );
     } else {
       return (

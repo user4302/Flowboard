@@ -3,7 +3,7 @@
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-1.5.0-green.svg)
+![Version](https://img.shields.io/badge/version-1.7.0-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
 
@@ -42,6 +42,13 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **List Reordering**: Drag list headers to reorder columns with persistent positioning
 - **Enhanced Drag Handles**: Visual feedback and improved drag-and-drop performance
 - **Optimistic Updates**: Immediate UI feedback during drag operations
+
+### Calendar Enhancements 📅
+- **Overflow Modal**: Click "+N more" to view all tasks when day cells contain more than 3 tasks
+- **Interactive Task List**: Full task modal access from overflow modal with proper navigation flow
+- **Visual Color Indicators**: Colored bars on left edge of task items for quick label identification
+- **Enhanced Design**: Improved spacing, hover effects, and modern card-based layout
+- **Mobile-Inspired Design**: Modal-based navigation similar to mobile calendar applications
 
 ## Tech Stack / Built With 🛠️
 

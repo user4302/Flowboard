@@ -4,8 +4,10 @@ import { useTaskModalLabelManager } from './hooks/useTaskModalLabelManager';
 import { TaskModalLabelList } from './TaskModalLabelList';
 import { TaskModalLabelForm } from './TaskModalLabelForm';
 import { LabelManagerProps } from '../../types/TaskModal.form.types';
+import { useRef } from 'react';
 
 export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClose }: LabelManagerProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
   const {
     view,
     searchTerm,
@@ -13,6 +15,7 @@ export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClo
     labelColor,
     filteredLabels,
     editingLabel,
+    boardLabels,
     setView,
     setSearchTerm,
     setLabelTitle,
@@ -27,6 +30,7 @@ export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClo
 
   return (
     <div
+      ref={modalRef}
       className="w-80 max-h-[480px] flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-xl dark:border-slate-700 dark:bg-slate-900 overflow-hidden"
       onClick={(e) => {
         e.stopPropagation();
@@ -83,6 +87,8 @@ export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClo
             onDelete={() => editingLabel && handleDeleteLabel(editingLabel.id)}
             onBack={() => setView('list')}
             onClose={onClose}
+            existingLabels={boardLabels}
+            modalRef={modalRef}
           />
         )}
       </div>

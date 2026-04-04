@@ -7,6 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2026-04-05
+
+### Added
+- Implement comprehensive hex color system to replace Tailwind CSS classes
+- Add hybrid ColorPicker component with basic colors and custom color wheel
+- Create color utility functions for conversion, contrast calculation, and brightness adjustment
+- Implement data migration utilities for backward compatibility with existing Tailwind colors
+- Add BASIC_LABEL_COLORS and LIST_COLORS_HEX constants with curated hex palettes
+- Add extensive test coverage for color system (1600+ tests)
+- Install react-color package for advanced color selection functionality
+- Complete list color system with hex support and contrast calculation in KanbanList components
+- Convert SearchAndFilterDropdown from Tailwind classes to inline hex styles
+- Enhance ColorPicker with smart color suggestions based on existing board labels
+- Move Basic Colors from dropdown to main label form for improved UX
+- Add custom color button (+) in Basic Colors grid for quick access to advanced options
+- Implement portal-based ColorPicker dropdown to fix z-index and positioning issues
+- Create ColorPickerPortal component to handle click-outside event conflicts
+- Add parentRef positioning system to align dropdown with modal boundaries
+- Update TaskModalLabelForm to pass existing labels for color suggestions
+- Fix test mocks and expectations for hex-based color system
+- Update all label display components to use hex colors with automatic contrast
+- Replace Tailwind color classes with inline styles using getContrastColor utility
+- Fix Calendar View complex color logic to use hex-based lighten function
+- Update label management hooks to use BASIC_LABEL_COLORS with hex support
+- Add proper color utility imports for contrast calculation across components
+- Ensure consistent text readability with automatic black/white contrast
+- Add keyboard navigation support to ColorPicker with Enter key functionality
+- Add test:failing npm script for re-running only failed tests
+
+### Refactored
+- Remove legacy Tailwind color conversion utilities and deprecated constants
+- Delete tailwindToHex function and TAILWIND_TO_HEX_MAP from colorUtils.ts
+- Remove entire migrationUtils.ts file and related test infrastructure
+- Update TimelineTooltip to use direct hex colors without conversion layer
+- Simplify BoardHeaderImportExport to work with hex-only color system
+- Clean up test files to reflect new hex-based architecture
+- Remove disabled test files and unused legacy code references
+- Optimize TimelineTooltip performance by replacing inline styles with Tailwind classes
+
+### Fixed
+- Fix timeline date navigation reactivity by replacing getTimelineState with individual Zustand selectors
+- Prevent infinite loop and "Maximum update depth exceeded" errors in TimelineView component
+- Add stable fallback constants to prevent unnecessary re-renders in timeline components
+- Update TimelineView tests to support new selector pattern and comprehensive date navigation testing
+- Prevent label duplication when importing exported boards by excluding labels property from card exports
+- Fix failing unit tests across multiple components by updating test mocks and expectations
+- Update SearchAndFilter tests to handle board-scoped UI store selectors correctly
+- Add missing scroll position functions to KanbanView test mocks
+- Fix TaskModal form type test to expect null instead of undefined for priority validation
+- Refactor UIStore tests to use boardId parameter and proper filterState structure
+- Prevent vertical layout shift in calendar view when navigating between months with different name lengths
+- Add calendar overflow modal for viewing all tasks when day cells contain more than 3 tasks
+- Implement clickable "+N more" indicator with hover effects in calendar view
+- Create DayTasksModal component with proper label color coding and task click functionality
+- Add modal stacking behavior so closing task modal returns to list modal instead of calendar
+- Enhance day tasks modal with colored indicator bars on left edge of task items
+- Remove unwanted border from kanban lists by eliminating border classes from KanbanList container
+- Refactor modal styling from inline CSS to Tailwind classes with proper color mapping
+- Add comprehensive RGB color mapping for proper CSS color values in indicator bars
+- Fix flaky ColorPicker test by adding proper async handling and focus management
+- Adjust contrast color threshold from 0.5 to 0.35 for better text readability on medium-light colors
+- Improve ColorPicker accessibility with proper tabIndex attributes and focus management
+- Fix TypeError when clicking label + button by handling undefined label data in import and filtering
+- Add defensive label filtering to prevent toLowerCase() errors on undefined text properties
+- Enhance board import logic to support labels stored as strings (label IDs) in addition to label objects
+
 ## [1.6.0] - 2026-03-27
 
 ### Added

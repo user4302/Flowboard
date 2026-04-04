@@ -3,6 +3,7 @@
 import { fromUTCString } from '@/lib/dateUtils';
 import { useBoardStore } from '@/store';
 import { Board, List, Card, Label } from '@/lib/types';
+import { isValidHex } from '@/lib/colorUtils';
 
 interface ImportedLabel {
   id: string;
@@ -42,27 +43,42 @@ interface ImportedBoardData {
  * 
  * Creates a downloadable JSON file containing:
  * - Name and export timestamp
+ * - Board-level labels array
  * - All lists with their cards
- * - Complete card data including labels, members, dates, etc.
+ * - Complete card data including labelIds, members, dates, etc.
+ * - Note: Cards include labelIds but exclude labels property to prevent import duplication
  * 
- * @param data - The data object to export
+ * @param data - The board data object to export
  */
-export const exportData = (data: Board) => {
+export const exportData = (data: { board: Board }) => {
   // Structure the data for export
   const exportData = {
-    name: data.name,
+    name: data.board.name,
     exportDate: new Date().toISOString(),
-    labels: data.labels,
-    lists: data.lists.map((list: List) => ({
+    labels: data.board.labels,
+    lists: data.board.lists.map((list: List) => ({
       title: list.title,
       cards: list.cards.map((card: Card) => ({
-        ...card // Spread entire card object to include all fields like completed, etc.
+        id: card.id,
+        title: card.title,
+        description: card.description,
+        labelIds: card.labelIds,
+        members: card.members,
+        checklists: card.checklists,
+        startDate: card.startDate,
+        dueDate: card.dueDate,
+        completed: card.completed,
+        position: card.position,
+        listId: card.listId,
+        priority: card.priority,
+        createdAt: card.createdAt,
+        updatedAt: card.updatedAt
       }))
     }))
   };
 
   // Generate filename with name and current date
-  const filename = `${data.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+  const filename = `${data.board.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
 
   // Create and trigger download
   const dataStr = JSON.stringify(exportData, null, 2);
@@ -110,13 +126,24 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
         // Recreate labels at board level if they exist
         if (boardData.labels) {
           boardData.labels.forEach((labelData: ImportedLabel) => {
-            const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
+            // Validate and normalize label color
+            const validatedLabel = {
+              id: labelData.id,
+              text: labelData.text,
+              color: isValidHex(labelData.color) ? labelData.color : '#64748b' // fallback to slate-500
+            };
+
+            const existing = newBoard.labels.find(l =>
+              l.text === validatedLabel.text &&
+              l.color === validatedLabel.color
+            );
+
             if (existing) {
               labelMap.set(labelData.id, existing.id);
             } else {
               const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
-                text: labelData.text,
-                color: labelData.color
+                text: validatedLabel.text,
+                color: validatedLabel.color
               });
               labelMap.set(labelData.id, newLabel.id);
             }
@@ -179,16 +206,26 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
               });
 
               // Add by text/color logic for old format
-              importedLabels.forEach((labelData: ImportedLabel) => {
-                const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
-                if (existing) {
-                  useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, existing.id);
-                } else {
-                  const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
-                    text: labelData.text,
-                    color: labelData.color
-                  });
-                  useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, newLabel.id);
+              importedLabels.forEach((labelData: any) => {
+                // Handle case where labels is an array of strings (label IDs)
+                if (typeof labelData === 'string') {
+                  const newId = labelMap.get(labelData);
+                  if (newId) {
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, newId);
+                  }
+                }
+                // Handle case where labels is an array of label objects
+                else if (labelData && typeof labelData === 'object' && labelData.text && labelData.color) {
+                  const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
+                  if (existing) {
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, existing.id);
+                  } else {
+                    const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
+                      text: labelData.text,
+                      color: labelData.color
+                    });
+                    useBoardStore.getState().addLabelToCard(newBoard.id, card!.id, newLabel.id);
+                  }
                 }
               });
 

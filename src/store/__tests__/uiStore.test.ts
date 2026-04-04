@@ -65,13 +65,7 @@ describe('uiStore', () => {
       currentView: 'kanban',
       sidebarOpen: true,
       theme: 'light',
-      searchTerm: '',
-      selectedLabels: [],
-      selectedMembers: [],
-      showOverdue: false,
-      showCompleted: 'all',
-      priorityThreshold: null,
-      dueDateFilter: 'all',
+      filterState: {},
       cardModalOpen: false,
       selectedCardId: null,
       cardJSONData: null,
@@ -79,6 +73,7 @@ describe('uiStore', () => {
       isJSONImportMode: false,
       timelineState: {},
       columnOrder: {},
+      scrollPosition: {},
     })
   })
 
@@ -89,13 +84,7 @@ describe('uiStore', () => {
       expect(state.currentView).toBe('kanban')
       expect(state.sidebarOpen).toBe(true)
       expect(state.theme).toBe('light')
-      expect(state.searchTerm).toBe('')
-      expect(state.selectedLabels).toEqual([])
-      expect(state.selectedMembers).toEqual([])
-      expect(state.showOverdue).toBe(false)
-      expect(state.showCompleted).toBe('all')
-      expect(state.priorityThreshold).toBe(null)
-      expect(state.dueDateFilter).toBe('all')
+      expect(state.filterState).toEqual({})
       expect(state.cardModalOpen).toBe(false)
       expect(state.selectedCardId).toBe(null)
       expect(state.cardJSONData).toBe(null)
@@ -103,6 +92,7 @@ describe('uiStore', () => {
       expect(state.isJSONImportMode).toBe(false)
       expect(state.timelineState).toEqual({})
       expect(state.columnOrder).toEqual({})
+      expect(state.scrollPosition).toEqual({})
     })
   })
 
@@ -230,68 +220,76 @@ describe('uiStore', () => {
 
   describe('filter actions', () => {
     it('should set search term', () => {
-      useUIStore.getState().setSearchTerm('test query')
+      const boardId = 'test-board'
+      useUIStore.getState().setSearchTerm(boardId, 'test query')
 
-      expect(useUIStore.getState().searchTerm).toBe('test query')
+      expect(useUIStore.getState().filterState[boardId].searchTerm).toBe('test query')
     })
 
     it('should set selected labels', () => {
+      const boardId = 'test-board'
       const labels = ['label1', 'label2']
 
-      useUIStore.getState().setSelectedLabels(labels)
+      useUIStore.getState().setSelectedLabels(boardId, labels)
 
-      expect(useUIStore.getState().selectedLabels).toEqual(labels)
+      expect(useUIStore.getState().filterState[boardId].selectedLabels).toEqual(labels)
     })
 
     it('should set selected members', () => {
+      const boardId = 'test-board'
       const members = ['user1', 'user2']
 
-      useUIStore.getState().setSelectedMembers(members)
+      useUIStore.getState().setSelectedMembers(boardId, members)
 
-      expect(useUIStore.getState().selectedMembers).toEqual(members)
+      expect(useUIStore.getState().filterState[boardId].selectedMembers).toEqual(members)
     })
 
     it('should set show overdue', () => {
-      useUIStore.getState().setShowOverdue(true)
+      const boardId = 'test-board'
+      useUIStore.getState().setShowOverdue(boardId, true)
 
-      expect(useUIStore.getState().showOverdue).toBe(true)
+      expect(useUIStore.getState().filterState[boardId].showOverdue).toBe(true)
     })
 
     it('should set show completed', () => {
-      useUIStore.getState().setShowCompleted('completed')
+      const boardId = 'test-board'
+      useUIStore.getState().setShowCompleted(boardId, 'completed')
 
-      expect(useUIStore.getState().showCompleted).toBe('completed')
+      expect(useUIStore.getState().filterState[boardId].showCompleted).toBe('completed')
     })
 
     it('should set priority threshold', () => {
-      useUIStore.getState().setPriorityThreshold(5)
+      const boardId = 'test-board'
+      useUIStore.getState().setPriorityThreshold(boardId, 5)
 
-      expect(useUIStore.getState().priorityThreshold).toBe(5)
+      expect(useUIStore.getState().filterState[boardId].priorityThreshold).toBe(5)
     })
 
     it('should set due date filter', () => {
-      useUIStore.getState().setDueDateFilter('week')
+      const boardId = 'test-board'
+      useUIStore.getState().setDueDateFilter(boardId, 'week')
 
-      expect(useUIStore.getState().dueDateFilter).toBe('week')
+      expect(useUIStore.getState().filterState[boardId].dueDateFilter).toBe('week')
     })
 
     it('should clear all filters', () => {
+      const boardId = 'test-board'
       // Set some filters
-      useUIStore.getState().setSearchTerm('test')
-      useUIStore.getState().setSelectedLabels(['label1'])
-      useUIStore.getState().setSelectedMembers(['user1'])
-      useUIStore.getState().setShowOverdue(true)
-      useUIStore.getState().setShowCompleted('completed')
+      useUIStore.getState().setSearchTerm(boardId, 'test')
+      useUIStore.getState().setSelectedLabels(boardId, ['label1'])
+      useUIStore.getState().setSelectedMembers(boardId, ['user1'])
+      useUIStore.getState().setShowOverdue(boardId, true)
+      useUIStore.getState().setShowCompleted(boardId, 'completed')
 
       // Clear filters
-      useUIStore.getState().clearFilters()
+      useUIStore.getState().clearFilters(boardId)
 
       const state = useUIStore.getState()
-      expect(state.searchTerm).toBe('')
-      expect(state.selectedLabels).toEqual([])
-      expect(state.selectedMembers).toEqual([])
-      expect(state.showOverdue).toBe(false)
-      expect(state.showCompleted).toBe('all')
+      expect(state.filterState[boardId].searchTerm).toBe('')
+      expect(state.filterState[boardId].selectedLabels).toEqual([])
+      expect(state.filterState[boardId].selectedMembers).toEqual([])
+      expect(state.filterState[boardId].showOverdue).toBe(false)
+      expect(state.filterState[boardId].showCompleted).toBe('all')
       // Note: priorityThreshold and dueDateFilter are not cleared
     })
   })
@@ -419,14 +417,14 @@ describe('uiStore', () => {
       // Change some state
       useUIStore.getState().setCurrentView('timeline')
       useUIStore.getState().setTheme('dark')
-      useUIStore.getState().setSearchTerm('test')
+      useUIStore.getState().setSearchTerm('test-board', 'test')
 
       // Note: Zustand persist is asynchronous, so we need to wait
       // For this test, we'll just verify the state changes were made
       const state = useUIStore.getState()
       expect(state.currentView).toBe('timeline')
       expect(state.theme).toBe('dark')
-      expect(state.searchTerm).toBe('test')
+      expect(state.filterState['test-board'].searchTerm).toBe('test')
     })
   })
 
@@ -449,10 +447,10 @@ describe('uiStore', () => {
     it('should handle null/undefined filter values', () => {
       const state = useUIStore.getState()
 
-      expect(() => state.setSearchTerm('')).not.toThrow()
-      expect(() => state.setSelectedLabels([])).not.toThrow()
-      expect(() => state.setSelectedMembers([])).not.toThrow()
-      expect(() => state.setPriorityThreshold(null)).not.toThrow()
+      expect(() => state.setSearchTerm('test-board', '')).not.toThrow()
+      expect(() => state.setSelectedLabels('test-board', [])).not.toThrow()
+      expect(() => state.setSelectedMembers('test-board', [])).not.toThrow()
+      expect(() => state.setPriorityThreshold('test-board', null)).not.toThrow()
     })
   })
 })

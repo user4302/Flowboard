@@ -6,6 +6,7 @@ import { useBoardStore, useUIStore } from '@/store';
 import { formatDate, getChecklistProgress, formatRelativeTime } from '@/lib/utils';
 import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
+import { getContrastColor } from '@/lib/colorUtils';
 
 import { Card } from '@/lib/types';
 
@@ -297,10 +298,11 @@ export function TableView({ boardId }: TableViewProps) {
                         return (
                           <span
                             key={label.id}
-                            className={cn(
-                              'inline-flex items-center rounded-full px-2 py-1 text-xs font-medium text-white',
-                              label.color
-                            )}
+                            className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium"
+                            style={{
+                              backgroundColor: label.color,
+                              color: getContrastColor(label.color)
+                            }}
                           >
                             {label.text}
                           </span>
