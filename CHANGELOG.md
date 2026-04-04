@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add missing scroll position functions to KanbanView test mocks
 - Fix TaskModal form type test to expect null instead of undefined for priority validation
 - Refactor UIStore tests to use boardId parameter and proper filterState structure
+- Prevent vertical layout shift in calendar view when navigating between months with different name lengths
 - Fix TypeError when clicking label + button by handling undefined label data in import and filtering
 - Add defensive label filtering to prevent toLowerCase() errors on undefined text properties
 - Enhance board import logic to support labels stored as strings (label IDs) in addition to label objects

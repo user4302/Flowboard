@@ -1,5 +1,6 @@
 import { format, addDays, addWeeks, addMonths, addYears } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { MonthYearDisplay } from '@/components/ui/MonthYearDisplay';
 
 /**
  * Timeline zoom level type
@@ -77,12 +78,10 @@ export function TimelineHeader({
 
         {/* Current date display with today button */}
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-            {currentDate && !isNaN(currentDate.getTime())
-              ? format(currentDate, zoomLevel === 'year' ? 'yyyy' : 'MMMM yyyy')
-              : 'Invalid Date'
-            }
-          </h2>
+          <MonthYearDisplay
+            currentDate={currentDate}
+            formatString={zoomLevel === 'year' ? 'yyyy' : 'MMMM yyyy'}
+          />
           <button
             onClick={() => onDateChange(new Date())}
             className="rounded-lg px-3 py-1 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"

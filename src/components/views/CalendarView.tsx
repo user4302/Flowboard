@@ -5,6 +5,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMont
 import { useBoardStore, useUIStore } from '@/store';
 import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
+import { MonthYearDisplay } from '@/components/ui/MonthYearDisplay';
 
 // Default filter state to avoid creating new objects
 const DEFAULT_FILTER_STATE = {
@@ -136,7 +137,8 @@ export function CalendarView({ boardId }: CalendarViewProps) {
     <div className="flex h-full flex-col">
       {/* Calendar header with navigation controls */}
       <div className="flex items-center justify-between border-b border-slate-200 p-4 dark:border-slate-700">
-        <div className="flex items-center gap-4">
+        {/* Fixed-width container prevents layout shift when month names have different lengths */}
+        <div className="flex items-center justify-between w-96">
           {/* Previous month button */}
           <button
             onClick={() => navigateMonth('prev')}
@@ -144,10 +146,8 @@ export function CalendarView({ boardId }: CalendarViewProps) {
           >
             ←
           </button>
-          {/* Current month display */}
-          <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            {format(currentMonth, 'MMMM yyyy')}
-          </h2>
+          {/* Current month display with stable height */}
+          <MonthYearDisplay currentDate={currentMonth} />
           {/* Next month button */}
           <button
             onClick={() => navigateMonth('next')}
