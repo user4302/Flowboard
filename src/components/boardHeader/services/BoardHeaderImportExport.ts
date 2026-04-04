@@ -3,6 +3,8 @@
 import { fromUTCString } from '@/lib/dateUtils';
 import { useBoardStore } from '@/store';
 import { Board, List, Card, Label } from '@/lib/types';
+import { migrateBoardColors, validateLabelColor, validateListColor } from '@/lib/migrationUtils';
+import { isValidHex } from '@/lib/colorUtils';
 
 interface ImportedLabel {
   id: string;
@@ -50,12 +52,15 @@ interface ImportedBoardData {
  * @param data - The board data object to export
  */
 export const exportData = (data: Board) => {
+  // Ensure all colors are in hex format before export
+  const migratedBoard = migrateBoardColors(data);
+
   // Structure the data for export
   const exportData = {
-    name: data.name,
+    name: migratedBoard.board.name,
     exportDate: new Date().toISOString(),
-    labels: data.labels,
-    lists: data.lists.map((list: List) => ({
+    labels: migratedBoard.board.labels,
+    lists: migratedBoard.board.lists.map((list: List) => ({
       title: list.title,
       cards: list.cards.map((card: Card) => ({
         id: card.id,
@@ -125,13 +130,24 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
         // Recreate labels at board level if they exist
         if (boardData.labels) {
           boardData.labels.forEach((labelData: ImportedLabel) => {
-            const existing = newBoard.labels.find(l => l.text === labelData.text && l.color === labelData.color);
+            // Validate and normalize label color
+            const validatedLabel = validateLabelColor({
+              id: labelData.id,
+              text: labelData.text,
+              color: labelData.color
+            });
+
+            const existing = newBoard.labels.find(l =>
+              l.text === validatedLabel.text &&
+              l.color === validatedLabel.color
+            );
+
             if (existing) {
               labelMap.set(labelData.id, existing.id);
             } else {
               const newLabel = useBoardStore.getState().createBoardLabel(newBoard.id, {
-                text: labelData.text,
-                color: labelData.color
+                text: validatedLabel.text,
+                color: validatedLabel.color
               });
               labelMap.set(labelData.id, newLabel.id);
             }

@@ -1,4 +1,5 @@
 import { Card, Label } from '@/lib/types';
+import { getContrastColor } from '@/lib/colorUtils';
 
 /**
  * Tooltip Component
@@ -68,7 +69,11 @@ export function TimelineTooltip({ task, boardLabels }: TooltipProps) {
             return (
               <span
                 key={label.id}
-                className={`text-[10px] px-1.5 py-0.5 rounded ${label.color} text-white font-medium`}
+                className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                style={{
+                  backgroundColor: label.color,
+                  color: getContrastColor(label.color)
+                }}
               >
                 {label.text}
               </span>

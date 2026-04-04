@@ -35,6 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhance day tasks modal with colored indicator bars on left edge of task items
 - Refactor modal styling from inline CSS to Tailwind classes with proper color mapping
 - Add comprehensive RGB color mapping for proper CSS color values in indicator bars
+
+### Added
+- Update all label display components to use hex colors with automatic contrast
+- Replace Tailwind color classes with inline styles using getContrastColor utility
+- Fix Calendar View complex color logic to use hex-based lighten function
+- Update label management hooks to use BASIC_LABEL_COLORS with hex support
+- Add proper color utility imports for contrast calculation across components
+- Ensure consistent text readability with automatic black/white contrast
 - Fix TypeError when clicking label + button by handling undefined label data in import and filtering
 - Add defensive label filtering to prevent toLowerCase() errors on undefined text properties
 - Enhance board import logic to support labels stored as strings (label IDs) in addition to label objects

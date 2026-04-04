@@ -2,6 +2,7 @@ import { Search, Plus, Edit2, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Input, Button } from '@/components/ui';
 import { Label } from '@/lib/types';
+import { getContrastColor } from '@/lib/colorUtils';
 
 interface TaskModalLabelListProps {
   labels: Label[];
@@ -53,11 +54,14 @@ export function TaskModalLabelList({
               }}
               className={cn(
                 "flex h-9 flex-1 items-center justify-between rounded px-3 transition-all",
-                label.color,
                 "hover:brightness-90 active:scale-95"
               )}
+              style={{
+                backgroundColor: label.color,
+                color: getContrastColor(label.color)
+              }}
             >
-              <span className="text-sm font-medium text-white truncate max-w-[180px]">
+              <span className="text-sm font-medium truncate max-w-[180px]" style={{ color: getContrastColor(label.color) }}>
                 {label.text}
               </span>
               {selectedLabelIds.includes(label.id) && (
