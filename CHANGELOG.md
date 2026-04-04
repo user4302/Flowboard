@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add calendar overflow modal for viewing all tasks when day cells contain more than 3 tasks
+- Implement clickable "+N more" indicator with hover effects in calendar view
+- Create DayTasksModal component with proper label color coding and task click functionality
+- Add modal stacking behavior so closing task modal returns to list modal instead of calendar
+
 ### Fixed
 - Fix timeline date navigation reactivity by replacing getTimelineState with individual Zustand selectors
 - Prevent infinite loop and "Maximum update depth exceeded" errors in TimelineView component

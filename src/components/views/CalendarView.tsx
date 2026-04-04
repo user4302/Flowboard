@@ -6,6 +6,7 @@ import { useBoardStore, useUIStore } from '@/store';
 import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
 import { MonthYearDisplay } from '@/components/ui/MonthYearDisplay';
+import { DayTasksModal } from './DayTasksModal';
 
 // Default filter state to avoid creating new objects
 const DEFAULT_FILTER_STATE = {
@@ -53,6 +54,17 @@ export function CalendarView({ boardId }: CalendarViewProps) {
 
   // Local state for current month navigation
   const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  // State for day tasks modal
+  const [modalState, setModalState] = useState<{
+    open: boolean;
+    selectedDate: Date | null;
+    selectedTasks: any[];
+  }>({
+    open: false,
+    selectedDate: null,
+    selectedTasks: []
+  });
 
   /**
    * Generate calendar days for the current month
@@ -128,6 +140,30 @@ export function CalendarView({ boardId }: CalendarViewProps) {
    */
   const handleCardClick = (cardId: string) => {
     openCardModal(cardId);
+  };
+
+  /**
+   * Handle opening the day tasks modal
+   * @param day - The selected day
+   * @param tasks - Tasks for that day
+   */
+  const handleOpenDayModal = (day: Date, tasks: any[]) => {
+    setModalState({
+      open: true,
+      selectedDate: day,
+      selectedTasks: tasks
+    });
+  };
+
+  /**
+   * Handle closing the day tasks modal
+   */
+  const handleCloseDayModal = () => {
+    setModalState({
+      open: false,
+      selectedDate: null,
+      selectedTasks: []
+    });
   };
 
   // Week day headers for calendar grid
@@ -223,9 +259,12 @@ export function CalendarView({ boardId }: CalendarViewProps) {
                       </div>
                     ))}
 
-                    {/* Show count for additional cards */}
+                    {/* Show count for additional cards - now clickable */}
                     {dayCards.length > 3 && (
-                      <div className="text-xs text-slate-500 dark:text-slate-400">
+                      <div
+                        onClick={() => handleOpenDayModal(day, dayCards)}
+                        className="text-xs text-slate-500 dark:text-slate-400 cursor-pointer hover:text-slate-700 dark:hover:text-slate-300 underline"
+                      >
                         +{dayCards.length - 3} more
                       </div>
                     )}
@@ -251,6 +290,16 @@ export function CalendarView({ boardId }: CalendarViewProps) {
           </div>
         </div>
       </div>
+
+      {/* Day Tasks Modal */}
+      <DayTasksModal
+        open={modalState.open}
+        onClose={handleCloseDayModal}
+        date={modalState.selectedDate || new Date()}
+        tasks={modalState.selectedTasks}
+        onCardClick={handleCardClick}
+        labels={board?.labels}
+      />
     </div>
   );
 }

@@ -43,6 +43,12 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Enhanced Drag Handles**: Visual feedback and improved drag-and-drop performance
 - **Optimistic Updates**: Immediate UI feedback during drag operations
 
+### Calendar Enhancements 📅
+- **Overflow Modal**: Click "+N more" to view all tasks when day cells contain more than 3 tasks
+- **Interactive Task List**: Full task modal access from overflow modal with proper navigation flow
+- **Label Color Coding**: Maintains consistent color coding in overflow view
+- **Mobile-Inspired Design**: Modal-based navigation similar to mobile calendar applications
+
 ## Tech Stack / Built With 🛠️
 
 ![React](https://img.shields.io/badge/React-19.2.3-blue.svg)
