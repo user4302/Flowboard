@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { ChromePicker } from 'react-color';
+import { HexColorPicker } from 'react-colorful';
 import { ChevronDown, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isValidHex, getContrastColor } from '@/lib/colorUtils';
@@ -43,7 +43,7 @@ const RECENT_COLORS_KEY = 'flowboard-recent-colors';
  * 
  * Provides a hybrid color selection interface:
  * - Basic color grid (10 curated colors)
- * - Custom color picker with Chrome picker
+ * - Custom color picker with HexColorPicker
  * - Recent colors history
  * - Hex input field for precise values
  */
@@ -127,32 +127,27 @@ export function ColorPicker({
 
   // Handle custom color change
   const handleCustomColorChange = useCallback((color: any) => {
-    if (color && color.hex) {
-      const hex = color.hex;
-      setHexInput(hex);
+    if (color) {
+      const hex = typeof color === 'string' ? color : color.hex || color;
       if (isValidHex(hex)) {
         onChange(hex);
+        saveToRecent(hex);
       }
     }
-  }, [onChange]);
+  }, [onChange, saveToRecent]);
 
   // Handle hex input change
   const handleHexInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    setHexInput(input);
-
-    if (isValidHex(input)) {
-      onChange(input);
-    }
+    onChange(input);
   }, [onChange]);
 
   // Handle hex input blur
   const handleHexInputBlur = useCallback(() => {
-    if (isValidHex(hexInput)) {
-      onChange(hexInput);
-      saveToRecent(hexInput);
+    if (isValidHex(value)) {
+      saveToRecent(value);
     }
-  }, [hexInput, onChange, saveToRecent]);
+  }, [value, onChange, saveToRecent]);
 
   // Handle recent color selection
   const handleRecentColorSelect = useCallback((color: string) => {
@@ -199,16 +194,16 @@ export function ColorPicker({
       setShowCustomPicker(false);
     } else if (e.key === 'Enter' && isOpen) {
       e.preventDefault();
-      if (isValidHex(hexInput)) {
-        onChange(hexInput);
-        saveToRecent(hexInput);
+      if (isValidHex(value)) {
+        onChange(value);
+        saveToRecent(value);
         setIsOpen(false);
       }
     } else if (e.key === ' ' || e.key === 'ArrowDown') {
       e.preventDefault();
       handleToggleDropdown();
     }
-  }, [isOpen, hexInput, onChange, saveToRecent, handleToggleDropdown]);
+  }, [isOpen, value, onChange, saveToRecent, handleToggleDropdown]);
 
   return (
     <div className={cn('relative', className)}>
@@ -302,21 +297,16 @@ export function ColorPicker({
               </button>
 
               {showCustomPicker && (
-                <div className="mt-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-md">
-                  <ChromePicker
-                    color={value || '#ffffff'}
-                    onChange={handleCustomColorChange}
-                    disableAlpha
-                    styles={{
-                      default: {
-                        picker: {
-                          background: 'transparent',
-                          boxShadow: 'none',
-                          padding: '0',
-                        },
-                      },
-                    }}
-                  />
+                <div className="mt-2 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <div className="flex justify-center">
+                    <HexColorPicker
+                      color={value || '#ffffff'}
+                      onChange={handleCustomColorChange}
+                      style={{
+                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -330,32 +320,24 @@ export function ColorPicker({
                 <div className="relative flex-1">
                   <div
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded border border-slate-300 dark:border-slate-600"
-                    style={{ backgroundColor: hexInput || '#ffffff' }}
+                    style={{ backgroundColor: value || '#ffffff' }}
                   />
                   <input
                     type="text"
-                    value={hexInput}
+                    value={value}
                     onChange={handleHexInputChange}
-                    onBlur={handleHexInputBlur}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && isValidHex(hexInput)) {
-                        onChange(hexInput);
-                        saveToRecent(hexInput);
-                        // Keep dropdown open for continuous color selection
-                      }
-                    }}
                     placeholder="#000000"
                     tabIndex={0}
                     className={cn(
                       'w-full pl-10 pr-3 py-2 border rounded-md text-sm',
                       'border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
                       'dark:border-slate-600 dark:bg-slate-800 dark:text-white',
-                      !isValidHex(hexInput) && 'border-red-300 focus:ring-red-500 dark:border-red-600'
+                      !isValidHex(value) && 'border-red-300 focus:ring-red-500 dark:border-red-600'
                     )}
                   />
                 </div>
               </div>
-              {!isValidHex(hexInput) && (
+              {!isValidHex(value) && (
                 <p className="mt-1 text-xs text-red-600 dark:text-red-400">
                   Please enter a valid hex color (e.g., #ff0000)
                 </p>
