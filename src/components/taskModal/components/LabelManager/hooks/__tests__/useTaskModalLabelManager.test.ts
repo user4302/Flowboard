@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useTaskModalLabelManager } from '../useTaskModalLabelManager';
 import { Label } from '@/lib/types';
-import { LABEL_COLORS } from '@/lib/constants';
+import { BASIC_LABEL_COLORS } from '@/lib/constants';
 import type { LabelManagerView } from '../../../../types/TaskModal.form.types';
 
 // Mock the board store
@@ -13,7 +13,6 @@ const mockUseBoardStore = require('@/store').useBoardStore;
 
 // Mock constants
 jest.mock('@/lib/constants', () => ({
-  LABEL_COLORS: ['bg-green-100', 'bg-yellow-100', 'bg-red-100'],
   BASIC_LABEL_COLORS: ['#ef4444', '#f97316', '#eab308']
 }));
 
@@ -716,7 +715,7 @@ describe('useTaskModalLabelManager', () => {
     expect(result.current.filteredLabels).toHaveLength(0);
   });
 
-  it('should test all LABEL_COLORS are accessible', () => {
+  it('should test all BASIC_LABEL_COLORS are accessible', () => {
     const { result } = renderHook(() =>
       useTaskModalLabelManager({
         boardId: mockBoardId,
@@ -726,7 +725,7 @@ describe('useTaskModalLabelManager', () => {
     );
 
     // Test setting different colors
-    const colors: typeof LABEL_COLORS[number][] = ['bg-green-100', 'bg-yellow-100', 'bg-red-100'];
+    const colors: string[] = ['#ef4444', '#f97316', '#eab308'];
 
     colors.forEach(color => {
       act(() => {

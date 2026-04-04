@@ -13,6 +13,7 @@ describe('TimelineTooltip', () => {
     completed: false,
     position: 0,
     listId: 'list1',
+    priority: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides
@@ -21,7 +22,7 @@ describe('TimelineTooltip', () => {
   const createMockLabel = (overrides: Partial<Label> = {}): Label => ({
     id: 'label1',
     text: 'Test Label',
-    color: 'bg-red-100',
+    color: '#ef4444',
     ...overrides
   })
 
@@ -185,8 +186,8 @@ describe('TimelineTooltip', () => {
 
     it('should render multiple labels', () => {
       const labels = [
-        createMockLabel({ id: 'label1', text: 'Label 1', color: 'bg-red-100' }),
-        createMockLabel({ id: 'label2', text: 'Label 2', color: 'bg-blue-100' })
+        createMockLabel({ id: 'label1', text: 'Label 1', color: '#ef4444' }),
+        createMockLabel({ id: 'label2', text: 'Label 2', color: '#3b82f6' })
       ]
       const taskWithMultipleLabels = createMockCard({ labelIds: ['label1', 'label2'] })
       render(<TimelineTooltip {...mockProps} task={taskWithMultipleLabels} boardLabels={labels} />)
@@ -206,7 +207,7 @@ describe('TimelineTooltip', () => {
     })
 
     it('should render label with correct styling', () => {
-      const labels = [createMockLabel({ color: 'bg-purple-500' })]
+      const labels = [createMockLabel({ color: '#6b21a8' })]
       const taskWithLabel = createMockCard({ labelIds: ['label1'] })
       render(<TimelineTooltip {...mockProps} task={taskWithLabel} boardLabels={labels} />)
 
@@ -215,7 +216,7 @@ describe('TimelineTooltip', () => {
       expect(labelElement).toHaveClass('px-1.5')
       expect(labelElement).toHaveClass('py-0.5')
       expect(labelElement).toHaveClass('rounded')
-      expect(labelElement).toHaveClass('bg-purple-500')
+      expect(labelElement).toHaveClass('#6b21a8')
       expect(labelElement).toHaveClass('text-white')
       expect(labelElement).toHaveClass('font-medium')
     })

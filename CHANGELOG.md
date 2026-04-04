@@ -28,6 +28,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensure consistent text readability with automatic black/white contrast
 - Add keyboard navigation support to ColorPicker with Enter key functionality
 - Add test:failing npm script for re-running only failed tests
+
+### Refactored
+- Remove legacy Tailwind color conversion utilities and deprecated constants
+- Delete tailwindToHex function and TAILWIND_TO_HEX_MAP from colorUtils.ts
+- Remove entire migrationUtils.ts file and related test infrastructure
+- Update TimelineTooltip to use direct hex colors without conversion layer
+- Simplify BoardHeaderImportExport to work with hex-only color system
+- Clean up test files to reflect new hex-based architecture
+- Remove disabled test files and unused legacy code references
 - Optimize TimelineTooltip performance by replacing inline styles with Tailwind classes
 
 ### Fixed

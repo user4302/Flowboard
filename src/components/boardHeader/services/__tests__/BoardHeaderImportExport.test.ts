@@ -75,11 +75,11 @@ describe('BoardHeaderImportExport', () => {
     id: 'board1',
     name: 'Test Board',
     lists: [],
-    members: [],
     labels: [],
     archivedCards: [],
     createdAt: new Date(),
     updatedAt: new Date(),
+    members: [],
     ...overrides
   })
 
@@ -94,13 +94,13 @@ describe('BoardHeaderImportExport', () => {
         labels: [createMockLabel()]
       })
 
-      expect(() => exportData(mockBoard)).not.toThrow()
+      expect(() => exportData({ board: mockBoard })).not.toThrow()
     })
 
     it('should handle empty board export', () => {
       const mockBoard = createMockBoard()
 
-      expect(() => exportData(mockBoard)).not.toThrow()
+      expect(() => exportData({ board: mockBoard })).not.toThrow()
     })
 
     it('should handle board with cards', () => {
@@ -112,7 +112,7 @@ describe('BoardHeaderImportExport', () => {
         ]
       })
 
-      expect(() => exportData(mockBoard)).not.toThrow()
+      expect(() => exportData({ board: mockBoard })).not.toThrow()
     })
 
     it('should export cards with labelIds but without labels property', () => {
@@ -145,7 +145,7 @@ describe('BoardHeaderImportExport', () => {
         return result
       }) as jest.MockedFunction<typeof JSON.stringify>
 
-      exportData(mockBoard)
+      exportData({ board: mockBoard })
 
       // Restore original JSON.stringify
       JSON.stringify = originalStringify
@@ -208,7 +208,7 @@ describe('BoardHeaderImportExport', () => {
         return result
       }) as jest.MockedFunction<typeof JSON.stringify>
 
-      exportData(mockBoard)
+      exportData({ board: mockBoard })
 
       // Restore original JSON.stringify
       JSON.stringify = originalStringify

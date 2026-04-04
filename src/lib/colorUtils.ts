@@ -1,108 +1,11 @@
 /**
  * Color Utility Functions
  * 
- * Provides utilities for converting between color formats,
+ * Provides utilities for working with hex colors,
  * calculating contrast, and adjusting color brightness.
  * 
- * Used throughout the application for consistent color handling
- * when migrating from Tailwind CSS classes to hex codes.
+ * Used throughout the application for consistent color handling.
  */
-
-/**
- * Maps Tailwind CSS color classes to their hex equivalents
- * Covers all 45 colors used in the original LABEL_COLORS array
- */
-const TAILWIND_TO_HEX_MAP: Record<string, string> = {
-  // Greens
-  'bg-green-100': '#dcfce7',
-  'bg-green-300': '#86efac',
-  'bg-green-500': '#22c55e',
-  'bg-green-600': '#16a34a',
-  'bg-green-800': '#166534',
-
-  // Yellows
-  'bg-yellow-100': '#fef3c7',
-  'bg-yellow-300': '#fde047',
-  'bg-yellow-500': '#eab308',
-  'bg-yellow-600': '#ca8a04',
-  'bg-yellow-800': '#713f12',
-
-  // Oranges
-  'bg-orange-100': '#fed7aa',
-  'bg-orange-300': '#fdba74',
-  'bg-orange-500': '#f97316',
-  'bg-orange-600': '#ea580c',
-  'bg-orange-800': '#9a3412',
-
-  // Reds
-  'bg-red-100': '#fee2e2',
-  'bg-red-300': '#fca5a5',
-  'bg-red-500': '#ef4444',
-  'bg-red-600': '#dc2626',
-  'bg-red-800': '#991b1b',
-
-  // Purples
-  'bg-purple-100': '#f3e8ff',
-  'bg-purple-300': '#d8b4fe',
-  'bg-purple-500': '#a855f7',
-  'bg-purple-600': '#9333ea',
-  'bg-purple-800': '#581c87',
-
-  // Azures/Blues
-  'bg-sky-100': '#e0f2fe',
-  'bg-sky-300': '#7dd3fc',
-  'bg-sky-500': '#06b6d4',
-  'bg-sky-600': '#0891b2',
-  'bg-sky-800': '#0c4a6e',
-  'bg-blue-100': '#dbeafe',
-  'bg-blue-300': '#93c5fd',
-  'bg-blue-500': '#3b82f6',
-  'bg-blue-600': '#2563eb',
-  'bg-blue-800': '#1e3a8a',
-
-  // Teals
-  'bg-teal-100': '#ccfbf1',
-  'bg-teal-300': '#5eead4',
-  'bg-teal-500': '#14b8a6',
-  'bg-teal-600': '#0d9488',
-  'bg-teal-800': '#134e4a',
-
-  // Pinks
-  'bg-pink-100': '#fce7f3',
-  'bg-pink-300': '#f9a8d4',
-  'bg-pink-500': '#ec4899',
-  'bg-pink-600': '#db2777',
-  'bg-pink-800': '#831843',
-
-  // Slate/Grays
-  'bg-slate-100': '#f1f5f9',
-  'bg-slate-300': '#cbd5e1',
-  'bg-slate-500': '#64748b',
-  'bg-slate-600': '#475569',
-  'bg-slate-800': '#1e293b',
-} as const;
-
-/**
- * Converts Tailwind CSS color class to hex code
- * @param tailwindClass - The Tailwind CSS class (e.g., 'bg-red-500')
- * @returns The equivalent hex color code (e.g., '#ef4444')
- */
-export function tailwindToHex(tailwindClass: string): string {
-  // If it's already a hex code, return as-is
-  if (tailwindClass.startsWith('#')) {
-    return tailwindClass;
-  }
-
-  // Look up in mapping
-  const hex = TAILWIND_TO_HEX_MAP[tailwindClass];
-  if (hex) {
-    return hex;
-  }
-
-  // Fallback to slate-500 if color not found
-  console.warn(`Unknown Tailwind color: ${tailwindClass}, falling back to #64748b`);
-  return '#64748b';
-}
 
 /**
  * Validates if a string is a valid hex color

@@ -3,7 +3,6 @@
 import { fromUTCString } from '@/lib/dateUtils';
 import { useBoardStore } from '@/store';
 import { Board, List, Card, Label } from '@/lib/types';
-import { migrateBoardColors, validateLabelColor, validateListColor } from '@/lib/migrationUtils';
 import { isValidHex } from '@/lib/colorUtils';
 
 interface ImportedLabel {
@@ -51,16 +50,13 @@ interface ImportedBoardData {
  * 
  * @param data - The board data object to export
  */
-export const exportData = (data: Board) => {
-  // Ensure all colors are in hex format before export
-  const migratedBoard = migrateBoardColors(data);
-
+export const exportData = (data: { board: Board }) => {
   // Structure the data for export
   const exportData = {
-    name: migratedBoard.board.name,
+    name: data.board.name,
     exportDate: new Date().toISOString(),
-    labels: migratedBoard.board.labels,
-    lists: migratedBoard.board.lists.map((list: List) => ({
+    labels: data.board.labels,
+    lists: data.board.lists.map((list: List) => ({
       title: list.title,
       cards: list.cards.map((card: Card) => ({
         id: card.id,
@@ -82,7 +78,7 @@ export const exportData = (data: Board) => {
   };
 
   // Generate filename with name and current date
-  const filename = `${data.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+  const filename = `${data.board.name.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
 
   // Create and trigger download
   const dataStr = JSON.stringify(exportData, null, 2);
@@ -131,11 +127,11 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
         if (boardData.labels) {
           boardData.labels.forEach((labelData: ImportedLabel) => {
             // Validate and normalize label color
-            const validatedLabel = validateLabelColor({
+            const validatedLabel = {
               id: labelData.id,
               text: labelData.text,
-              color: labelData.color
-            });
+              color: isValidHex(labelData.color) ? labelData.color : '#64748b' // fallback to slate-500
+            };
 
             const existing = newBoard.labels.find(l =>
               l.text === validatedLabel.text &&
