@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Complete list color system with hex support and contrast calculation in KanbanList components
 - Convert SearchAndFilterDropdown from Tailwind classes to inline hex styles
 - Enhance ColorPicker with smart color suggestions based on existing board labels
+- Move Basic Colors from dropdown to main label form for improved UX
+- Add custom color button (+) in Basic Colors grid for quick access to advanced options
+- Implement portal-based ColorPicker dropdown to fix z-index and positioning issues
+- Create ColorPickerPortal component to handle click-outside event conflicts
+- Add parentRef positioning system to align dropdown with modal boundaries
 - Update TaskModalLabelForm to pass existing labels for color suggestions
 - Fix test mocks and expectations for hex-based color system
 - Update all label display components to use hex colors with automatic contrast

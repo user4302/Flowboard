@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { ChromePicker } from 'react-color';
 import { ChevronDown, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { BASIC_LABEL_COLORS } from '@/lib/constants';
 import { isValidHex, getContrastColor } from '@/lib/colorUtils';
+import { ColorPickerPortal } from './ColorPickerPortal';
 
 /**
  * Color Picker Component Props
@@ -27,6 +27,10 @@ interface ColorPickerProps {
   existingLabels?: Array<{ color: string; text: string }>;
   /** Whether to show color suggestions */
   showColorSuggestions?: boolean;
+  /** Reference to parent container for positioning */
+  parentRef?: React.RefObject<HTMLDivElement | null>;
+  /** Data attributes to pass to trigger button */
+  [key: string]: any;
 }
 
 /**
@@ -51,12 +55,16 @@ export function ColorPicker({
   maxRecentColors = 5,
   className,
   existingLabels = [],
-  showColorSuggestions = true
+  showColorSuggestions = true,
+  parentRef,
+  ...restProps
 }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showCustomPicker, setShowCustomPicker] = useState(false);
   const [hexInput, setHexInput] = useState(value);
   const [recentColors, setRecentColors] = useState<string[]>([]);
+  const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 });
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   // Generate color suggestions from existing labels
   const colorSuggestions = existingLabels
@@ -104,13 +112,6 @@ export function ColorPicker({
     });
   }, [showRecentColors, maxRecentColors]);
 
-  // Handle basic color selection
-  const handleBasicColorSelect = useCallback((color: string) => {
-    onChange(color);
-    saveToRecent(color);
-    setIsOpen(false);
-  }, [onChange, saveToRecent]);
-
   // Handle custom color change
   const handleCustomColorChange = useCallback((color: any) => {
     if (color && color.hex) {
@@ -154,20 +155,29 @@ export function ColorPicker({
     setIsOpen(false);
   }, [onChange, saveToRecent]);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen && !event.target || !(event.target as Element).closest('.color-picker-dropdown')) {
-        setIsOpen(false);
-        setShowCustomPicker(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+  // Calculate dropdown position when opening
+  const updateDropdownPosition = useCallback(() => {
+    // Use parentRef if provided, otherwise fall back to triggerRef
+    const referenceElement = parentRef?.current || triggerRef.current;
+    if (referenceElement) {
+      const rect = referenceElement.getBoundingClientRect();
+      setDropdownPosition({
+        left: rect.right + 4, // Align to the right of the reference element, with a 4px gap
+        top: rect.top // Align with the top of the reference element
+      });
     }
-  }, [isOpen]);
+  }, [parentRef]);
+
+  // Handle dropdown toggle
+  const handleToggleDropdown = useCallback(() => {
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
+    if (newIsOpen) {
+      updateDropdownPosition();
+    } else {
+      setShowCustomPicker(false);
+    }
+  }, [isOpen, updateDropdownPosition]);
 
   // Keyboard navigation
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -181,15 +191,19 @@ export function ColorPicker({
         saveToRecent(hexInput);
         setIsOpen(false);
       }
+    } else if (e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      handleToggleDropdown();
     }
-  }, [isOpen, hexInput, onChange, saveToRecent]);
+  }, [isOpen, hexInput, onChange, saveToRecent, handleToggleDropdown]);
 
   return (
     <div className={cn('relative', className)}>
       {/* Trigger Button */}
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggleDropdown}
         className={cn(
           'flex items-center gap-2 px-3 py-2 border rounded-md text-sm font-medium transition-colors',
           'border-slate-300 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
@@ -198,6 +212,7 @@ export function ColorPicker({
         onKeyDown={handleKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        {...restProps}
       >
         {/* Color Preview */}
         <div
@@ -214,34 +229,17 @@ export function ColorPicker({
         <ChevronDown className="h-4 w-4 text-slate-400 ml-auto" />
       </button>
 
-      {/* Dropdown */}
-      {isOpen && (
-        <div className="color-picker-dropdown absolute top-full left-0 mt-1 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50">
+      {/* Dropdown Portal */}
+      <ColorPickerPortal
+        show={isOpen}
+        position={dropdownPosition}
+        onClose={() => {
+          setIsOpen(false);
+          setShowCustomPicker(false);
+        }}
+      >
+        <div className="color-picker-dropdown w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg">
           <div className="p-4 space-y-4">
-            {/* Basic Colors */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                Basic Colors
-              </label>
-              <div className="grid grid-cols-5 gap-2">
-                {BASIC_LABEL_COLORS.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    onClick={() => handleBasicColorSelect(color)}
-                    tabIndex={-1}
-                    className={cn(
-                      'w-12 h-12 rounded-md border-2 transition-all hover:scale-105',
-                      'border-slate-200 dark:border-slate-600',
-                      value === color && 'border-indigo-500 ring-2 ring-indigo-200 dark:ring-indigo-800'
-                    )}
-                    style={{ backgroundColor: color }}
-                    title={color}
-                  />
-                ))}
-              </div>
-            </div>
-
             {/* Color Suggestions */}
             {showColorSuggestions && colorSuggestions.length > 0 && (
               <div>
@@ -397,7 +395,7 @@ export function ColorPicker({
             </button>
           </div>
         </div>
-      )}
+      </ColorPickerPortal>
     </div>
   );
 }
