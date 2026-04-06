@@ -35,6 +35,8 @@ export function TaskModalMultiChecklistManager({
   const [editingChecklistId, setEditingChecklistId] = useState<string | null>(null);
   const [editingChecklistName, setEditingChecklistName] = useState('');
   const [newItemInputs, setNewItemInputs] = useState<Record<string, string>>({});
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [editingItemText, setEditingItemText] = useState('');
 
   const toggleChecklistExpanded = (checklistId: string) => {
     setExpandedChecklists(prev => {
@@ -88,6 +90,24 @@ export function TaskModalMultiChecklistManager({
 
   const handleDeleteItem = (checklistId: string, itemId: string) => {
     onRemoveChecklistItem(checklistId, itemId);
+  };
+
+  const handleStartEditItem = (itemId: string, currentText: string) => {
+    setEditingItemId(itemId);
+    setEditingItemText(currentText);
+  };
+
+  const handleSaveItem = (checklistId: string, itemId: string) => {
+    if (editingItemText.trim()) {
+      onUpdateChecklistItem(checklistId, itemId, { text: editingItemText.trim() });
+    }
+    setEditingItemId(null);
+    setEditingItemText('');
+  };
+
+  const handleCancelEditItem = () => {
+    setEditingItemId(null);
+    setEditingItemText('');
   };
 
   const getChecklistProgress = (checklist: Checklist) => {
@@ -289,31 +309,83 @@ export function TaskModalMultiChecklistManager({
             {/* Checklist items */}
             {isExpanded && (
               <div className="p-3 space-y-2">
-                {checklist.items.map((item) => (
-                  <div key={item.id} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={item.done}
-                      onChange={(e) => handleToggleItem(checklist.id, item.id, e.target.checked)}
-                      className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800"
-                    />
-                    <span
-                      className={cn(
-                        'flex-1 text-sm',
-                        item.done && 'line-through text-slate-500 dark:text-slate-400'
+                {checklist.items.map((item) => {
+                  const isEditingItem = editingItemId === item.id;
+
+                  return (
+                    <div key={item.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={item.done}
+                        onChange={(e) => handleToggleItem(checklist.id, item.id, e.target.checked)}
+                        className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800"
+                      />
+                      {isEditingItem ? (
+                        <Input
+                          type="text"
+                          value={editingItemText}
+                          onChange={(e) => setEditingItemText(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleSaveItem(checklist.id, item.id);
+                            } else if (e.key === 'Escape') {
+                              handleCancelEditItem();
+                            }
+                          }}
+                          className="flex-1 h-7 text-sm"
+                          autoFocus
+                        />
+                      ) : (
+                        <span
+                          className={cn(
+                            'flex-1 text-sm cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 px-1 py-0.5 rounded',
+                            item.done && 'line-through text-slate-500 dark:text-slate-400'
+                          )}
+                          onClick={() => handleStartEditItem(item.id, item.text)}
+                        >
+                          {item.text}
+                        </span>
                       )}
-                    >
-                      {item.text}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteItem(checklist.id, item.id)}
-                      className="text-slate-400 hover:text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
+                      {isEditingItem ? (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            onClick={() => handleSaveItem(checklist.id, item.id)}
+                            disabled={!editingItemText.trim()}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleCancelEditItem}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleStartEditItem(item.id, item.text)}
+                            className="text-slate-400 hover:text-indigo-600"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteItem(checklist.id, item.id)}
+                            className="text-slate-400 hover:text-red-600"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
 
                 {/* Add new item input */}
                 <div className="flex items-center gap-2">

@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add inline editing capability for checklist items in task modal
+- Add edit buttons and save/cancel controls for checklist items
+- Make checklist item text clickable to initiate editing
+- Add keyboard shortcuts (Enter to save, Escape to cancel) for checklist item editing
 - Add label name tooltips on hover for existing colors in ColorPicker
 - Increase custom color button plus symbol size for better visibility
 - Add react-colorful package for improved color picker customization
