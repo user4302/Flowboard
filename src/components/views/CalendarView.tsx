@@ -7,7 +7,7 @@ import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
 import { getContrastColor, lighten } from '@/lib/colorUtils';
 import { MonthYearDisplay } from '@/components/ui/MonthYearDisplay';
-import { DayTasksModal } from './DayTasksModal';
+import { DayTasksModal } from './calendar';
 
 // Default filter state to avoid creating new objects
 const DEFAULT_FILTER_STATE = {

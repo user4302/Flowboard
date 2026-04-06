@@ -18,10 +18,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add color-coded hover states for edit (indigo) and delete (red) actions
 - Add label name tooltips on hover for existing colors in ColorPicker
 - Increase custom color button plus symbol size for better visibility
-- Add react-colorful package for improved color picker customization
-- Center HexColorPicker within its container for better layout
+
+### Changed
+- Reorganize calendar components to follow kanban/timeline pattern
+- Move CalendarView back to views folder and DayTasksModal to calendar/components/
+- Rename calendarfoldr to calendar for consistency
 
 ### Fixed
+- Restore color indicators in day tasks modal for tasks with labels
+- Add react-colorful package for improved color picker customization
+- Center HexColorPicker within its container for better layout
 - Fix calendar view label colors to display vibrant colors instead of dull washed-out colors
 - Move dynamic color styles from className to proper style prop for correct rendering
 - Reduce color lightening from 40% to 10% for better visibility and vibrancy
