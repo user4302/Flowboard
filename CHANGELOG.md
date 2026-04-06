@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Refactored
+- Restructure TimelineListLane layout from per-task queues to full-height left/right columns
+- Extract duplicate filtering logic into reusable getTasksBeforeDateRange/AfterDateRange functions
+- Create QueueSection component to consolidate TimelineQueue usage from 4 to 2 instances
 - Simplify TimelineQueue interface from separate before/after props to single hiddenTasks array
 - Centralize queue logic in TimelineListLane to eliminate code duplication
 - Remove global tooltip system from TimelineView, now only uses TimelineTooltip component

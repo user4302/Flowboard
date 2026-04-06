@@ -39,7 +39,7 @@ interface ListLaneProps {
  * 
  * Handles lane headers, collapsible state, and individual sub-lanes for tasks.
  * Manages queue areas for hidden tasks before/after the current date range.
- * Only renders TimelineQueue on the first task lane to avoid duplication.
+ * Uses a three-column layout: left queue column, tasks column, right queue column.
  */
 export function TimelineListLane({
   boardId,
@@ -59,6 +59,43 @@ export function TimelineListLane({
   const visibleTaskIds = new Set(listTasks.map((task: Card) => task.id));
   const trulyHiddenTasks = allListTasks.filter((task: Card) => !visibleTaskIds.has(task.id));
   const { hiddenTasksBefore, hiddenTasksAfter } = useTimelineHiddenTasks(trulyHiddenTasks, dateRange);
+
+  // Extract queue filtering logic to avoid duplication
+  /**
+   * Filters tasks that end before the current date range starts
+   */
+  const getTasksBeforeDateRange = (tasks: Card[]) =>
+    tasks.filter((task: Card) => {
+      const taskEnd = task.dueDate || addDays(task.startDate || new Date(), 7);
+      return taskEnd < dateRange[0];
+    });
+
+  /**
+   * Filters tasks that start after the current date range ends
+   */
+  const getTasksAfterDateRange = (tasks: Card[]) =>
+    tasks.filter((task: Card) => {
+      const taskStart = task.startDate || new Date();
+      return taskStart > dateRange[dateRange.length - 1];
+    });
+
+  // Reusable queue component
+  /**
+   * QueueSection - Reusable wrapper for TimelineQueue with consistent styling
+   * @param tasks - Array of tasks to display in the queue
+   * @param position - Whether this is the left or right queue column
+   */
+  const QueueSection = ({ tasks, position }: { tasks: Card[], position: 'left' | 'right' }) => (
+    <div className={`w-48 flex-shrink-0 p-3 overflow-visible ${position === 'left' ? 'border-r' : 'border-l'} border-slate-100 dark:border-slate-700`}>
+      <TimelineQueue
+        hiddenTasks={tasks}
+        onOpenTaskModal={openCardModal}
+        getTaskColor={getTaskColor}
+        boardLabels={boardLabels}
+        position={position}
+      />
+    </div>
+  );
 
   return (
     <div key={list.id} className="border-2 border-slate-200 dark:border-slate-700 rounded-lg mb-4 overflow-visible">
@@ -88,77 +125,53 @@ export function TimelineListLane({
       {!isCollapsed && (
         <div className="bg-white dark:bg-slate-900">
           {listTasks.length > 0 ? (
-            listTasks.map((task: Card, taskIndex: number) => (
-              <div key={task.id} className="flex border-b border-slate-50 dark:border-slate-700">
-                {/* Left queue area */}
-                <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700 overflow-visible">
-                  {taskIndex === 0 && (
-                    <TimelineQueue
-                      hiddenTasks={allListTasks.filter((task: Card) => {
-                        const taskEnd = task.dueDate || addDays(task.startDate || new Date(), 7);
-                        return taskEnd < dateRange[0];
-                      })}
-                      onOpenTaskModal={openCardModal}
-                      getTaskColor={getTaskColor}
-                      boardLabels={boardLabels}
-                      position="left"
-                    />
-                  )}
-                </div>
+            <div className="flex">
+              {/* Left queue column - spans all tasks */}
+              <QueueSection
+                tasks={getTasksBeforeDateRange(allListTasks)}
+                position="left"
+              />
 
-                {/* Timeline area with main task */}
-                <div
-                  className="flex-1 relative border-b border-slate-50 dark:border-slate-700"
-                  style={{
-                    minHeight: `${calculateTimelineHeight([task], dateRange)}px`
-                  }}
-                >
-                  <TimelineTask
-                    task={task}
-                    allCards={[task]}
-                    cardIndex={0}
-                    dateRange={dateRange}
-                    zoomLevel={zoomLevel}
-                    onOpenTaskModal={openCardModal}
-                    getTaskPosition={getTaskPosition}
-                    getTaskColor={getTaskColor}
-                    boardLabels={boardLabels}
-                  />
-                </div>
-
-                {/* Right queue area */}
-                <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700 overflow-visible">
-                  {taskIndex === 0 && (
-                    <TimelineQueue
-                      hiddenTasks={allListTasks.filter((task: Card) => {
-                        const taskStart = task.startDate || new Date();
-                        return taskStart > dateRange[dateRange.length - 1];
-                      })}
-                      onOpenTaskModal={openCardModal}
-                      getTaskColor={getTaskColor}
-                      boardLabels={boardLabels}
-                      position="right"
-                    />
-                  )}
-                </div>
+              {/* Tasks column */}
+              <div className="flex-1">
+                {listTasks.map((task: Card, taskIndex: number) => (
+                  <div key={task.id} className="border-b border-slate-50 dark:border-slate-700">
+                    {/* Timeline area with main task */}
+                    <div
+                      className="relative"
+                      style={{
+                        minHeight: `${calculateTimelineHeight([task], dateRange)}px`
+                      }}
+                    >
+                      <TimelineTask
+                        task={task}
+                        allCards={[task]}
+                        cardIndex={0}
+                        dateRange={dateRange}
+                        zoomLevel={zoomLevel}
+                        onOpenTaskModal={openCardModal}
+                        getTaskPosition={getTaskPosition}
+                        getTaskColor={getTaskColor}
+                        boardLabels={boardLabels}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))
+
+              {/* Right queue column - spans all tasks */}
+              <QueueSection
+                tasks={getTasksAfterDateRange(allListTasks)}
+                position="right"
+              />
+            </div>
           ) : (
             list.cards.length > 0 ? (
               <div className="flex border-b border-slate-50 dark:border-slate-700">
-                {/* Left queue area */}
-                <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700 overflow-visible">
-                  <TimelineQueue
-                    hiddenTasks={list.cards.filter((task: Card) => {
-                      const taskEnd = task.dueDate || addDays(task.startDate || new Date(), 7);
-                      return taskEnd < dateRange[0];
-                    })}
-                    onOpenTaskModal={openCardModal}
-                    getTaskColor={getTaskColor}
-                    boardLabels={boardLabels}
-                    position="left"
-                  />
-                </div>
+                <QueueSection
+                  tasks={getTasksBeforeDateRange(list.cards)}
+                  position="left"
+                />
 
                 <div className="flex-1 relative flex items-center justify-center" style={{ minHeight: '60px' }}>
                   <div className="text-slate-400 dark:text-slate-500 text-sm italic">
@@ -166,19 +179,10 @@ export function TimelineListLane({
                   </div>
                 </div>
 
-                {/* Right queue area */}
-                <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700 overflow-visible">
-                  <TimelineQueue
-                    hiddenTasks={list.cards.filter((task: Card) => {
-                      const taskStart = task.startDate || new Date();
-                      return taskStart > dateRange[dateRange.length - 1];
-                    })}
-                    onOpenTaskModal={openCardModal}
-                    getTaskColor={getTaskColor}
-                    boardLabels={boardLabels}
-                    position="right"
-                  />
-                </div>
+                <QueueSection
+                  tasks={getTasksAfterDateRange(list.cards)}
+                  position="right"
+                />
               </div>
             ) : (
               <div className="flex border-b border-slate-50 dark:border-slate-700">
