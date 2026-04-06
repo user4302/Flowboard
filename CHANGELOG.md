@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add react-colorful package for improved color picker customization
 - Center HexColorPicker within its container for better layout
 
+### Fixed
+- Fix label color display in task modal to show proper background colors
+- Ensure label text has proper contrast (white/black) based on background color
+
 ### Changed
 - Rename "Suggested Colors" to "Existing Colors" for clarity
 - Keep ColorPicker dropdown open for continuous color selection
