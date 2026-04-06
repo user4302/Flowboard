@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.1] - 2026-04-07
+
+### Fixed
+- Update Node.js version from 18 to 20 in Netlify build configuration
+- Resolve build failure due to Next.js 16.1.6 requiring Node.js >=20.9.0
+
 ## [1.8.0] - 2026-04-07
 
 ### Refactored
