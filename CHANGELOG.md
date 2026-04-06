@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reduce color lightening from 40% to 10% for better visibility and vibrancy
 - Fix label color display in task modal to show proper background colors
 - Ensure label text has proper contrast (white/black) based on background color
+- Fix calendar month-based card counting to show correct number of cards when navigating between months
+- Replace static "Today" indicator with dynamic task count showing actual number of tasks due today
 
 ### Changed
 - Rename "Suggested Colors" to "Existing Colors" for clarity

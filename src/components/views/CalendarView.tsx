@@ -78,8 +78,8 @@ export function CalendarView({ boardId }: CalendarViewProps) {
   }, [currentMonth]);
 
   /**
-   * Filter cards that have due dates and apply search filtering
-   * Returns only cards with due dates for calendar display
+   * Filter cards that have due dates in the current month and apply search filtering
+   * Returns only cards with due dates within the currently displayed month for calendar display
    */
   const cardsWithDueDates = useMemo(() => {
     if (!board) return [];
@@ -98,8 +98,15 @@ export function CalendarView({ boardId }: CalendarViewProps) {
 
     const filtered = filterCards(allCards, filterOptions, board.labels || []);
 
-    // Only return cards that have due dates
-    return filtered.filter(card => card.dueDate);
+    // Only return cards that have due dates in the current month
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(currentMonth);
+
+    return filtered.filter(card =>
+      card.dueDate &&
+      card.dueDate >= monthStart &&
+      card.dueDate <= monthEnd
+    );
   }, [
     board,
     searchTerm,
@@ -290,12 +297,13 @@ export function CalendarView({ boardId }: CalendarViewProps) {
       <div className="border-t border-slate-200 p-4 dark:border-slate-700">
         <div className="flex items-center justify-between">
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {cardsWithDueDates.length} cards with due dates this month
+            {cardsWithDueDates.length} task due this month
           </div>
           <div className="flex gap-4 text-xs">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-indigo-100 dark:bg-indigo-900/30"></div>
-              <span className="text-slate-600 dark:text-slate-400">Today</span>
+              <span className="text-slate-600 dark:text-slate-400">
+                {getCardsForDay(new Date()).length} tasks today
+              </span>
             </div>
           </div>
         </div>
