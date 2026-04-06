@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add edit buttons and save/cancel controls for checklist items
 - Make checklist item text clickable to initiate editing
 - Add keyboard shortcuts (Enter to save, Escape to cancel) for checklist item editing
+- Modernize checklist item styling with card-based design and smooth transitions
+- Add custom checkbox styling with SVG checkmark and hover effects
+- Implement smart button visibility that reveals action buttons on hover
+- Add color-coded hover states for edit (indigo) and delete (red) actions
 - Add label name tooltips on hover for existing colors in ColorPicker
 - Increase custom color button plus symbol size for better visibility
 - Add react-colorful package for improved color picker customization
