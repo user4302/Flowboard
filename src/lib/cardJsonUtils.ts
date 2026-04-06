@@ -17,6 +17,7 @@ export interface CardJSON {
   }>;
   startDate?: string; // ISO string
   dueDate?: string; // ISO string
+  priority?: number;
   checklist: Array<{
     text: string;
     done: boolean;
@@ -162,7 +163,8 @@ export function jsonToCardData(
     startDate: cardJSON.startDate ? new Date(cardJSON.startDate) : undefined,
     dueDate: cardJSON.dueDate ? new Date(cardJSON.dueDate) : undefined,
     checklists,
-    completed: false
+    completed: false,
+    priority: cardJSON.priority !== undefined ? cardJSON.priority : null
   };
 }
 
