@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { ChromePicker } from 'react-color';
+import { HexColorPicker } from 'react-colorful';
 import { ChevronDown, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isValidHex, getContrastColor } from '@/lib/colorUtils';
@@ -43,7 +43,7 @@ const RECENT_COLORS_KEY = 'flowboard-recent-colors';
  * 
  * Provides a hybrid color selection interface:
  * - Basic color grid (10 curated colors)
- * - Custom color picker with Chrome picker
+ * - Custom color picker with HexColorPicker
  * - Recent colors history
  * - Hex input field for precise values
  */
@@ -71,6 +71,19 @@ export function ColorPicker({
     .map(label => label.color)
     .filter((color, index, arr) => color && arr.indexOf(color) === index) // Remove duplicates
     .slice(0, 8); // Limit to 8 suggestions
+
+  /**
+   * Returns a comma-separated list of label names that use the specified color
+   * Used for displaying tooltips on existing color buttons
+   * @param color - The hex color value to look up
+   * @returns Comma-separated label names, or empty string if none found
+   */
+  const getLabelsByColor = useCallback((color: string) => {
+    return existingLabels
+      .filter(label => label.color === color)
+      .map(label => label.text)
+      .join(', ');
+  }, [existingLabels]);
 
   // Load recent colors from localStorage
   useEffect(() => {
@@ -114,45 +127,40 @@ export function ColorPicker({
 
   // Handle custom color change
   const handleCustomColorChange = useCallback((color: any) => {
-    if (color && color.hex) {
-      const hex = color.hex;
-      setHexInput(hex);
+    if (color) {
+      const hex = typeof color === 'string' ? color : color.hex || color;
       if (isValidHex(hex)) {
         onChange(hex);
+        saveToRecent(hex);
       }
     }
-  }, [onChange]);
+  }, [onChange, saveToRecent]);
 
   // Handle hex input change
   const handleHexInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    setHexInput(input);
-
-    if (isValidHex(input)) {
-      onChange(input);
-    }
+    onChange(input);
   }, [onChange]);
 
   // Handle hex input blur
   const handleHexInputBlur = useCallback(() => {
-    if (isValidHex(hexInput)) {
-      onChange(hexInput);
-      saveToRecent(hexInput);
+    if (isValidHex(value)) {
+      saveToRecent(value);
     }
-  }, [hexInput, onChange, saveToRecent]);
+  }, [value, onChange, saveToRecent]);
 
   // Handle recent color selection
   const handleRecentColorSelect = useCallback((color: string) => {
     onChange(color);
     saveToRecent(color);
-    setIsOpen(false);
+    // Keep dropdown open for continuous color selection
   }, [onChange, saveToRecent]);
 
   // Handle suggested color selection
   const handleSuggestedColorSelect = useCallback((color: string) => {
     onChange(color);
     saveToRecent(color);
-    setIsOpen(false);
+    // Keep dropdown open for continuous color selection
   }, [onChange, saveToRecent]);
 
   // Calculate dropdown position when opening
@@ -186,16 +194,16 @@ export function ColorPicker({
       setShowCustomPicker(false);
     } else if (e.key === 'Enter' && isOpen) {
       e.preventDefault();
-      if (isValidHex(hexInput)) {
-        onChange(hexInput);
-        saveToRecent(hexInput);
+      if (isValidHex(value)) {
+        onChange(value);
+        saveToRecent(value);
         setIsOpen(false);
       }
     } else if (e.key === ' ' || e.key === 'ArrowDown') {
       e.preventDefault();
       handleToggleDropdown();
     }
-  }, [isOpen, hexInput, onChange, saveToRecent, handleToggleDropdown]);
+  }, [isOpen, value, onChange, saveToRecent, handleToggleDropdown]);
 
   return (
     <div className={cn('relative', className)}>
@@ -244,23 +252,32 @@ export function ColorPicker({
             {showColorSuggestions && colorSuggestions.length > 0 && (
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Suggested Colors
+                  Existing Colors
                 </label>
                 <div className="grid grid-cols-8 gap-1.5">
-                  {colorSuggestions.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => handleSuggestedColorSelect(color)}
-                      className={cn(
-                        'w-8 h-8 rounded border-2 transition-all hover:scale-105',
-                        'border-slate-200 dark:border-slate-600',
-                        value === color && 'border-indigo-500 ring-1 ring-indigo-200 dark:ring-indigo-800'
-                      )}
-                      style={{ backgroundColor: color }}
-                      title={color}
-                    />
-                  ))}
+                  {colorSuggestions.map((color) => {
+                    const labelNames = getLabelsByColor(color);
+                    return (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => handleSuggestedColorSelect(color)}
+                        className={cn(
+                          'w-8 h-8 rounded border-2 transition-all hover:scale-105 relative group',
+                          'border-slate-200 dark:border-slate-600',
+                          value === color && 'border-indigo-500 ring-1 ring-indigo-200 dark:ring-indigo-800'
+                        )}
+                        style={{ backgroundColor: color }}
+                        title={labelNames || color}
+                      >
+                        {labelNames && (
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                            {labelNames}
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -280,21 +297,16 @@ export function ColorPicker({
               </button>
 
               {showCustomPicker && (
-                <div className="mt-2 p-3 bg-slate-50 dark:bg-slate-900 rounded-md">
-                  <ChromePicker
-                    color={value || '#ffffff'}
-                    onChange={handleCustomColorChange}
-                    disableAlpha
-                    styles={{
-                      default: {
-                        picker: {
-                          background: 'transparent',
-                          boxShadow: 'none',
-                          padding: '0',
-                        },
-                      },
-                    }}
-                  />
+                <div className="mt-2 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <div className="flex justify-center">
+                    <HexColorPicker
+                      color={value || '#ffffff'}
+                      onChange={handleCustomColorChange}
+                      style={{
+                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                      }}
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -308,50 +320,24 @@ export function ColorPicker({
                 <div className="relative flex-1">
                   <div
                     className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded border border-slate-300 dark:border-slate-600"
-                    style={{ backgroundColor: hexInput || '#ffffff' }}
+                    style={{ backgroundColor: value || '#ffffff' }}
                   />
                   <input
                     type="text"
-                    value={hexInput}
+                    value={value}
                     onChange={handleHexInputChange}
-                    onBlur={handleHexInputBlur}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && isValidHex(hexInput)) {
-                        onChange(hexInput);
-                        saveToRecent(hexInput);
-                        setIsOpen(false);
-                      }
-                    }}
                     placeholder="#000000"
                     tabIndex={0}
                     className={cn(
                       'w-full pl-10 pr-3 py-2 border rounded-md text-sm',
                       'border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
                       'dark:border-slate-600 dark:bg-slate-800 dark:text-white',
-                      !isValidHex(hexInput) && 'border-red-300 focus:ring-red-500 dark:border-red-600'
+                      !isValidHex(value) && 'border-red-300 focus:ring-red-500 dark:border-red-600'
                     )}
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isValidHex(hexInput)) {
-                      onChange(hexInput);
-                      saveToRecent(hexInput);
-                      setIsOpen(false);
-                    }
-                  }}
-                  disabled={!isValidHex(hexInput)}
-                  className={cn(
-                    'px-4 py-2 text-sm font-medium rounded-md transition-colors',
-                    'bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
-                    'disabled:opacity-50 disabled:cursor-not-allowed'
-                  )}
-                >
-                  Apply
-                </button>
               </div>
-              {!isValidHex(hexInput) && (
+              {!isValidHex(value) && (
                 <p className="mt-1 text-xs text-red-600 dark:text-red-400">
                   Please enter a valid hex color (e.g., #ff0000)
                 </p>
@@ -385,13 +371,18 @@ export function ColorPicker({
           </div>
 
           {/* Close Button */}
-          <div className="flex justify-end p-2 pt-0">
+          <div className="flex justify-end p-3 pt-0">
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              className={cn(
+                'px-3 py-2 text-sm font-medium rounded-md transition-colors',
+                'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800',
+                'dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300 dark:hover:text-slate-100',
+                'border border-slate-200 dark:border-slate-600'
+              )}
             >
-              <X className="h-4 w-4" />
+              Close
             </button>
           </div>
         </div>

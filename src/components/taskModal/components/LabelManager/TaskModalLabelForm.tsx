@@ -101,7 +101,7 @@ export function TaskModalLabelForm({
               className={cn(
                 'w-12 h-12 rounded-md border-2 transition-all hover:scale-105',
                 'border-slate-200 dark:border-slate-600 bg-gradient-to-br from-red-400 via-purple-400 to-blue-400',
-                'flex items-center justify-center text-white text-xs font-bold'
+                'flex items-center justify-center text-white text-lg font-bold'
               )}
               title="Custom Color"
             >

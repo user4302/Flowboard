@@ -125,7 +125,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
 
   const zoomLevel = timelineZoomLevel || DEFAULT_ZOOM_LEVEL; // Fallback to week if undefined
   const collapsedLanes = useMemo(() => new Set(timelineCollapsedLanes || DEFAULT_COLLAPSED_LANES), [timelineCollapsedLanes]);
-  const [hoveredTask, setHoveredTask] = useState<{ task: Card; position: 'before' | 'after'; x: number; y: number } | null>(null); // Track hovered task for tooltip
 
   // Generate date range based on zoom level and current date using custom hook
   const dateRange = useTimelineDateRange(currentDate, zoomLevel);
@@ -266,7 +265,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
                     getTaskPosition={getTaskPositionWrapper}
                     calculateTimelineHeight={calculateTimelineHeight}
                     isCollapsed={isCollapsed}
-                    setHoveredTask={setHoveredTask}
                     boardLabels={board.labels}
                   />
                 );
@@ -288,19 +286,6 @@ export function TimelineView({ boardId }: TimelineViewProps) {
         </div>
       </div>
 
-      {/* Tooltip rendering for hovered mini tasks */}
-      {hoveredTask && (
-        <div
-          className="fixed z-50 pointer-events-none"
-          style={{
-            left: hoveredTask.x - 100, // Center the tooltip horizontally
-            top: hoveredTask.y,
-            transform: 'translateX(0)'
-          }}
-        >
-          <TimelineTooltip task={hoveredTask.task} position={hoveredTask.position} boardLabels={board.labels} />
-        </div>
-      )}
     </div >
   );
 }

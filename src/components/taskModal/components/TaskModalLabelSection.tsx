@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { Tag, Plus } from 'lucide-react';
 import { Label } from '@/lib/types';
 import { PopoverCoords } from '@/components/taskCard/types';
+import { getContrastColor } from '@/lib/colorUtils';
 import { TaskModalLabelManager } from './LabelManager/TaskModalLabelManager';
 
 interface TaskModalLabelSectionProps {
@@ -50,7 +51,11 @@ export function TaskModalLabelSection({
           return (
             <span
               key={label.id}
-              className={`inline-flex h-8 items-center rounded px-3 text-sm font-semibold text-white transition-all hover:brightness-110 cursor-pointer ${label.color}`}
+              className="inline-flex h-8 items-center rounded px-3 text-sm font-semibold transition-all hover:brightness-110 cursor-pointer"
+              style={{
+                backgroundColor: label.color,
+                color: getContrastColor(label.color)
+              }}
               onClick={handleLabelClick}
             >
               {label.text}

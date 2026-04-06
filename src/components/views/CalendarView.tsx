@@ -7,7 +7,7 @@ import { filterCards } from '@/lib/filterUtils';
 import { cn } from '@/lib/utils';
 import { getContrastColor, lighten } from '@/lib/colorUtils';
 import { MonthYearDisplay } from '@/components/ui/MonthYearDisplay';
-import { DayTasksModal } from './DayTasksModal';
+import { DayTasksModal } from './calendar';
 
 // Default filter state to avoid creating new objects
 const DEFAULT_FILTER_STATE = {
@@ -78,8 +78,8 @@ export function CalendarView({ boardId }: CalendarViewProps) {
   }, [currentMonth]);
 
   /**
-   * Filter cards that have due dates and apply search filtering
-   * Returns only cards with due dates for calendar display
+   * Filter cards that have due dates in the current month and apply search filtering
+   * Returns only cards with due dates within the currently displayed month for calendar display
    */
   const cardsWithDueDates = useMemo(() => {
     if (!board) return [];
@@ -98,8 +98,15 @@ export function CalendarView({ boardId }: CalendarViewProps) {
 
     const filtered = filterCards(allCards, filterOptions, board.labels || []);
 
-    // Only return cards that have due dates
-    return filtered.filter(card => card.dueDate);
+    // Only return cards that have due dates in the current month
+    const monthStart = startOfMonth(currentMonth);
+    const monthEnd = endOfMonth(currentMonth);
+
+    return filtered.filter(card =>
+      card.dueDate &&
+      card.dueDate >= monthStart &&
+      card.dueDate <= monthEnd
+    );
   }, [
     board,
     searchTerm,
@@ -251,12 +258,18 @@ export function CalendarView({ boardId }: CalendarViewProps) {
                         className={cn(
                           'truncate rounded px-1 py-0.5 text-xs cursor-pointer transition-colors',
                           (card.labelIds?.length ?? 0) > 0 && board.labels.find(l => l.id === card.labelIds![0])
-                            ? {
-                              backgroundColor: lighten(board.labels.find(l => l.id === card.labelIds![0])!.color, 40),
-                              color: getContrastColor(board.labels.find(l => l.id === card.labelIds![0])!.color)
-                            }
+                            ? ''
                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                         )}
+                        style={
+                          // Apply label colors with proper styling: use lightened background color and contrasting text
+                          (card.labelIds?.length ?? 0) > 0 && board.labels.find(l => l.id === card.labelIds![0])
+                            ? {
+                              backgroundColor: lighten(board.labels.find(l => l.id === card.labelIds![0])!.color, 10),
+                              color: getContrastColor(board.labels.find(l => l.id === card.labelIds![0])!.color)
+                            }
+                            : undefined
+                        }
                         title={card.title}
                       >
                         {card.title}
@@ -284,12 +297,13 @@ export function CalendarView({ boardId }: CalendarViewProps) {
       <div className="border-t border-slate-200 p-4 dark:border-slate-700">
         <div className="flex items-center justify-between">
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            {cardsWithDueDates.length} cards with due dates this month
+            {cardsWithDueDates.length} task due this month
           </div>
           <div className="flex gap-4 text-xs">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-indigo-100 dark:bg-indigo-900/30"></div>
-              <span className="text-slate-600 dark:text-slate-400">Today</span>
+              <span className="text-slate-600 dark:text-slate-400">
+                {getCardsForDay(new Date()).length} tasks today
+              </span>
             </div>
           </div>
         </div>

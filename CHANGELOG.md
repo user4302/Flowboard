@@ -7,6 +7,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-04-07
+
+### Refactored
+- Restructure TimelineListLane layout from per-task queues to full-height left/right columns
+- Extract duplicate filtering logic into reusable getTasksBeforeDateRange/AfterDateRange functions
+- Create QueueSection component to consolidate TimelineQueue usage from 4 to 2 instances
+- Simplify TimelineQueue interface from separate before/after props to single hiddenTasks array
+- Centralize queue logic in TimelineListLane to eliminate code duplication
+- Remove global tooltip system from TimelineView, now only uses TimelineTooltip component
+- Fix tooltip positioning with dynamic alignment based on position prop
+- Maintain consistent queue areas that don't disappear when content changes
+- Update TimelineTaskLane to provide reserved queue areas populated by parent component
+
+### Added
+- Add inline editing capability for checklist items in task modal
+- Add edit buttons and save/cancel controls for checklist items
+- Make checklist item text clickable to initiate editing
+- Add keyboard shortcuts (Enter to save, Escape to cancel) for checklist item editing
+- Modernize checklist item styling with card-based design and smooth transitions
+- Add custom checkbox styling with SVG checkmark and hover effects
+- Implement smart button visibility that reveals action buttons on hover
+- Add color-coded hover states for edit (indigo) and delete (red) actions
+- Add label name tooltips on hover for existing colors in ColorPicker
+- Increase custom color button plus symbol size for better visibility
+
+### Changed
+- Reorganize calendar components to follow kanban/timeline pattern
+- Move CalendarView back to views folder and DayTasksModal to calendar/components/
+- Rename calendarfoldr to calendar for consistency
+
+### Fixed
+- Restore color indicators in day tasks modal for tasks with labels
+- Add react-colorful package for improved color picker customization
+- Center HexColorPicker within its container for better layout
+- Fix calendar view label colors to display vibrant colors instead of dull washed-out colors
+- Move dynamic color styles from className to proper style prop for correct rendering
+- Reduce color lightening from 40% to 10% for better visibility and vibrancy
+- Fix label color display in task modal to show proper background colors
+- Ensure label text has proper contrast (white/black) based on background color
+- Fix calendar month-based card counting to show correct number of cards when navigating between months
+- Replace static "Today" indicator with dynamic task count showing actual number of tasks due today
+
+### Changed
+- Rename "Suggested Colors" to "Existing Colors" for clarity
+- Keep ColorPicker dropdown open for continuous color selection
+- Replace small X close button with prominent Close button
+- Remove redundant Apply button (colors apply automatically)
+- Replace ChromePicker with HexColorPicker for better styling flexibility
+- Fix state synchronization issues by using value prop consistently
+- Simplify event handlers for controlled component behavior
+
 ## [1.7.0] - 2026-04-05
 
 ### Added

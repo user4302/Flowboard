@@ -32,7 +32,7 @@ interface TooltipProps {
  * Renders a styled tooltip showing task details when hovering
  * over mini task indicators in the timeline.
  */
-export function TimelineTooltip({ task, boardLabels }: TooltipProps) {
+export function TimelineTooltip({ task, position, boardLabels }: TooltipProps) {
   // Helper function to format dates consistently
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
@@ -43,7 +43,8 @@ export function TimelineTooltip({ task, boardLabels }: TooltipProps) {
   };
 
   return (
-    <div className="absolute z-[9999] bg-slate-900 text-white p-3 rounded-lg shadow-xl border border-slate-700 min-w-[200px] pointer-events-none">
+    <div className={`absolute z-[9999] bg-slate-900 text-white p-3 rounded-lg shadow-xl border border-slate-700 min-w-[200px] pointer-events-none ${position === 'after' ? 'right-0 translate-x-0' : 'right-full translate-x-full'
+      } bottom-full`}>
       {/* Task title */}
       <div className="font-medium text-sm mb-1">{task.title}</div>
 
