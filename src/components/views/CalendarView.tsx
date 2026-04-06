@@ -251,12 +251,18 @@ export function CalendarView({ boardId }: CalendarViewProps) {
                         className={cn(
                           'truncate rounded px-1 py-0.5 text-xs cursor-pointer transition-colors',
                           (card.labelIds?.length ?? 0) > 0 && board.labels.find(l => l.id === card.labelIds![0])
-                            ? {
-                              backgroundColor: lighten(board.labels.find(l => l.id === card.labelIds![0])!.color, 40),
-                              color: getContrastColor(board.labels.find(l => l.id === card.labelIds![0])!.color)
-                            }
+                            ? ''
                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                         )}
+                        style={
+                          // Apply label colors with proper styling: use lightened background color and contrasting text
+                          (card.labelIds?.length ?? 0) > 0 && board.labels.find(l => l.id === card.labelIds![0])
+                            ? {
+                              backgroundColor: lighten(board.labels.find(l => l.id === card.labelIds![0])!.color, 10),
+                              color: getContrastColor(board.labels.find(l => l.id === card.labelIds![0])!.color)
+                            }
+                            : undefined
+                        }
                         title={card.title}
                       >
                         {card.title}

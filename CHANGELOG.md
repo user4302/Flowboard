@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Center HexColorPicker within its container for better layout
 
 ### Fixed
+- Fix calendar view label colors to display vibrant colors instead of dull washed-out colors
+- Move dynamic color styles from className to proper style prop for correct rendering
+- Reduce color lightening from 40% to 10% for better visibility and vibrancy
 - Fix label color display in task modal to show proper background colors
 - Ensure label text has proper contrast (white/black) based on background color
 
