@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.0] - 2026-04-07
+
 ### Refactored
 - Restructure TimelineListLane layout from per-task queues to full-height left/right columns
 - Extract duplicate filtering logic into reusable getTasksBeforeDateRange/AfterDateRange functions
