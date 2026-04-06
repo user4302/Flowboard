@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Refactored
+- Simplify TimelineQueue interface from separate before/after props to single hiddenTasks array
+- Centralize queue logic in TimelineListLane to eliminate code duplication
+- Remove global tooltip system from TimelineView, now only uses TimelineTooltip component
+- Fix tooltip positioning with dynamic alignment based on position prop
+- Maintain consistent queue areas that don't disappear when content changes
+- Update TimelineTaskLane to provide reserved queue areas populated by parent component
+
 ### Added
 - Add inline editing capability for checklist items in task modal
 - Add edit buttons and save/cancel controls for checklist items

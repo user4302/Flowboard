@@ -1,7 +1,9 @@
 import { Card, List, Label } from '@/lib/types';
 import { TimelineTaskLane } from './TimelineTaskLane';
+import { TimelineTask } from './TimelineTask';
+import { TimelineQueue } from './TimelineQueue';
 import { useTimelineHiddenTasks } from '../hooks/useTimelineHiddenTasks';
-import { getTaskColor } from '../utils';
+import { getTaskColor, getTaskPosition } from '../utils';
 import { addDays } from 'date-fns';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 
@@ -28,15 +30,16 @@ interface ListLaneProps {
   calculateTimelineHeight: (cards: Card[], dateRange: Date[]) => number;
   // State
   isCollapsed: boolean;
-  // Tooltip tracking
-  setHoveredTask: (hovered: { task: Card; position: 'before' | 'after'; x: number; y: number } | null) => void;
   // Labels available on the board
   boardLabels: Label[];
 }
 
 /**
  * ListLane component - Renders a major lane representing a Board List
+ * 
  * Handles lane headers, collapsible state, and individual sub-lanes for tasks.
+ * Manages queue areas for hidden tasks before/after the current date range.
+ * Only renders TimelineQueue on the first task lane to avoid duplication.
  */
 export function TimelineListLane({
   boardId,
@@ -49,7 +52,6 @@ export function TimelineListLane({
   getTaskPosition,
   calculateTimelineHeight,
   isCollapsed,
-  setHoveredTask,
   boardLabels
 }: ListLaneProps) {
   // Move hook call to the top level of the component
@@ -87,85 +89,95 @@ export function TimelineListLane({
         <div className="bg-white dark:bg-slate-900">
           {listTasks.length > 0 ? (
             listTasks.map((task: Card, taskIndex: number) => (
-              <TimelineTaskLane
-                key={task.id}
-                task={task}
-                dateRange={dateRange}
-                zoomLevel={zoomLevel}
-                onOpenTaskModal={openCardModal}
-                getTaskPosition={getTaskPosition}
-                getTaskColor={getTaskColor}
-                calculateTimelineHeight={calculateTimelineHeight}
-                hiddenTasksBefore={taskIndex === 0 ? hiddenTasksBefore : []}
-                hiddenTasksAfter={taskIndex === 0 ? hiddenTasksAfter : []}
-                boardLabels={boardLabels}
-              />
+              <div key={task.id} className="flex border-b border-slate-50 dark:border-slate-700">
+                {/* Left queue area */}
+                <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700 overflow-visible">
+                  {taskIndex === 0 && (
+                    <TimelineQueue
+                      hiddenTasks={allListTasks.filter((task: Card) => {
+                        const taskEnd = task.dueDate || addDays(task.startDate || new Date(), 7);
+                        return taskEnd < dateRange[0];
+                      })}
+                      onOpenTaskModal={openCardModal}
+                      getTaskColor={getTaskColor}
+                      boardLabels={boardLabels}
+                      position="left"
+                    />
+                  )}
+                </div>
+
+                {/* Timeline area with main task */}
+                <div
+                  className="flex-1 relative border-b border-slate-50 dark:border-slate-700"
+                  style={{
+                    minHeight: `${calculateTimelineHeight([task], dateRange)}px`
+                  }}
+                >
+                  <TimelineTask
+                    task={task}
+                    allCards={[task]}
+                    cardIndex={0}
+                    dateRange={dateRange}
+                    zoomLevel={zoomLevel}
+                    onOpenTaskModal={openCardModal}
+                    getTaskPosition={getTaskPosition}
+                    getTaskColor={getTaskColor}
+                    boardLabels={boardLabels}
+                  />
+                </div>
+
+                {/* Right queue area */}
+                <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700 overflow-visible">
+                  {taskIndex === 0 && (
+                    <TimelineQueue
+                      hiddenTasks={allListTasks.filter((task: Card) => {
+                        const taskStart = task.startDate || new Date();
+                        return taskStart > dateRange[dateRange.length - 1];
+                      })}
+                      onOpenTaskModal={openCardModal}
+                      getTaskColor={getTaskColor}
+                      boardLabels={boardLabels}
+                      position="right"
+                    />
+                  )}
+                </div>
+              </div>
             ))
           ) : (
             list.cards.length > 0 ? (
               <div className="flex border-b border-slate-50 dark:border-slate-700">
-                <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700">
-                  <div className="flex flex-wrap gap-1">
-                    {list.cards.map((task: Card) => {
+                {/* Left queue area */}
+                <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700 overflow-visible">
+                  <TimelineQueue
+                    hiddenTasks={list.cards.filter((task: Card) => {
                       const taskEnd = task.dueDate || addDays(task.startDate || new Date(), 7);
-                      if (taskEnd < dateRange[0]) {
-                        return (
-                          <div
-                            key={task.id}
-                            className="w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity relative"
-                            style={{ backgroundColor: getTaskColor(task, boardLabels).background }}
-                            title={`${task.title} (Before current view)`}
-                            onClick={() => openCardModal(task.id)}
-                            onMouseEnter={(e) => {
-                              const rect = e.currentTarget.getBoundingClientRect();
-                              setHoveredTask({
-                                task: task,
-                                position: 'before',
-                                x: rect.left + rect.width / 2,
-                                y: rect.bottom + 8
-                              });
-                            }}
-                            onMouseLeave={() => setHoveredTask(null)}
-                          />
-                        );
-                      }
-                      return null;
+                      return taskEnd < dateRange[0];
                     })}
-                  </div>
+                    onOpenTaskModal={openCardModal}
+                    getTaskColor={getTaskColor}
+                    boardLabels={boardLabels}
+                    position="left"
+                  />
                 </div>
+
                 <div className="flex-1 relative flex items-center justify-center" style={{ minHeight: '60px' }}>
                   <div className="text-slate-400 dark:text-slate-500 text-sm italic">
                     All tasks are outside current date range
                   </div>
                 </div>
-                <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700">
-                  <div className="flex flex-wrap gap-1">
-                    {list.cards.map((task: Card) => {
+
+                {/* Right queue area */}
+                <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700 overflow-visible">
+                  <TimelineQueue
+                    hiddenTasks={list.cards.filter((task: Card) => {
                       const taskStart = task.startDate || new Date();
-                      if (taskStart > dateRange[dateRange.length - 1]) {
-                        return (
-                          <div
-                            key={task.id}
-                            className="w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity relative"
-                            style={{ backgroundColor: getTaskColor(task, boardLabels).background }}
-                            title={`${task.title} (After current view)`}
-                            onClick={() => openCardModal(task.id)}
-                            onMouseEnter={(e) => {
-                              const rect = e.currentTarget.getBoundingClientRect();
-                              setHoveredTask({
-                                task: task,
-                                position: 'after',
-                                x: rect.left + rect.width / 2,
-                                y: rect.bottom + 8
-                              });
-                            }}
-                            onMouseLeave={() => setHoveredTask(null)}
-                          />
-                        );
-                      }
-                      return null;
+                      return taskStart > dateRange[dateRange.length - 1];
                     })}
-                  </div>
+                    onOpenTaskModal={openCardModal}
+                    getTaskColor={getTaskColor}
+                    boardLabels={boardLabels}
+                    position="right"
+                  />
                 </div>
               </div>
             ) : (

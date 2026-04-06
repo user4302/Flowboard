@@ -1,6 +1,5 @@
 import { Card, Label } from '@/lib/types';
 import { TimelineTask } from './TimelineTask';
-import { TimelineTooltip } from './TimelineTooltip';
 
 /**
  * TaskLane Component
@@ -71,29 +70,12 @@ export function TimelineTaskLane({
 }: TaskLaneProps) {
   return (
     <div className="flex">
-      {/* Left-side space for past hidden tasks */}
+      {/* Left queue area - reserved space */}
       <div className="w-48 flex-shrink-0 p-3 border-r border-slate-100 dark:border-slate-700 overflow-visible">
-        <div className="flex flex-wrap gap-1">
-          {hiddenTasksBefore.map((hiddenTask: Card) => (
-            <div
-              key={hiddenTask.id}
-              className="relative group"
-            >
-              <div
-                className="w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity"
-                style={{ backgroundColor: getTaskColor(hiddenTask, boardLabels).background }}
-                onClick={() => onOpenTaskModal(hiddenTask.id)}
-                title=""  // Remove browser tooltip
-              />
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
-                <TimelineTooltip task={hiddenTask} position="before" boardLabels={boardLabels} />
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Queue content will be populated by parent TimelineListLane */}
       </div>
 
-      {/* Timeline area with the main task */}
+      {/* Timeline area with main task */}
       <div
         className="flex-1 relative border-b border-slate-50 dark:border-slate-700"
         style={{
@@ -113,26 +95,9 @@ export function TimelineTaskLane({
         />
       </div>
 
-      {/* Right-side space for future hidden tasks */}
+      {/* Right queue area - reserved space */}
       <div className="w-48 flex-shrink-0 p-3 border-l border-slate-100 dark:border-slate-700 overflow-visible">
-        <div className="flex flex-wrap gap-1">
-          {hiddenTasksAfter.map((hiddenTask: Card) => (
-            <div
-              key={hiddenTask.id}
-              className="relative group"
-            >
-              <div
-                className="w-6 h-6 rounded cursor-pointer hover:opacity-80 transition-opacity"
-                style={{ backgroundColor: getTaskColor(hiddenTask, boardLabels).background }}
-                onClick={() => onOpenTaskModal(hiddenTask.id)}
-                title=""  // Remove browser tooltip
-              />
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[9999]">
-                <TimelineTooltip task={hiddenTask} position="after" boardLabels={boardLabels} />
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Queue content will be populated by parent TimelineListLane */}
       </div>
     </div>
   );
