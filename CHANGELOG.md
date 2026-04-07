@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.8.4] - 2026-04-07
+
+### Fixed
+- Remove static export configuration to support dynamic routes
+- Update Netlify publish directory from 'out' to '.next'
+- Allow /board/[boardId]/card/[cardId] route to render at runtime
+
 ## [1.8.3] - 2026-04-07
 
 ### Fixed
