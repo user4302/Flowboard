@@ -51,9 +51,6 @@ export function KanbanView({ boardId }: KanbanViewProps) {
       const scrollTop = scrollContainer.scrollTop;
       const position = { left: scrollLeft, top: scrollTop };
       setScrollPosition(boardId, position);
-      console.log('Storing scroll position to UI store:', position);
-    } else {
-      console.log('Scroll container ref not available when trying to store position');
     }
   };
 
@@ -105,20 +102,11 @@ export function KanbanView({ boardId }: KanbanViewProps) {
       // Restore scroll position when modal closes with a small delay
       // to ensure the DOM has updated
       const storedPosition = getScrollPosition(boardId);
-      console.log('Modal closing - attempting to restore scroll position from UI store:', storedPosition);
-      console.log('Current scroll position before restore:', {
-        left: scrollContainer.scrollLeft,
-        top: scrollContainer.scrollTop
-      });
 
       setTimeout(() => {
         if (scrollContainerRef.current) {
           scrollContainerRef.current.scrollLeft = storedPosition.left;
           scrollContainerRef.current.scrollTop = storedPosition.top;
-          console.log('Scroll position after restore attempt:', {
-            left: scrollContainerRef.current.scrollLeft,
-            top: scrollContainerRef.current.scrollTop
-          });
         }
       }, 50);
     }

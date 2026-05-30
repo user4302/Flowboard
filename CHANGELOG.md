@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fix LabelManager and ColorPicker click-outside interactions by implementing portal detection in `useClickOutside`
+- Update import-format-template.md schema to match actual internal Board interface
+- Clean up debug logging
+
 ## [1.8.0] - 2026-04-07
 
 ### Refactored

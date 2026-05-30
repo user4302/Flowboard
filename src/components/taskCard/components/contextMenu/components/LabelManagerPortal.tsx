@@ -19,6 +19,8 @@ interface LabelManagerPortalProps {
   selectedLabelIds: string[];
   /** Function to call when the label manager should close */
   onClose: () => void;
+  /** Optional additional refs to exclude from click-outside detection */
+  additionalRefs?: React.RefObject<Node>[];
 }
 
 /**
@@ -32,8 +34,9 @@ export function LabelManagerPortal({
   cardId,
   selectedLabelIds,
   onClose,
+  additionalRefs,
 }: LabelManagerPortalProps) {
-  const labelManagerRef = useClickOutside<HTMLDivElement>(onClose);
+  const labelManagerRef = useClickOutside<HTMLDivElement>(onClose, additionalRefs);
 
   if (!show || !boardId) {
     return null;
@@ -47,6 +50,7 @@ export function LabelManagerPortal({
         left: `${position.left}px`,
         top: `${position.top}px`,
       }}
+      data-portal="label-manager"
     >
       <TaskModalLabelManager
         boardId={boardId}

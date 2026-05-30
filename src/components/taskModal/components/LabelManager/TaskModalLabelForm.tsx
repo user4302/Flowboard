@@ -118,6 +118,7 @@ export function TaskModalLabelForm({
             data-color-picker-trigger
             value={labelColor}
             onChange={onColorChange}
+            isInsidePortal={true}
             placeholder="Select a label color"
             showRecentColors={true}
             maxRecentColors={5}
