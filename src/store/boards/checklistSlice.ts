@@ -223,4 +223,5 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
             ),
         }));
     },
+});
 
