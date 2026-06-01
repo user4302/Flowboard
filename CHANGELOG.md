@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Implement dual-state Markdown description field in task modal
+- Add support for raw Markdown editing on focus and rendered Markdown view on blur
+- Integrate Tailwind typography (prose) for consistent Markdown rendering
+- Fix layout consistency by unifying container height for edit and view modes
+- Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
+
 ### Fixed
 - Fix LabelManager and ColorPicker click-outside interactions by implementing portal detection in `useClickOutside`
 - Update import-format-template.md schema to match actual internal Board interface
