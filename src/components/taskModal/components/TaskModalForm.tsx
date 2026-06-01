@@ -137,12 +137,12 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               }}
               onBlur={() => setIsEditing(false)}
               ref={textareaRef}
-              className="w-full h-full bg-transparent focus:outline-none resize-none overflow-y-auto"
+              className="w-full h-full bg-transparent focus:outline-none resize-none overflow-y-auto overscroll-y-contain"
               placeholder="Add a more detailed description..."
               autoFocus
             />
           ) : (
-            <div className="prose dark:prose-invert prose-sm max-w-none h-full overflow-y-auto">
+            <div className="prose dark:prose-invert prose-sm max-w-none h-full overflow-y-auto overscroll-y-contain">
               {descriptionValue ? (
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{descriptionValue}</ReactMarkdown>
               ) : (
