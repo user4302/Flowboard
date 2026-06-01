@@ -1,7 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { TaskModalMultiChecklistManager } from './TaskModalMultiChecklistManager';
 import { Checklist, ChecklistItem } from '@/lib/types';
+import { Button } from '@/components/ui';
 
 interface TaskModalChecklistSectionProps {
   cardId: string;
