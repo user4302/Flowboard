@@ -469,6 +469,7 @@ export function TaskModalMultiChecklistManager({
                       const pastedText = e.clipboardData.getData('text');
                       if (pastedText.includes('\n')) {
                         e.preventDefault();
+                        e.stopPropagation();
                         const items = pastedText.split('\n').filter(line => line.trim() !== '');
                         onAddChecklistItems(checklist.id, items);
                         setNewItemInputs(prev => ({ ...prev, [checklist.id]: '' }));
