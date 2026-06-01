@@ -184,7 +184,7 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
         }));
     },
 
-    removeChecklistItem: (boardId, cardId, checklistId, itemId) => {
+    addChecklistItems: (boardId, cardId, checklistId, texts) => {
         set((state) => ({
             boards: state.boards.map((board) =>
                 board.id === boardId
@@ -202,7 +202,10 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
                                                     checklist.id === checklistId
                                                         ? {
                                                             ...checklist,
-                                                            items: checklist.items.filter((item) => item.id !== itemId),
+                                                            items: [
+                                                                ...checklist.items,
+                                                                ...texts.map(text => ({ id: generateId(), text, done: false }))
+                                                            ],
                                                             updatedAt: new Date(),
                                                         }
                                                         : checklist
@@ -220,4 +223,4 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
             ),
         }));
     },
-});
+
