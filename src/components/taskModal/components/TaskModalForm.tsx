@@ -33,17 +33,21 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
 
   // Check if content exceeds default height
   useEffect(() => {
-    if (textareaRef.current && !isDescriptionExpanded) {
-      // Temporarily set height to auto to measure content
-      const originalHeight = textareaRef.current.style.height;
-      textareaRef.current.style.height = 'auto';
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = originalHeight;
-
-      // Default 4 rows = approximately 96px
-      setContentExceedsHeight(scrollHeight > 96);
-    }
-  }, [descriptionValue, isDescriptionExpanded]);
+    // Use a temporary textarea for measurement
+    const tempTextarea = document.createElement('textarea');
+    tempTextarea.value = descriptionValue;
+    tempTextarea.style.width = '100%';
+    tempTextarea.style.position = 'absolute';
+    tempTextarea.style.visibility = 'hidden';
+    tempTextarea.style.font = '0.875rem sans-serif'; // text-sm
+    tempTextarea.style.padding = '0.5rem'; // px-3 py-2
+    document.body.appendChild(tempTextarea);
+    
+    // Default 4 rows = approximately 96px
+    setContentExceedsHeight(tempTextarea.scrollHeight > 96);
+    
+    document.body.removeChild(tempTextarea);
+  }, [descriptionValue]);
 
   // Auto-adjust height when expanded or content changes
   useEffect(() => {
