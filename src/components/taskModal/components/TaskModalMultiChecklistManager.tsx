@@ -16,6 +16,7 @@ interface TaskModalMultiChecklistManagerProps {
   onAddChecklistItem: (checklistId: string, text: string) => void;
   onUpdateChecklistItem: (checklistId: string, itemId: string, updates: Partial<ChecklistItem>) => void;
   onRemoveChecklistItem: (checklistId: string, itemId: string) => void;
+  onAddChecklistItems: (checklistId: string, texts: string[]) => void;
 }
 
 export function TaskModalMultiChecklistManager({
@@ -27,7 +28,8 @@ export function TaskModalMultiChecklistManager({
   onRemoveChecklist,
   onAddChecklistItem,
   onUpdateChecklistItem,
-  onRemoveChecklistItem
+  onRemoveChecklistItem,
+  onAddChecklistItems
 }: TaskModalMultiChecklistManagerProps) {
   const [expandedChecklists, setExpandedChecklists] = useState<Set<string>>(new Set());
   const [newChecklistName, setNewChecklistName] = useState('');
@@ -460,6 +462,15 @@ export function TaskModalMultiChecklistManager({
                       if (e.key === 'Enter') {
                         handleAddItem(checklist.id);
                       } else if (e.key === 'Escape') {
+                        setNewItemInputs(prev => ({ ...prev, [checklist.id]: '' }));
+                      }
+                    }}
+                    onPaste={(e) => {
+                      const pastedText = e.clipboardData.getData('text');
+                      if (pastedText.includes('\n')) {
+                        e.preventDefault();
+                        const items = pastedText.split('\n').filter(line => line.trim() !== '');
+                        onAddChecklistItems(checklist.id, items);
                         setNewItemInputs(prev => ({ ...prev, [checklist.id]: '' }));
                       }
                     }}
