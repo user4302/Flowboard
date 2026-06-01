@@ -123,8 +123,8 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
         </div>
         <div
           className={cn(
-            "w-full rounded-lg border border-transparent px-3 py-2 text-sm dark:bg-slate-900/50 dark:text-slate-100 transition-all duration-200 cursor-pointer hover:border-slate-300",
-            !descriptionValue && "text-slate-400 italic"
+            "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200",
+            !isDescriptionExpanded && "max-h-[140px] overflow-y-auto"
           )}
           onClick={() => setIsEditing(true)}
         >
@@ -137,15 +137,8 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               }}
               onBlur={() => setIsEditing(false)}
               ref={textareaRef}
-              rows={isDescriptionExpanded ? 1 : 4}
-              style={{
-                resize: 'vertical',
-                height: isDescriptionExpanded ? undefined : '',
-                minHeight: '96px'
-              }}
-              className={cn(
-                "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200"
-              )}
+              rows={isDescriptionExpanded ? 10 : 4}
+              className="w-full h-full bg-transparent focus:outline-none resize-none"
               placeholder="Add a more detailed description..."
               autoFocus
             />
@@ -154,7 +147,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               {descriptionValue ? (
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{descriptionValue}</ReactMarkdown>
               ) : (
-                "Add a more detailed description..."
+                <span className="text-slate-400 italic">Add a more detailed description...</span>
               )}
             </div>
           )}
