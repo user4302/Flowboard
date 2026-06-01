@@ -1,4 +1,5 @@
 import { Card, Label, User, ChecklistItem } from './types';
+import { generateId } from './utils';
 
 /**
  * Interface for clean card JSON format
@@ -18,7 +19,14 @@ export interface CardJSON {
   startDate?: string; // ISO string
   dueDate?: string; // ISO string
   priority?: number;
-  checklist: Array<{
+  checklists?: Array<{
+    name: string;
+    items: Array<{
+      text: string;
+      done: boolean;
+    }>;
+  }>;
+  checklist?: Array<{ // Kept for backward compatibility
     text: string;
     done: boolean;
   }>;
@@ -103,9 +111,12 @@ export function cardToJSON(card: Card, boardLabels: Label[], boardMembers: User[
     members,
     startDate: card.startDate?.toISOString(),
     dueDate: card.dueDate?.toISOString(),
-    checklist: (card.checklists || []).flatMap(c => c.items).map(item => ({
-      text: item.text,
-      done: item.done
+    checklists: (card.checklists || []).map(c => ({
+      name: c.name,
+      items: c.items.map(item => ({
+        text: item.text,
+        done: item.done
+      }))
     }))
   };
 }
@@ -123,7 +134,7 @@ export function jsonToCardData(
   const labelIds = cardJSON.labels
     .map(jsonLabel => {
       const matchingLabel = boardLabels.find(boardLabel =>
-        boardLabel.text === jsonLabel.text &&
+        boardLabel.text.toLowerCase() === jsonLabel.text.toLowerCase() &&
         boardLabel.color === jsonLabel.color
       );
       return matchingLabel?.id;
@@ -134,26 +145,43 @@ export function jsonToCardData(
   const members = cardJSON.members
     .map(jsonMember => {
       const matchingMember = boardMembers.find(boardMember =>
-        boardMember.name === jsonMember.name &&
-        (jsonMember.email ? boardMember.email === jsonMember.email : true)
+        boardMember.name.toLowerCase() === jsonMember.name.toLowerCase() &&
+        (jsonMember.email ? boardMember.email?.toLowerCase() === jsonMember.email.toLowerCase() : true)
       );
       return matchingMember?.id;
     })
     .filter((id): id is string => id !== undefined);
 
   // Convert checklist items
-  const checklists: import('./types').Checklist[] = [{
-    id: `checklist-imported`, // Temporary ID
-    name: 'Checklist',
-    items: cardJSON.checklist.map((item, index) => ({
-      id: `checklist-item-${index}`,
-      text: item.text,
-      done: item.done
-    })),
-    position: 0,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }];
+  let checklists: import('./types').Checklist[] = [];
+  if (cardJSON.checklists) {
+    checklists = cardJSON.checklists.map((c, index) => ({
+      id: generateId(),
+      name: c.name,
+      items: c.items.map((item, itemIndex) => ({
+        id: generateId(),
+        text: item.text,
+        done: item.done
+      })),
+      position: index,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }));
+  } else if (cardJSON.checklist) {
+    // Backward compatibility
+    checklists = [{
+      id: generateId(),
+      name: 'Checklist',
+      items: cardJSON.checklist.map((item, index) => ({
+        id: generateId(),
+        text: item.text,
+        done: item.done
+      })),
+      position: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }];
+  }
 
   return {
     title: cardJSON.title,
