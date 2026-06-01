@@ -60,6 +60,20 @@ export function TaskModalMultiChecklistManager({
     }
   };
 
+  const handleAddMultipleItems = (checklistId: string, texts: string[]) => {
+    if (typeof onAddChecklistItems === 'function') {
+      onAddChecklistItems(checklistId, texts);
+      return;
+    }
+
+    texts.forEach((text) => {
+      const trimmedText = text.trim();
+      if (trimmedText) {
+        onAddChecklistItem(checklistId, trimmedText);
+      }
+    });
+  };
+
   const handleStartEditChecklist = (checklist: Checklist) => {
     setEditingChecklistId(checklist.id);
     setEditingChecklistName(checklist.name);
@@ -470,8 +484,11 @@ export function TaskModalMultiChecklistManager({
                       if (pastedText.includes('\n')) {
                         e.preventDefault();
                         e.stopPropagation();
-                        const items = pastedText.split('\n').filter(line => line.trim() !== '');
-                        onAddChecklistItems(checklist.id, items);
+                        const items = pastedText
+                          .split(/\r?\n/)
+                          .map(line => line.trim())
+                          .filter(line => line.length > 0);
+                        handleAddMultipleItems(checklist.id, items);
                         setNewItemInputs(prev => ({ ...prev, [checklist.id]: '' }));
                       }
                     }}

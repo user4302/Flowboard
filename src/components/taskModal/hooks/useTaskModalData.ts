@@ -14,8 +14,9 @@ export function useTaskModalData() {
   const [isWaitingForCard, setIsWaitingForCard] = useState(false);
 
   // Find current board and selected card
-  const currentBoard = boards.find(b => b.id === currentBoardId);
-  const foundCard = currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId);
+  const currentBoard = useMemo(() => boards.find(b => b.id === currentBoardId), [boards, currentBoardId]);
+  const foundCard = useMemo(() => currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId), [currentBoard, selectedCardId]);
+  const initialChecklists = useMemo(() => foundCard?.checklists || [], [foundCard]);
 
   // Determine if we're in JSON import mode
   const isJSONImportMode = !!cardJSONData && !!targetListId;
@@ -55,8 +56,13 @@ export function useTaskModalData() {
   const checklist = useTaskModalChecklist({
     boardId: currentBoardId || '',
     cardId: foundCard?.id || '',
-    initialChecklists: foundCard?.checklists || []
+    initialChecklists: initialChecklists
   });
+
+  const memoizedChecklist = useMemo(() => ({
+    ...checklist,
+    isDirty: checklist.isDirty,
+  }), [checklist.localChecklists, checklist.isDirty, checklist.addChecklist, checklist.updateChecklist, checklist.removeChecklist, checklist.addChecklistItem, checklist.addChecklistItems, checklist.updateChecklistItem, checklist.removeChecklistItem, checklist.syncChecklistToStore, checklist.resetChecklist, checklist.resetDirty]);
 
   // Force form re-initialization when a newly created card is found
   useEffect(() => {
@@ -80,12 +86,12 @@ export function useTaskModalData() {
     foundCard,
     boardLabels,
     form,
-    checklist,
+    checklist: memoizedChecklist,
     currentBoardId,
     cardModalOpen,
     selectedCardId,
     cardJSONData,
     targetListId,
     isJSONImportMode
-  }), [currentBoard, foundCard, boardLabels, form, checklist, currentBoardId, cardModalOpen, selectedCardId, cardJSONData, targetListId, isJSONImportMode]);
+  }), [currentBoard, foundCard, boardLabels, form, memoizedChecklist, currentBoardId, cardModalOpen, selectedCardId, cardJSONData, targetListId, isJSONImportMode]);
 }

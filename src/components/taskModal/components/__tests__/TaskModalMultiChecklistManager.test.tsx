@@ -29,6 +29,7 @@ describe('TaskModalMultiChecklistManager', () => {
     onUpdateChecklist: jest.fn(),
     onRemoveChecklist: jest.fn(),
     onAddChecklistItem: jest.fn(),
+    onAddChecklistItems: jest.fn(),
     onUpdateChecklistItem: jest.fn(),
     onRemoveChecklistItem: jest.fn()
   }

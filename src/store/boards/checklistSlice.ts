@@ -223,5 +223,41 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
             ),
         }));
     },
-});
 
+    removeChecklistItem: (boardId, cardId, checklistId, itemId) => {
+        set((state) => ({
+            boards: state.boards.map((board) =>
+                board.id === boardId
+                    ? {
+                        ...board,
+                        lists: board.lists.map((list) =>
+                            list.cards.some((c) => c.id === cardId)
+                                ? {
+                                    ...list,
+                                    cards: list.cards.map((card) =>
+                                        card.id === cardId
+                                            ? {
+                                                ...card,
+                                                checklists: card.checklists.map((checklist) =>
+                                                    checklist.id === checklistId
+                                                        ? {
+                                                            ...checklist,
+                                                            items: checklist.items.filter((item) => item.id !== itemId),
+                                                            updatedAt: new Date(),
+                                                        }
+                                                        : checklist
+                                                ),
+                                                updatedAt: new Date(),
+                                            }
+                                            : card
+                                    ),
+                                }
+                                : list
+                        ),
+                        updatedAt: new Date(),
+                    }
+                    : board
+            ),
+        }));
+    },
+});

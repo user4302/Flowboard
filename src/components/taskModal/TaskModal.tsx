@@ -39,6 +39,16 @@ export function TaskModal() {
     handleSave(cardData);
   };
 
+  const handleClose = () => {
+    if (form.formState.isDirty || checklist.isDirty) {
+      if (confirm("You have unsaved changes. Are you sure you want to close?")) {
+        closeCardModal();
+      }
+    } else {
+      closeCardModal();
+    }
+  };
+
   // Early return if modal data is not available
   if (!cardModalOpen || (!currentBoard || !currentBoardId)) {
     return null;
@@ -49,7 +59,7 @@ export function TaskModal() {
     // Show loading state while waiting for newly created card
     if (selectedCardId) {
       return (
-        <UIModal open={cardModalOpen} onClose={closeCardModal}>
+        <UIModal open={cardModalOpen} onClose={handleClose}>
           <div className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading card...</p>
@@ -61,8 +71,8 @@ export function TaskModal() {
   }
 
   return (
-    <UIModal open={cardModalOpen} onClose={closeCardModal}>
-      <TaskModalHeader onClose={closeCardModal} />
+    <UIModal open={cardModalOpen} onClose={handleClose}>
+      <TaskModalHeader onClose={handleClose} />
 
       <form onSubmit={form.handleSubmit(handleFormSubmit)}>
         <ModalBody className="space-y-6">
@@ -110,7 +120,7 @@ export function TaskModal() {
 
         <ModalFooter>
           <Button type="submit">Save changes</Button>
-          <Button type="button" variant="ghost" onClick={closeCardModal}>
+          <Button type="button" variant="ghost" onClick={handleClose}>
             Cancel
           </Button>
           {!isJSONImportMode && foundCard && (

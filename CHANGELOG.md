@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add addChecklistItems functionality to checklistSlice
+- Implement smart import and store support for checklists
+- Implement smart paste import for checklist items
 - Implement dual-state Markdown description field in task modal
 - Add support for raw Markdown editing on focus and rendered Markdown view on blur
 - Integrate Tailwind typography (prose) for consistent Markdown rendering
@@ -15,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
 
 ### Fixed
+- Prevent duplicate label names
+- Restore missing closing bracket in checklist slice
+- Add missing useState import in checklist hook
+- Preserve checklist structure and label uniqueness during import
+- Remove explicit import button and fix paste behavior
 - Fix LabelManager and ColorPicker click-outside interactions by implementing portal detection in `useClickOutside`
 - Update import-format-template.md schema to match actual internal Board interface
 - Clean up debug logging
