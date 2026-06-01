@@ -16,7 +16,7 @@ export const useBoardHeaderActions = (currentBoard: Board) => {
    */
   const handleExportBoard = () => {
     if (currentBoard) {
-      exportData(currentBoard);
+      exportData({ board: currentBoard });
     }
   };
 

@@ -5,16 +5,7 @@ import { useTaskModalChecklist } from './useTaskModalChecklist';
 import { CardModalData } from '../types/TaskModal.modal.types';
 import { CardJSON } from '@/lib/cardJsonUtils';
 
-export function useTaskModalData(): CardModalData & {
-  form: ReturnType<typeof useTaskModalForm>;
-  checklist: ReturnType<typeof useTaskModalChecklist>;
-  currentBoardId: string | null;
-  cardModalOpen: boolean;
-  selectedCardId: string | null;
-  cardJSONData: CardJSON | null;
-  targetListId: string | null;
-  isJSONImportMode: boolean;
-} {
+export function useTaskModalData() {
   // Store hooks for state management
   const { cardModalOpen, selectedCardId, cardJSONData, targetListId } = useUIStore();
   const { boards, currentBoardId } = useBoardStore();

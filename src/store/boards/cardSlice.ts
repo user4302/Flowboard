@@ -18,6 +18,7 @@ export const createCardSlice: BoardStateCreator<CardSlice> = (set, get) => ({
             checklists: [],
             completed: false,
             position: position ?? list.cards.length,
+            priority: null,
             createdAt: new Date(),
             updatedAt: new Date(),
         };

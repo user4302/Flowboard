@@ -12,6 +12,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update import-format-template.md schema to match actual internal Board interface
 - Clean up debug logging
 
+## [1.8.4] - 2026-04-07
+
+### Fixed
+- Remove static export configuration to support dynamic routes
+- Update Netlify publish directory from 'out' to '.next'
+- Allow /board/[boardId]/card/[cardId] route to render at runtime
+
+## [1.8.3] - 2026-04-07
+
+### Fixed
+- Add uuid dependency to resolve Netlify build failure
+- Fix missing uuid package required by Netlify functions (create-invite.js, join-board.js)
+
+## [1.8.2] - 2026-04-07
+
+### Fixed
+- Fix TypeScript compilation errors preventing Netlify deployment
+- Fix exportData function call to match expected object parameter structure
+- Remove complex return type annotation in useTaskModalData to allow type inference
+- Simplify zod schema by removing preprocessing from priority field validation
+- Add priority field to CardJSON interface and card creation logic
+- Add priority: null to new card objects in cardSlice to match Card interface
+
+## [1.8.1] - 2026-04-07
+
+### Fixed
+- Update Node.js version from 18 to 20 in Netlify build configuration
+- Resolve build failure due to Next.js 16.1.6 requiring Node.js >=20.9.0
+
 ## [1.8.0] - 2026-04-07
 
 ### Refactored
@@ -38,6 +67,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase custom color button plus symbol size for better visibility
 
 ### Changed
+- Rename "Suggested Colors" to "Existing Colors" for clarity
+- Keep ColorPicker dropdown open for continuous color selection
+- Replace small X close button with prominent Close button
+- Remove redundant Apply button (colors apply automatically)
+- Replace ChromePicker with HexColorPicker for better styling flexibility
+- Fix state synchronization issues by using value prop consistently
+- Simplify event handlers for controlled component behavior
 - Reorganize calendar components to follow kanban/timeline pattern
 - Move CalendarView back to views folder and DayTasksModal to calendar/components/
 - Rename calendarfoldr to calendar for consistency
@@ -53,15 +89,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensure label text has proper contrast (white/black) based on background color
 - Fix calendar month-based card counting to show correct number of cards when navigating between months
 - Replace static "Today" indicator with dynamic task count showing actual number of tasks due today
-
-### Changed
-- Rename "Suggested Colors" to "Existing Colors" for clarity
-- Keep ColorPicker dropdown open for continuous color selection
-- Replace small X close button with prominent Close button
-- Remove redundant Apply button (colors apply automatically)
-- Replace ChromePicker with HexColorPicker for better styling flexibility
-- Fix state synchronization issues by using value prop consistently
-- Simplify event handlers for controlled component behavior
 
 ## [1.7.0] - 2026-04-05
 
