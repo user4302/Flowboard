@@ -95,48 +95,27 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
             Description
           </label>
-          <div className="flex gap-2">
+          {contentExceedsHeight && (
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => setIsEditing(!isEditing)}
+              onClick={toggleDescriptionExpansion}
               className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
             >
-              {isEditing ? (
+              {isDescriptionExpanded ? (
                 <>
-                  <Eye className="h-3 w-3 mr-1" />
-                  View
+                  <Minimize2 className="h-3 w-3 mr-1" />
+                  Shrink
                 </>
               ) : (
                 <>
-                  <Pencil className="h-3 w-3 mr-1" />
-                  Edit
+                  <Maximize2 className="h-3 w-3 mr-1" />
+                  Expand
                 </>
               )}
             </Button>
-            {contentExceedsHeight && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={toggleDescriptionExpansion}
-                className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
-              >
-                {isDescriptionExpanded ? (
-                  <>
-                    <Minimize2 className="h-3 w-3 mr-1" />
-                    Shrink
-                  </>
-                ) : (
-                  <>
-                    <Maximize2 className="h-3 w-3 mr-1" />
-                    Expand
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
+          )}
         </div>
         {isEditing ? (
           <textarea
@@ -161,7 +140,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
         ) : (
           <div
             className={cn(
-              "w-full rounded-lg border border-transparent px-3 py-2 text-sm dark:bg-slate-900/50 dark:text-slate-100 transition-all duration-200 cursor-pointer hover:border-slate-300",
+              "w-full rounded-lg border border-transparent px-3 py-2 text-sm dark:bg-slate-900/50 dark:text-slate-100 transition-all duration-200 cursor-pointer hover:border-slate-300 prose dark:prose-invert prose-sm max-w-none",
               !descriptionValue && "text-slate-400 italic"
             )}
             onClick={() => setIsEditing(true)}
