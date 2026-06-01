@@ -1,0 +1,1 @@
+Decision: Use Zustand store for consistent state management of checklists and labels.\nRationale: Maintains alignment with existing architecture.\nAlternatives: Local component state (insufficient for import/export logic).
