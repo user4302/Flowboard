@@ -117,41 +117,44 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
             </Button>
           )}
         </div>
-        {isEditing ? (
-          <textarea
-            value={descriptionValue}
-            onChange={(e) => {
-              setDescriptionValue(e.target.value);
-              form.setValue('description', e.target.value);
-            }}
-            onBlur={() => setIsEditing(false)}
-            ref={textareaRef}
-            rows={isDescriptionExpanded ? 1 : 4}
-            style={{
-              resize: 'vertical',
-              height: isDescriptionExpanded ? undefined : '',
-              minHeight: '96px'
-            }}
-            className={cn(
-              "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200"
-            )}
-            placeholder="Add a more detailed description..."
-          />
-        ) : (
-          <div
-            className={cn(
-              "w-full rounded-lg border border-transparent px-3 py-2 text-sm dark:bg-slate-900/50 dark:text-slate-100 transition-all duration-200 cursor-pointer hover:border-slate-300 prose dark:prose-invert prose-sm max-w-none",
-              !descriptionValue && "text-slate-400 italic"
-            )}
-            onClick={() => setIsEditing(true)}
-          >
-            {descriptionValue ? (
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{descriptionValue}</ReactMarkdown>
-            ) : (
-              "Add a more detailed description..."
-            )}
-          </div>
-        )}
+        <div
+          className={cn(
+            "w-full rounded-lg border border-transparent px-3 py-2 text-sm dark:bg-slate-900/50 dark:text-slate-100 transition-all duration-200 cursor-pointer hover:border-slate-300",
+            !descriptionValue && "text-slate-400 italic"
+          )}
+          onClick={() => setIsEditing(true)}
+        >
+          {isEditing ? (
+            <textarea
+              value={descriptionValue}
+              onChange={(e) => {
+                setDescriptionValue(e.target.value);
+                form.setValue('description', e.target.value);
+              }}
+              onBlur={() => setIsEditing(false)}
+              ref={textareaRef}
+              rows={isDescriptionExpanded ? 1 : 4}
+              style={{
+                resize: 'vertical',
+                height: isDescriptionExpanded ? undefined : '',
+                minHeight: '96px'
+              }}
+              className={cn(
+                "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200"
+              )}
+              placeholder="Add a more detailed description..."
+              autoFocus
+            />
+          ) : (
+            <div className="prose dark:prose-invert prose-sm max-w-none">
+              {descriptionValue ? (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{descriptionValue}</ReactMarkdown>
+              ) : (
+                "Add a more detailed description..."
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Priority - Number-based priority input */}
