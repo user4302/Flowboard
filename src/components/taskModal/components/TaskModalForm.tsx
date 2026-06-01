@@ -1,6 +1,8 @@
 'use client';
 
-import { Calendar, User, Tag, CheckSquare, Flag, Maximize2, Minimize2 } from 'lucide-react';
+import { Calendar, User, Tag, CheckSquare, Flag, Maximize2, Minimize2, Pencil, Eye } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
 import { Input, Button } from '@/components/ui';
 import { ModalFormProps } from '@/components/taskModal/types/TaskModal.form.types';
@@ -10,9 +12,17 @@ import { useState, useRef, useEffect } from 'react';
 
 export function TaskModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [descriptionValue, setDescriptionValue] = useState(card?.description || '');
   const [contentExceedsHeight, setContentExceedsHeight] = useState(false);
+
+  // Focus textarea when entering edit mode
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isEditing]);
 
   // Update description when card changes
   useEffect(() => {
@@ -85,46 +95,84 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
             Description
           </label>
-          {contentExceedsHeight && (
+          <div className="flex gap-2">
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={toggleDescriptionExpansion}
+              onClick={() => setIsEditing(!isEditing)}
               className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
             >
-              {isDescriptionExpanded ? (
+              {isEditing ? (
                 <>
-                  <Minimize2 className="h-3 w-3 mr-1" />
-                  Shrink
+                  <Eye className="h-3 w-3 mr-1" />
+                  View
                 </>
               ) : (
                 <>
-                  <Maximize2 className="h-3 w-3 mr-1" />
-                  Expand
+                  <Pencil className="h-3 w-3 mr-1" />
+                  Edit
                 </>
               )}
             </Button>
-          )}
+            {contentExceedsHeight && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={toggleDescriptionExpansion}
+                className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
+              >
+                {isDescriptionExpanded ? (
+                  <>
+                    <Minimize2 className="h-3 w-3 mr-1" />
+                    Shrink
+                  </>
+                ) : (
+                  <>
+                    <Maximize2 className="h-3 w-3 mr-1" />
+                    Expand
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </div>
-        <textarea
-          value={descriptionValue}
-          onChange={(e) => {
-            setDescriptionValue(e.target.value);
-            form.setValue('description', e.target.value);
-          }}
-          ref={textareaRef}
-          rows={isDescriptionExpanded ? 1 : 4}
-          style={{
-            resize: 'vertical',
-            height: isDescriptionExpanded ? undefined : '',
-            minHeight: '96px'
-          }}
-          className={cn(
-            "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200"
-          )}
-          placeholder="Add a more detailed description..."
-        />
+        {isEditing ? (
+          <textarea
+            value={descriptionValue}
+            onChange={(e) => {
+              setDescriptionValue(e.target.value);
+              form.setValue('description', e.target.value);
+            }}
+            onBlur={() => setIsEditing(false)}
+            ref={textareaRef}
+            rows={isDescriptionExpanded ? 1 : 4}
+            style={{
+              resize: 'vertical',
+              height: isDescriptionExpanded ? undefined : '',
+              minHeight: '96px'
+            }}
+            className={cn(
+              "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200"
+            )}
+            placeholder="Add a more detailed description..."
+          />
+        ) : (
+          <div
+            className={cn(
+              "w-full rounded-lg border border-transparent px-3 py-2 text-sm dark:bg-slate-900/50 dark:text-slate-100 transition-all duration-200 cursor-pointer hover:border-slate-300",
+              !descriptionValue && "text-slate-400 italic"
+            )}
+            onClick={() => setIsEditing(true)}
+          >
+            {descriptionValue ? (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{descriptionValue}</ReactMarkdown>
+            ) : (
+              "Add a more detailed description..."
+            )}
+          </div>
+        )}
       </div>
 
       {/* Priority - Number-based priority input */}
