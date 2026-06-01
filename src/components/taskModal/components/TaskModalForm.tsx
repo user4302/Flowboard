@@ -123,7 +123,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
         </div>
         <div
           className={cn(
-            "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200 overflow-y-auto",
+            "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200 overflow-hidden",
             isDescriptionExpanded ? "h-[300px]" : "h-[140px]"
           )}
           onClick={() => setIsEditing(true)}
@@ -137,12 +137,12 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               }}
               onBlur={() => setIsEditing(false)}
               ref={textareaRef}
-              className="w-full h-full bg-transparent focus:outline-none resize-none"
+              className="w-full h-full bg-transparent focus:outline-none resize-none overflow-y-auto"
               placeholder="Add a more detailed description..."
               autoFocus
             />
           ) : (
-            <div className="prose dark:prose-invert prose-sm max-w-none">
+            <div className="prose dark:prose-invert prose-sm max-w-none h-full overflow-y-auto">
               {descriptionValue ? (
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{descriptionValue}</ReactMarkdown>
               ) : (
