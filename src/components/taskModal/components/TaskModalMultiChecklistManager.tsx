@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Plus, Trash2, Edit2, X, ChevronDown, ChevronUp } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
 import { Button, Input } from '@/components/ui';
 import { Checklist, ChecklistItem } from '@/lib/types';
@@ -397,7 +399,7 @@ export function TaskModalMultiChecklistManager({
                           )}
                           onClick={() => handleStartEditItem(item.id, item.text)}
                         >
-                          {item.text}
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.text}</ReactMarkdown>
                         </div>
                       )}
 

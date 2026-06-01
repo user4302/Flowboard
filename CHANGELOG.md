@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add Markdown support for checklist items
 - Add addChecklistItems functionality to checklistSlice
 - Implement smart import and store support for checklists
 - Implement smart paste import for checklist items
