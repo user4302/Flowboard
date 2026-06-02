@@ -134,7 +134,7 @@ export function KanbanCardsContainer({
   return (
     <div
       ref={setNodeRef}
-      className={cn("flex flex-1 flex-col gap-2 min-h-[100px]", className)}
+      className={cn("flex flex-1 flex-col gap-2 min-h-[100px] pb-10", className)}
     >
       <SortableContext items={filteredCards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
         {filteredCards.map((card) => (
