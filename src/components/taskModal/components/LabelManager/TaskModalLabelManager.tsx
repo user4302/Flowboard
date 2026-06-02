@@ -6,8 +6,14 @@ import { TaskModalLabelForm } from './TaskModalLabelForm';
 import { LabelManagerProps } from '../../types/TaskModal.form.types';
 import { useRef } from 'react';
 
-export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClose }: LabelManagerProps) {
+export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClose, labelManagerHook }: LabelManagerProps & { labelManagerHook?: any }) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const internalHook = useTaskModalLabelManager({ 
+    boardId, 
+    cardId, 
+    initialSelectedLabelIds: selectedLabelIds 
+  });
+  
   const {
     view,
     searchTerm,
@@ -25,8 +31,11 @@ export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClo
     handleUpdateLabel,
     handleDeleteLabel,
     openEdit,
-    openCreate
-  } = useTaskModalLabelManager({ boardId, cardId, selectedLabelIds });
+    openCreate,
+    localSelectedLabelIds
+  } = labelManagerHook || internalHook;
+
+  const currentSelectedLabelIds = labelManagerHook ? localSelectedLabelIds : selectedLabelIds;
 
   return (
     <div
@@ -67,7 +76,7 @@ export function TaskModalLabelManager({ boardId, cardId, selectedLabelIds, onClo
         {view === 'list' ? (
           <TaskModalLabelList
             labels={filteredLabels}
-            selectedLabelIds={selectedLabelIds}
+            selectedLabelIds={currentSelectedLabelIds}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             onToggleLabel={handleToggleLabel}

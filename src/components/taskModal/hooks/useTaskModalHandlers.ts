@@ -14,6 +14,9 @@ export function useTaskModalHandlers(
   checklist: {
     syncChecklistToStore: () => void;
     resetChecklist: () => void;
+  },
+  labelManager: {
+    syncLabelsToStore: () => void;
   }
 ): CardModalHandlers & { closeCardModal: () => void } {
   const { closeCardModal, closeCardModalWithoutUrlUpdate } = useUIStore();
@@ -89,9 +92,10 @@ export function useTaskModalHandlers(
         updateData.priority = data.priority;
       }
 
-      // Sync checklist items first if not in JSON import mode
+      // Sync checklist and label items first if not in JSON import mode
       if (!isJSONImportMode) {
         checklist.syncChecklistToStore();
+        labelManager.syncLabelsToStore();
       }
 
       // Update the card
@@ -99,7 +103,7 @@ export function useTaskModalHandlers(
       // Close modal using the same logic as cancel button
       handleCloseCardModal();
     }
-  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleCloseCardModal, checklist]);
+  }, [currentBoardId, foundCard, isJSONImportMode, cardJSONData, targetListId, createCard, updateCard, handleCloseCardModal, checklist, labelManager]);
 
   const handleToggleCompleted = useCallback(() => {
     if (currentBoardId && foundCard) {

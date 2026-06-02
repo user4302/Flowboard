@@ -12,6 +12,7 @@ export function TaskModal() {
     boardLabels,
     form,
     checklist,
+    labelManager,
     currentBoardId,
     cardModalOpen,
     selectedCardId,
@@ -27,7 +28,8 @@ export function TaskModal() {
     isJSONImportMode,
     cardJSONData,
     targetListId,
-    checklist
+    checklist,
+    labelManager
   );
 
   const handleFormSubmit = (data: any) => {
@@ -40,7 +42,7 @@ export function TaskModal() {
   };
 
   const handleClose = () => {
-    if (form.formState.isDirty || checklist.isDirty) {
+    if (form.formState.isDirty || checklist.isDirty || labelManager.isDirty) {
       if (confirm("You have unsaved changes. Are you sure you want to close?")) {
         closeCardModal();
       }
@@ -104,6 +106,7 @@ export function TaskModal() {
               cardId={foundCard?.id || ''}
               labelIds={foundCard?.labelIds || []}
               labels={boardLabels}
+              labelManager={labelManager}
             />
           )}
 

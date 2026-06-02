@@ -260,4 +260,5 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
             ),
         }));
     },
+    // Force rebuild
 });

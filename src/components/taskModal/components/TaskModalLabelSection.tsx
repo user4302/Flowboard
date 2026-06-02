@@ -13,13 +13,33 @@ interface TaskModalLabelSectionProps {
   cardId: string;
   labelIds: string[];
   labels: Label[];
+  labelManager: {
+    localSelectedLabelIds: string[];
+    handleToggleLabel: (labelId: string) => void;
+    boardLabels: Label[];
+    filteredLabels: Label[];
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
+    openEdit: (label: Label) => void;
+    openCreate: () => void;
+    view: string;
+    setView: (view: any) => void;
+    labelTitle: string;
+    setLabelTitle: (title: string) => void;
+    labelColor: string;
+    setLabelColor: (color: string) => void;
+    handleCreateLabel: () => void;
+    handleUpdateLabel: () => void;
+    handleDeleteLabel: (labelId: string) => void;
+  };
 }
 
 export function TaskModalLabelSection({
   boardId,
   cardId,
   labelIds,
-  labels
+  labels,
+  labelManager
 }: TaskModalLabelSectionProps) {
   const [showLabelManager, setShowLabelManager] = useState(false);
   const [popoverCoords, setPopoverCoords] = useState<PopoverCoords>({ left: 0 });
@@ -45,7 +65,7 @@ export function TaskModalLabelSection({
         Labels
       </label>
       <div className="flex flex-wrap gap-2">
-        {labelIds?.map((labelId) => {
+        {labelManager.localSelectedLabelIds?.map((labelId) => {
           const label = labels.find((l: Label) => l.id === labelId);
           if (!label) return null;
           return (
@@ -90,8 +110,9 @@ export function TaskModalLabelSection({
             <TaskModalLabelManager
               boardId={boardId}
               cardId={cardId}
-              selectedLabelIds={labelIds || []}
+              selectedLabelIds={labelManager.localSelectedLabelIds || []}
               onClose={() => setShowLabelManager(false)}
+              labelManagerHook={labelManager}
             />
           </div>
         </>,

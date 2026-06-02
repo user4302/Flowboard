@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Implement unified save behavior for task modal: changes only persist when the Save button is clicked
+- Add deferred commit logic for labels and checklist items to prevent auto-saving on interaction
+- Prevent modal from closing without confirmation if there are unsaved changes in description, labels, or checklists
 - Add Markdown support for checklist items
 - Add addChecklistItems functionality to checklistSlice
 - Implement smart import and store support for checklists

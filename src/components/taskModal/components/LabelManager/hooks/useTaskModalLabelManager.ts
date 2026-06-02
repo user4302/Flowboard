@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useBoardStore } from '@/store';
 import { Label } from '@/lib/types';
 import { BASIC_LABEL_COLORS } from '@/lib/constants';
@@ -10,7 +10,7 @@ interface UseTaskModalLabelManagerProps {
   selectedLabelIds: string[];
 }
 
-export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: UseTaskModalLabelManagerProps) {
+export function useTaskModalLabelManager({ boardId, cardId, initialSelectedLabelIds }: { boardId: string, cardId: string, initialSelectedLabelIds: string[] }) {
   const {
     boards,
     addLabelToCard,
@@ -28,6 +28,16 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
   const [editingLabel, setEditingLabel] = useState<Label | null>(null);
   const [labelTitle, setLabelTitle] = useState('');
   const [labelColor, setLabelColor] = useState<string>(BASIC_LABEL_COLORS[0]);
+  
+  // Local state for selected labels on this card
+  const [localSelectedLabelIds, setLocalSelectedLabelIds] = useState<string[]>(initialSelectedLabelIds);
+  const [isDirty, setIsDirty] = useState(false);
+
+  // Sync with prop changes (e.g. if card changes)
+  useEffect(() => {
+    setLocalSelectedLabelIds(initialSelectedLabelIds);
+    setIsDirty(false);
+  }, [initialSelectedLabelIds]);
 
   const filteredLabels = boardLabels.filter(label =>
     label && label.text && typeof label.text === 'string' &&
@@ -35,11 +45,13 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
   );
 
   const handleToggleLabel = (labelId: string) => {
-    if (selectedLabelIds.includes(labelId)) {
-      removeLabelFromCard(boardId, cardId, labelId);
-    } else {
-      addLabelToCard(boardId, cardId, labelId);
-    }
+    setLocalSelectedLabelIds(prev => {
+      const next = prev.includes(labelId)
+        ? prev.filter(id => id !== labelId)
+        : [...prev, labelId];
+      setIsDirty(true);
+      return next;
+    });
   };
 
   const handleCreateLabel = () => {
@@ -59,6 +71,22 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
   const handleDeleteLabel = (labelId: string) => {
     deleteBoardLabel(boardId, labelId);
     if (view === 'edit') setView('list');
+    
+    // Also remove from local selection if it was deleted from board
+    if (localSelectedLabelIds.includes(labelId)) {
+      setLocalSelectedLabelIds(prev => prev.filter(id => id !== labelId));
+    }
+  };
+
+  const syncLabelsToStore = () => {
+    // Determine which labels were added and which were removed
+    const added = localSelectedLabelIds.filter(id => !initialSelectedLabelIds.includes(id));
+    const removed = initialSelectedLabelIds.filter(id => !localSelectedLabelIds.includes(id));
+
+    added.forEach(id => addLabelToCard(boardId, cardId, id));
+    removed.forEach(id => removeLabelFromCard(boardId, cardId, id));
+    
+    setIsDirty(false);
   };
 
   const openEdit = (label: Label) => {
@@ -83,6 +111,8 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
     labelColor,
     boardLabels,
     filteredLabels,
+    localSelectedLabelIds,
+    isDirty,
 
     // Actions
     setView,
@@ -93,6 +123,7 @@ export function useTaskModalLabelManager({ boardId, cardId, selectedLabelIds }: 
     handleCreateLabel,
     handleUpdateLabel,
     handleDeleteLabel,
+    syncLabelsToStore,
     openEdit,
     openCreate
   };

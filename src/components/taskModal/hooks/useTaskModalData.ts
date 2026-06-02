@@ -2,6 +2,7 @@ import { useMemo, useEffect, useState } from 'react';
 import { useBoardStore, useUIStore } from '@/store';
 import { useTaskModalForm } from './useTaskModalForm';
 import { useTaskModalChecklist } from './useTaskModalChecklist';
+import { useTaskModalLabelManager } from '../components/LabelManager/hooks/useTaskModalLabelManager';
 import { CardModalData } from '../types/TaskModal.modal.types';
 import { CardJSON } from '@/lib/cardJsonUtils';
 
@@ -17,6 +18,7 @@ export function useTaskModalData() {
   const currentBoard = useMemo(() => boards.find(b => b.id === currentBoardId), [boards, currentBoardId]);
   const foundCard = useMemo(() => currentBoard?.lists.flatMap(l => l.cards).find(c => c.id === selectedCardId), [currentBoard, selectedCardId]);
   const initialChecklists = useMemo(() => foundCard?.checklists || [], [foundCard]);
+  const initialLabelIds = useMemo(() => foundCard?.labelIds || [], [foundCard]);
 
   // Determine if we're in JSON import mode
   const isJSONImportMode = !!cardJSONData && !!targetListId;
@@ -53,16 +55,27 @@ export function useTaskModalData() {
     card: foundCard || null,
     cardJSON: isJSONImportMode ? cardJSONData : null
   });
+  
   const checklist = useTaskModalChecklist({
     boardId: currentBoardId || '',
     cardId: foundCard?.id || '',
     initialChecklists: initialChecklists
   });
 
+  const labelManager = useTaskModalLabelManager({
+    boardId: currentBoardId || '',
+    cardId: foundCard?.id || '',
+    initialSelectedLabelIds: initialLabelIds
+  });
+
   const memoizedChecklist = useMemo(() => ({
     ...checklist,
     isDirty: checklist.isDirty,
   }), [checklist.localChecklists, checklist.isDirty, checklist.addChecklist, checklist.updateChecklist, checklist.removeChecklist, checklist.addChecklistItem, checklist.addChecklistItems, checklist.updateChecklistItem, checklist.removeChecklistItem, checklist.syncChecklistToStore, checklist.resetChecklist, checklist.resetDirty]);
+
+  const memoizedLabelManager = useMemo(() => ({
+    ...labelManager
+  }), [labelManager.localSelectedLabelIds, labelManager.isDirty, labelManager.view, labelManager.searchTerm, labelManager.editingLabel, labelManager.labelTitle, labelManager.labelColor, labelManager.handleToggleLabel, labelManager.handleCreateLabel, labelManager.handleUpdateLabel, labelManager.handleDeleteLabel, labelManager.syncLabelsToStore, labelManager.openEdit, labelManager.openCreate]);
 
   // Force form re-initialization when a newly created card is found
   useEffect(() => {
@@ -87,11 +100,13 @@ export function useTaskModalData() {
     boardLabels,
     form,
     checklist: memoizedChecklist,
+    labelManager: memoizedLabelManager,
     currentBoardId,
     cardModalOpen,
     selectedCardId,
     cardJSONData,
     targetListId,
     isJSONImportMode
-  }), [currentBoard, foundCard, boardLabels, form, memoizedChecklist, currentBoardId, cardModalOpen, selectedCardId, cardJSONData, targetListId, isJSONImportMode]);
+  }), [currentBoard, foundCard, boardLabels, form, memoizedChecklist, memoizedLabelManager, currentBoardId, cardModalOpen, selectedCardId, cardJSONData, targetListId, isJSONImportMode]);
 }
+

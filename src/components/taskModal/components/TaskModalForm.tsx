@@ -133,7 +133,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               value={descriptionValue}
               onChange={(e) => {
                 setDescriptionValue(e.target.value);
-                form.setValue('description', e.target.value);
+                form.setValue('description', e.target.value, { shouldDirty: true });
               }}
               onBlur={() => setIsEditing(false)}
               ref={textareaRef}
