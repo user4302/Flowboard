@@ -8,8 +8,8 @@ import { Button } from '@/components/ui';
 interface TaskModalChecklistSectionProps {
   cardId: string;
   boardId: string;
-  checklists: Checklist[];
   checklistHook: {
+    localChecklists: Checklist[];
     addChecklist: (name: string) => void;
     updateChecklist: (checklistId: string, updates: Partial<Checklist>) => void;
     removeChecklist: (checklistId: string) => void;
@@ -25,7 +25,6 @@ interface TaskModalChecklistSectionProps {
 export function TaskModalChecklistSection({
   cardId,
   boardId,
-  checklists,
   checklistHook
 }: TaskModalChecklistSectionProps) {
   return (
@@ -39,7 +38,7 @@ export function TaskModalChecklistSection({
       <TaskModalMultiChecklistManager
         cardId={cardId}
         boardId={boardId}
-        checklists={checklists}
+        checklists={checklistHook.localChecklists}
         onAddChecklist={checklistHook.addChecklist}
         onUpdateChecklist={checklistHook.updateChecklist}
         onRemoveChecklist={checklistHook.removeChecklist}

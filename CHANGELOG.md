@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
 
 ### Fixed
+- Fix checklist UI synchronization by using local state instead of stale store data in TaskModalChecklistSection
 - Prevent duplicate label names
 - Restore missing closing bracket in checklist slice
 - Add missing useState import in checklist hook

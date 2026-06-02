@@ -115,7 +115,6 @@ export function TaskModal() {
             <TaskModalChecklistSection
               cardId={foundCard?.id || ''}
               boardId={currentBoardId}
-              checklists={foundCard?.checklists || []}
               checklistHook={checklist}
             />
           )}
