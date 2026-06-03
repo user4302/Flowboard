@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement vertical scrolling and consistent bottom padding (16px/1rem) for Kanban lists to ensure action buttons maintain a safe zone from the container edge
 - Fix Kanban list layout by enforcing fixed height, ensuring action buttons remain anchored at the bottom of the list container
 - Remove unnecessary top border line above Kanban list action buttons
+- Always display description expand/shrink buttons in task modal
+- Refactor checklist header to integrate progress bar into header background and refine styling with borders and margins
+- Reduce checklist header height by 30% for improved UI density
 - Fix checklist UI synchronization by using local state instead of stale store data in TaskModalChecklistSection
 - Prevent duplicate label names
 - Restore missing closing bracket in checklist slice

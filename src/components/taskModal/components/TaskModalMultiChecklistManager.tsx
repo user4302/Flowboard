@@ -217,18 +217,18 @@ export function TaskModalMultiChecklistManager({
           <div key={checklist.id} className="border border-slate-200 dark:border-slate-600 rounded-lg overflow-hidden">
             {/* Checklist header */}
             <div
-              className="relative flex items-center justify-between p-3 bg-white dark:bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border border-emerald-500/50"
+              className="relative flex items-center justify-between p-2 bg-white dark:bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border border-emerald-500/50"
               onClick={() => !isEditing && toggleChecklistExpanded(checklist.id)}
             >
               {/* Progress bar background */}
               <motion.div
-                className="absolute inset-[6px] rounded-md bg-emerald-500/20 dark:bg-emerald-500/15"
+                className="absolute inset-[4px] rounded-md bg-emerald-500/20 dark:bg-emerald-500/15"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               />
               
-              <div className="relative flex items-center justify-between p-3 flex-1">
+              <div className="relative flex items-center justify-between p-2 flex-1">
                 <div className="flex items-center gap-2 flex-1">
                   <div className="p-1">
                     {isExpanded ? (
