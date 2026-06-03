@@ -51,7 +51,7 @@ export function KanbanListActions({ listId, onAddCard, className }: KanbanListAc
   };
 
   return (
-    <div className={cn("flex gap-2 p-2 pt-0 border-t border-slate-100 dark:border-slate-700 bg-transparent", className)}>
+    <div className={cn("flex gap-2 p-2 pt-0 bg-transparent", className)}>
       <InlineInput
         placeholder="Enter card title..."
         addText="Add card"
