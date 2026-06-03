@@ -1,5 +1,5 @@
 import { generateId } from '@/lib/utils';
-import { BoardStateCreator, ChecklistSlice } from './types';
+import { BoardStateCreator, ChecklistSlice, reorderArray } from './types';
 
 export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => ({
     addChecklist: (boardId, cardId, name) => {
@@ -243,6 +243,43 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
                                                         ? {
                                                             ...checklist,
                                                             items: checklist.items.filter((item) => item.id !== itemId),
+                                                            updatedAt: new Date(),
+                                                        }
+                                                        : checklist
+                                                ),
+                                                updatedAt: new Date(),
+                                            }
+                                            : card
+                                    ),
+                                }
+                                : list
+                        ),
+                        updatedAt: new Date(),
+                    }
+                    : board
+            ),
+        }));
+    },
+
+    reorderChecklistItems: (boardId, cardId, checklistId, fromIndex, toIndex) => {
+        set((state) => ({
+            boards: state.boards.map((board) =>
+                board.id === boardId
+                    ? {
+                        ...board,
+                        lists: board.lists.map((list) =>
+                            list.cards.some((c) => c.id === cardId)
+                                ? {
+                                    ...list,
+                                    cards: list.cards.map((card) =>
+                                        card.id === cardId
+                                            ? {
+                                                ...card,
+                                                checklists: card.checklists.map((checklist) =>
+                                                    checklist.id === checklistId
+                                                        ? {
+                                                            ...checklist,
+                                                            items: reorderArray(checklist.items, fromIndex, toIndex),
                                                             updatedAt: new Date(),
                                                         }
                                                         : checklist
