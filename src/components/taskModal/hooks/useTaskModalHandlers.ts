@@ -12,8 +12,9 @@ export function useTaskModalHandlers(
   cardJSONData: CardJSON | null,
   targetListId: string | null,
   checklist: {
-    syncChecklistToStore: () => void;
+    syncChecklistToStore: (checklistsToSync: Checklist[]) => void;
     resetChecklist: () => void;
+    localChecklists: Checklist[];
   },
   labelManager: {
     syncLabelsToStore: () => void;
@@ -94,7 +95,7 @@ export function useTaskModalHandlers(
 
       // Sync checklist and label items first if not in JSON import mode
       if (!isJSONImportMode) {
-        checklist.syncChecklistToStore();
+        checklist.syncChecklistToStore(checklist.localChecklists);
         labelManager.syncLabelsToStore();
       }
 
