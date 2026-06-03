@@ -222,102 +222,104 @@ export function TaskModalMultiChecklistManager({
             >
               {/* Progress bar background */}
               <motion.div
-                className="absolute inset-0 bg-emerald-500/20 dark:bg-emerald-500/15"
+                className="absolute inset-[2px] rounded-md bg-emerald-500/20 dark:bg-emerald-500/15"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
               />
               
-              <div className="relative flex items-center gap-2 flex-1">
-                <div className="p-1">
-                  {isExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
+              <div className="relative flex items-center justify-between p-3 border border-emerald-500/50 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                <div className="flex items-center gap-2 flex-1">
+                  <div className="p-1">
+                    {isExpanded ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </div>
+
+                  {isEditing ? (
+                    <Input
+                      type="text"
+                      value={editingChecklistName}
+                      onChange={(e) => setEditingChecklistName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveChecklistName(checklist.id);
+                        } else if (e.key === 'Escape') {
+                          handleCancelEditChecklist();
+                        }
+                      }}
+                      className="flex-1 h-7 text-sm"
+                      autoFocus
+                    />
                   ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
+                      {checklist.name}
+                    </span>
                   )}
                 </div>
 
-                {isEditing ? (
-                  <Input
-                    type="text"
-                    value={editingChecklistName}
-                    onChange={(e) => setEditingChecklistName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSaveChecklistName(checklist.id);
-                      } else if (e.key === 'Escape') {
-                        handleCancelEditChecklist();
-                      }
-                    }}
-                    className="flex-1 h-7 text-sm"
-                    autoFocus
-                  />
-                ) : (
-                  <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
-                    {checklist.name}
-                  </span>
-                )}
-              </div>
+                <div className="flex items-center gap-1">
+                  {checklist.items.length > 0 && (
+                    <span className="text-xs text-slate-600 dark:text-slate-300 font-medium mr-2">
+                      {checklist.items.filter(item => item.done).length}/{checklist.items.length}
+                    </span>
+                  )}
 
-              <div className="relative flex items-center gap-1">
-                {checklist.items.length > 0 && (
-                  <span className="text-xs text-slate-600 dark:text-slate-300 font-medium mr-2">
-                    {checklist.items.filter(item => item.done).length}/{checklist.items.length}
-                  </span>
-                )}
-
-                {isEditing ? (
-                  <>
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSaveChecklistName(checklist.id);
-                      }}
-                      disabled={!editingChecklistName.trim()}
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCancelEditChecklist();
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleStartEditChecklist(checklist);
-                      }}
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRemoveChecklist(checklist.id);
-                      }}
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
+                  {isEditing ? (
+                    <>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSaveChecklistName(checklist.id);
+                        }}
+                        disabled={!editingChecklistName.trim()}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelEditChecklist();
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStartEditChecklist(checklist);
+                        }}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRemoveChecklist(checklist.id);
+                        }}
+                        className="text-red-500 hover:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
