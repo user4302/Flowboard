@@ -2,7 +2,7 @@ import { generateId } from '@/lib/utils';
 import { BoardStateCreator, ChecklistSlice, reorderArray } from './types';
 
 export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => ({
-    addChecklist: (boardId, cardId, name) => {
+    addChecklist: (boardId, cardId, name, id) => {
         set((state) => ({
             boards: state.boards.map((board) =>
                 board.id === boardId
@@ -19,7 +19,7 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
                                                 checklists: [
                                                     ...card.checklists,
                                                     {
-                                                        id: generateId(),
+                                                        id: id || generateId(),
                                                         name,
                                                         items: [],
                                                         position: card.checklists.length,

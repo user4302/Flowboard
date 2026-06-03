@@ -17,7 +17,8 @@ export function useTaskModalHandlers(
     localChecklists: Checklist[];
   },
   labelManager: {
-    syncLabelsToStore: () => void;
+    syncLabelsToStore: (labelsToSync: string[]) => void;
+    localSelectedLabelIds: string[];
   }
 ): CardModalHandlers & { closeCardModal: () => void } {
   const { closeCardModal, closeCardModalWithoutUrlUpdate } = useUIStore();
@@ -96,7 +97,7 @@ export function useTaskModalHandlers(
       // Sync checklist and label items first if not in JSON import mode
       if (!isJSONImportMode) {
         checklist.syncChecklistToStore(checklist.localChecklists);
-        labelManager.syncLabelsToStore();
+        labelManager.syncLabelsToStore(labelManager.localSelectedLabelIds);
       }
 
       // Update the card

@@ -78,10 +78,10 @@ export function useTaskModalLabelManager({ boardId, cardId, initialSelectedLabel
     }
   };
 
-  const syncLabelsToStore = () => {
+  const syncLabelsToStore = (labelsToSync: string[]) => {
     // Determine which labels were added and which were removed
-    const added = localSelectedLabelIds.filter(id => !initialSelectedLabelIds.includes(id));
-    const removed = initialSelectedLabelIds.filter(id => !localSelectedLabelIds.includes(id));
+    const added = labelsToSync.filter(id => !initialSelectedLabelIds.includes(id));
+    const removed = initialSelectedLabelIds.filter(id => !labelsToSync.includes(id));
 
     added.forEach(id => addLabelToCard(boardId, cardId, id));
     removed.forEach(id => removeLabelFromCard(boardId, cardId, id));

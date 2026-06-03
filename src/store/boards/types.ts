@@ -50,7 +50,7 @@ export interface MemberSlice {
 }
 
 export interface ChecklistSlice {
-    addChecklist: (boardId: string, cardId: string, name: string) => void;
+    addChecklist: (boardId: string, cardId: string, name: string, id?: string) => void;
     updateChecklist: (boardId: string, cardId: string, checklistId: string, updates: Partial<Checklist>) => void;
     removeChecklist: (boardId: string, cardId: string, checklistId: string) => void;
     addChecklistItem: (boardId: string, cardId: string, checklistId: string, text: string) => void;

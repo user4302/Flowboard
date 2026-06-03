@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useBoardStore } from '@/store';
 import { Checklist, ChecklistItem } from '@/lib/types';
+import { generateId } from '@/lib/utils';
 
 interface UseChecklistProps {
   boardId: string;
@@ -33,7 +34,7 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
 
   const addChecklist = (name: string) => {
     const newChecklist: Checklist = {
-      id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateId(),
       name,
       items: [],
       position: localChecklists.length,
@@ -182,7 +183,7 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
 
       if (!storeChecklist) {
         // Add new checklist
-        storeAddChecklist(boardId, cardId, localChecklist.name);
+        storeAddChecklist(boardId, cardId, localChecklist.name, localChecklist.id);
         // Note: New items will be added in a subsequent sync or as part of checklist creation,
         // but for simplicity, we can update them now.
         storeUpdateChecklistItems(boardId, cardId, localChecklist.id, localChecklist.items);
