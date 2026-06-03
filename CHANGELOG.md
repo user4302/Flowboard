@@ -22,7 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
 
 ### Fixed
-- Add bottom spacing to Kanban lists to prevent "+ Add card" button from touching the horizontal scrollbar
+- Implement vertical scrolling and consistent bottom padding (16px/1rem) for Kanban lists to ensure action buttons maintain a safe zone from the container edge
+- Fix border clipping on Kanban cards by adding internal padding to the list container to fully display card rings (green/red)
 - Fix checklist UI synchronization by using local state instead of stale store data in TaskModalChecklistSection
 - Prevent duplicate label names
 - Restore missing closing bracket in checklist slice

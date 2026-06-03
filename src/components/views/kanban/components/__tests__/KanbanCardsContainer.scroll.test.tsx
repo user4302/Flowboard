@@ -216,4 +216,24 @@ describe('KanbanCardsContainer Scroll Position', () => {
     fireEvent.click(screen.getByTestId('card-card-1'));
     expect(mockOnCardClick).toHaveBeenCalledWith('card-1');
   });
+
+  it('should have correct scrolling and padding classes', () => {
+    const mockOnAddCard = jest.fn();
+
+    const { container } = render(
+      <KanbanCardsContainer
+        cards={mockCards}
+        listId="list-1"
+        members={mockMembers}
+        onAddCard={mockOnAddCard}
+        className="custom-test-class"
+      />
+    );
+
+    const scrollContainer = container.firstChild;
+    expect(scrollContainer).toHaveClass('overflow-y-auto');
+    expect(scrollContainer).toHaveClass('custom-scrollbar');
+    expect(scrollContainer).toHaveClass('pb-10');
+    expect(scrollContainer).toHaveClass('custom-test-class');
+  });
 });
