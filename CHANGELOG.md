@@ -8,35 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Implement unified save behavior for task modal: changes only persist when the Save button is clicked
-- Add deferred commit logic for labels and checklist items to prevent auto-saving on interaction
-- Prevent modal from closing without confirmation if there are unsaved changes in description, labels, or checklists
-- Add Markdown support for checklist items
-- Add addChecklistItems functionality to checklistSlice
-- Implement smart import and store support for checklists
-- Implement smart paste import for checklist items
-- Implement dual-state Markdown description field in task modal
-- Add support for raw Markdown editing on focus and rendered Markdown view on blur
-- Integrate Tailwind typography (prose) for consistent Markdown rendering
-- Fix layout consistency by unifying container height for edit and view modes
-- Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
+- Add drag-and-drop rearranging capability to checklist items in task modals
+- Implement atomic checklist item synchronization for robust persistence
 
 ### Fixed
-- Implement vertical scrolling and consistent bottom padding (16px/1rem) for Kanban lists to ensure action buttons maintain a safe zone from the container edge
 - Fix Kanban list layout by enforcing fixed height, ensuring action buttons remain anchored at the bottom of the list container
 - Remove unnecessary top border line above Kanban list action buttons
 - Always display description expand/shrink buttons in task modal
 - Refactor checklist header to integrate progress bar into header background and refine styling with borders and margins
 - Reduce checklist header height by 30% for improved UI density
-- Fix checklist UI synchronization by using local state instead of stale store data in TaskModalChecklistSection
-- Prevent duplicate label names
-- Restore missing closing bracket in checklist slice
-- Add missing useState import in checklist hook
-- Preserve checklist structure and label uniqueness during import
-- Remove explicit import button and fix paste behavior
-- Fix LabelManager and ColorPicker click-outside interactions by implementing portal detection in `useClickOutside`
-- Update import-format-template.md schema to match actual internal Board interface
-- Clean up debug logging
 
 ## [1.8.4] - 2026-04-07
 

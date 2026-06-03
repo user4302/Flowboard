@@ -164,8 +164,7 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
   const syncChecklistToStore = () => {
     setIsDirty(false);
     const { addChecklist: storeAddChecklist, updateChecklist: storeUpdateChecklist, removeChecklist: storeRemoveChecklist,
-      addChecklistItem: storeAddChecklistItem, updateChecklistItem: storeUpdateChecklistItem, removeChecklistItem: storeRemoveChecklistItem,
-      reorderChecklistItems: storeReorderChecklistItems } = useBoardStore.getState();
+      updateChecklistItems: storeUpdateChecklistItems } = useBoardStore.getState();
 
     // Get current card data from store to compare
     const currentBoard = useBoardStore.getState().boards.find(b => b.id === boardId);
@@ -184,10 +183,18 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
       if (!storeChecklist) {
         // Add new checklist
         storeAddChecklist(boardId, cardId, localChecklist.name);
+        // Note: New items will be added in a subsequent sync or as part of checklist creation,
+        // but for simplicity, we can update them now.
+        storeUpdateChecklistItems(boardId, cardId, localChecklist.id, localChecklist.items);
       } else {
         // Update existing checklist if changed
         if (localChecklist.name !== storeChecklist.name) {
           storeUpdateChecklist(boardId, cardId, localChecklist.id, { name: localChecklist.name });
+        }
+        
+        // Update checklist items if they changed (includes reordering, add, update, remove)
+        if (JSON.stringify(storeChecklist.items) !== JSON.stringify(localChecklist.items)) {
+          storeUpdateChecklistItems(boardId, cardId, localChecklist.id, localChecklist.items);
         }
       }
     });
@@ -197,52 +204,6 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
       if (!localChecklists.find(lc => lc.id === storeChecklist.id)) {
         storeRemoveChecklist(boardId, cardId, storeChecklist.id);
       }
-    });
-
-    // Sync checklist items (add, update, remove, reorder)
-    localChecklists.forEach(localChecklist => {
-      const storeChecklist = currentChecklists.find(cl => cl.id === localChecklist.id);
-      const currentItems = storeChecklist?.items || [];
-
-      // Check if reordering is needed
-      const currentIds = currentItems.map(i => i.id);
-      const localIds = localChecklist.items.map(i => i.id);
-
-      if (JSON.stringify(currentIds) !== JSON.stringify(localIds)) {
-        // Simple reorder: just perform the reorder for each item.
-        // This is inefficient but functional given the current store API.
-        localChecklist.items.forEach((item, index) => {
-          const currentIndex = currentItems.findIndex(i => i.id === item.id);
-          if (currentIndex !== -1 && currentIndex !== index) {
-            storeReorderChecklistItems(boardId, cardId, localChecklist.id, currentIndex, index);
-          }
-        });
-      }
-
-      // Add new items
-      localChecklist.items.forEach(localItem => {
-        if (!currentItems.find(item => item.id === localItem.id)) {
-          storeAddChecklistItem(boardId, cardId, localChecklist.id, localItem.text);
-        }
-      });
-
-      // Update existing items if text or done status changed
-      localChecklist.items.forEach(localItem => {
-        const storeItem = currentItems.find(item => item.id === localItem.id);
-        if (storeItem && (storeItem.done !== localItem.done || storeItem.text !== localItem.text)) {
-          storeUpdateChecklistItem(boardId, cardId, localChecklist.id, localItem.id, { 
-            done: localItem.done,
-            text: localItem.text
-          });
-        }
-      });
-
-      // Remove items that are no longer in local state
-      currentItems.forEach(storeItem => {
-        if (!localChecklist.items.find(item => item.id === storeItem.id)) {
-          storeRemoveChecklistItem(boardId, cardId, localChecklist.id, storeItem.id);
-        }
-      });
     });
   };
 

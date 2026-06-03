@@ -57,6 +57,8 @@ export interface ChecklistSlice {
     addChecklistItems: (boardId: string, cardId: string, checklistId: string, texts: string[]) => void;
     updateChecklistItem: (boardId: string, cardId: string, checklistId: string, itemId: string, updates: Partial<ChecklistItem>) => void;
     removeChecklistItem: (boardId: string, cardId: string, checklistId: string, itemId: string) => void;
+    reorderChecklistItems: (boardId: string, cardId: string, checklistId: string, fromIndex: number, toIndex: number) => void;
+    updateChecklistItems: (boardId: string, cardId: string, checklistId: string, items: ChecklistItem[]) => void;
 }
 
 export interface UtilsSlice {

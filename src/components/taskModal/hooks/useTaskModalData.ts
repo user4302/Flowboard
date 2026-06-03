@@ -71,7 +71,8 @@ export function useTaskModalData() {
   const memoizedChecklist = useMemo(() => ({
     ...checklist,
     isDirty: checklist.isDirty,
-  }), [checklist.localChecklists, checklist.isDirty, checklist.addChecklist, checklist.updateChecklist, checklist.removeChecklist, checklist.addChecklistItem, checklist.addChecklistItems, checklist.updateChecklistItem, checklist.removeChecklistItem, checklist.syncChecklistToStore, checklist.resetChecklist, checklist.resetDirty]);
+    reorderChecklistItems: checklist.reorderChecklistItems
+  }), [checklist.localChecklists, checklist.isDirty, checklist.addChecklist, checklist.updateChecklist, checklist.removeChecklist, checklist.addChecklistItem, checklist.addChecklistItems, checklist.updateChecklistItem, checklist.removeChecklistItem, checklist.reorderChecklistItems, checklist.syncChecklistToStore, checklist.resetChecklist, checklist.resetDirty]);
 
   const memoizedLabelManager = useMemo(() => ({
     ...labelManager

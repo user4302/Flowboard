@@ -17,6 +17,7 @@ interface TaskModalChecklistSectionProps {
     updateChecklistItem: (checklistId: string, itemId: string, updates: Partial<ChecklistItem>) => void;
     removeChecklistItem: (checklistId: string, itemId: string) => void;
     addChecklistItems: (checklistId: string, texts: string[]) => void;
+    reorderChecklistItems: (checklistId: string, fromIndex: number, toIndex: number) => void;
     syncChecklistToStore: () => void;
     resetChecklist: () => void;
   };
@@ -46,6 +47,7 @@ export function TaskModalChecklistSection({
         onUpdateChecklistItem={checklistHook.updateChecklistItem}
         onRemoveChecklistItem={checklistHook.removeChecklistItem}
         onAddChecklistItems={checklistHook.addChecklistItems}
+        onReorderChecklistItems={checklistHook.reorderChecklistItems}
       />
     </div>
   );
