@@ -92,7 +92,7 @@ export function SortableKanbanList({
       // Apply drag-and-drop styles
       style={style}
       // Add smooth transition class for better UX during drag operations
-      className="transition-transform duration-300 ease-in-out"
+      className="transition-transform duration-300 ease-in-out h-full"
     >
       {/* Render the actual KanbanList with all props and drag handle functionality */}
       <KanbanList
