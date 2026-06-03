@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 import { KanbanListHeader } from './KanbanListHeader';
 import { KanbanCardsContainer } from './KanbanCardsContainer';
+import { KanbanListActions } from './KanbanListActions';
 import { getFilteredCardCount, FilterOptions } from '@/lib/filterUtils';
 import { useUIStore, useBoardStore } from '@/store';
 import { List, User } from '@/lib/types';
@@ -125,7 +126,7 @@ export function KanbanList({
 
   return (
     <div
-      className={cn("flex w-80 flex-shrink-0 flex-col gap-3 h-full rounded-lg", className)}
+      className={cn("flex w-80 flex-shrink-0 flex-col h-full rounded-lg overflow-hidden", className)}
       style={listStyle}
     >
       <KanbanListHeader
@@ -145,6 +146,11 @@ export function KanbanList({
         onAddCard={onAddCard}
         onCardClick={onCardClick}
         searchTerm={searchTerm}
+      />
+
+      <KanbanListActions 
+        listId={list.id}
+        onAddCard={onAddCard}
       />
     </div>
   );
