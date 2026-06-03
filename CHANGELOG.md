@@ -10,6 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add drag-and-drop rearranging capability to checklist items in task modals
 - Implement atomic checklist item synchronization for robust persistence
+- Implement unified save behavior for task modal: changes only persist when the Save button is clicked
+- Add deferred commit logic for labels and checklist items to prevent auto-saving on interaction
+- Prevent modal from closing without confirmation if there are unsaved changes in description, labels, or checklists
+- Add Markdown support for checklist items
+- Add addChecklistItems functionality to checklistSlice
+- Implement smart import and store support for checklists
+- Implement smart paste import for checklist items
+- Implement dual-state Markdown description field in task modal
+- Add support for raw Markdown editing on focus and rendered Markdown view on blur
+- Integrate Tailwind typography (prose) for consistent Markdown rendering
+- Fix layout consistency by unifying container height for edit and view modes
+- Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
 
 ### Fixed
 - Fix Kanban list layout by enforcing fixed height, ensuring action buttons remain anchored at the bottom of the list container
@@ -17,6 +29,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Always display description expand/shrink buttons in task modal
 - Refactor checklist header to integrate progress bar into header background and refine styling with borders and margins
 - Reduce checklist header height by 30% for improved UI density
+- Fix checklist UI synchronization by using local state instead of stale store data in TaskModalChecklistSection
+- Prevent duplicate label names
+- Restore missing closing bracket in checklist slice
+- Add missing useState import in checklist hook
+- Preserve checklist structure and label uniqueness during import
+- Remove explicit import button and fix paste behavior
+- Fix LabelManager and ColorPicker click-outside interactions by implementing portal detection in `useClickOutside`
+- Update import-format-template.md schema to match actual internal Board interface
+- Clean up debug logging
 
 ## [1.8.4] - 2026-04-07
 
@@ -575,9 +596,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **BoardHeader Component:**
 - **Added Sharing Store Integration**: Imported `useSharingStore` for modal management
 - **Added Modal Components**: Moved `InviteModal` and `MemberManagement` to header
-- **Enhanced Hamburger Menu**: 
+- **Enhanced Hamburger Menu**:
   - Invite Members (Share2 icon) - Owner only
-  - Member Management (UserPlus icon) - Owner only  
+  - Member Management (UserPlus icon) - Owner only
   - Team Members (Users icon) - Placeholder
   - Settings (Settings icon) - Placeholder
 - **Improved Styling**: Added hover effects, proper spacing, and visual divider
