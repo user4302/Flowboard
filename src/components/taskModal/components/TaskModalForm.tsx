@@ -99,27 +99,25 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
             Description
           </label>
-          {contentExceedsHeight && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={toggleDescriptionExpansion}
-              className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
-            >
-              {isDescriptionExpanded ? (
-                <>
-                  <Minimize2 className="h-3 w-3 mr-1" />
-                  Shrink
-                </>
-              ) : (
-                <>
-                  <Maximize2 className="h-3 w-3 mr-1" />
-                  Expand
-                </>
-              )}
-            </Button>
-          )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={toggleDescriptionExpansion}
+            className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
+          >
+            {isDescriptionExpanded ? (
+              <>
+                <Minimize2 className="h-3 w-3 mr-1" />
+                Shrink
+              </>
+            ) : (
+              <>
+                <Maximize2 className="h-3 w-3 mr-1" />
+                Expand
+              </>
+            )}
+          </Button>
         </div>
         <div
           className={cn(
