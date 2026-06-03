@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { arrayMove } from '@dnd-kit/sortable';
 import { useBoardStore } from '@/store';
 import { Checklist, ChecklistItem } from '@/lib/types';
 
@@ -143,14 +144,28 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
       )
     );
     setIsDirty(true);
+  };
 
-    // Removed immediate sync to store to support "save only on button click"
+  const reorderChecklistItems = (checklistId: string, fromIndex: number, toIndex: number) => {
+    setLocalChecklists(prev =>
+      prev.map(checklist =>
+        checklist.id === checklistId
+          ? {
+            ...checklist,
+            items: arrayMove(checklist.items, fromIndex, toIndex),
+            updatedAt: new Date()
+          }
+          : checklist
+      )
+    );
+    setIsDirty(true);
   };
 
   const syncChecklistToStore = () => {
     setIsDirty(false);
     const { addChecklist: storeAddChecklist, updateChecklist: storeUpdateChecklist, removeChecklist: storeRemoveChecklist,
-      addChecklistItem: storeAddChecklistItem, updateChecklistItem: storeUpdateChecklistItem, removeChecklistItem: storeRemoveChecklistItem } = useBoardStore.getState();
+      addChecklistItem: storeAddChecklistItem, updateChecklistItem: storeUpdateChecklistItem, removeChecklistItem: storeRemoveChecklistItem,
+      reorderChecklistItems: storeReorderChecklistItems } = useBoardStore.getState();
 
     // Get current card data from store to compare
     const currentBoard = useBoardStore.getState().boards.find(b => b.id === boardId);
@@ -184,10 +199,25 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
       }
     });
 
-    // Sync checklist items
+    // Sync checklist items (add, update, remove, reorder)
     localChecklists.forEach(localChecklist => {
       const storeChecklist = currentChecklists.find(cl => cl.id === localChecklist.id);
       const currentItems = storeChecklist?.items || [];
+
+      // Check if reordering is needed
+      const currentIds = currentItems.map(i => i.id);
+      const localIds = localChecklist.items.map(i => i.id);
+
+      if (JSON.stringify(currentIds) !== JSON.stringify(localIds)) {
+        // Simple reorder: just perform the reorder for each item.
+        // This is inefficient but functional given the current store API.
+        localChecklist.items.forEach((item, index) => {
+          const currentIndex = currentItems.findIndex(i => i.id === item.id);
+          if (currentIndex !== -1 && currentIndex !== index) {
+            storeReorderChecklistItems(boardId, cardId, localChecklist.id, currentIndex, index);
+          }
+        });
+      }
 
       // Add new items
       localChecklist.items.forEach(localItem => {
@@ -216,6 +246,7 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
     });
   };
 
+
   const resetChecklist = () => {
     setLocalChecklists(initialChecklists);
     setIsDirty(false);
@@ -236,6 +267,7 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
     addChecklistItems,
     updateChecklistItem,
     removeChecklistItem,
+    reorderChecklistItems,
     syncChecklistToStore,
     resetChecklist
   };
