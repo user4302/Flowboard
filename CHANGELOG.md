@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reduce checklist header height by 30% for improved UI density
 - Fix checklist and label persistence issue where state changes were not consistently saved due to stale closure synchronization during save
 - Fix checklist item persistence by ensuring consistent ID generation between local state and global store
+- Fix checklist item import failure where plural 'checklists' property was ignored in JSON import
+- Fix board import functionality only working once per page load by resetting file input value after import
 - Fix checklist UI synchronization by using local state instead of stale store data in TaskModalChecklistSection
 - Prevent duplicate label names
 - Restore missing closing bracket in checklist slice
