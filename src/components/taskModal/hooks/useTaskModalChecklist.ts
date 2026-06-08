@@ -184,8 +184,15 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
       if (!storeChecklist) {
         // Add new checklist
         storeAddChecklist(boardId, cardId, localChecklist.name, localChecklist.id);
-        // Note: New items will be added in a subsequent sync or as part of checklist creation,
-        // but for simplicity, we can update them now.
+        
+        // Add all items for the new checklist
+        localChecklist.items.forEach(item => {
+           // We have to add them one by one based on current store API
+           // or we rely on the fact that storeAddChecklist initialized an empty items array
+           // which we now need to populate.
+        });
+        
+        // Use the newly created storeAddChecklist logic + update items
         storeUpdateChecklistItems(boardId, cardId, localChecklist.id, localChecklist.items);
       } else {
         // Update existing checklist if changed
