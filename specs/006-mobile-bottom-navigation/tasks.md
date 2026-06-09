@@ -7,7 +7,7 @@
 The goal is to introduce a fixed bottom navigation bar on mobile viewports (< 768px) for persistent access to view switching and a filter trigger. This involves creating the `MobileBottomNav` component, updating the layout, and managing state for active views and the filter sheet.
 
 ## Phase 1: Setup
-- [ ] T001 Initialize directory structure for mobile components in src/components/mobile/
+- [x] T001 Initialize directory structure for mobile components in src/components/mobile/
 
 ## Phase 2: Foundational Layout Shells
 - [ ] T002 Implement `MobileBottomNav` component in src/components/mobile/MobileBottomNav.tsx
