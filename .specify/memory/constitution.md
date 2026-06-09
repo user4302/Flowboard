@@ -1,10 +1,10 @@
 <!-- Sync Impact Report:
-Version change: 1.0.0 (assumed) -> 1.1.0
-Modified principles: Mobile-First UI/UX added, Build Discipline added (No Bun)
-Added sections: Mobile-First UI/UX, Build Discipline
+Version change: 1.1.0 -> 1.2.0
+Modified principles: Next.js/React Standards, Tailwind CSS Discipline added
+Added sections: Next.js/React Standards, Tailwind CSS Discipline
 Removed sections: None
-Templates requiring updates: ✅ constitution-template.md, ⚠ plan-template.md (check for rules), ⚠ tasks-template.md (check for task categorization), ⚠ spec-template.md (check for requirements)
-Follow-up TODOs: Manual review of plan/tasks/spec templates for compliance with new rules.
+Templates requiring updates: ⚠ plan-template.md, ⚠ tasks-template.md, ⚠ spec-template.md
+Follow-up TODOs: Ensure all new components comply with React Server Component patterns and Tailwind utility standards.
 -->
 
 # Flowboard Constitution
@@ -21,13 +21,22 @@ Follow-up TODOs: Manual review of plan/tasks/spec templates for compliance with 
 - Strictly prohibited: 'bun' runtime in any build, run, or script workflow.
 - All dependencies must be managed via standard npm/yarn workflows as approved by project setup.
 
-### III. Test-First (NON-NEGOTIABLE)
+### III. Next.js & React Standards (NON-NEGOTIABLE)
+- Use modern React patterns (App Router, Server Components).
+- No class components.
+- Strict TypeScript enforcement (no `any` without explicit justification).
+
+### IV. Tailwind CSS Discipline (NON-NEGOTIABLE)
+- Use utility classes; avoid arbitrary styles.
+- Rely on `eslint-plugin-tailwindcss` for class ordering and consistency.
+
+### V. Test-First (NON-NEGOTIABLE)
 - TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced.
 
-### IV. Integration Testing
+### VI. Integration Testing
 - Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas.
 
-### V. Observability & Simplicity
+### VII. Observability & Simplicity
 - Text I/O ensures debuggability; Structured logging required; Start simple, YAGNI principles.
 
 ## UI/UX Standards
@@ -46,4 +55,4 @@ Follow-up TODOs: Manual review of plan/tasks/spec templates for compliance with 
 - All PRs/reviews must verify compliance.
 - Complexity must be justified.
 
-**Version**: 1.1.0 | **Ratified**: 2026-06-09 | **Last Amended**: 2026-06-09
+**Version**: 1.2.0 | **Ratified**: 2026-06-09 | **Last Amended**: 2026-06-09
