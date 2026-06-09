@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, Archive } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { useSharingStore } from '@/store/sharingStore';
@@ -57,6 +57,15 @@ export function BoardHeader() {
 
   // Find the current board from the boards array
   const currentBoard = boards.find(board => board.id === currentBoardId);
+
+  // Update document title
+  useEffect(() => {
+    if (currentBoard) {
+      document.title = `Flowboard | ${currentBoard.name}`;
+    } else {
+      document.title = 'Flowboard';
+    }
+  }, [currentBoard]);
   const archivedCardsCount = currentBoard?.archivedCards?.length || 0;
 
   /**

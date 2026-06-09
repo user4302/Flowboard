@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integrate Tailwind typography (prose) for consistent Markdown rendering
 - Fix layout consistency by unifying container height for edit and view modes
 - Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
+- Update browser tab title to show "Flowboard | [Board Name]" for better navigation
 
 ### Fixed
 - Fix Kanban list layout by enforcing fixed height, ensuring action buttons remain anchored at the bottom of the list container
@@ -34,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix checklist item import failure where plural 'checklists' property was ignored in JSON import
 - Fix board import functionality only working once per page load by resetting file input value after import
 - Fix checklist UI synchronization by using local state instead of stale store data in TaskModalChecklistSection
+- Fix "Cannot access 'currentBoard' before initialization" error by correcting useEffect dependency ordering in BoardHeader
 - Prevent duplicate label names
 - Restore missing closing bracket in checklist slice
 - Add missing useState import in checklist hook
