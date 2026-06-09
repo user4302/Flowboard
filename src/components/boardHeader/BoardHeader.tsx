@@ -78,7 +78,7 @@ export function BoardHeader() {
   // Always show header, even when no board is selected
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/80">
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/80">
         <div className="flex h-16 items-center px-4 md:px-6 w-full">
           {/* Left side - Menu button and board title */}
           <div className="flex items-center gap-2 flex-shrink-0 md:w-1/5">
