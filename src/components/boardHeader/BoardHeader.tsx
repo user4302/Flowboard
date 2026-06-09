@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Menu, Archive } from 'lucide-react';
+import { Menu, Archive, SlidersHorizontal } from 'lucide-react';
 import { useBoardStore, useUIStore } from '@/store';
 import { useSharingStore } from '@/store/sharingStore';
-import { Button } from '@/components/ui';
+import { Button, Modal, ModalHeader, ModalTitle, ModalBody } from '@/components/ui';
 import { InviteModal, MemberManagement } from '@/components/boardShare';
 import { SearchAndFilter } from '@/components/searchAndFilter';
 import { BoardHeaderTitle } from './components/BoardHeaderTitle';
@@ -54,6 +54,7 @@ export function BoardHeader() {
 
   // Archived cards modal state
   const [showArchivedCards, setShowArchivedCards] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Find the current board from the boards array
   const currentBoard = boards.find(board => board.id === currentBoardId);
@@ -143,9 +144,48 @@ export function BoardHeader() {
                 )}
               </Button>
             )}
+
+            {/* Mobile menu button for views/filters - hidden on desktop */}
+            {currentBoard && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                onClick={() => setShowMobileMenu(true)}
+              >
+                <SlidersHorizontal className="h-5 w-5" />
+              </Button>
+            )}
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu Modal */}
+      <Modal isOpen={showMobileMenu} onClose={() => setShowMobileMenu(false)}>
+        <ModalHeader>
+          <ModalTitle>Board Options</ModalTitle>
+        </ModalHeader>
+        <ModalBody className="flex flex-col gap-6 p-4">
+          {currentBoard && (
+            <>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-500">Views</span>
+                <BoardHeaderViewNavigation
+                  currentView={currentView}
+                  onViewChange={(viewId: string) => {
+                    setCurrentView(viewId as 'kanban' | 'timeline' | 'calendar' | 'table');
+                    setShowMobileMenu(false);
+                  }}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-slate-500">Search & Filter</span>
+                <SearchAndFilter boardId={currentBoard.id} />
+              </div>
+            </>
+          )}
+        </ModalBody>
+      </Modal>
 
       {/* Sharing Modals */}
       <InviteModal
