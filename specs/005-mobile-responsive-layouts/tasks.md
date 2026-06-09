@@ -7,9 +7,9 @@
 The goal is to ensure the Flowboard interface dynamically conforms to narrow viewports (< 768px) without triggering window-level horizontal overflow. This involves implementing responsive utility breakpoints, collapsible navigation panels, scroll-snapping data tracks, and section accordions.
 
 ## Phase 1: Foundational Layout Shells
-- [ ] T001 Implement responsive wrapper for Sidebar in src/components/boardSidebar/BoardSidebar.tsx
-- [ ] T002 Implement responsive wrapper for Header in src/components/boardHeader/BoardHeader.tsx
-- [ ] T003 Implement drawer/sheet navigation for Filters in src/components/searchAndFilter/SearchAndFilter.tsx
+- [x] T001 Implement responsive wrapper for Sidebar in src/components/boardSidebar/BoardSidebar.tsx
+- [x] T002 Implement responsive wrapper for Header in src/components/boardHeader/BoardHeader.tsx
+- [x] T003 Implement drawer/sheet navigation for Filters in src/components/searchAndFilter/SearchAndFilter.tsx
 
 ## Phase 2: User Story 1 - Kanban Viewport Adaptations
 - [ ] T004 [P] [US1] Refactor KanbanView for responsive scroll-snapping tracks in src/components/views/KanbanView.tsx

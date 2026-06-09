@@ -79,14 +79,14 @@ export function BoardHeader() {
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/80 backdrop-blur-lg dark:border-slate-700 dark:bg-slate-900/80">
-        <div className="flex h-16 items-center px-4 lg:px-6">
+        <div className="flex h-16 items-center px-4 md:px-6 w-full">
           {/* Left side - Menu button and board title */}
-          <div className="flex items-center gap-4 flex-shrink-0 w-1/5">
+          <div className="flex items-center gap-2 flex-shrink-0 md:w-1/5">
             {/* Mobile menu button - hidden on larger screens */}
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="md:hidden"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               <Menu className="h-5 w-5" />
@@ -96,8 +96,8 @@ export function BoardHeader() {
             <BoardHeaderTitle currentBoard={currentBoard!} />
           </div>
 
-          {/* Center - View navigation tabs and search */}
-          <div className="flex items-center justify-center w-3/5">
+          {/* Center - View navigation tabs and search - Stack on mobile */}
+          <div className="hidden md:flex flex-1 items-center justify-center">
             {currentBoard && (
               <div className="flex items-center gap-4">
                 {/* View navigation tabs */}
@@ -110,10 +110,10 @@ export function BoardHeader() {
           </div>
 
           {/* Right side - Search and action menu */}
-          <div className="flex items-center justify-end gap-3 flex-shrink-0 w-2/5">
+          <div className="flex items-center justify-end gap-3 flex-shrink-0 md:w-2/5">
             {/* Search and Filter Bar */}
             {currentBoard && (
-              <div className="flex-1 max-w-sm">
+              <div className="flex-1 max-w-sm hidden md:block">
                 <SearchAndFilter boardId={currentBoard.id} compact={true} />
               </div>
             )}
