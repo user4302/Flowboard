@@ -11,12 +11,13 @@ export function FilterSheet({ boardId }: { boardId: string }) {
     <Modal
       open={showFilterSheet}
       onClose={() => setShowFilterSheet(false)}
+      className="!bg-slate-900/90 !max-h-[90vh] !h-[90vh] !rounded-t-2xl !rounded-b-none !fixed !bottom-0 !top-auto !w-full !max-w-full"
     >
-      <ModalHeader>
-        <ModalTitle>Filters</ModalTitle>
+      <ModalHeader className="border-slate-800">
+        <ModalTitle className="text-white">Filters</ModalTitle>
       </ModalHeader>
-      <ModalBody className="p-4">
-        <SearchAndFilter boardId={boardId} />
+      <ModalBody className="p-4 h-full overflow-y-auto">
+        <SearchAndFilter boardId={boardId} className="w-full !relative !static" />
       </ModalBody>
     </Modal>
   );
