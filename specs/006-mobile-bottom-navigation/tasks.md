@@ -10,9 +10,9 @@ The goal is to introduce a fixed bottom navigation bar on mobile viewports (< 76
 - [x] T001 Initialize directory structure for mobile components in src/components/mobile/
 
 ## Phase 2: Foundational Layout Shells
-- [ ] T002 Implement `MobileBottomNav` component in src/components/mobile/MobileBottomNav.tsx
+- [x] T002 Implement `MobileBottomNav` component in src/components/mobile/MobileBottomNav.tsx
 - [ ] T003 Update `BoardPage` layout to include `MobileBottomNav` with conditional responsiveness in src/app/board/[boardId]/page.tsx
-- [ ] T004 Add `showFilterSheet` state to `uiStore` in src/store/uiStore.ts
+- [x] T004 Add `showFilterSheet` state to `uiStore` in src/store/uiStore.ts
 
 ## Phase 3: User Story 1 - Navigation and View Switching
 - [ ] T005 [P] [US1] Connect tab buttons in `MobileBottomNav` to `setCurrentView` in src/components/mobile/MobileBottomNav.tsx
