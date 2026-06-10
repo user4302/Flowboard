@@ -106,8 +106,7 @@ export function SearchAndFilter({ boardId, className, compact = false, inline = 
             size="icon"
             onClick={handleClearAllFilters}
             className={cn(
-              "h-9 w-9 rounded-xl text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-colors",
-              !hasActiveFiltersValue && "opacity-0 pointer-events-none"
+              "h-9 w-9 rounded-xl text-slate-500 hover:text-red-400 hover:bg-red-400/10 transition-colors"
             )}
             title="Clear all filters"
           >
