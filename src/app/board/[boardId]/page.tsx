@@ -110,20 +110,17 @@ export default function BoardPage() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-[100dvh] w-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       <BoardSidebar />
 
-      <div className="flex flex-1 flex-col lg:ml-64">
-        <div className="bg-blue-500 text-white p-2">DEBUG: TOP OF MAIN</div>
+      <div className="flex flex-1 flex-col overflow-hidden lg:ml-64">
         <BoardHeader />
-
-        <main className="flex-1 overflow-hidden pb-16 md:pb-0">
+        <main className="flex-1 overflow-hidden">
           {renderCurrentView()}
         </main>
-        <div className="bg-yellow-500 text-black p-2">DEBUG: BOTTOM OF MAIN</div>
+        <MobileBottomNav />
       </div>
 
-      <MobileBottomNav />
       <FilterSheet boardId={boardId} />
 
       <TaskModal />
