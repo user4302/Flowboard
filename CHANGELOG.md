@@ -23,9 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix layout consistency by unifying container height for edit and view modes
 - Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
 - Update browser tab title to show "Flowboard | [Board Name]" for better navigation
-- Implement mobile-first responsive foundation (sidebar, header, filter drawer)
+- Implement mobile-responsive foundation (sidebar, header, filter drawer)
 - Implement fixed bottom navigation bar on mobile with view switching and filter sheet trigger
-- Update project constitution (v1.2.0) to include mobile-first UI/UX, Tailwind standards, and build discipline.
+- Update project constitution (v1.2.0) to include mobile-responsive UI/UX, Tailwind standards, and build discipline.
 - Add close button to mobile filter sheet for better UX
 - Fix filter clear button functionality in mobile view
 - Fix filter panel visibility and portal rendering issues on mobile
@@ -636,7 +636,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **State Management**: Proper sharing store integration in header component
 - **Modal Handling**: Invite and member management modals moved to header
 - **Icon Consistency**: All buttons use appropriate Lucide icons
-- **Responsive Design**: Maintained mobile-first approach
+- **Responsive Design**: Maintained mobile-responsive approach
 
 ## [1.0.0] - 2026-02-24
 
