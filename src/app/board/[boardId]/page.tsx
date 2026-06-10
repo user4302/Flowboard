@@ -119,9 +119,9 @@ export default function BoardPage() {
         <main className="flex-1 overflow-hidden pb-16 md:pb-0">
           {renderCurrentView()}
         </main>
+        <MobileBottomNav />
       </div>
 
-      <MobileBottomNav />
       <FilterSheet boardId={boardId} />
 
       <TaskModal />
