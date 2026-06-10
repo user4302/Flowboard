@@ -16,7 +16,7 @@ export function MobileBottomNav() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 z-[9999] flex h-16 w-full items-center justify-around border-t border-slate-200 bg-red-500 px-2 shadow-2xl md:hidden">
+    <nav className="fixed bottom-0 left-0 z-[9999] flex h-16 w-full items-center justify-around border-t border-slate-200 bg-red-500 px-2 shadow-2xl md:hidden">
       <div className="text-white font-bold">TEST NAV</div>
       {navItems.map((item) => (
         <Button
