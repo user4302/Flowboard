@@ -110,12 +110,12 @@ export default function BoardPage() {
   };
 
   return (
-    <div className="flex h-[100dvh] w-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-dvh w-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       <BoardSidebar />
 
-      <div className="flex flex-1 flex-col overflow-hidden lg:ml-64">
+      <div className="flex flex-1 flex-col overflow-hidden lg:ml-64 bg-slate-50 dark:bg-slate-900">
         <BoardHeader />
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-900">
           {renderCurrentView()}
         </main>
         <MobileBottomNav />
