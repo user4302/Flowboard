@@ -114,11 +114,13 @@ export default function BoardPage() {
       <BoardSidebar />
 
       <div className="flex flex-1 flex-col lg:ml-64">
+        <div className="bg-blue-500 text-white p-2">DEBUG: TOP OF MAIN</div>
         <BoardHeader />
 
         <main className="flex-1 overflow-hidden pb-16 md:pb-0">
           {renderCurrentView()}
         </main>
+        <div className="bg-yellow-500 text-black p-2">DEBUG: BOTTOM OF MAIN</div>
       </div>
 
       <MobileBottomNav />
