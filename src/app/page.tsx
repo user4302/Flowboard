@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { BoardSidebar } from '@/components/boardSidebar';
 import { BoardHeader } from '@/components/boardHeader';
+import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
+import { FilterSheet } from '@/components/mobile/FilterSheet';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
 import { TaskModal } from '@/components/taskModal';
 import { JoinBoardModal } from '@/components/boardShare';
@@ -81,12 +83,11 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Main app interface - only visible when welcome screen is hidden */}
-        <div className={`flex h-screen bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ${showWelcomeScreen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className={`flex h-dvh w-screen overflow-hidden bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ${showWelcomeScreen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <BoardSidebar />
-          <div className="flex flex-1 flex-col lg:ml-64">
+          <div className="flex flex-1 flex-col overflow-hidden bg-slate-50 dark:bg-slate-900 lg:ml-64 w-full">
             <BoardHeader />
-            <main className="flex-1 overflow-hidden flex items-center justify-center">
+            <main className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
               <div className="text-center">
                 <h2 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
                   No Board Selected
@@ -102,32 +103,20 @@ export default function Home() {
     );
   }
 
-  const renderCurrentView = () => {
-    switch (currentView) {
-      case 'kanban':
-        return <KanbanView boardId={currentBoardId!} />;
-      case 'timeline':
-        return <TimelineView boardId={currentBoardId!} />;
-      case 'calendar':
-        return <CalendarView boardId={currentBoardId!} />;
-      case 'table':
-        return <TableView boardId={currentBoardId!} />;
-      default:
-        return <KanbanView boardId={currentBoardId!} />;
-    }
-  };
-
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-dvh w-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       <BoardSidebar />
 
-      <div className="flex flex-1 flex-col lg:ml-64">
+      <div className="flex flex-1 flex-col overflow-hidden bg-slate-50 dark:bg-slate-900 lg:ml-64 w-full">
         <BoardHeader />
 
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-900 pb-16 md:pb-0">
           {renderCurrentView()}
         </main>
+        <MobileBottomNav />
       </div>
+
+      <FilterSheet boardId={currentBoardId!} />
 
       <TaskModal />
       <JoinBoardModal
