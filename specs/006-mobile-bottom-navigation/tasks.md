@@ -22,8 +22,8 @@ The goal is to introduce a fixed bottom navigation bar on mobile viewports (< 76
 - [x] T007 [US2] Implement Filter Sheet component using Radix UI in src/components/mobile/FilterSheet.tsx
 
 ## Phase 5: Polish & Cross-Cutting Concerns
-- [ ] T008 Audit and fix responsive padding in src/app/board/[boardId]/page.tsx to accommodate fixed bottom bar
-- [ ] T009 Audit and fix interactive tap targets (min 44x44px) in `MobileBottomNav`
+- [x] T008 Audit and fix responsive padding in src/app/board/[boardId]/page.tsx to accommodate fixed bottom bar
+- [x] T009 Audit and fix interactive tap targets (min 44x44px) in `MobileBottomNav`
 
 ## Dependency Graph
 - Phase 1 (Setup) and Phase 2 (Foundational) MUST be completed before User Story Phases.
