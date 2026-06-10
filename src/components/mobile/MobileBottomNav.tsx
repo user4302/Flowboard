@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils';
 
 export function MobileBottomNav() {
   const { currentView, setCurrentView, setShowFilterSheet } = useUIStore();
+  
+  console.log('MobileBottomNav: Rendering, currentView=', currentView);
 
   const navItems = [
     { id: 'kanban', icon: LayoutGrid, label: 'Kanban' },
