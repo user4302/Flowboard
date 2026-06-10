@@ -11,7 +11,7 @@ Follow-up TODOs: Ensure all new components comply with React Server Component pa
 
 ## Core Principles
 
-### I. Mobile-First UI/UX (NON-NEGOTIABLE)
+### I. Mobile-Responsive UI/UX (NON-NEGOTIABLE)
 - Multi-column layouts MUST collapse to single-column streams on viewports < 768px.
 - Horizontal scrolling MUST be restricted purely to scoped elements (e.g., Kanban boards); NEVER on the window viewport body.
 - Secondary data (metadata, filters) MUST use Radix UI drawers, accordions, or sheets.
