@@ -18,7 +18,9 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Card Archiving**: Archive completed cards with restore and permanent delete options
 - **Real-time Search**: Filter cards by title, description, labels, and members
 - **Dark/Light Theme**: System preference detection with manual toggle
-- **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions
+- **Responsive Design**: Mobile-first optimized layout, fixed bottom navigation for quick view switching, and sliding filter drawer for narrow viewports
+- **Viewport Locking**: Dynamic viewport units (dvh) and overscroll-behavior control for smooth mobile experience
+- **Constitution**: Adherence to mobile-first UI/UX and strict Tailwind utility standards
 - **Board Management**: Create, switch between, and delete boards with confirmation dialogs
 - **Board Export/Import**: Save and load board data as JSON files for backup and sharing
 - **Card JSON Import/Export**: Copy, download, and upload individual cards as JSON with smart paste functionality
