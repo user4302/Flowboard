@@ -20,6 +20,12 @@ interface ImportedCardData {
   labelIds?: string[];
   labels?: ImportedLabel[];
   members?: string[];
+  checklists?: Array<{
+    id: string;
+    name: string;
+    items: Array<{ text: string; done: boolean }>;
+    position?: number;
+  }>;
   checklist?: Array<{
     id: string;
     text: string;

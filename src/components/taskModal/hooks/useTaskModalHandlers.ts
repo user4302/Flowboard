@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useBoardStore, useUIStore } from '@/store';
 import { CardModalHandlers } from '../types/TaskModal.modal.types';
-import { Card } from '@/lib/types';
+import { Card, Checklist } from '@/lib/types';
 import { CardJSON } from '@/lib/cardJsonUtils';
 
 export function useTaskModalHandlers(

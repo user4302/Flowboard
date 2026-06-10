@@ -65,6 +65,13 @@ export function TaskModalLabelForm({
      onUpdate();
   };
 
+  /**
+   * Handles selection of a basic color
+   */
+  const handleBasicColorSelect = (color: string) => {
+    onColorChange(color);
+  };
+
   return (
     <div ref={containerRef} className="flex flex-col h-full space-y-4 overflow-hidden">
       <div className="space-y-4">

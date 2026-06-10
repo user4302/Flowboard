@@ -18,7 +18,7 @@ interface TaskModalChecklistSectionProps {
     removeChecklistItem: (checklistId: string, itemId: string) => void;
     addChecklistItems: (checklistId: string, texts: string[]) => void;
     reorderChecklistItems: (checklistId: string, fromIndex: number, toIndex: number) => void;
-    syncChecklistToStore: () => void;
+    syncChecklistToStore: (checklistsToSync: Checklist[]) => void;
     resetChecklist: () => void;
   };
 }
