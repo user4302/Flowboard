@@ -23,7 +23,7 @@ const DEFAULT_FILTER_STATE = {
   dueDateFilter: 'all' as const
 };
 
-export function SearchAndFilter({ boardId, className, compact = false }: SearchAndFilterProps) {
+export function SearchAndFilter({ boardId, className, compact = false, inline = false }: SearchAndFilterProps) {
   // Use individual selectors to avoid object creation
   const searchTerm = useUIStore((state) => state.filterState[boardId]?.searchTerm ?? DEFAULT_FILTER_STATE.searchTerm);
   const selectedLabels = useUIStore((state) => state.filterState[boardId]?.selectedLabels ?? DEFAULT_FILTER_STATE.selectedLabels);
