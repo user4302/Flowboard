@@ -113,9 +113,10 @@ export function SearchAndFilter({ boardId, className, compact = false, inline = 
         </div>
       </div>
 
-      {showFilters && (inline ? (
+  {showFilters && (inline ? (
         <SearchAndFilterPanel
           ref={dropdownRef1}
+          inline={inline}
           className="w-full mt-2"
           showCompleted={showCompleted}
           setShowCompleted={(status) => setShowCompleted(boardId, status as 'all' | 'completed' | 'incomplete')}
@@ -140,6 +141,7 @@ export function SearchAndFilter({ boardId, className, compact = false, inline = 
           
           <SearchAndFilterPanel
             ref={dropdownRef1}
+            inline={inline}
             className="w-full max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white dark:bg-slate-900 md:rounded-2xl z-[101]"
             showCompleted={showCompleted}
             setShowCompleted={(status) => setShowCompleted(boardId, status as 'all' | 'completed' | 'incomplete')}
