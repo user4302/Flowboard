@@ -115,7 +115,7 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
 
       {showFilters && (
         <div className={cn(
-          "fixed inset-0 z-50 flex items-end justify-center md:absolute md:inset-auto md:top-full md:mt-2 md:right-0",
+          "fixed inset-0 z-[100] flex items-end justify-center md:absolute md:inset-auto md:top-full md:mt-2 md:right-0",
           "md:w-96 md:rounded-2xl md:border md:border-slate-800 md:bg-slate-900/90 md:shadow-2xl"
         )}>
           {/* Mobile drawer backdrop */}
@@ -123,7 +123,7 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
           
           <SearchAndFilterPanel
             ref={dropdownRef1}
-            className="w-full max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white dark:bg-slate-900 md:rounded-2xl"
+            className="w-full max-h-[80vh] overflow-y-auto rounded-t-2xl bg-white dark:bg-slate-900 md:rounded-2xl z-[101]"
             showCompleted={showCompleted}
             setShowCompleted={(status) => setShowCompleted(boardId, status as 'all' | 'completed' | 'incomplete')}
             priorityThreshold={priorityThreshold}
