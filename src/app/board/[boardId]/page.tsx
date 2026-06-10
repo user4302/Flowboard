@@ -21,6 +21,7 @@ export default function BoardPage() {
   const { boards, setCurrentBoard } = useBoard();
   const { currentView, initializeTheme } = useUIStore();
   const { showJoinModal, setShowJoinModal } = useSharingStore();
+  const isHydrated = useBoardStore((state: any) => state.isHydrated);
 
   // Helper function to find board by ID
   const getBoardById = (id: string) => boards.find(board => board.id === id) || null;
@@ -28,6 +29,12 @@ export default function BoardPage() {
   const [inviteId, setInviteId] = useState<string | null>(null);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [isBoardLoading, setIsBoardLoading] = useState(true);
+
+  useEffect(() => {
+    if (isHydrated) {
+      setIsBoardLoading(false);
+    }
+  }, [isHydrated]);
 
   useEffect(() => {
     initializeTheme();
@@ -52,18 +59,20 @@ export default function BoardPage() {
   }, [initializeTheme, setShowJoinModal]);
 
   useEffect(() => {
-    // Set current board from URL parameter
-    if (boardId) {
+    // Only check board ID once hydrated
+    if (isHydrated && boardId) {
       const board = getBoardById(boardId);
+      console.log('BoardPage: Board ID change effect', { boardId, boardFound: !!board, isHydrated });
       if (board) {
         setCurrentBoard(boardId);
         setIsBoardLoading(false);
       } else {
         // Board not found, redirect to home
+        console.log('BoardPage: Board not found, redirecting to home');
         router.push('/');
       }
     }
-  }, [boardId, getBoardById, setCurrentBoard, router]);
+  }, [boardId, isHydrated, getBoardById, setCurrentBoard, router]);
 
   const currentBoard = boardId ? getBoardById(boardId) : null;
 

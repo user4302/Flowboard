@@ -35,9 +35,14 @@ export const useBoardStore = create<BoardState>()(
       ...createMemberSlice(set, get, store),
       ...createChecklistSlice(set, get, store),
       ...createUtilsSlice(set, get, store),
+      isHydrated: false,
+      setHydrated: (hydrated) => set({ isHydrated: hydrated }),
     }),
     {
       name: STORAGE_KEYS.BOARDS,
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true);
+      },
       partialize: (state) => ({
         boards: state.boards,
         currentBoardId: state.currentBoardId,
