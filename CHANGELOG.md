@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.9.0] - 2026-06-09
 
 ### Added
 - Add drag-and-drop rearranging capability to checklist items in task modals
@@ -54,6 +54,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix hydration issue causing redirects on direct board URL access
 - Refactor layout to `100dvh` and fix overscroll behavior for mobile consistency
 - Fix responsive styling and filter portal rendering issues
+
+## [Unreleased]
+
 
 ## [1.8.4] - 2026-04-07
 
