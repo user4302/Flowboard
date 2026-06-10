@@ -26,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Implement mobile-first responsive foundation (sidebar, header, filter drawer)
 - Implement fixed bottom navigation bar on mobile with view switching and filter sheet trigger
 - Update project constitution (v1.2.0) to include mobile-first UI/UX, Tailwind standards, and build discipline.
+- Add close button to mobile filter sheet for better UX
+- Fix filter clear button functionality in mobile view
+- Fix filter panel visibility and portal rendering issues on mobile
+- Lock mobile viewport and fix layout issues causing unwanted scroll and empty edges
 
 ### Fixed
 - Fix Kanban list layout by enforcing fixed height, ensuring action buttons remain anchored at the bottom of the list container
