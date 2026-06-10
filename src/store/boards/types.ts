@@ -61,6 +61,11 @@ export interface ChecklistSlice {
     updateChecklistItems: (boardId: string, cardId: string, checklistId: string, items: ChecklistItem[]) => void;
 }
 
+export interface HydrationSlice {
+    isHydrated: boolean;
+    setHydrated: (hydrated: boolean) => void;
+}
+
 export interface UtilsSlice {
     getCurrentBoard: () => Board | null;
     getCard: (boardId: string, cardId: string) => Card | null;
@@ -77,6 +82,7 @@ export type BoardState = BoardSlice &
     LabelSlice &
     MemberSlice &
     ChecklistSlice &
+    HydrationSlice &
     UtilsSlice;
 
 export type BoardStateCreator<T> = StateCreator<
