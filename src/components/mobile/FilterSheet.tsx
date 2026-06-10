@@ -16,7 +16,7 @@ export function FilterSheet({ boardId }: { boardId: string }) {
       <ModalHeader className="border-slate-800">
         <ModalTitle className="text-white">Filters</ModalTitle>
       </ModalHeader>
-      <ModalBody className="p-4 !max-h-[80vh] overflow-y-auto">
+      <ModalBody className="p-4 !max-h-[50vh] overflow-y-auto">
         <SearchAndFilter boardId={boardId} inline={true} className="w-full !relative !static" />
       </ModalBody>
     </Modal>
