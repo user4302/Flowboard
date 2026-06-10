@@ -45,6 +45,7 @@ export function SearchAndFilter({ boardId, className, compact = false, inline = 
   const { boards } = useBoardStore();
 
   const [showFilters, setShowFilters] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const dropdownRef1 = useRef<HTMLDivElement>(null);
   const dropdownRef2 = useRef<HTMLDivElement>(null);
   const [portalDropdownRefs, setPortalDropdownRefs] = useState<React.RefObject<HTMLDivElement | null>[]>([]);
@@ -53,7 +54,7 @@ export function SearchAndFilter({ boardId, className, compact = false, inline = 
     setPortalDropdownRefs(refs);
   }, []);
 
-  const dropdownRefs = [dropdownRef1, dropdownRef2, ...portalDropdownRefs];
+  const dropdownRefs = [containerRef, dropdownRef1, dropdownRef2, ...portalDropdownRefs];
 
   const board = boards.find(b => b.id === boardId);
 
@@ -82,7 +83,7 @@ export function SearchAndFilter({ boardId, className, compact = false, inline = 
   };
 
   return (
-    <div className={cn("relative", className)}>
+    <div ref={containerRef} className={cn("relative", className)}>
       <div className={cn(
         "flex items-center gap-3 bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-2xl p-2 transition-all duration-300",
         compact ? "shadow-lg" : "shadow-xl border-slate-700/50 bg-slate-900/80"
