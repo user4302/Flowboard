@@ -7,8 +7,6 @@ import { cn } from '@/lib/utils';
 
 export function MobileBottomNav() {
   const { currentView, setCurrentView, setShowFilterSheet } = useUIStore();
-  
-  console.log('MobileBottomNav: Rendering, currentView=', currentView);
 
   const navItems = [
     { id: 'kanban', icon: LayoutGrid, label: 'Kanban' },
@@ -18,8 +16,7 @@ export function MobileBottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 z-[9999] flex h-16 w-full items-center justify-around border-t-4 border-yellow-400 bg-red-600 px-2 shadow-2xl">
-      <div className="text-white font-bold text-lg">TEST NAV: {currentView}</div>
+    <nav className="fixed bottom-0 left-0 z-50 flex h-16 w-full items-center justify-around border-t border-slate-200 bg-white/95 px-2 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95 md:hidden pb-safe">
       {navItems.map((item) => (
         <Button
           key={item.id}
