@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { BoardSidebar } from '@/components/boardSidebar';
 import { BoardHeader } from '@/components/boardHeader';
 import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
+import { FilterSheet } from '@/components/mobile/FilterSheet';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
 import { TaskModal } from '@/components/taskModal';
 import { JoinBoardModal } from '@/components/boardShare';
@@ -121,6 +122,7 @@ export default function BoardPage() {
       </div>
 
       <MobileBottomNav />
+      <FilterSheet boardId={boardId} />
 
       <TaskModal />
       <JoinBoardModal

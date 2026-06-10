@@ -18,8 +18,8 @@ The goal is to introduce a fixed bottom navigation bar on mobile viewports (< 76
 - [x] T005 [P] [US1] Connect tab buttons in `MobileBottomNav` to `setCurrentView` in src/components/mobile/MobileBottomNav.tsx
 
 ## Phase 4: User Story 2 - Filter Sheet Trigger
-- [ ] T006 [P] [US2] Implement filter sheet trigger in `MobileBottomNav` in src/components/mobile/MobileBottomNav.tsx
-- [ ] T007 [US2] Implement Filter Sheet component using Radix UI in src/components/mobile/FilterSheet.tsx
+- [x] T006 [P] [US2] Implement filter sheet trigger in `MobileBottomNav` in src/components/mobile/MobileBottomNav.tsx
+- [x] T007 [US2] Implement Filter Sheet component using Radix UI in src/components/mobile/FilterSheet.tsx
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 - [ ] T008 Audit and fix responsive padding in src/app/board/[boardId]/page.tsx to accommodate fixed bottom bar
