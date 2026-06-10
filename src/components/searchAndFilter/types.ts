@@ -12,6 +12,8 @@ export interface SearchAndFilterProps {
   className?: string;
   /** Whether to render in compact mode */
   compact?: boolean;
+  /** Whether to render in inline mode (disables fixed overlay) */
+  inline?: boolean;
 }
 
 /**

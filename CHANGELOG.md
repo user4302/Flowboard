@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix layout consistency by unifying container height for edit and view modes
 - Implement scroll containment using `overscroll-y-contain` to prevent modal parent scrolling
 - Update browser tab title to show "Flowboard | [Board Name]" for better navigation
+- Implement mobile-first responsive foundation (sidebar, header, filter drawer)
+- Implement fixed bottom navigation bar on mobile with view switching and filter sheet trigger
+- Update project constitution (v1.2.0) to include mobile-first UI/UX, Tailwind standards, and build discipline.
 
 ### Fixed
 - Fix Kanban list layout by enforcing fixed height, ensuring action buttons remain anchored at the bottom of the list container
@@ -44,6 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix LabelManager and ColorPicker click-outside interactions by implementing portal detection in `useClickOutside`
 - Update import-format-template.md schema to match actual internal Board interface
 - Clean up debug logging
+- Fix hydration issue causing redirects on direct board URL access
+- Refactor layout to `100dvh` and fix overscroll behavior for mobile consistency
+- Fix responsive styling and filter portal rendering issues
 
 ## [1.8.4] - 2026-04-07
 
