@@ -16,7 +16,8 @@ export function MobileBottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 z-50 flex h-16 w-full items-center justify-around border-t border-slate-200 bg-white/95 px-2 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95 md:hidden pb-safe">
+    <nav className="fixed bottom-0 left-0 z-50 flex h-16 w-full items-center justify-around border-t border-slate-200 bg-red-500 px-2 backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95 md:hidden pb-safe">
+      <div className="text-white font-bold">TEST NAV</div>
       {navItems.map((item) => (
         <Button
           key={item.id}
