@@ -9,7 +9,7 @@ export function FilterSheet({ boardId }: { boardId: string }) {
 
   return (
     <Modal
-      isOpen={showFilterSheet}
+      open={showFilterSheet}
       onClose={() => setShowFilterSheet(false)}
     >
       <ModalHeader>
