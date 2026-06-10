@@ -77,6 +77,7 @@ export function SearchAndFilter({ boardId, className, compact = false, inline = 
   const handleClearAllFilters = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+    console.log('Clearing filters');
     clearFilters(boardId);
   };
 
