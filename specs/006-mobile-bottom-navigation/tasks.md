@@ -15,7 +15,7 @@ The goal is to introduce a fixed bottom navigation bar on mobile viewports (< 76
 - [x] T004 Add `showFilterSheet` state to `uiStore` in src/store/uiStore.ts
 
 ## Phase 3: User Story 1 - Navigation and View Switching
-- [ ] T005 [P] [US1] Connect tab buttons in `MobileBottomNav` to `setCurrentView` in src/components/mobile/MobileBottomNav.tsx
+- [x] T005 [P] [US1] Connect tab buttons in `MobileBottomNav` to `setCurrentView` in src/components/mobile/MobileBottomNav.tsx
 
 ## Phase 4: User Story 2 - Filter Sheet Trigger
 - [ ] T006 [P] [US2] Implement filter sheet trigger in `MobileBottomNav` in src/components/mobile/MobileBottomNav.tsx

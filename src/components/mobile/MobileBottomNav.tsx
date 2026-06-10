@@ -26,7 +26,9 @@ export function MobileBottomNav() {
             "flex flex-col gap-1 h-full w-full rounded-none text-xs",
             currentView === item.id ? "text-blue-600 dark:text-blue-400" : "text-slate-500"
           )}
-          onClick={() => setCurrentView(item.id as any)}
+          onClick={() => {
+            setCurrentView(item.id as any);
+          }}
         >
           <item.icon className="h-5 w-5" />
           {item.label}
