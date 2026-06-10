@@ -69,6 +69,21 @@ export default function Home() {
     // The board store will automatically set this as current board
   };
 
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'kanban':
+        return <KanbanView boardId={currentBoardId!} />;
+      case 'timeline':
+        return <TimelineView boardId={currentBoardId!} />;
+      case 'calendar':
+        return <CalendarView boardId={currentBoardId!} />;
+      case 'table':
+        return <TableView boardId={currentBoardId!} />;
+      default:
+        return <KanbanView boardId={currentBoardId!} />;
+    }
+  };
+
   if (!currentBoard || !currentBoardId) {
     return (
       <>
@@ -83,6 +98,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Main app interface - only visible when welcome screen is hidden */}
         <div className={`flex h-dvh w-screen overflow-hidden bg-slate-50 dark:bg-slate-900 transition-opacity duration-500 ${showWelcomeScreen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <BoardSidebar />
           <div className="flex flex-1 flex-col overflow-hidden bg-slate-50 dark:bg-slate-900 lg:ml-64 w-full">
