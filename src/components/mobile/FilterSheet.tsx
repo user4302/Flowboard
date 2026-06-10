@@ -16,7 +16,7 @@ export function FilterSheet({ boardId }: { boardId: string }) {
         <ModalTitle>Filters</ModalTitle>
       </ModalHeader>
       <ModalBody className="p-4">
-        <SearchAndFilter boardId={boardId} />
+        <SearchAndFilter boardId={boardId} inline={true} />
       </ModalBody>
     </Modal>
   );

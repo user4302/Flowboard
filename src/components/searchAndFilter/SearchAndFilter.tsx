@@ -113,7 +113,24 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
         </div>
       </div>
 
-      {showFilters && (
+      {showFilters && (inline ? (
+        <SearchAndFilterPanel
+          ref={dropdownRef1}
+          className="w-full mt-2"
+          showCompleted={showCompleted}
+          setShowCompleted={(status) => setShowCompleted(boardId, status as 'all' | 'completed' | 'incomplete')}
+          priorityThreshold={priorityThreshold}
+          setPriorityThreshold={(threshold) => setPriorityThreshold(boardId, threshold)}
+          dueDateFilter={dueDateFilter}
+          setDueDateFilter={(filter) => setDueDateFilter(boardId, filter as 'all' | 'overdue' | 'today' | 'week' | 'month')}
+          selectedLabels={selectedLabels}
+          setSelectedLabels={(labels) => setSelectedLabels(boardId, labels)}
+          selectedMembers={selectedMembers}
+          setSelectedMembers={(members) => setSelectedMembers(boardId, members)}
+          board={board}
+          onPortalDropdownRef={handlePortalDropdownRefs}
+        />
+      ) : (
         <div className={cn(
           "fixed inset-0 z-[100] flex items-end justify-center md:absolute md:inset-auto md:top-full md:mt-2 md:right-0",
           "md:w-96 md:rounded-2xl md:border md:border-slate-800 md:bg-slate-900/90 md:shadow-2xl"
@@ -138,7 +155,7 @@ export function SearchAndFilter({ boardId, className, compact = false }: SearchA
             onPortalDropdownRef={handlePortalDropdownRefs}
           />
         </div>
-      )}
+      ))}
     </div>
   );
 }
