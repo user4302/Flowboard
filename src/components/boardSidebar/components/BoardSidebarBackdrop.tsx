@@ -17,7 +17,7 @@ export function BoardSidebarBackdrop({
 
   return (
     <div
-      className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+      className="fixed inset-0 z-40 bg-black/50 md:hidden"
       onClick={onClose}
     />
   );
