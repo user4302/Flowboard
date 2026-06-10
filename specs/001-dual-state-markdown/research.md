@@ -1,0 +1,1 @@
+Decision: Use react-markdown for rendering.\nRationale: Industry standard for React Markdown rendering, robust parsing.\nAlternatives: Custom regex parser (too limited), full-featured editors (too heavy).

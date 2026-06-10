@@ -1,9 +1,9 @@
-# Flowboard v1.5.0
+# Flowboard v1.9.0
 
 A modern, feature-rich project management application inspired by Trello, built with React, Next.js, and TypeScript.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/badge/version-1.8.4-green.svg)
+![Version](https://img.shields.io/badge/version-1.9.0-green.svg)
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.6-black.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
 
@@ -18,7 +18,9 @@ A modern, feature-rich project management application inspired by Trello, built 
 - **Card Archiving**: Archive completed cards with restore and permanent delete options
 - **Real-time Search**: Filter cards by title, description, labels, and members
 - **Dark/Light Theme**: System preference detection with manual toggle
-- **Responsive Design**: Mobile-optimized with collapsible sidebar and touch-friendly interactions
+- **Mobile Responsive**: Mobile-optimized layout, fixed bottom navigation for quick view switching, and sliding filter drawer for narrow viewports
+- **Viewport Locking**: Dynamic viewport units (dvh) and overscroll-behavior control for smooth mobile experience
+- **Constitution**: Adherence to mobile-responsive UI/UX and strict Tailwind utility standards
 - **Board Management**: Create, switch between, and delete boards with confirmation dialogs
 - **Board Export/Import**: Save and load board data as JSON files for backup and sharing
 - **Card JSON Import/Export**: Copy, download, and upload individual cards as JSON with smart paste functionality

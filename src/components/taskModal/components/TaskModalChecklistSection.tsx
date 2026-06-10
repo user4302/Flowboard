@@ -1,19 +1,23 @@
 'use client';
 
+import { useState } from 'react';
 import { TaskModalMultiChecklistManager } from './TaskModalMultiChecklistManager';
 import { Checklist, ChecklistItem } from '@/lib/types';
+import { Button } from '@/components/ui';
 
 interface TaskModalChecklistSectionProps {
   cardId: string;
   boardId: string;
-  checklists: Checklist[];
   checklistHook: {
+    localChecklists: Checklist[];
     addChecklist: (name: string) => void;
     updateChecklist: (checklistId: string, updates: Partial<Checklist>) => void;
     removeChecklist: (checklistId: string) => void;
     addChecklistItem: (checklistId: string, text: string) => void;
     updateChecklistItem: (checklistId: string, itemId: string, updates: Partial<ChecklistItem>) => void;
     removeChecklistItem: (checklistId: string, itemId: string) => void;
+    addChecklistItems: (checklistId: string, texts: string[]) => void;
+    reorderChecklistItems: (checklistId: string, fromIndex: number, toIndex: number) => void;
     syncChecklistToStore: () => void;
     resetChecklist: () => void;
   };
@@ -22,7 +26,6 @@ interface TaskModalChecklistSectionProps {
 export function TaskModalChecklistSection({
   cardId,
   boardId,
-  checklists,
   checklistHook
 }: TaskModalChecklistSectionProps) {
   return (
@@ -36,13 +39,15 @@ export function TaskModalChecklistSection({
       <TaskModalMultiChecklistManager
         cardId={cardId}
         boardId={boardId}
-        checklists={checklists}
+        checklists={checklistHook.localChecklists}
         onAddChecklist={checklistHook.addChecklist}
         onUpdateChecklist={checklistHook.updateChecklist}
         onRemoveChecklist={checklistHook.removeChecklist}
         onAddChecklistItem={checklistHook.addChecklistItem}
         onUpdateChecklistItem={checklistHook.updateChecklistItem}
         onRemoveChecklistItem={checklistHook.removeChecklistItem}
+        onAddChecklistItems={checklistHook.addChecklistItems}
+        onReorderChecklistItems={checklistHook.reorderChecklistItems}
       />
     </div>
   );

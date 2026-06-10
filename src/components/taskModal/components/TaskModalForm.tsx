@@ -1,6 +1,8 @@
 'use client';
 
-import { Calendar, User, Tag, CheckSquare, Flag, Maximize2, Minimize2 } from 'lucide-react';
+import { Calendar, User, Tag, CheckSquare, Flag, Maximize2, Minimize2, Pencil, Eye } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
 import { Input, Button } from '@/components/ui';
 import { ModalFormProps } from '@/components/taskModal/types/TaskModal.form.types';
@@ -10,9 +12,17 @@ import { useState, useRef, useEffect } from 'react';
 
 export function TaskModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [descriptionValue, setDescriptionValue] = useState(card?.description || '');
   const [contentExceedsHeight, setContentExceedsHeight] = useState(false);
+
+  // Focus textarea when entering edit mode
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, [isEditing]);
 
   // Update description when card changes
   useEffect(() => {
@@ -23,17 +33,21 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
 
   // Check if content exceeds default height
   useEffect(() => {
-    if (textareaRef.current && !isDescriptionExpanded) {
-      // Temporarily set height to auto to measure content
-      const originalHeight = textareaRef.current.style.height;
-      textareaRef.current.style.height = 'auto';
-      const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = originalHeight;
-
-      // Default 4 rows = approximately 96px
-      setContentExceedsHeight(scrollHeight > 96);
-    }
-  }, [descriptionValue, isDescriptionExpanded]);
+    // Use a temporary textarea for measurement
+    const tempTextarea = document.createElement('textarea');
+    tempTextarea.value = descriptionValue;
+    tempTextarea.style.width = '100%';
+    tempTextarea.style.position = 'absolute';
+    tempTextarea.style.visibility = 'hidden';
+    tempTextarea.style.font = '0.875rem sans-serif'; // text-sm
+    tempTextarea.style.padding = '0.5rem'; // px-3 py-2
+    document.body.appendChild(tempTextarea);
+    
+    // Default 4 rows = approximately 96px
+    setContentExceedsHeight(tempTextarea.scrollHeight > 96);
+    
+    document.body.removeChild(tempTextarea);
+  }, [descriptionValue]);
 
   // Auto-adjust height when expanded or content changes
   useEffect(() => {
@@ -85,46 +99,56 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
           <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
             Description
           </label>
-          {contentExceedsHeight && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={toggleDescriptionExpansion}
-              className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
-            >
-              {isDescriptionExpanded ? (
-                <>
-                  <Minimize2 className="h-3 w-3 mr-1" />
-                  Shrink
-                </>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={toggleDescriptionExpansion}
+            className="text-slate-500 hover:text-slate-700 h-6 px-2 text-xs"
+          >
+            {isDescriptionExpanded ? (
+              <>
+                <Minimize2 className="h-3 w-3 mr-1" />
+                Shrink
+              </>
+            ) : (
+              <>
+                <Maximize2 className="h-3 w-3 mr-1" />
+                Expand
+              </>
+            )}
+          </Button>
+        </div>
+        <div
+          className={cn(
+            "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200 overflow-hidden",
+            isDescriptionExpanded ? "h-[300px]" : "h-[140px]"
+          )}
+          onClick={() => setIsEditing(true)}
+        >
+          {isEditing ? (
+            <textarea
+              value={descriptionValue}
+              onChange={(e) => {
+                setDescriptionValue(e.target.value);
+                form.setValue('description', e.target.value, { shouldDirty: true });
+              }}
+              onBlur={() => setIsEditing(false)}
+              ref={textareaRef}
+              className="w-full h-full bg-transparent focus:outline-none resize-none overflow-y-auto overscroll-y-contain"
+              placeholder="Add a more detailed description..."
+              autoFocus
+            />
+          ) : (
+            <div className="prose dark:prose-invert prose-sm max-w-none h-full overflow-y-auto overscroll-y-contain">
+              {descriptionValue ? (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{descriptionValue}</ReactMarkdown>
               ) : (
-                <>
-                  <Maximize2 className="h-3 w-3 mr-1" />
-                  Expand
-                </>
+                <span className="text-slate-400 italic">Add a more detailed description...</span>
               )}
-            </Button>
+            </div>
           )}
         </div>
-        <textarea
-          value={descriptionValue}
-          onChange={(e) => {
-            setDescriptionValue(e.target.value);
-            form.setValue('description', e.target.value);
-          }}
-          ref={textareaRef}
-          rows={isDescriptionExpanded ? 1 : 4}
-          style={{
-            resize: 'vertical',
-            height: isDescriptionExpanded ? undefined : '',
-            minHeight: '96px'
-          }}
-          className={cn(
-            "w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100 transition-all duration-200"
-          )}
-          placeholder="Add a more detailed description..."
-        />
       </div>
 
       {/* Priority - Number-based priority input */}

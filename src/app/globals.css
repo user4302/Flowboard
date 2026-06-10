@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
@@ -23,6 +24,12 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  overscroll-behavior: none; /* Prevents pull-to-refresh/rubber-banding */
 }
 
 .custom-scrollbar::-webkit-scrollbar {

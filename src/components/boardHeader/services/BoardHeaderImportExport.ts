@@ -237,7 +237,22 @@ export const importData = (file: File, setCurrentBoard: (boardId: string) => voi
               });
 
               // Add checklist items as a complete checklist object
-              if (cardData.checklist && cardData.checklist.length > 0) {
+              if (cardData.checklists && cardData.checklists.length > 0) {
+                const { generateId } = require('@/lib/utils');
+                const checklists = cardData.checklists.map((c: any) => ({
+                    id: generateId(),
+                    name: c.name,
+                    items: c.items.map((item: { text: string; done: boolean }) => ({
+                      id: generateId(),
+                      text: item.text,
+                      done: item.done
+                    })),
+                    position: c.position || 0,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                }));
+                useBoardStore.getState().updateCard(newBoard.id, card!.id, { checklists });
+              } else if (cardData.checklist && cardData.checklist.length > 0) {
                 const { generateId } = require('@/lib/utils');
                 const checklists = [{
                   id: generateId(),

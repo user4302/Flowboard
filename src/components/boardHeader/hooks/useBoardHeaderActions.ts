@@ -31,6 +31,7 @@ export const useBoardHeaderActions = (currentBoard: Board) => {
       importData(file, (boardId: string) => {
         useBoardStore.getState().setCurrentBoard(boardId);
       });
+      event.target.value = '';
     }
   };
 

@@ -22,6 +22,8 @@ interface SearchAndFilterPanelProps {
     members: Array<{ id: string; name: string }>;
   };
   onPortalDropdownRef?: (refs: React.RefObject<HTMLDivElement | null>[]) => void;
+  className?: string;
+  inline?: boolean;
 }
 
 export const SearchAndFilterPanel = forwardRef<HTMLDivElement, SearchAndFilterPanelProps>(({
@@ -36,7 +38,9 @@ export const SearchAndFilterPanel = forwardRef<HTMLDivElement, SearchAndFilterPa
   selectedMembers,
   setSelectedMembers,
   board,
-  onPortalDropdownRef
+  onPortalDropdownRef,
+  className,
+  inline = false
 }, ref) => {
   const [portalDropdownRefs, setPortalDropdownRefs] = useState<React.RefObject<HTMLDivElement | null>[]>([]);
 
@@ -77,9 +81,10 @@ export const SearchAndFilterPanel = forwardRef<HTMLDivElement, SearchAndFilterPa
     <div
       ref={ref}
       className={cn(
-        "absolute top-full right-0 mt-3 w-[360px] sm:w-[500px] z-50 animate-in fade-in zoom-in duration-200 origin-top-right",
+        !inline && "absolute top-full right-0 mt-3 w-[360px] sm:w-[500px] z-50 animate-in fade-in zoom-in duration-200 origin-top-right",
         "bg-slate-900/95 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]",
-        "p-6 space-y-8 max-h-[85vh] overflow-y-auto"
+        "p-6 space-y-8 max-h-[85vh] overflow-y-auto",
+        className
       )}
     >
       <SearchAndFilterStatus showCompleted={showCompleted} onChange={setShowCompleted} />

@@ -2,6 +2,7 @@
 
 import { createPortal } from 'react-dom';
 import { useRef, useEffect } from 'react';
+import { useClickOutside } from '@/hooks';
 
 /**
  * Props for the ColorPicker portal component
@@ -27,37 +28,7 @@ export function ColorPickerPortal({
   onClose,
   children,
 }: ColorPickerPortalProps) {
-  const portalRef = useRef<HTMLDivElement>(null);
-
-  // Handle click outside to close
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (portalRef.current && !portalRef.current.contains(event.target as Node)) {
-        // Prevent event bubbling to avoid conflicts with parent portals
-        event.stopPropagation();
-        onClose();
-      }
-    };
-
-    if (show) {
-      document.addEventListener('mousedown', handleClickOutside, true); // Use capture phase
-      return () => document.removeEventListener('mousedown', handleClickOutside, true);
-    }
-  }, [show, onClose]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    if (show) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
-    }
-  }, [show, onClose]);
+  const portalRef = useClickOutside<HTMLDivElement>(onClose, []);
 
   if (!show) {
     return null;
@@ -71,14 +42,7 @@ export function ColorPickerPortal({
         left: `${position.left}px`,
         top: `${position.top}px`,
       }}
-      onClick={(e) => {
-        // Prevent clicks inside the portal from bubbling up to parent elements
-        e.stopPropagation();
-      }}
-      onMouseDown={(e) => {
-        // Prevent mousedown events from bubbling up to parent elements
-        e.stopPropagation();
-      }}
+      data-portal="color-picker"
     >
       {children}
     </div>,

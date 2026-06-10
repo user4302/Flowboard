@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.vscode/
+
+.gemini/commands/
+.specify/extensions/
+.specify/integrations/
+.specify/scripts/
+.specify/templates/
+.specify/workflows/
+.specify/extensions.yml
+.specify/feature.json
+.specify/init-options.json
+.specify/integration.json

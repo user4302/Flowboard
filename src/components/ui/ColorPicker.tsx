@@ -29,6 +29,8 @@ interface ColorPickerProps {
   showColorSuggestions?: boolean;
   /** Reference to parent container for positioning */
   parentRef?: React.RefObject<HTMLDivElement | null>;
+  /** Whether this ColorPicker is inside another portal */
+  isInsidePortal?: boolean;
   /** Data attributes to pass to trigger button */
   [key: string]: any;
 }
@@ -57,6 +59,7 @@ export function ColorPicker({
   existingLabels = [],
   showColorSuggestions = true,
   parentRef,
+  isInsidePortal: propIsInsidePortal = false,
   ...restProps
 }: ColorPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -65,6 +68,10 @@ export function ColorPicker({
   const [recentColors, setRecentColors] = useState<string[]>([]);
   const [dropdownPosition, setDropdownPosition] = useState({ left: 0, top: 0 });
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Use the prop to determine if inside portal, with fallback to false
+  const isInsidePortal = propIsInsidePortal;
 
   // Generate color suggestions from existing labels
   const colorSuggestions = existingLabels
@@ -79,9 +86,12 @@ export function ColorPicker({
    * @returns Comma-separated label names, or empty string if none found
    */
   const getLabelsByColor = useCallback((color: string) => {
+    if (!existingLabels || !Array.isArray(existingLabels)) {
+      return '';
+    }
     return existingLabels
-      .filter(label => label.color === color)
-      .map(label => label.text)
+      .filter(label => label && label.color === color)
+      .map(label => label.text || '')
       .join(', ');
   }, [existingLabels]);
 
@@ -151,15 +161,10 @@ export function ColorPicker({
 
   // Handle recent color selection
   const handleRecentColorSelect = useCallback((color: string) => {
-    onChange(color);
-    saveToRecent(color);
-    // Keep dropdown open for continuous color selection
-  }, [onChange, saveToRecent]);
-
-  // Handle suggested color selection
-  const handleSuggestedColorSelect = useCallback((color: string) => {
-    onChange(color);
-    saveToRecent(color);
+    if (onChange && saveToRecent) {
+      onChange(color);
+      saveToRecent(color);
+    }
     // Keep dropdown open for continuous color selection
   }, [onChange, saveToRecent]);
 
@@ -206,7 +211,7 @@ export function ColorPicker({
   }, [isOpen, value, onChange, saveToRecent, handleToggleDropdown]);
 
   return (
-    <div className={cn('relative', className)}>
+    <div ref={containerRef} className={cn('relative', className)}>
       {/* Trigger Button */}
       <button
         ref={triggerRef}
@@ -237,16 +242,19 @@ export function ColorPicker({
         <ChevronDown className="h-4 w-4 text-slate-400 ml-auto" />
       </button>
 
-      {/* Dropdown Portal */}
-      <ColorPickerPortal
-        show={isOpen}
-        position={dropdownPosition}
-        onClose={() => {
-          setIsOpen(false);
-          setShowCustomPicker(false);
-        }}
-      >
-        <div className="color-picker-dropdown w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg">
+      {/* Dropdown - Use portal only when not inside another portal */}
+      {isOpen && (() => {
+        console.log('ColorPicker rendering:', { isInsidePortal, isOpen });
+        return isInsidePortal;
+      })() ? (
+        <div
+          className="fixed z-[60] color-picker-dropdown w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg"
+          style={{
+            left: `${dropdownPosition.left}px`,
+            top: `${dropdownPosition.top}px`,
+          }}
+          data-portal="color-picker"
+        >
           <div className="p-4 space-y-4">
             {/* Color Suggestions */}
             {showColorSuggestions && colorSuggestions.length > 0 && (
@@ -261,7 +269,7 @@ export function ColorPicker({
                       <button
                         key={color}
                         type="button"
-                        onClick={() => handleSuggestedColorSelect(color)}
+                        onClick={() => handleRecentColorSelect(color)}
                         className={cn(
                           'w-8 h-8 rounded border-2 transition-all hover:scale-105 relative group',
                           'border-slate-200 dark:border-slate-600',
@@ -368,25 +376,175 @@ export function ColorPicker({
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Close Button */}
-          <div className="flex justify-end p-3 pt-0">
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className={cn(
-                'px-3 py-2 text-sm font-medium rounded-md transition-colors',
-                'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800',
-                'dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300 dark:hover:text-slate-100',
-                'border border-slate-200 dark:border-slate-600'
-              )}
-            >
-              Close
-            </button>
+            {/* Close Button */}
+            <div className="flex justify-end p-3 pt-0">
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className={cn(
+                  'px-3 py-2 text-sm font-medium rounded-md transition-colors',
+                  'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800',
+                  'dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300 dark:hover:text-slate-100',
+                  'border border-slate-200 dark:border-slate-600'
+                )}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
-      </ColorPickerPortal>
+      ) : (
+        <ColorPickerPortal
+          show={isOpen}
+          position={dropdownPosition}
+          onClose={() => {
+            setIsOpen(false);
+            setShowCustomPicker(false);
+          }}
+        >
+          <div className="color-picker-dropdown w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg">
+            <div className="p-4 space-y-4">
+              {/* Color Suggestions */}
+              {showColorSuggestions && colorSuggestions.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Existing Colors
+                  </label>
+                  <div className="grid grid-cols-8 gap-1.5">
+                    {colorSuggestions.map((color) => {
+                      const labelNames = getLabelsByColor(color);
+                      return (
+                        <button
+                          key={color}
+                          type="button"
+                          onClick={() => handleRecentColorSelect(color)}
+                          className={cn(
+                            'w-8 h-8 rounded border-2 transition-all hover:scale-105 relative group',
+                            'border-slate-200 dark:border-slate-600',
+                            value === color && 'border-indigo-500 ring-1 ring-indigo-200 dark:ring-indigo-800'
+                          )}
+                          style={{ backgroundColor: color }}
+                          title={labelNames || color}
+                        >
+                          {labelNames && (
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                              {labelNames}
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Custom Color Picker */}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setShowCustomPicker(!showCustomPicker)}
+                  className={cn(
+                    'w-full px-3 py-2 text-sm font-medium rounded-md border transition-colors',
+                    'border-slate-300 bg-slate-50 hover:bg-slate-100',
+                    'dark:border-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white'
+                  )}
+                >
+                  {showCustomPicker ? 'Hide Custom Color' : 'Custom Color'}
+                </button>
+
+                {showCustomPicker && (
+                  <div className="mt-2 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div className="flex justify-center">
+                      <HexColorPicker
+                        color={value || '#ffffff'}
+                        onChange={handleCustomColorChange}
+                        style={{
+                          fontFamily: 'system-ui, -apple-system, sans-serif',
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Hex Input */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Hex Color
+                </label>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <div
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 rounded border border-slate-300 dark:border-slate-600"
+                      style={{ backgroundColor: value || '#ffffff' }}
+                    />
+                    <input
+                      type="text"
+                      value={value}
+                      onChange={handleHexInputChange}
+                      placeholder="#000000"
+                      tabIndex={0}
+                      className={cn(
+                        'w-full pl-10 pr-3 py-2 border rounded-md text-sm',
+                        'border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
+                        'dark:border-slate-600 dark:bg-slate-800 dark:text-white',
+                        !isValidHex(value) && 'border-red-300 focus:ring-red-500 dark:border-red-600'
+                      )}
+                    />
+                  </div>
+                </div>
+                {!isValidHex(value) && (
+                  <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                    Please enter a valid hex color (e.g., #ff0000)
+                  </p>
+                )}
+              </div>
+
+              {/* Recent Colors */}
+              {showRecentColors && recentColors.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Recent Colors
+                  </label>
+                  <div className="flex gap-2 flex-wrap">
+                    {recentColors.map((color) => (
+                      <button
+                        key={color}
+                        type="button"
+                        onClick={() => handleRecentColorSelect(color)}
+                        className={cn(
+                          'w-8 h-8 rounded border-2 transition-all hover:scale-105',
+                          'border-slate-200 dark:border-slate-600',
+                          value === color && 'border-indigo-500 ring-2 ring-indigo-200 dark:ring-indigo-800'
+                        )}
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Close Button */}
+              <div className="flex justify-end p-3 pt-0">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'px-3 py-2 text-sm font-medium rounded-md transition-colors',
+                    'bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800',
+                    'dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300 dark:hover:text-slate-100',
+                    'border border-slate-200 dark:border-slate-600'
+                  )}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </ColorPickerPortal>
+      )}
     </div>
   );
 }

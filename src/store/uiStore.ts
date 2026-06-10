@@ -12,6 +12,7 @@ interface UIState extends ViewState {
   // View preferences
   currentView: 'kanban' | 'timeline' | 'calendar' | 'table';
   sidebarOpen: boolean;
+  showFilterSheet: boolean;
   theme: 'light' | 'dark';
 
   // Filter state (per board)
@@ -49,6 +50,7 @@ interface UIState extends ViewState {
   setCurrentView: (view: ViewState['currentView']) => void;
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
+  setShowFilterSheet: (show: boolean) => void;
   setTheme: (theme: ViewState['theme']) => void;
 
   // Timeline actions
@@ -107,6 +109,7 @@ export const useUIStore = create<UIState>()(
       // Initial view state
       currentView: 'kanban',
       sidebarOpen: true,
+      showFilterSheet: false,
       theme: 'light',
 
       // Initial filter state (per board)
@@ -252,6 +255,12 @@ export const useUIStore = create<UIState>()(
        * @param open - Whether sidebar should be open
        */
       setSidebarOpen: (open) => set({ sidebarOpen: open }),
+
+      /**
+       * Set filter sheet visibility
+       * @param show - Whether filter sheet should be open
+       */
+      setShowFilterSheet: (show) => set({ showFilterSheet: show }),
 
       /**
        * Set theme and apply to document
@@ -508,6 +517,7 @@ export const useUIStore = create<UIState>()(
       partialize: (state) => ({
         currentView: state.currentView,
         sidebarOpen: state.sidebarOpen,
+        showFilterSheet: state.showFilterSheet,
         theme: state.theme,
         filterState: state.filterState,
         timelineState: state.timelineState,

@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { arrayMove } from '@dnd-kit/sortable';
 import { useBoardStore } from '@/store';
 import { Checklist, ChecklistItem } from '@/lib/types';
+import { generateId } from '@/lib/utils';
 
 interface UseChecklistProps {
   boardId: string;
@@ -22,11 +24,17 @@ interface UseChecklistProps {
  * @returns Checklist management functions and local state
  */
 export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: UseChecklistProps) => {
-  const [localChecklists, setLocalChecklists] = useState<Checklist[]>([]); // Start with empty array instead of initialChecklists
+  const [localChecklists, setLocalChecklists] = useState<Checklist[]>(initialChecklists);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    setLocalChecklists(initialChecklists);
+    setIsDirty(false);
+  }, [initialChecklists]);
 
   const addChecklist = (name: string) => {
     const newChecklist: Checklist = {
-      id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      id: generateId(),
       name,
       items: [],
       position: localChecklists.length,
@@ -34,10 +42,7 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
       updatedAt: new Date(),
     };
     setLocalChecklists(prev => [...prev, newChecklist]);
-
-    // Immediately sync to store
-    const { addChecklist: storeAddChecklist } = useBoardStore.getState();
-    storeAddChecklist(boardId, cardId, name);
+    setIsDirty(true);
   };
 
   const updateChecklist = (checklistId: string, updates: Partial<Checklist>) => {
@@ -48,18 +53,12 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
           : checklist
       )
     );
-
-    // Immediately sync to store
-    const { updateChecklist: storeUpdateChecklist } = useBoardStore.getState();
-    storeUpdateChecklist(boardId, cardId, checklistId, updates);
+    setIsDirty(true);
   };
 
   const removeChecklist = (checklistId: string) => {
     setLocalChecklists(prev => prev.filter(checklist => checklist.id !== checklistId));
-
-    // Immediately sync to store
-    const { removeChecklist: storeRemoveChecklist } = useBoardStore.getState();
-    storeRemoveChecklist(boardId, cardId, checklistId);
+    setIsDirty(true);
   };
 
   const addChecklistItem = (checklistId: string, text: string) => {
@@ -79,10 +78,37 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
           : checklist
       )
     );
+    setIsDirty(true);
+  };
 
-    // Immediately sync to store
-    const { addChecklistItem: storeAddChecklistItem } = useBoardStore.getState();
-    storeAddChecklistItem(boardId, cardId, checklistId, text);
+  const addChecklistItems = (checklistId: string, texts: string[]) => {
+    const normalizedTexts = texts
+      .map(text => text.trim())
+      .filter(text => text.length > 0);
+
+    if (normalizedTexts.length === 0) {
+      return;
+    }
+
+    setLocalChecklists(prev =>
+      prev.map(checklist =>
+        checklist.id === checklistId
+          ? {
+            ...checklist,
+            items: [
+              ...checklist.items,
+              ...normalizedTexts.map(text => ({
+                id: `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                text,
+                done: false
+              }))
+            ],
+            updatedAt: new Date()
+          }
+          : checklist
+      )
+    );
+    setIsDirty(true);
   };
 
   const updateChecklistItem = (checklistId: string, itemId: string, updates: Partial<ChecklistItem>) => {
@@ -101,12 +127,9 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
           : checklist
       )
     );
+    setIsDirty(true);
 
-    // Immediately sync to store if updating done status
-    if (updates.done !== undefined) {
-      const { updateChecklistItem: storeUpdateChecklistItem } = useBoardStore.getState();
-      storeUpdateChecklistItem(boardId, cardId, checklistId, itemId, updates);
-    }
+    // Removed immediate sync to store to support "save only on button click"
   };
 
   const removeChecklistItem = (checklistId: string, itemId: string) => {
@@ -121,15 +144,28 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
           : checklist
       )
     );
-
-    // Immediately sync to store
-    const { removeChecklistItem: storeRemoveChecklistItem } = useBoardStore.getState();
-    storeRemoveChecklistItem(boardId, cardId, checklistId, itemId);
+    setIsDirty(true);
   };
 
-  const syncChecklistToStore = () => {
+  const reorderChecklistItems = (checklistId: string, fromIndex: number, toIndex: number) => {
+    setLocalChecklists(prev =>
+      prev.map(checklist =>
+        checklist.id === checklistId
+          ? {
+            ...checklist,
+            items: arrayMove(checklist.items, fromIndex, toIndex),
+            updatedAt: new Date()
+          }
+          : checklist
+      )
+    );
+    setIsDirty(true);
+  };
+
+  const syncChecklistToStore = (checklistsToSync: Checklist[]) => {
+    setIsDirty(false);
     const { addChecklist: storeAddChecklist, updateChecklist: storeUpdateChecklist, removeChecklist: storeRemoveChecklist,
-      addChecklistItem: storeAddChecklistItem, updateChecklistItem: storeUpdateChecklistItem, removeChecklistItem: storeRemoveChecklistItem } = useBoardStore.getState();
+      updateChecklistItems: storeUpdateChecklistItems } = useBoardStore.getState();
 
     // Get current card data from store to compare
     const currentBoard = useBoardStore.getState().boards.find(b => b.id === boardId);
@@ -142,68 +178,65 @@ export const useTaskModalChecklist = ({ boardId, cardId, initialChecklists }: Us
     }
 
     // Sync checklists (add, update, remove)
-    localChecklists.forEach(localChecklist => {
+    checklistsToSync.forEach(localChecklist => {
       const storeChecklist = currentChecklists.find(cl => cl.id === localChecklist.id);
 
       if (!storeChecklist) {
         // Add new checklist
-        storeAddChecklist(boardId, cardId, localChecklist.name);
+        storeAddChecklist(boardId, cardId, localChecklist.name, localChecklist.id);
+        
+        // Add all items for the new checklist
+        localChecklist.items.forEach(item => {
+           // We have to add them one by one based on current store API
+           // or we rely on the fact that storeAddChecklist initialized an empty items array
+           // which we now need to populate.
+        });
+        
+        // Use the newly created storeAddChecklist logic + update items
+        storeUpdateChecklistItems(boardId, cardId, localChecklist.id, localChecklist.items);
       } else {
         // Update existing checklist if changed
         if (localChecklist.name !== storeChecklist.name) {
           storeUpdateChecklist(boardId, cardId, localChecklist.id, { name: localChecklist.name });
+        }
+        
+        // Update checklist items if they changed (includes reordering, add, update, remove)
+        if (JSON.stringify(storeChecklist.items) !== JSON.stringify(localChecklist.items)) {
+          storeUpdateChecklistItems(boardId, cardId, localChecklist.id, localChecklist.items);
         }
       }
     });
 
     // Remove checklists that are no longer in local state
     currentChecklists.forEach(storeChecklist => {
-      if (!localChecklists.find(lc => lc.id === storeChecklist.id)) {
+      if (!checklistsToSync.find(lc => lc.id === storeChecklist.id)) {
         storeRemoveChecklist(boardId, cardId, storeChecklist.id);
       }
     });
-
-    // Sync checklist items
-    localChecklists.forEach(localChecklist => {
-      const storeChecklist = currentChecklists.find(cl => cl.id === localChecklist.id);
-      const currentItems = storeChecklist?.items || [];
-
-      // Add new items
-      localChecklist.items.forEach(localItem => {
-        if (!currentItems.find(item => item.id === localItem.id)) {
-          storeAddChecklistItem(boardId, cardId, localChecklist.id, localItem.text);
-        }
-      });
-
-      // Update existing items
-      localChecklist.items.forEach(localItem => {
-        const storeItem = currentItems.find(item => item.id === localItem.id);
-        if (storeItem && storeItem.done !== localItem.done) {
-          storeUpdateChecklistItem(boardId, cardId, localChecklist.id, localItem.id, { done: localItem.done });
-        }
-      });
-
-      // Remove items that are no longer in local state
-      currentItems.forEach(storeItem => {
-        if (!localChecklist.items.find(item => item.id === storeItem.id)) {
-          storeRemoveChecklistItem(boardId, cardId, localChecklist.id, storeItem.id);
-        }
-      });
-    });
   };
+
 
   const resetChecklist = () => {
     setLocalChecklists(initialChecklists);
+    setIsDirty(false);
+  };
+
+  const resetDirty = () => {
+    setIsDirty(false);
   };
 
   return {
     localChecklists,
+    isDirty,
+    resetDirty,
     addChecklist,
     updateChecklist,
     removeChecklist,
     addChecklistItem,
+    addChecklistItems,
     updateChecklistItem,
     removeChecklistItem,
+    reorderChecklistItems,
     syncChecklistToStore,
     resetChecklist
   };

@@ -39,6 +39,7 @@ describe('useTaskModalChecklist', () => {
     expect(typeof result.current.updateChecklist).toBe('function')
     expect(typeof result.current.removeChecklist).toBe('function')
     expect(typeof result.current.addChecklistItem).toBe('function')
+    expect(typeof result.current.addChecklistItems).toBe('function')
     expect(typeof result.current.updateChecklistItem).toBe('function')
     expect(typeof result.current.removeChecklistItem).toBe('function')
   })

@@ -1,8 +1,8 @@
 import { generateId } from '@/lib/utils';
-import { BoardStateCreator, ChecklistSlice } from './types';
+import { BoardStateCreator, ChecklistSlice, reorderArray } from './types';
 
 export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => ({
-    addChecklist: (boardId, cardId, name) => {
+    addChecklist: (boardId, cardId, name, id) => {
         set((state) => ({
             boards: state.boards.map((board) =>
                 board.id === boardId
@@ -19,7 +19,7 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
                                                 checklists: [
                                                     ...card.checklists,
                                                     {
-                                                        id: generateId(),
+                                                        id: id || generateId(),
                                                         name,
                                                         items: [],
                                                         position: card.checklists.length,
@@ -184,6 +184,46 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
         }));
     },
 
+    addChecklistItems: (boardId, cardId, checklistId, texts) => {
+        set((state) => ({
+            boards: state.boards.map((board) =>
+                board.id === boardId
+                    ? {
+                        ...board,
+                        lists: board.lists.map((list) =>
+                            list.cards.some((c) => c.id === cardId)
+                                ? {
+                                    ...list,
+                                    cards: list.cards.map((card) =>
+                                        card.id === cardId
+                                            ? {
+                                                ...card,
+                                                checklists: card.checklists.map((checklist) =>
+                                                    checklist.id === checklistId
+                                                        ? {
+                                                            ...checklist,
+                                                            items: [
+                                                                ...checklist.items,
+                                                                ...texts.map(text => ({ id: generateId(), text, done: false }))
+                                                            ],
+                                                            updatedAt: new Date(),
+                                                        }
+                                                        : checklist
+                                                ),
+                                                updatedAt: new Date(),
+                                            }
+                                            : card
+                                    ),
+                                }
+                                : list
+                        ),
+                        updatedAt: new Date(),
+                    }
+                    : board
+            ),
+        }));
+    },
+
     removeChecklistItem: (boardId, cardId, checklistId, itemId) => {
         set((state) => ({
             boards: state.boards.map((board) =>
@@ -220,4 +260,79 @@ export const createChecklistSlice: BoardStateCreator<ChecklistSlice> = (set) => 
             ),
         }));
     },
+
+    reorderChecklistItems: (boardId, cardId, checklistId, fromIndex, toIndex) => {
+        set((state) => ({
+            boards: state.boards.map((board) =>
+                board.id === boardId
+                    ? {
+                        ...board,
+                        lists: board.lists.map((list) =>
+                            list.cards.some((c) => c.id === cardId)
+                                ? {
+                                    ...list,
+                                    cards: list.cards.map((card) =>
+                                        card.id === cardId
+                                            ? {
+                                                ...card,
+                                                checklists: card.checklists.map((checklist) =>
+                                                    checklist.id === checklistId
+                                                        ? {
+                                                            ...checklist,
+                                                            items: reorderArray(checklist.items, fromIndex, toIndex),
+                                                            updatedAt: new Date(),
+                                                        }
+                                                        : checklist
+                                                ),
+                                                updatedAt: new Date(),
+                                            }
+                                            : card
+                                    ),
+                                }
+                                : list
+                        ),
+                        updatedAt: new Date(),
+                    }
+                    : board
+            ),
+        }));
+    },
+
+    updateChecklistItems: (boardId, cardId, checklistId, items) => {
+        set((state) => ({
+            boards: state.boards.map((board) =>
+                board.id === boardId
+                    ? {
+                        ...board,
+                        lists: board.lists.map((list) =>
+                            list.cards.some((c) => c.id === cardId)
+                                ? {
+                                    ...list,
+                                    cards: list.cards.map((card) =>
+                                        card.id === cardId
+                                            ? {
+                                                ...card,
+                                                checklists: card.checklists.map((checklist) =>
+                                                    checklist.id === checklistId
+                                                        ? {
+                                                            ...checklist,
+                                                            items,
+                                                            updatedAt: new Date(),
+                                                        }
+                                                        : checklist
+                                                ),
+                                                updatedAt: new Date(),
+                                            }
+                                            : card
+                                    ),
+                                }
+                                : list
+                        ),
+                        updatedAt: new Date(),
+                    }
+                    : board
+            ),
+        }));
+    },
+    // Force rebuild
 });

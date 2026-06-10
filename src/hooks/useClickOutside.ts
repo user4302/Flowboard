@@ -26,7 +26,26 @@ export function useClickOutside<T extends HTMLElement>(
       !additionalRef.current || !additionalRef.current.contains(target)
     ) ?? true;
 
-    if (isOutsideMainRef && isOutsideAdditionalRefs) {
+    // Check if click is inside any portal element
+    // If so, don't trigger the callback (this prevents closing when clicking inside portals)
+    const isInsideAnyPortal = target && (
+      (target as Element).closest('[data-portal]') !== null
+    );
+
+    // Debug logging
+    console.log('useClickOutside debug:', {
+      target: target,
+      isOutsideMainRef,
+      isOutsideAdditionalRefs,
+      isInsideAnyPortal,
+      shouldTrigger: isOutsideMainRef && isOutsideAdditionalRefs && !isInsideAnyPortal,
+      refCurrent: ref.current,
+      additionalRefs: additionalRefs?.map(r => r.current)
+    });
+
+    // Only trigger callback if click is outside all refs AND not inside any portal
+    if (isOutsideMainRef && isOutsideAdditionalRefs && !isInsideAnyPortal) {
+      console.log('useClickOutside: triggering callback');
       callback();
     }
   }, [callback, additionalRefs]);

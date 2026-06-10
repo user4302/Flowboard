@@ -30,6 +30,7 @@ describe('TaskModalChecklistSection', () => {
       updateChecklist: jest.fn(),
       removeChecklist: jest.fn(),
       addChecklistItem: jest.fn(),
+      addChecklistItems: jest.fn(),
       updateChecklistItem: jest.fn(),
       removeChecklistItem: jest.fn(),
       syncChecklistToStore: jest.fn(),

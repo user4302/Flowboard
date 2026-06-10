@@ -1,10 +1,205 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Trash2, Edit2, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Trash2, Edit2, X, ChevronDown, ChevronUp, GripVertical } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
 import { Button, Input } from '@/components/ui';
 import { Checklist, ChecklistItem } from '@/lib/types';
+
+interface SortableItemProps {
+  id: string;
+  item: ChecklistItem;
+  isEditing: boolean;
+  editingItemText: string;
+  onUpdateText: (text: string) => void;
+  onSave: () => void;
+  onCancel: () => void;
+  onStartEdit: () => void;
+  onToggle: () => void;
+  onDelete: () => void;
+}
+
+function SortableItem({
+  id,
+  item,
+  isEditing,
+  editingItemText,
+  onUpdateText,
+  onSave,
+  onCancel,
+  onStartEdit,
+  onToggle,
+  onDelete,
+}: SortableItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "group relative flex items-center gap-3 p-2.5 rounded-lg border transition-all duration-200",
+        "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800",
+        "hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm",
+        item.done && "bg-slate-50 dark:bg-slate-700/50"
+      )}
+    >
+      <div {...attributes} {...listeners} className="cursor-grab p-1 text-slate-400 hover:text-slate-600">
+        <GripVertical className="h-4 w-4" />
+      </div>
+
+      {/* Custom checkbox with enhanced styling */}
+      <div className="relative">
+        <input
+          type="checkbox"
+          checked={item.done}
+          onChange={onToggle}
+          className="sr-only"
+        />
+        <div
+          onClick={onToggle}
+          className={cn(
+            "w-5 h-5 rounded-md border-2 flex items-center justify-center cursor-pointer transition-all duration-200",
+            "border-slate-300 dark:border-slate-500",
+            "hover:border-indigo-500 dark:hover:border-indigo-400",
+            item.done && "bg-indigo-600 border-indigo-600 dark:bg-indigo-500 dark:border-indigo-500"
+          )}
+        >
+          {item.done && (
+            <svg
+              className="w-3 h-3 text-white"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path d="M5 13l4 4L19 7"></path>
+            </svg>
+          )}
+        </div>
+      </div>
+
+      {/* Item text or input field */}
+      {isEditing ? (
+        <Input
+          type="text"
+          value={editingItemText}
+          onChange={(e) => onUpdateText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              onSave();
+            } else if (e.key === 'Escape') {
+              onCancel();
+            }
+          }}
+          className="flex-1 h-8 text-sm border-indigo-300 dark:border-indigo-500 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+          autoFocus
+        />
+      ) : (
+        <div
+          className={cn(
+            "flex-1 text-sm cursor-pointer select-none transition-all duration-200",
+            "text-slate-700 dark:text-slate-200",
+            "hover:text-indigo-600 dark:hover:text-indigo-400",
+            item.done && "line-through text-slate-500 dark:text-slate-400"
+          )}
+          onClick={onStartEdit}
+        >
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{item.text}</ReactMarkdown>
+        </div>
+      )}
+
+      {/* Action buttons */}
+      <div className={cn(
+        "flex items-center gap-1 transition-opacity duration-200",
+        isEditing ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+      )}>
+        {isEditing ? (
+          <>
+            <Button
+              type="button"
+              size="sm"
+              onClick={onSave}
+              disabled={!editingItemText.trim()}
+              className="h-7 px-2 text-xs bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
+            >
+              Save
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={onCancel}
+              className="h-7 w-7 p-0 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            >
+              <X className="h-3.5 w-3.5" />
+            </Button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={onStartEdit}
+              className={cn(
+                "h-7 w-7 p-0 rounded-md flex items-center justify-center transition-all duration-200",
+                "text-slate-400 hover:text-indigo-600 dark:text-slate-500 dark:hover:text-indigo-400",
+                "hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
+              )}
+            >
+              <Edit2 className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={onDelete}
+              className={cn(
+                "h-7 w-7 p-0 rounded-md flex items-center justify-center transition-all duration-200",
+                "text-slate-400 hover:text-red-600 dark:text-slate-500 dark:hover:text-red-400",
+                "hover:bg-red-50 dark:hover:bg-red-900/30"
+              )}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ... rest of the file (TaskModalMultiChecklistManager) updated inside checklists mapping ...
 
 interface TaskModalMultiChecklistManagerProps {
   cardId: string;
@@ -16,6 +211,7 @@ interface TaskModalMultiChecklistManagerProps {
   onAddChecklistItem: (checklistId: string, text: string) => void;
   onUpdateChecklistItem: (checklistId: string, itemId: string, updates: Partial<ChecklistItem>) => void;
   onRemoveChecklistItem: (checklistId: string, itemId: string) => void;
+  onAddChecklistItems: (checklistId: string, texts: string[]) => void;
 }
 
 export function TaskModalMultiChecklistManager({
@@ -27,8 +223,10 @@ export function TaskModalMultiChecklistManager({
   onRemoveChecklist,
   onAddChecklistItem,
   onUpdateChecklistItem,
-  onRemoveChecklistItem
-}: TaskModalMultiChecklistManagerProps) {
+  onRemoveChecklistItem,
+  onAddChecklistItems,
+  onReorderChecklistItems
+}: TaskModalMultiChecklistManagerProps & { onReorderChecklistItems: (checklistId: string, fromIndex: number, toIndex: number) => void }) {
   const [expandedChecklists, setExpandedChecklists] = useState<Set<string>>(new Set());
   const [newChecklistName, setNewChecklistName] = useState('');
   const [showNewChecklistInput, setShowNewChecklistInput] = useState(false);
@@ -37,6 +235,13 @@ export function TaskModalMultiChecklistManager({
   const [newItemInputs, setNewItemInputs] = useState<Record<string, string>>({});
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editingItemText, setEditingItemText] = useState('');
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const toggleChecklistExpanded = (checklistId: string) => {
     setExpandedChecklists(prev => {
@@ -50,12 +255,44 @@ export function TaskModalMultiChecklistManager({
     });
   };
 
+  const handleDragEnd = (checklistId: string, event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const checklist = checklists.find(c => c.id === checklistId);
+      if (checklist) {
+        const oldIndex = checklist.items.findIndex(item => item.id === active.id);
+        const newIndex = checklist.items.findIndex(item => item.id === over.id);
+
+        if (oldIndex !== -1 && newIndex !== -1) {
+          onReorderChecklistItems(checklistId, oldIndex, newIndex);
+        }
+      }
+    }
+  };
+
+  // ... (rest of the handler functions: handleAddChecklist, handleAddMultipleItems, etc., remain the same)
+
   const handleAddChecklist = () => {
     if (newChecklistName.trim()) {
       onAddChecklist(newChecklistName.trim());
       setNewChecklistName('');
       setShowNewChecklistInput(false);
     }
+  };
+
+  const handleAddMultipleItems = (checklistId: string, texts: string[]) => {
+    if (typeof onAddChecklistItems === 'function') {
+      onAddChecklistItems(checklistId, texts);
+      return;
+    }
+
+    texts.forEach((text) => {
+      const trimmedText = text.trim();
+      if (trimmedText) {
+        onAddChecklistItem(checklistId, trimmedText);
+      }
+    });
   };
 
   const handleStartEditChecklist = (checklist: Checklist) => {
@@ -195,288 +432,198 @@ export function TaskModalMultiChecklistManager({
         const newItemText = newItemInputs[checklist.id] || '';
 
         return (
-          <div key={checklist.id} className="border border-slate-200 dark:border-slate-600 rounded-lg">
+          <div key={checklist.id} className="border border-slate-200 dark:border-slate-600 rounded-lg overflow-hidden">
             {/* Checklist header */}
             <div
-              className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-t-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+              className="relative flex items-center justify-between p-2 bg-white dark:bg-slate-800 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border border-emerald-500/50"
               onClick={() => !isEditing && toggleChecklistExpanded(checklist.id)}
             >
-              <div className="flex items-center gap-2 flex-1">
-                <div className="p-1">
-                  {isExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
+              {/* Progress bar background */}
+              <motion.div
+                className="absolute inset-[4px] rounded-md bg-emerald-500/20 dark:bg-emerald-500/15"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              />
+              
+              <div className="relative flex items-center justify-between p-2 flex-1">
+                <div className="flex items-center gap-2 flex-1">
+                  <div className="p-1">
+                    {isExpanded ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </div>
+
+                  {isEditing ? (
+                    <Input
+                      type="text"
+                      value={editingChecklistName}
+                      onChange={(e) => setEditingChecklistName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSaveChecklistName(checklist.id);
+                        } else if (e.key === 'Escape') {
+                          handleCancelEditChecklist();
+                        }
+                      }}
+                      className="flex-1 h-7 text-sm"
+                      autoFocus
+                    />
                   ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
+                      {checklist.name}
+                    </span>
                   )}
                 </div>
 
-                {isEditing ? (
-                  <Input
-                    type="text"
-                    value={editingChecklistName}
-                    onChange={(e) => setEditingChecklistName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleSaveChecklistName(checklist.id);
-                      } else if (e.key === 'Escape') {
-                        handleCancelEditChecklist();
-                      }
-                    }}
-                    className="flex-1 h-7 text-sm"
-                    autoFocus
-                  />
-                ) : (
-                  <span className="font-medium text-sm text-slate-700 dark:text-slate-300">
-                    {checklist.name}
-                  </span>
-                )}
-              </div>
+                <div className="flex items-center gap-1">
+                  {checklist.items.length > 0 && (
+                    <span className="text-xs text-slate-600 dark:text-slate-300 font-medium mr-2">
+                      {checklist.items.filter(item => item.done).length}/{checklist.items.length}
+                    </span>
+                  )}
 
-              <div className="flex items-center gap-1">
-                {checklist.items.length > 0 && (
-                  <span className="text-xs text-slate-500 dark:text-slate-400 mr-2">
-                    {checklist.items.filter(item => item.done).length}/{checklist.items.length} ({progress}%)
-                  </span>
-                )}
-
-                {isEditing ? (
-                  <>
-                    <Button
-                      type="button"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSaveChecklistName(checklist.id);
-                      }}
-                      disabled={!editingChecklistName.trim()}
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCancelEditChecklist();
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleStartEditChecklist(checklist);
-                      }}
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRemoveChecklist(checklist.id);
-                      }}
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
+                  {isEditing ? (
+                    <>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSaveChecklistName(checklist.id);
+                        }}
+                        disabled={!editingChecklistName.trim()}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelEditChecklist();
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStartEditChecklist(checklist);
+                        }}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRemoveChecklist(checklist.id);
+                        }}
+                        className="text-red-500 hover:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Progress bar - full height section */}
-            {checklist.items.length > 0 && (
-              <div className="px-3 py-2 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700">
-                <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                  <div
-                    className="bg-green-600 dark:bg-green-500 h-2 rounded-full transition-all duration-300 ease-out"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-            )}
-
             {/* Checklist items */}
-            {isExpanded && (
-              <div className="p-3 space-y-2">
-                {checklist.items.map((item) => {
-                  const isEditingItem = editingItemId === item.id;
-
-                  return (
-                    <div
-                      key={item.id}
-                      className={cn(
-                        "group relative flex items-center gap-3 p-2.5 rounded-lg border transition-all duration-200",
-                        "border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800",
-                        "hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-sm",
-                        item.done && "bg-slate-50 dark:bg-slate-700/50"
-                      )}
-                    >
-                      {/* Custom checkbox with enhanced styling */}
-                      <div className="relative">
-                        <input
-                          type="checkbox"
-                          checked={item.done}
-                          onChange={(e) => handleToggleItem(checklist.id, item.id, e.target.checked)}
-                          className="sr-only"
-                        />
-                        <div
-                          onClick={() => handleToggleItem(checklist.id, item.id, !item.done)}
-                          className={cn(
-                            "w-5 h-5 rounded-md border-2 flex items-center justify-center cursor-pointer transition-all duration-200",
-                            "border-slate-300 dark:border-slate-500",
-                            "hover:border-indigo-500 dark:hover:border-indigo-400",
-                            item.done && "bg-indigo-600 border-indigo-600 dark:bg-indigo-500 dark:border-indigo-500"
-                          )}
-                        >
-                          {item.done && (
-                            <svg
-                              className="w-3 h-3 text-white"
-                              fill="none"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2.5"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path d="M5 13l4 4L19 7"></path>
-                            </svg>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Item text or input field */}
-                      {isEditingItem ? (
-                        <Input
-                          type="text"
-                          value={editingItemText}
-                          onChange={(e) => setEditingItemText(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleSaveItem(checklist.id, item.id);
-                            } else if (e.key === 'Escape') {
-                              handleCancelEditItem();
-                            }
-                          }}
-                          className="flex-1 h-8 text-sm border-indigo-300 dark:border-indigo-500 focus:ring-indigo-500 dark:focus:ring-indigo-400"
-                          autoFocus
-                        />
-                      ) : (
-                        <div
-                          className={cn(
-                            "flex-1 text-sm cursor-pointer select-none transition-all duration-200",
-                            "text-slate-700 dark:text-slate-200",
-                            "hover:text-indigo-600 dark:hover:text-indigo-400",
-                            item.done && "line-through text-slate-500 dark:text-slate-400"
-                          )}
-                          onClick={() => handleStartEditItem(item.id, item.text)}
-                        >
-                          {item.text}
-                        </div>
-                      )}
-
-                      {/* Action buttons */}
-                      <div className={cn(
-                        "flex items-center gap-1 transition-opacity duration-200",
-                        isEditingItem ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                      )}>
-                        {isEditingItem ? (
-                          <>
-                            <Button
-                              type="button"
-                              size="sm"
-                              onClick={() => handleSaveItem(checklist.id, item.id)}
-                              disabled={!editingItemText.trim()}
-                              className="h-7 px-2 text-xs bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-                            >
-                              Save
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={handleCancelEditItem}
-                              className="h-7 w-7 p-0 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-                            >
-                              <X className="h-3.5 w-3.5" />
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => handleStartEditItem(item.id, item.text)}
-                              className={cn(
-                                "h-7 w-7 p-0 rounded-md flex items-center justify-center transition-all duration-200",
-                                "text-slate-400 hover:text-indigo-600 dark:text-slate-500 dark:hover:text-indigo-400",
-                                "hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
-                              )}
-                            >
-                              <Edit2 className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteItem(checklist.id, item.id)}
-                              className={cn(
-                                "h-7 w-7 p-0 rounded-md flex items-center justify-center transition-all duration-200",
-                                "text-slate-400 hover:text-red-600 dark:text-slate-500 dark:hover:text-red-400",
-                                "hover:bg-red-50 dark:hover:bg-red-900/30"
-                              )}
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-
-                {/* Add new item input */}
-                <div className={cn(
-                  "flex items-center gap-2 p-2.5 rounded-lg border border-dashed transition-all duration-200",
-                  "border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50",
-                  "hover:border-indigo-300 dark:hover:border-indigo-500 hover:bg-white dark:hover:bg-slate-800"
-                )}>
-                  <div className="w-5 h-5 rounded-md border-2 border-dashed border-slate-400 dark:border-slate-500 flex items-center justify-center">
-                    <Plus className="w-3 h-3 text-slate-400 dark:text-slate-500" />
-                  </div>
-                  <Input
-                    type="text"
-                    placeholder="Add new item..."
-                    value={newItemText}
-                    onChange={(e) => setNewItemInputs(prev => ({ ...prev, [checklist.id]: e.target.value }))}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleAddItem(checklist.id);
-                      } else if (e.key === 'Escape') {
-                        setNewItemInputs(prev => ({ ...prev, [checklist.id]: '' }));
-                      }
-                    }}
-                    className="flex-1 h-8 text-sm border-0 bg-transparent focus:ring-0 focus:outline-none placeholder-slate-500 dark:placeholder-slate-400"
-                  />
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => handleAddItem(checklist.id)}
-                    disabled={!newItemText.trim()}
-                    className="h-7 px-3 text-xs bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-3 space-y-2 border-t border-slate-200 dark:border-slate-700"
+                >
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={(event) => handleDragEnd(checklist.id, event)}
                   >
-                    Add
-                  </Button>
-                </div>
-              </div>
-            )}
+                    <SortableContext items={checklist.items.map(i => i.id)} strategy={verticalListSortingStrategy}>
+                      {checklist.items.map((item) => (
+                        <SortableItem
+                          key={item.id}
+                          id={item.id}
+                          item={item}
+                          isEditing={editingItemId === item.id}
+                          editingItemText={editingItemText}
+                          onUpdateText={setEditingItemText}
+                          onSave={() => handleSaveItem(checklist.id, item.id)}
+                          onCancel={handleCancelEditItem}
+                          onStartEdit={() => handleStartEditItem(item.id, item.text)}
+                          onToggle={() => handleToggleItem(checklist.id, item.id, !item.done)}
+                          onDelete={() => handleDeleteItem(checklist.id, item.id)}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
+
+                  {/* Add new item input */}
+                  <div className={cn(
+                    "flex items-center gap-2 p-2.5 rounded-lg border border-dashed transition-all duration-200",
+                    "border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50",
+                    "hover:border-indigo-300 dark:hover:border-indigo-500 hover:bg-white dark:hover:bg-slate-800"
+                  )}>
+                    <div className="w-5 h-5 rounded-md border-2 border-dashed border-slate-400 dark:border-slate-500 flex items-center justify-center">
+                      <Plus className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+                    </div>
+                    <Input
+                      type="text"
+                      placeholder="Add new item..."
+                      value={newItemText}
+                      onChange={(e) => setNewItemInputs(prev => ({ ...prev, [checklist.id]: e.target.value }))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleAddItem(checklist.id);
+                        } else if (e.key === 'Escape') {
+                          setNewItemInputs(prev => ({ ...prev, [checklist.id]: '' }));
+                        }
+                      }}
+                      onPaste={(e) => {
+                        const pastedText = e.clipboardData.getData('text');
+                        if (pastedText.includes('\n')) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const items = pastedText
+                            .split(/\r?\n/)
+                            .map(line => line.trim())
+                            .filter(line => line.length > 0);
+                          handleAddMultipleItems(checklist.id, items);
+                          setNewItemInputs(prev => ({ ...prev, [checklist.id]: '' }));
+                        }
+                      }}
+                      className="flex-1 h-8 text-sm border-0 bg-transparent focus:ring-0 focus:outline-none placeholder-slate-500 dark:placeholder-slate-400"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() => handleAddItem(checklist.id)}
+                      disabled={!newItemText.trim()}
+                      className="h-7 px-3 text-xs bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         );
       })}

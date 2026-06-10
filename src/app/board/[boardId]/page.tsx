@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { BoardSidebar } from '@/components/boardSidebar';
 import { BoardHeader } from '@/components/boardHeader';
+import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
+import { FilterSheet } from '@/components/mobile/FilterSheet';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
 import { TaskModal } from '@/components/taskModal';
 import { JoinBoardModal } from '@/components/boardShare';
@@ -19,6 +21,7 @@ export default function BoardPage() {
   const { boards, setCurrentBoard } = useBoard();
   const { currentView, initializeTheme } = useUIStore();
   const { showJoinModal, setShowJoinModal } = useSharingStore();
+  const isHydrated = useBoardStore((state: any) => state.isHydrated);
 
   // Helper function to find board by ID
   const getBoardById = (id: string) => boards.find(board => board.id === id) || null;
@@ -26,6 +29,12 @@ export default function BoardPage() {
   const [inviteId, setInviteId] = useState<string | null>(null);
   const [showWelcomeScreen, setShowWelcomeScreen] = useState(true);
   const [isBoardLoading, setIsBoardLoading] = useState(true);
+
+  useEffect(() => {
+    if (isHydrated) {
+      setIsBoardLoading(false);
+    }
+  }, [isHydrated]);
 
   useEffect(() => {
     initializeTheme();
@@ -50,18 +59,20 @@ export default function BoardPage() {
   }, [initializeTheme, setShowJoinModal]);
 
   useEffect(() => {
-    // Set current board from URL parameter
-    if (boardId) {
+    // Only check board ID once hydrated
+    if (isHydrated && boardId) {
       const board = getBoardById(boardId);
+      console.log('BoardPage: Board ID change effect', { boardId, boardFound: !!board, isHydrated });
       if (board) {
         setCurrentBoard(boardId);
         setIsBoardLoading(false);
       } else {
         // Board not found, redirect to home
+        console.log('BoardPage: Board not found, redirecting to home');
         router.push('/');
       }
     }
-  }, [boardId, getBoardById, setCurrentBoard, router]);
+  }, [boardId, isHydrated, getBoardById, setCurrentBoard, router]);
 
   const currentBoard = boardId ? getBoardById(boardId) : null;
 
@@ -108,16 +119,18 @@ export default function BoardPage() {
   };
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="flex h-dvh w-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       <BoardSidebar />
 
-      <div className="flex flex-1 flex-col lg:ml-64">
+      <div className="flex flex-1 flex-col overflow-hidden bg-slate-50 dark:bg-slate-900 lg:ml-64 w-full">
         <BoardHeader />
-
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-900">
           {renderCurrentView()}
         </main>
+        <MobileBottomNav />
       </div>
+
+      <FilterSheet boardId={boardId} />
 
       <TaskModal />
       <JoinBoardModal
