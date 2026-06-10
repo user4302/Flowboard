@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { BoardSidebar } from '@/components/boardSidebar';
 import { BoardHeader } from '@/components/boardHeader';
+import { MobileBottomNav } from '@/components/mobile/MobileBottomNav';
 import { KanbanView, TimelineView, CalendarView, TableView } from '@/components/views';
 import { TaskModal } from '@/components/taskModal';
 import { JoinBoardModal } from '@/components/boardShare';
@@ -114,10 +115,12 @@ export default function BoardPage() {
       <div className="flex flex-1 flex-col lg:ml-64">
         <BoardHeader />
 
-        <main className="flex-1 overflow-hidden">
+        <main className="flex-1 overflow-hidden pb-16 md:pb-0">
           {renderCurrentView()}
         </main>
       </div>
+
+      <MobileBottomNav />
 
       <TaskModal />
       <JoinBoardModal
