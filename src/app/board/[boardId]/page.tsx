@@ -120,10 +120,9 @@ export default function BoardPage() {
 
   return (
     <div className="flex h-dvh w-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
-      {console.log('BoardPage: Rendering', { boardId, currentView })}
       <BoardSidebar />
 
-      <div className="flex flex-1 flex-col overflow-hidden bg-slate-50 dark:bg-slate-900 lg:ml-64 w-full border-4 border-green-500">
+      <div className="flex flex-1 flex-col overflow-hidden bg-slate-50 dark:bg-slate-900 lg:ml-64 w-full">
         <BoardHeader />
         <main className="flex-1 overflow-hidden bg-slate-50 dark:bg-slate-900">
           {renderCurrentView()}
