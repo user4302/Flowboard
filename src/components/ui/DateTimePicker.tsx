@@ -24,7 +24,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverContentRef = useRef<HTMLDivElement>(null);
-  const [popoverHeight, setPopoverHeight] = useState(0);
+  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
   // Position calculation effect
   useEffect(() => {
