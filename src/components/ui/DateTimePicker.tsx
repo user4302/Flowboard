@@ -23,6 +23,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   const [timeInteracted, setTimeInteracted] = useState(false);
   
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const popoverContentRef = useRef<HTMLDivElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
@@ -36,15 +37,15 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const popoverHeight = 400; 
+      const popoverHeight = popoverContentRef.current?.offsetHeight || 400; 
 
       const shouldOpenAbove = rect.bottom + popoverHeight > viewportHeight && rect.top > popoverHeight;
 
       setPopoverPosition({
         top: shouldOpenAbove 
-          ? rect.top - popoverHeight - 8 // Align bottom with top of bar
-          : rect.bottom + 8,             // Align top with bottom of bar
-        left: rect.left,
+          ? window.scrollY + rect.top - popoverHeight - 8 
+          : window.scrollY + rect.bottom + 8,
+        left: rect.left + window.scrollX,
       });
     }
     setIsOpen(!isOpen);
@@ -107,6 +108,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
           }}
         >
           <div 
+            ref={popoverContentRef}
             className="popover-content absolute z-[60] bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-4 rounded-lg shadow-xl border border-slate-300 dark:border-slate-700 w-72"
             style={{
               top: `${popoverPosition.top}px`,
