@@ -66,10 +66,12 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   });
 
   const handleDateSelect = (date: Date) => {
+    // Combine selected date with current time buffer
     const [hours, minutes] = timeValue.split(':').map(Number);
     const finalDate = setMinutes(setHours(date, hours), minutes);
     
-    // Update parent state. The useEffect will sync viewDate and timeValue from the new value prop.
+    // Update local state AND parent state
+    setViewDate(finalDate);
     onChange(finalDate);
   };
 
@@ -77,12 +79,17 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     setTimeValue(newTime);
     const dateToUpdate = value || viewDate || new Date();
     
+    let finalDate;
     if (newTime === '') {
-      onChange(isStartDate ? getStartOfLocalDay(dateToUpdate) : getEndOfLocalDay(dateToUpdate));
+      finalDate = isStartDate ? getStartOfLocalDay(dateToUpdate) : getEndOfLocalDay(dateToUpdate);
     } else {
       const [hours, minutes] = newTime.split(':').map(Number);
-      onChange(setMinutes(setHours(dateToUpdate, hours), minutes));
+      finalDate = setMinutes(setHours(dateToUpdate, hours), minutes);
     }
+    
+    // Update local state AND parent state
+    setViewDate(finalDate);
+    onChange(finalDate);
   };
 
   const displayValue = value ? format(value, 'MMM d, yyyy HH:mm') : placeholder;
