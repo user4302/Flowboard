@@ -14,6 +14,8 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 export function TaskModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [startPickerOpen, setStartPickerOpen] = useState(false);
+  const [duePickerOpen, setDuePickerOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [descriptionValue, setDescriptionValue] = useState(card?.description || '');
   const [contentExceedsHeight, setContentExceedsHeight] = useState(false);
@@ -206,6 +208,11 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
           Dates
         </label>
         <div className="grid grid-cols-2 gap-4">
+  const [startPickerOpen, setStartPickerOpen] = useState(false);
+  const [duePickerOpen, setDuePickerOpen] = useState(false);
+
+  // ... (inside the form structure)
+
           <div>
             <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Start Date</label>
             <Controller
@@ -216,6 +223,8 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
                   value={startDateValue}
                   onChange={(date) => field.onChange(date.toISOString())}
                   isStartDate={true}
+                  isOpen={startPickerOpen}
+                  onToggle={() => setStartPickerOpen(!startPickerOpen)}
                 />
               )}
             />
@@ -230,6 +239,8 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
                   value={dueDateValue}
                   onChange={(date) => field.onChange(date.toISOString())}
                   isStartDate={false}
+                  isOpen={duePickerOpen}
+                  onToggle={() => setDuePickerOpen(!duePickerOpen)}
                 />
               )}
             />
