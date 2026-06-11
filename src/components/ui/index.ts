@@ -17,3 +17,6 @@ export { DragOverlayWrapper } from './drag-overlay';
 
 // Inline input component for add/edit patterns
 export { InlineInput } from './inline-input';
+
+// DateTimePicker component for date and time selection
+export { DateTimePicker } from './DateTimePicker';

@@ -4,7 +4,8 @@ import { Calendar, User, Tag, CheckSquare, Flag, Maximize2, Minimize2, Pencil, E
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
-import { Input, Button } from '@/components/ui';
+import { Input, Button, DateTimePicker } from '@/components/ui';
+import { Controller } from 'react-hook-form';
 import { ModalFormProps } from '@/components/taskModal/types/TaskModal.form.types';
 import { TaskCardCardCompletion } from '@/components/taskCard/components/TaskCardCardCompletion';
 import { TaskCardCardMembers } from '@/components/taskCard/components/TaskCardCardMembers';
@@ -194,18 +195,30 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Start Date</label>
-            <input
-              type="date"
-              {...register('startDate')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            <Controller
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <DateTimePicker
+                  value={field.value ? new Date(field.value) : null}
+                  onChange={(date) => field.onChange(date.toISOString())}
+                  isStartDate={true}
+                />
+              )}
             />
           </div>
           <div>
             <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Due Date</label>
-            <input
-              type="date"
-              {...register('dueDate')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            <Controller
+              control={form.control}
+              name="dueDate"
+              render={({ field }) => (
+                <DateTimePicker
+                  value={field.value ? new Date(field.value) : null}
+                  onChange={(date) => field.onChange(date.toISOString())}
+                  isStartDate={false}
+                />
+              )}
             />
           </div>
         </div>
