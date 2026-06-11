@@ -26,12 +26,21 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
-  // Position calculation effect
   useEffect(() => {
-    if (isOpen && buttonRef.current && popoverContentRef.current) {
+    if (value) {
+      setTime(format(value, 'HH:mm'));
+      setCurrentDate(value);
+      // Determine if we are interacting with time or it's a boundary value
+      const timeStr = format(value, 'HH:mm');
+      setTimeInteracted(timeStr !== '00:00' && timeStr !== '23:59');
+    }
+  }, [value]);
+
+  const togglePopover = () => {
+    if (buttonRef.current && popoverContentRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const height = popoverContentRef.current.offsetHeight;
       const viewportHeight = window.innerHeight;
+      const height = popoverContentRef.current.offsetHeight;
       
       const shouldOpenAbove = rect.bottom + height > viewportHeight && rect.top > height;
 
@@ -42,9 +51,6 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
         left: rect.left + window.scrollX,
       });
     }
-  }, [isOpen]);
-
-  const togglePopover = () => {
     setIsOpen(!isOpen);
   };
 
@@ -81,7 +87,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   };
 
   const displayValue = value 
-    ? format(value, timeInteracted || (value && format(value, 'HH:mm') !== '00:00' && format(value, 'HH:mm') !== '23:59') ? 'MMM d, yyyy HH:mm' : 'MMM d, yyyy') 
+    ? format(value, timeInteracted || (format(value, 'HH:mm') !== '00:00' && format(value, 'HH:mm') !== '23:59') ? 'MMM d, yyyy HH:mm' : 'MMM d, yyyy') 
     : placeholder;
 
   return (
