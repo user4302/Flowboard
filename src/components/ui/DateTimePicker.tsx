@@ -28,20 +28,24 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
 
   useEffect(() => {
     if (value) {
-      // Compare time-only string to avoid unnecessary resets
       const currentTimeStr = format(value, 'HH:mm');
-      if (currentTimeStr !== time) {
-        setTime(currentTimeStr);
-      }
-      
       const newDate = new Date(value);
+      
+      // Update calendar view
       if (newDate.toDateString() !== currentDate.toDateString()) {
         setCurrentDate(newDate);
       }
       
-      setTimeInteracted(currentTimeStr !== '00:00' && currentTimeStr !== '23:59');
+      // Only sync time from props if we haven't interacted with the time input
+      // or if the value changed significantly (e.g. backend sync)
+      if (!timeInteracted) {
+        if (currentTimeStr !== time) {
+          setTime(currentTimeStr);
+        }
+        setTimeInteracted(currentTimeStr !== '00:00' && currentTimeStr !== '23:59');
+      }
     }
-  }, [value]);
+  }, [value]); // Removed time, timeInteracted from dependencies to prevent loops/overwrites
 
   useLayoutEffect(() => {
     if (isOpen && buttonRef.current && popoverContentRef.current) {
@@ -66,6 +70,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   });
 
   const handleDateSelect = (date: Date) => {
+    // Optimistically update calendar view
+    setCurrentDate(date);
+    
     // Always use the selected date as the base
     const baseDate = date; 
 
