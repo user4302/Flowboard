@@ -14,10 +14,6 @@ interface DateTimePickerProps {
   onToggle: () => void;
 }
 
-/**
- * DateTimePicker component
- * A premium, dark-themed popover for date and time selection.
- */
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({ 
   value, 
   onChange, 
@@ -26,12 +22,21 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   isOpen,
   onToggle
 }) => {
-  const displayDate = value || new Date();
-  const displayTime = format(displayDate, 'HH:mm');
+  // viewDate drives which month is shown in the calendar grid
+  const [viewDate, setViewDate] = useState(value || new Date());
+  const [time, setTime] = useState(value ? format(value, 'HH:mm') : '12:00');
   
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+
+  // Sync viewDate when value changes to ensure we stay on the selected month
+  useEffect(() => {
+    if (value) {
+      setViewDate(value);
+      setTime(format(value, 'HH:mm'));
+    }
+  }, [value]);
 
   useLayoutEffect(() => {
     if (isOpen && buttonRef.current && popoverContentRef.current) {
@@ -51,17 +56,20 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   }, [isOpen]);
 
   const daysInMonth = eachDayOfInterval({
-    start: startOfMonth(displayDate),
-    end: endOfMonth(displayDate),
+    start: startOfMonth(viewDate),
+    end: endOfMonth(viewDate),
   });
 
   const handleDateSelect = (date: Date) => {
-    const [hours, minutes] = displayTime.split(':').map(Number);
-    onChange(setMinutes(setHours(date, hours), minutes));
+    const [hours, minutes] = time.split(':').map(Number);
+    const finalDate = setMinutes(setHours(date, hours), minutes);
+    onChange(finalDate);
   };
 
   const handleTimeChange = (newTime: string) => {
+    setTime(newTime);
     const dateToUpdate = value || new Date();
+    
     if (newTime === '') {
       onChange(isStartDate ? getStartOfLocalDay(dateToUpdate) : getEndOfLocalDay(dateToUpdate));
     } else {
@@ -102,9 +110,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
           >
             {/* Calendar Grid */}
             <div className="calendar-header flex justify-between items-center mb-4">
-              <button type="button" className="hover:text-indigo-500" onClick={() => { /* needs local state if we want to change month without changing selected date */ }}>&lt;</button>
-              <span className="font-semibold">{format(displayDate, 'MMMM yyyy')}</span>
-              <button type="button" className="hover:text-indigo-500" onClick={() => { }}>&gt;</button>
+              <button type="button" className="hover:text-indigo-500" onClick={() => setViewDate(subMonths(viewDate, 1))}>&lt;</button>
+              <span className="font-semibold">{format(viewDate, 'MMMM yyyy')}</span>
+              <button type="button" className="hover:text-indigo-500" onClick={() => setViewDate(addMonths(viewDate, 1))}>&gt;</button>
             </div>
             <div className="calendar-grid grid grid-cols-7 gap-1 text-center">
               {['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'].map((day, index) => (
@@ -129,7 +137,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
               <label className="text-sm text-slate-700 dark:text-slate-400 block mb-2">Time</label>
               <input 
                 type="time" 
-                value={displayTime}
+                value={time}
                 onChange={(e) => handleTimeChange(e.target.value)}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
               />
