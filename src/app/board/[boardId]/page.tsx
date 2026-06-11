@@ -62,13 +62,11 @@ export default function BoardPage() {
     // Only check board ID once hydrated
     if (isHydrated && boardId) {
       const board = getBoardById(boardId);
-      console.log('BoardPage: Board ID change effect', { boardId, boardFound: !!board, isHydrated });
       if (board) {
         setCurrentBoard(boardId);
         setIsBoardLoading(false);
       } else {
         // Board not found, redirect to home
-        console.log('BoardPage: Board not found, redirecting to home');
         router.push('/');
       }
     }
