@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix silent failure when adding a new list in Kanban view by synchronizing column order state in UI store
 - Fix reactivity bug where board views failed to update when creating new boards by refactoring BoardPage to use reactive store state
+- Fix DateTimePicker portal positioning and overlapping issues
+- Fix DateTimePicker state synchronization issues for reliable data persistence
+- Fix date selection visual feedback and immediate UI updates in DateTimePicker
+- Fix time input parsing and synchronization issues to prevent unintended resets to default times
 
 ## [1.9.0] - 2026-06-09
 

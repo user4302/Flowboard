@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, setHours, setMinutes } from 'date-fns';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, setHours, setMinutes, isSameDay } from 'date-fns';
 import { getStartOfLocalDay, getEndOfLocalDay } from '../../lib/dateUtils';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -10,24 +10,40 @@ interface DateTimePickerProps {
   onChange: (date: Date) => void;
   isStartDate?: boolean;
   placeholder?: string;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
 /**
  * DateTimePicker component
  * A premium, dark-themed popover for date and time selection.
  */
-export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange, isStartDate = true, placeholder = "Select date & time" }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentDate, setCurrentDate] = useState(value || new Date());
-  const [time, setTime] = useState(value ? format(value, 'HH:mm') : '12:00');
-  const [timeInteracted, setTimeInteracted] = useState(false);
+export const DateTimePicker: React.FC<DateTimePickerProps> = ({ 
+  value, 
+  onChange, 
+  isStartDate = true, 
+  placeholder = "Select date & time",
+  isOpen,
+  onToggle
+}) => {
+  // Local state for immediate UI feedback
+  const [viewDate, setViewDate] = useState(value || new Date());
+  const [timeValue, setTimeValue] = useState(value ? format(value, 'HH:mm') : '12:00');
   
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
-  // Position calculation effect
+  // Sync internal state when prop changes
   useEffect(() => {
+    console.log('[DateTimePicker] Syncing from value prop:', value);
+    if (value) {
+      setViewDate(value);
+      setTimeValue(format(value, 'HH:mm'));
+    }
+  }, [value]);
+
+  useLayoutEffect(() => {
     if (isOpen && buttonRef.current && popoverContentRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const height = popoverContentRef.current.offsetHeight;
@@ -44,52 +60,46 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
     }
   }, [isOpen]);
 
-  const togglePopover = () => {
-    setIsOpen(!isOpen);
-  };
-
   const daysInMonth = eachDayOfInterval({
-    start: startOfMonth(currentDate),
-    end: endOfMonth(currentDate),
+    start: startOfMonth(viewDate),
+    end: endOfMonth(viewDate),
   });
 
   const handleDateSelect = (date: Date) => {
-    let finalDate = date;
-    if (timeInteracted || value) {
-      const [hours, minutes] = time.split(':').map(Number);
-      finalDate = setMinutes(setHours(finalDate, hours), minutes);
-    } else {
-      finalDate = isStartDate ? getStartOfLocalDay(finalDate) : getEndOfLocalDay(finalDate);
-    }
+    // Combine selected date with current time buffer
+    const [hours, minutes] = timeValue.split(':').map(Number);
+    const finalDate = setMinutes(setHours(date, hours), minutes);
+    
+    // Update local state AND parent state
+    setViewDate(finalDate);
     onChange(finalDate);
   };
 
   const handleTimeChange = (newTime: string) => {
-    setTime(newTime);
+    setTimeValue(newTime);
+    const dateToUpdate = value || viewDate || new Date();
+    
+    let finalDate;
     if (newTime === '') {
-      setTimeInteracted(false);
-      if (value) {
-        onChange(isStartDate ? getStartOfLocalDay(value) : getEndOfLocalDay(value));
-      }
+      finalDate = isStartDate ? getStartOfLocalDay(dateToUpdate) : getEndOfLocalDay(dateToUpdate);
     } else {
-      setTimeInteracted(true);
-      if (value) {
-        const [hours, minutes] = newTime.split(':').map(Number);
-        onChange(setMinutes(setHours(value, hours), minutes));
-      }
+      const [hours, minutes] = newTime.split(':').map(Number);
+      finalDate = setMinutes(setHours(dateToUpdate, hours), minutes);
     }
+    
+    // Update local state AND parent state
+    setViewDate(finalDate);
+    onChange(finalDate);
   };
 
-  const displayValue = value 
-    ? format(value, timeInteracted || (value && format(value, 'HH:mm') !== '00:00' && format(value, 'HH:mm') !== '23:59') ? 'MMM d, yyyy HH:mm' : 'MMM d, yyyy') 
-    : placeholder;
+  const displayValue = value ? format(value, 'MMM d, yyyy HH:mm') : placeholder;
 
   return (
     <div className="relative w-full">
       <button
         ref={buttonRef}
         type="button"
-        onClick={togglePopover}
+        onClick={onToggle}
         className="w-full flex items-center justify-between rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
       >
         <span>{displayValue}</span>
@@ -101,7 +111,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
           className="fixed inset-0 z-50" 
           onClick={(e) => {
             if ((e.target as HTMLElement).closest('.popover-content')) return;
-            setIsOpen(false);
+            onToggle();
           }}
         >
           <div 
@@ -114,9 +124,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
           >
             {/* Calendar Grid */}
             <div className="calendar-header flex justify-between items-center mb-4">
-              <button type="button" className="hover:text-indigo-500" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>&lt;</button>
-              <span className="font-semibold">{format(currentDate, 'MMMM yyyy')}</span>
-              <button type="button" className="hover:text-indigo-500" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>&gt;</button>
+              <button type="button" className="hover:text-indigo-500" onClick={() => setViewDate(subMonths(viewDate, 1))}>&lt;</button>
+              <span className="font-semibold">{format(viewDate, 'MMMM yyyy')}</span>
+              <button type="button" className="hover:text-indigo-500" onClick={() => setViewDate(addMonths(viewDate, 1))}>&gt;</button>
             </div>
             <div className="calendar-grid grid grid-cols-7 gap-1 text-center">
               {['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'].map((day, index) => (
@@ -125,11 +135,10 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
               {daysInMonth.map((day, index) => (
                 <div 
                   key={`${day.toISOString()}-${index}`} 
-                  className={`p-2 rounded cursor-pointer ${
-                    value && day.toDateString() === value.toDateString() 
-                      ? 'bg-indigo-600 text-white' 
-                      : 'hover:bg-slate-200 dark:hover:bg-slate-700'
-                  }`}
+                  className={cn(
+                    "p-2 rounded cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700",
+                    value && isSameDay(day, value) ? "bg-indigo-600 text-white" : ""
+                  )}
                   onClick={() => handleDateSelect(day)}
                 >
                   {format(day, 'd')}
@@ -142,7 +151,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
               <label className="text-sm text-slate-700 dark:text-slate-400 block mb-2">Time</label>
               <input 
                 type="time" 
-                value={time}
+                value={timeValue}
                 onChange={(e) => handleTimeChange(e.target.value)}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
               />

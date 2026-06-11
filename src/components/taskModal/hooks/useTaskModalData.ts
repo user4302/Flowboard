@@ -87,8 +87,8 @@ export function useTaskModalData() {
       form.reset({
         title: foundCard.title || '',
         description: foundCard.description || '',
-        startDate: foundCard.startDate ? foundCard.startDate.toISOString().split('T')[0] : '',
-        dueDate: foundCard.dueDate ? foundCard.dueDate.toISOString().split('T')[0] : '',
+        startDate: foundCard.startDate ? foundCard.startDate.toISOString() : '',
+        dueDate: foundCard.dueDate ? foundCard.dueDate.toISOString() : '',
         priority: foundCard.priority !== undefined ? foundCard.priority : null,
       });
     }

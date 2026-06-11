@@ -17,8 +17,8 @@ export const useTaskModalForm = ({ card, cardJSON }: UseCardFormProps) => {
       return {
         title: cardJSON.title || '',
         description: cardJSON.description || '',
-        startDate: cardJSON.startDate ? new Date(cardJSON.startDate).toISOString().split('T')[0] : '',
-        dueDate: cardJSON.dueDate ? new Date(cardJSON.dueDate).toISOString().split('T')[0] : '',
+        startDate: cardJSON.startDate ? new Date(cardJSON.startDate).toISOString() : '',
+        dueDate: cardJSON.dueDate ? new Date(cardJSON.dueDate).toISOString() : '',
         priority: null,
       };
     }
@@ -26,8 +26,8 @@ export const useTaskModalForm = ({ card, cardJSON }: UseCardFormProps) => {
     return {
       title: card?.title || '',
       description: card?.description || '',
-      startDate: card?.startDate ? card.startDate.toISOString().split('T')[0] : '',
-      dueDate: card?.dueDate ? card.dueDate.toISOString().split('T')[0] : '',
+      startDate: card?.startDate ? new Date(card.startDate).toISOString() : '',
+      dueDate: card?.dueDate ? new Date(card.dueDate).toISOString() : '',
       priority: card?.priority !== undefined ? card.priority : null,
     };
   };

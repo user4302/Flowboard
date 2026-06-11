@@ -1,5 +1,3 @@
-'use client';
-
 import { Calendar, User, Tag, CheckSquare, Flag, Maximize2, Minimize2, Pencil, Eye } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -9,11 +7,13 @@ import { Controller } from 'react-hook-form';
 import { ModalFormProps } from '@/components/taskModal/types/TaskModal.form.types';
 import { TaskCardCardCompletion } from '@/components/taskCard/components/TaskCardCardCompletion';
 import { TaskCardCardMembers } from '@/components/taskCard/components/TaskCardCardMembers';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 
 export function TaskModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [startPickerOpen, setStartPickerOpen] = useState(false);
+  const [duePickerOpen, setDuePickerOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [descriptionValue, setDescriptionValue] = useState(card?.description || '');
   const [contentExceedsHeight, setContentExceedsHeight] = useState(false);
@@ -66,6 +66,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
   const toggleDescriptionExpansion = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
+
   return (
     <>
       {/* Title - Required field with validation */}
@@ -203,6 +204,8 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
                   value={field.value ? new Date(field.value) : null}
                   onChange={(date) => field.onChange(date.toISOString())}
                   isStartDate={true}
+                  isOpen={startPickerOpen}
+                  onToggle={() => setStartPickerOpen(!startPickerOpen)}
                 />
               )}
             />
@@ -217,6 +220,8 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
                   value={field.value ? new Date(field.value) : null}
                   onChange={(date) => field.onChange(date.toISOString())}
                   isStartDate={false}
+                  isOpen={duePickerOpen}
+                  onToggle={() => setDuePickerOpen(!duePickerOpen)}
                 />
               )}
             />
