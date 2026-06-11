@@ -14,6 +14,10 @@ interface DateTimePickerProps {
   onToggle: () => void;
 }
 
+/**
+ * DateTimePicker component
+ * A premium, dark-themed popover for date and time selection.
+ */
 export const DateTimePicker: React.FC<DateTimePickerProps> = ({ 
   value, 
   onChange, 
@@ -22,19 +26,19 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   isOpen,
   onToggle
 }) => {
-  // viewDate drives which month is shown in the calendar grid
+  // Local state for immediate UI feedback
   const [viewDate, setViewDate] = useState(value || new Date());
-  const [time, setTime] = useState(value ? format(value, 'HH:mm') : '12:00');
+  const [timeValue, setTimeValue] = useState(value ? format(value, 'HH:mm') : '12:00');
   
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
-  // Sync viewDate when value changes to ensure we stay on the selected month
+  // Sync internal state when prop changes
   useEffect(() => {
     if (value) {
       setViewDate(value);
-      setTime(format(value, 'HH:mm'));
+      setTimeValue(format(value, 'HH:mm'));
     }
   }, [value]);
 
@@ -61,24 +65,21 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   });
 
   const handleDateSelect = (date: Date) => {
-    const [hours, minutes] = time.split(':').map(Number);
+    const [hours, minutes] = timeValue.split(':').map(Number);
     const finalDate = setMinutes(setHours(date, hours), minutes);
     
-    // Update local view state for immediate UI feedback
-    setViewDate(date);
+    // Optimistic UI update
+    setViewDate(finalDate);
     
-    // Update parent state
+    // Update parent
     onChange(finalDate);
   };
 
   const handleTimeChange = (newTime: string) => {
-    setTime(newTime);
-    const dateToUpdate = value || new Date();
-    
-    if (newTime === '') {
-      onChange(isStartDate ? getStartOfLocalDay(dateToUpdate) : getEndOfLocalDay(dateToUpdate));
-    } else {
+    setTimeValue(newTime);
+    if (newTime) {
       const [hours, minutes] = newTime.split(':').map(Number);
+      const dateToUpdate = value || viewDate || new Date();
       onChange(setMinutes(setHours(dateToUpdate, hours), minutes));
     }
   };
@@ -142,7 +143,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
               <label className="text-sm text-slate-700 dark:text-slate-400 block mb-2">Time</label>
               <input 
                 type="time" 
-                value={time}
+                value={timeValue}
                 onChange={(e) => handleTimeChange(e.target.value)}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
               />
