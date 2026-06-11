@@ -24,7 +24,6 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
-  const [direction, setDirection] = useState<'above' | 'below'>('below');
 
   useEffect(() => {
     if (value) {
@@ -40,13 +39,12 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
       const popoverHeight = 400; 
 
       const shouldOpenAbove = rect.bottom + popoverHeight > viewportHeight && rect.top > popoverHeight;
-      setDirection(shouldOpenAbove ? 'above' : 'below');
 
       setPopoverPosition({
         top: shouldOpenAbove 
-          ? rect.top + window.scrollY - popoverHeight - 8 
-          : rect.bottom + window.scrollY + 8,
-        left: rect.left + window.scrollX,
+          ? rect.top - popoverHeight - 8 // Align bottom with top of bar
+          : rect.bottom + 8,             // Align top with bottom of bar
+        left: rect.left,
       });
     }
     setIsOpen(!isOpen);
@@ -70,7 +68,6 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
 
   const handleTimeChange = (newTime: string) => {
     setTime(newTime);
-    
     if (newTime === '') {
       setTimeInteracted(false);
       if (value) {
@@ -110,9 +107,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
           }}
         >
           <div 
-            className={cn(
-              "popover-content absolute z-[60] bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-4 rounded-lg shadow-xl border border-slate-300 dark:border-slate-700 w-72"
-            )}
+            className="popover-content absolute z-[60] bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-4 rounded-lg shadow-xl border border-slate-300 dark:border-slate-700 w-72"
             style={{
               top: `${popoverPosition.top}px`,
               left: `${popoverPosition.left}px`,
