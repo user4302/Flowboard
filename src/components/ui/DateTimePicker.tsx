@@ -28,19 +28,18 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
 
   useEffect(() => {
     if (value) {
-      // Create a new date that represents the same wall-clock time in local timezone
-      const localDate = new Date(
-        value.getUTCFullYear(),
-        value.getUTCMonth(),
-        value.getUTCDate(),
-        value.getUTCHours(),
-        value.getUTCMinutes()
-      );
-      setTime(format(localDate, 'HH:mm'));
-      setCurrentDate(localDate);
+      // Compare time-only string to avoid unnecessary resets
+      const currentTimeStr = format(value, 'HH:mm');
+      if (currentTimeStr !== time) {
+        setTime(currentTimeStr);
+      }
       
-      const timeStr = format(localDate, 'HH:mm');
-      setTimeInteracted(timeStr !== '00:00' && timeStr !== '23:59');
+      const newDate = new Date(value);
+      if (newDate.toDateString() !== currentDate.toDateString()) {
+        setCurrentDate(newDate);
+      }
+      
+      setTimeInteracted(currentTimeStr !== '00:00' && currentTimeStr !== '23:59');
     }
   }, [value]);
 

@@ -9,7 +9,7 @@ import { Controller } from 'react-hook-form';
 import { ModalFormProps } from '@/components/taskModal/types/TaskModal.form.types';
 import { TaskCardCardCompletion } from '@/components/taskCard/components/TaskCardCardCompletion';
 import { TaskCardCardMembers } from '@/components/taskCard/components/TaskCardCardMembers';
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 
 export function TaskModalForm({ card, form, errors, register, onToggleCompleted }: ModalFormProps) {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -66,6 +66,11 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
   const toggleDescriptionExpansion = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
+
+  // Memoize date values
+  const startDateValue = useMemo(() => form.watch('startDate') ? new Date(form.watch('startDate')) : null, [form.watch('startDate')]);
+  const dueDateValue = useMemo(() => form.watch('dueDate') ? new Date(form.watch('dueDate')) : null, [form.watch('dueDate')]);
+
   return (
     <>
       {/* Title - Required field with validation */}
@@ -200,7 +205,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               name="startDate"
               render={({ field }) => (
                 <DateTimePicker
-                  value={field.value ? new Date(field.value) : null}
+                  value={startDateValue}
                   onChange={(date) => field.onChange(date.toISOString())}
                   isStartDate={true}
                 />
@@ -214,7 +219,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               name="dueDate"
               render={({ field }) => (
                 <DateTimePicker
-                  value={field.value ? new Date(field.value) : null}
+                  value={dueDateValue}
                   onChange={(date) => field.onChange(date.toISOString())}
                   isStartDate={false}
                 />
