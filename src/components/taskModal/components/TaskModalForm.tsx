@@ -69,11 +69,13 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
 
   const startDateValue = useMemo(() => {
     const val = form.watch('startDate');
+    console.log('[TaskModalForm] watched startDate:', val);
     return val ? new Date(val) : null;
   }, [form.watch('startDate')]);
   
   const dueDateValue = useMemo(() => {
     const val = form.watch('dueDate');
+    console.log('[TaskModalForm] watched dueDate:', val);
     return val ? new Date(val) : null;
   }, [form.watch('dueDate')]);
 
