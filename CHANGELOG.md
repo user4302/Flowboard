@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.10.0] - 2026-06-11
 
 ### Added
 - Refactor date initialization and boundary logic to capture local calendar boundaries accurately
@@ -20,6 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix DateTimePicker state synchronization issues for reliable data persistence
 - Fix date selection visual feedback and immediate UI updates in DateTimePicker
 - Fix time input parsing and synchronization issues to prevent unintended resets to default times
+
+## [Unreleased]
+
 
 ## [1.9.0] - 2026-06-09
 
