@@ -125,7 +125,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
                 <div 
                   key={`${day.toISOString()}-${index}`} 
                   className={`p-2 rounded cursor-pointer ${
-                    value && day.toDateString() === value.toDateString() 
+                    currentDate && day.toDateString() === currentDate.toDateString()
                       ? 'bg-indigo-600 text-white' 
                       : 'hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
