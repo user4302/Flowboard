@@ -71,7 +71,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
       const [hours, minutes] = time.split(':').map(Number);
       finalDate = setMinutes(setHours(finalDate, hours), minutes);
     } else {
-      finalDate = isStartDate ? getStartOfLocalDay(finalDate) : getEndOfLocalDay(finalDate);
+      finalDate = isStartDate ? getStartOfLocalDay(date) : getEndOfLocalDay(date);
     }
     onChange(finalDate);
   };
