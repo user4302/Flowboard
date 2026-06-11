@@ -244,7 +244,6 @@ export function ColorPicker({
 
       {/* Dropdown - Use portal only when not inside another portal */}
       {isOpen && (() => {
-        console.log('ColorPicker rendering:', { isInsidePortal, isOpen });
         return isInsidePortal;
       })() ? (
         <div

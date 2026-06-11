@@ -18,10 +18,13 @@ export default function BoardPage() {
   const router = useRouter();
   const { boardId } = params as { boardId: string };
 
-  const { boards, setCurrentBoard } = useBoard();
+  const { boards, currentBoardId, setCurrentBoard } = useBoardStore();
   const { currentView, initializeTheme } = useUIStore();
   const { showJoinModal, setShowJoinModal } = useSharingStore();
   const isHydrated = useBoardStore((state: any) => state.isHydrated);
+
+  // Use the store's currentBoardId as the source of truth if available
+  const activeBoardId = currentBoardId || boardId;
 
   // Helper function to find board by ID
   const getBoardById = (id: string) => boards.find(board => board.id === id) || null;
@@ -60,21 +63,19 @@ export default function BoardPage() {
 
   useEffect(() => {
     // Only check board ID once hydrated
-    if (isHydrated && boardId) {
-      const board = getBoardById(boardId);
-      console.log('BoardPage: Board ID change effect', { boardId, boardFound: !!board, isHydrated });
+    if (isHydrated && activeBoardId) {
+      const board = getBoardById(activeBoardId);
       if (board) {
-        setCurrentBoard(boardId);
+        setCurrentBoard(activeBoardId);
         setIsBoardLoading(false);
       } else {
         // Board not found, redirect to home
-        console.log('BoardPage: Board not found, redirecting to home');
         router.push('/');
       }
     }
-  }, [boardId, isHydrated, getBoardById, setCurrentBoard, router]);
+  }, [activeBoardId, isHydrated, getBoardById, setCurrentBoard, router]);
 
-  const currentBoard = boardId ? getBoardById(boardId) : null;
+  const currentBoard = activeBoardId ? getBoardById(activeBoardId) : null;
 
   if (isBoardLoading) {
     return (
@@ -106,15 +107,15 @@ export default function BoardPage() {
   const renderCurrentView = () => {
     switch (currentView) {
       case 'kanban':
-        return <KanbanView boardId={boardId} />;
+        return <KanbanView boardId={activeBoardId} />;
       case 'timeline':
-        return <TimelineView boardId={boardId} />;
+        return <TimelineView boardId={activeBoardId} />;
       case 'calendar':
-        return <CalendarView boardId={boardId} />;
+        return <CalendarView boardId={activeBoardId} />;
       case 'table':
-        return <TableView boardId={boardId} />;
+        return <TableView boardId={activeBoardId} />;
       default:
-        return <KanbanView boardId={boardId} />;
+        return <KanbanView boardId={activeBoardId} />;
     }
   };
 
@@ -130,7 +131,7 @@ export default function BoardPage() {
         <MobileBottomNav />
       </div>
 
-      <FilterSheet boardId={boardId} />
+      <FilterSheet boardId={activeBoardId} />
 
       <TaskModal />
       <JoinBoardModal

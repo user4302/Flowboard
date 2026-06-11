@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.10.0] - 2026-06-11
+
+### Added
+- Refactor date initialization and boundary logic to capture local calendar boundaries accurately
+- Add boundary-aware utility functions (`getStartOfLocalDay`, `getEndOfLocalDay`) to `src/lib/dateUtils.ts`
+- Update card initialization in `cardSlice.ts` to use local-day boundaries
+- Refactor timeline and calendar filtering logic to use local-day boundaries
+
+### Fixed
+- Fix silent failure when adding a new list in Kanban view by synchronizing column order state in UI store
+- Fix reactivity bug where board views failed to update when creating new boards by refactoring BoardPage to use reactive store state
+- Fix DateTimePicker portal positioning and overlapping issues
+- Fix DateTimePicker state synchronization issues for reliable data persistence
+- Fix date selection visual feedback and immediate UI updates in DateTimePicker
+- Fix time input parsing and synchronization issues to prevent unintended resets to default times
+
+## [Unreleased]
+
+
 ## [1.9.0] - 2026-06-09
 
 ### Added
@@ -54,9 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix hydration issue causing redirects on direct board URL access
 - Refactor layout to `100dvh` and fix overscroll behavior for mobile consistency
 - Fix responsive styling and filter portal rendering issues
-
-## [Unreleased]
-
 
 ## [1.8.4] - 2026-04-07
 

@@ -1,6 +1,7 @@
 import { List } from '@/lib/types';
 import { generateId } from '@/lib/utils';
 import { BoardStateCreator, ListSlice, reorderArray } from './types';
+import { useUIStore } from '../uiStore';
 
 export const createListSlice: BoardStateCreator<ListSlice> = (set, get) => ({
     createList: (boardId, title, position) => {
@@ -22,6 +23,13 @@ export const createListSlice: BoardStateCreator<ListSlice> = (set, get) => ({
                     : b
             ),
         }));
+
+        // Update column order if it exists
+        const uiStore = useUIStore.getState();
+        const existingOrder = uiStore.getColumnOrder(boardId);
+        if (existingOrder.length > 0) {
+            uiStore.setColumnOrder(boardId, [...existingOrder, newList.id]);
+        }
 
         return newList;
     },

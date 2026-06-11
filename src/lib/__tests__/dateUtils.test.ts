@@ -5,9 +5,33 @@ import {
   isUTCString,
   normalizeForStorage,
   normalizeForDisplay,
+  getStartOfLocalDay,
+  getEndOfLocalDay,
 } from '../dateUtils'
 
 describe('DateUtils', () => {
+  describe('getStartOfLocalDay', () => {
+    it('should set time to 00:00:00.000', () => {
+      const date = new Date('2026-06-11T14:30:00Z')
+      const start = getStartOfLocalDay(date)
+      expect(start.getHours()).toBe(0)
+      expect(start.getMinutes()).toBe(0)
+      expect(start.getSeconds()).toBe(0)
+      expect(start.getMilliseconds()).toBe(0)
+    })
+  })
+
+  describe('getEndOfLocalDay', () => {
+    it('should set time to 23:59:59.999', () => {
+      const date = new Date('2026-06-11T14:30:00Z')
+      const end = getEndOfLocalDay(date)
+      expect(end.getHours()).toBe(23)
+      expect(end.getMinutes()).toBe(59)
+      expect(end.getSeconds()).toBe(59)
+      expect(end.getMilliseconds()).toBe(999)
+    })
+  })
+
   describe('toUTCString', () => {
     it('should return undefined for undefined input', () => {
       expect(toUTCString(undefined)).toBeUndefined()

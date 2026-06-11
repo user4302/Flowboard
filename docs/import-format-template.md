@@ -157,7 +157,7 @@ This document specifies the required JSON format for importing boards into Flowb
 
 ## Implementation Notes
 
-1. **Date Format**: All timestamps must be valid ISO 8601 strings (e.g., `2026-05-30T10:00:00Z`).
+1. **Date Format**: All timestamps must be valid ISO 8601 strings in UTC (e.g., `2026-05-30T10:00:00Z`). Although the application interprets dates based on local client boundaries, storage persists them in universal UTC format.
 2. **References**:
    - `Card.labelIds` must match `Label.id`.
    - `Card.members` must match `User.id`.
