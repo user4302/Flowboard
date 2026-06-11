@@ -1,5 +1,3 @@
-'use client';
-
 import { Calendar, User, Tag, CheckSquare, Flag, Maximize2, Minimize2, Pencil, Eye } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -68,21 +66,6 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
   const toggleDescriptionExpansion = () => {
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
-
-  // Memoize date values
-  const startDate = form.watch('startDate');
-  const dueDate = form.watch('dueDate');
-
-  // Use the form's state directly for initialization, falling back to card data if not in form state
-  const startDateValue = useMemo(() => {
-    const dateStr = startDate || card?.startDate;
-    return dateStr ? new Date(dateStr) : null;
-  }, [startDate, card?.startDate]);
-  
-  const dueDateValue = useMemo(() => {
-    const dateStr = dueDate || card?.dueDate;
-    return dateStr ? new Date(dateStr) : null;
-  }, [dueDate, card?.dueDate]);
 
   return (
     <>
@@ -218,7 +201,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               name="startDate"
               render={({ field }) => (
                 <DateTimePicker
-                  value={startDateValue}
+                  value={field.value ? new Date(field.value) : null}
                   onChange={(date) => field.onChange(date.toISOString())}
                   isStartDate={true}
                   isOpen={startPickerOpen}
@@ -234,7 +217,7 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
               name="dueDate"
               render={({ field }) => (
                 <DateTimePicker
-                  value={dueDateValue}
+                  value={field.value ? new Date(field.value) : null}
                   onChange={(date) => field.onChange(date.toISOString())}
                   isStartDate={false}
                   isOpen={duePickerOpen}
