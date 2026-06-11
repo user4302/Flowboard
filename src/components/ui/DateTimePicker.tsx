@@ -25,11 +25,15 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
-  // Strictly sync state from props
+  // Sync state when props change
   useEffect(() => {
     if (value) {
       setCurrentDate(value);
       setTime(format(value, 'HH:mm'));
+    } else {
+      // Reset to defaults if no value provided
+      setCurrentDate(new Date());
+      setTime('12:00');
     }
   }, [value]);
 
@@ -56,16 +60,8 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   });
 
   const handleDateSelect = (date: Date) => {
-    // 1. Preserve the current time from state (or use default if not set)
     const [hours, minutes] = time.split(':').map(Number);
-    
-    // 2. Create the final date combining selected day with time
     const finalDate = setMinutes(setHours(date, hours), minutes);
-    
-    // 3. Update local state immediately to reflect selection
-    setCurrentDate(date);
-    
-    // 4. Update parent state
     onChange(finalDate);
   };
 
@@ -125,7 +121,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
                 <div 
                   key={`${day.toISOString()}-${index}`} 
                   className={`p-2 rounded cursor-pointer ${
-                    currentDate && day.toDateString() === currentDate.toDateString()
+                    value && day.toDateString() === value.toDateString() 
                       ? 'bg-indigo-600 text-white' 
                       : 'hover:bg-slate-200 dark:hover:bg-slate-700'
                   }`}
