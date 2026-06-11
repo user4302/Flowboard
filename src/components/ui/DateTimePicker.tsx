@@ -56,9 +56,18 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   });
 
   const handleDateSelect = (date: Date) => {
+    // 1. Preserve the current time from state (or use default if not set)
     const [hours, minutes] = time.split(':').map(Number);
+    
+    // 2. Create the final date combining selected day with time
     const finalDate = setMinutes(setHours(date, hours), minutes);
+    
+    // 3. Update parent state
     onChange(finalDate);
+    
+    // 4. IMPORTANT: Close only if you want, or keep open. 
+    // Usually date pickers close on date select.
+    // setIsOpen(false); 
   };
 
   const handleTimeChange = (newTime: string) => {
