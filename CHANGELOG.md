@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Refactor date initialization and boundary logic to capture local calendar boundaries accurately
+- Add boundary-aware utility functions (`getStartOfLocalDay`, `getEndOfLocalDay`) to `src/lib/dateUtils.ts`
+- Update card initialization in `cardSlice.ts` to use local-day boundaries
+- Refactor timeline and calendar filtering logic to use local-day boundaries
+
 ### Fixed
 - Fix silent failure when adding a new list in Kanban view by synchronizing column order state in UI store
 - Fix reactivity bug where board views failed to update when creating new boards by refactoring BoardPage to use reactive store state

@@ -1,7 +1,27 @@
+import { startOfDay, endOfDay } from 'date-fns';
+
 /**
  * Date utility functions for consistent UTC/local time handling
  * Ensures all dates are stored as UTC strings and displayed as local time
  */
+
+/**
+ * Get start of local day (00:00:00.000)
+ * @param date - Date object to convert
+ * @returns Date object at start of day
+ */
+export const getStartOfLocalDay = (date: Date): Date => {
+  return startOfDay(date);
+};
+
+/**
+ * Get end of local day (23:59:59.999)
+ * @param date - Date object to convert
+ * @returns Date object at end of day
+ */
+export const getEndOfLocalDay = (date: Date): Date => {
+  return endOfDay(date);
+};
 
 /**
  * Convert a date (Date object or string) to UTC ISO string

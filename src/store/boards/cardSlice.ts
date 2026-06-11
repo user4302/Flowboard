@@ -1,5 +1,6 @@
 import { Card, ArchivedCard } from '@/lib/types';
 import { generateId } from '@/lib/utils';
+import { getStartOfLocalDay, getEndOfLocalDay } from '../../lib/dateUtils';
 import { BoardStateCreator, CardSlice, reorderArray } from './types';
 
 export const createCardSlice: BoardStateCreator<CardSlice> = (set, get) => ({
@@ -9,6 +10,7 @@ export const createCardSlice: BoardStateCreator<CardSlice> = (set, get) => ({
         const list = board?.lists.find((l) => l.id === listId);
         if (!board || !list) return null;
 
+        const now = new Date();
         const newCard: Card = {
             id: generateId(),
             title,
@@ -19,8 +21,10 @@ export const createCardSlice: BoardStateCreator<CardSlice> = (set, get) => ({
             completed: false,
             position: position ?? list.cards.length,
             priority: null,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            startDate: getStartOfLocalDay(now),
+            dueDate: getEndOfLocalDay(now),
+            createdAt: now,
+            updatedAt: now,
         };
 
         set((state) => ({
