@@ -36,6 +36,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
   // Sync internal state when prop changes
   useEffect(() => {
+    console.log('[DateTimePicker] Syncing from value prop:', value);
     if (value) {
       setViewDate(value);
       setTimeValue(format(value, 'HH:mm'));
@@ -68,10 +69,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     const [hours, minutes] = timeValue.split(':').map(Number);
     const finalDate = setMinutes(setHours(date, hours), minutes);
     
-    // Update local view state for immediate UI feedback
-    setViewDate(date);
-    
-    // Update parent
+    // Update parent state. The useEffect will sync viewDate and timeValue from the new value prop.
     onChange(finalDate);
   };
 
