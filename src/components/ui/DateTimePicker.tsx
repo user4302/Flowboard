@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, setHours, setMinutes } from 'date-fns';
 import { getStartOfLocalDay, getEndOfLocalDay } from '../../lib/dateUtils';
@@ -28,19 +28,27 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
 
   useEffect(() => {
     if (value) {
-      setTime(format(value, 'HH:mm'));
-      setCurrentDate(value);
-      // Determine if we are interacting with time or it's a boundary value
-      const timeStr = format(value, 'HH:mm');
+      // Create a new date that represents the same wall-clock time in local timezone
+      const localDate = new Date(
+        value.getUTCFullYear(),
+        value.getUTCMonth(),
+        value.getUTCDate(),
+        value.getUTCHours(),
+        value.getUTCMinutes()
+      );
+      setTime(format(localDate, 'HH:mm'));
+      setCurrentDate(localDate);
+      
+      const timeStr = format(localDate, 'HH:mm');
       setTimeInteracted(timeStr !== '00:00' && timeStr !== '23:59');
     }
   }, [value]);
 
-  const togglePopover = () => {
-    if (buttonRef.current && popoverContentRef.current) {
+  useLayoutEffect(() => {
+    if (isOpen && buttonRef.current && popoverContentRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
       const height = popoverContentRef.current.offsetHeight;
+      const viewportHeight = window.innerHeight;
       
       const shouldOpenAbove = rect.bottom + height > viewportHeight && rect.top > height;
 
@@ -51,8 +59,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
         left: rect.left + window.scrollX,
       });
     }
-    setIsOpen(!isOpen);
-  };
+  }, [isOpen]);
 
   const daysInMonth = eachDayOfInterval({
     start: startOfMonth(currentDate),
@@ -95,7 +102,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
       <button
         ref={buttonRef}
         type="button"
-        onClick={togglePopover}
+        onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
       >
         <span>{displayValue}</span>
