@@ -69,17 +69,20 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
 
+  // Memoize date values
+  const startDate = form.watch('startDate');
+  const dueDate = form.watch('dueDate');
+
+  // Use the form's state directly for initialization, falling back to card data if not in form state
   const startDateValue = useMemo(() => {
-    const val = form.watch('startDate');
-    console.log('[TaskModalForm] watched startDate:', val);
-    return val ? new Date(val) : null;
-  }, [form.watch('startDate')]);
+    const dateStr = startDate || card?.startDate;
+    return dateStr ? new Date(dateStr) : null;
+  }, [startDate, card?.startDate]);
   
   const dueDateValue = useMemo(() => {
-    const val = form.watch('dueDate');
-    console.log('[TaskModalForm] watched dueDate:', val);
-    return val ? new Date(val) : null;
-  }, [form.watch('dueDate')]);
+    const dateStr = dueDate || card?.dueDate;
+    return dateStr ? new Date(dateStr) : null;
+  }, [dueDate, card?.dueDate]);
 
   return (
     <>
