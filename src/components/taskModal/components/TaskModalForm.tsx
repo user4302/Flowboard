@@ -68,8 +68,20 @@ export function TaskModalForm({ card, form, errors, register, onToggleCompleted 
   };
 
   // Memoize date values
-  const startDateValue = useMemo(() => form.watch('startDate') ? new Date(form.watch('startDate')) : null, [form.watch('startDate')]);
-  const dueDateValue = useMemo(() => form.watch('dueDate') ? new Date(form.watch('dueDate')) : null, [form.watch('dueDate')]);
+  const startDate = form.watch('startDate');
+  const dueDate = form.watch('dueDate');
+
+  console.log('[TaskModalForm] Rendering. Form values:', { startDate, dueDate });
+
+  const startDateValue = useMemo(() => {
+    console.log('[TaskModalForm] memoizing startDate:', startDate);
+    return startDate ? new Date(startDate) : null;
+  }, [startDate]);
+  
+  const dueDateValue = useMemo(() => {
+    console.log('[TaskModalForm] memoizing dueDate:', dueDate);
+    return dueDate ? new Date(dueDate) : null;
+  }, [dueDate]);
 
   return (
     <>
