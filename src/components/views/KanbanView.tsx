@@ -312,18 +312,18 @@ export function KanbanView({ boardId }: KanbanViewProps) {
                     />
                   ))}
                 </SortableContext>
-
-                {/* Add new list input component */}
-                <InlineInput
-                  placeholder="Enter list title..."
-                  addText="Add list"
-                  triggerText="Add a list"
-                  containerWidth="20rem"
-                  className="flex-shrink-0 h-fit"
-                  onAdd={handleCreateList}
-                />
               </DndContext>
             )}
+
+            {/* Add new list input component - Moved outside DndContext */}
+            <InlineInput
+              placeholder="Enter list title..."
+              addText="Add list"
+              triggerText="Add a list"
+              containerWidth="20rem"
+              className="flex-shrink-0 h-fit"
+              onAdd={handleCreateList}
+            />
           </div>
         </div>
       </div>

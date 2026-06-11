@@ -124,10 +124,12 @@ export const InlineInput = forwardRef<HTMLButtonElement, InlineInputProps>(
       }
     };
 
-    const handleBlur = () => {
-      setTimeout(() => {
-        handleCancel();
-      }, 200);
+    const handleBlur = (e: React.FocusEvent) => {
+      // If the new focus is inside our container, don't cancel
+      if (e.relatedTarget && containerRef.current && containerRef.current.contains(e.relatedTarget as Node)) {
+        return;
+      }
+      handleCancel();
     };
 
     const handleTriggerClick = () => {
