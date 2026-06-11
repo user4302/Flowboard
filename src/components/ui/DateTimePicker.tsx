@@ -66,29 +66,32 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   });
 
   const handleDateSelect = (date: Date) => {
-    let finalDate = date;
+    // Always use the selected date as the base
+    const baseDate = date; 
+
+    let finalDate = baseDate;
     if (timeInteracted || value) {
       const [hours, minutes] = time.split(':').map(Number);
-      finalDate = setMinutes(setHours(finalDate, hours), minutes);
+      finalDate = setMinutes(setHours(baseDate, hours), minutes);
     } else {
-      finalDate = isStartDate ? getStartOfLocalDay(date) : getEndOfLocalDay(date);
+      finalDate = isStartDate ? getStartOfLocalDay(baseDate) : getEndOfLocalDay(baseDate);
     }
     onChange(finalDate);
   };
 
   const handleTimeChange = (newTime: string) => {
     setTime(newTime);
+    
+    // Always use the current value or a new date if value is null
+    const dateToUpdate = value || new Date();
+    
     if (newTime === '') {
       setTimeInteracted(false);
-      if (value) {
-        onChange(isStartDate ? getStartOfLocalDay(value) : getEndOfLocalDay(value));
-      }
+      onChange(isStartDate ? getStartOfLocalDay(dateToUpdate) : getEndOfLocalDay(dateToUpdate));
     } else {
       setTimeInteracted(true);
-      if (value) {
-        const [hours, minutes] = newTime.split(':').map(Number);
-        onChange(setMinutes(setHours(value, hours), minutes));
-      }
+      const [hours, minutes] = newTime.split(':').map(Number);
+      onChange(setMinutes(setHours(dateToUpdate, hours), minutes));
     }
   };
 
