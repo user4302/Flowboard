@@ -63,6 +63,11 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   const handleDateSelect = (date: Date) => {
     const [hours, minutes] = time.split(':').map(Number);
     const finalDate = setMinutes(setHours(date, hours), minutes);
+    
+    // Update local view state for immediate UI feedback
+    setViewDate(date);
+    
+    // Update parent state
     onChange(finalDate);
   };
 
