@@ -24,30 +24,27 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverContentRef = useRef<HTMLDivElement>(null);
-  const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  const [popoverHeight, setPopoverHeight] = useState(0);
 
+  // Position calculation effect
   useEffect(() => {
-    if (value) {
-      setTime(format(value, 'HH:mm'));
-      setCurrentDate(value);
-    }
-  }, [value]);
-
-  const togglePopover = () => {
-    if (buttonRef.current) {
+    if (isOpen && buttonRef.current && popoverContentRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const height = popoverContentRef.current.offsetHeight;
       const viewportHeight = window.innerHeight;
-      const popoverHeight = popoverContentRef.current?.offsetHeight || 400; 
-
-      const shouldOpenAbove = rect.bottom + popoverHeight > viewportHeight && rect.top > popoverHeight;
+      
+      const shouldOpenAbove = rect.bottom + height > viewportHeight && rect.top > height;
 
       setPopoverPosition({
         top: shouldOpenAbove 
-          ? window.scrollY + rect.top - popoverHeight - 8 
+          ? window.scrollY + rect.top - height - 8 
           : window.scrollY + rect.bottom + 8,
         left: rect.left + window.scrollX,
       });
     }
+  }, [isOpen]);
+
+  const togglePopover = () => {
     setIsOpen(!isOpen);
   };
 
