@@ -36,17 +36,19 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      const popoverHeight = 350; // Approximate height
+      // Increased popover height estimate to be safer
+      const popoverHeight = 400; 
 
-      // Check if there is enough space below, if not, open above
+      // Check if there is enough space below
       const spaceBelow = viewportHeight - rect.bottom;
-      const spaceAbove = rect.top;
-
+      
       let top;
-      if (spaceBelow < popoverHeight && spaceAbove > popoverHeight) {
-        top = rect.top + window.scrollY - popoverHeight - 8;
+      if (rect.bottom + popoverHeight > viewportHeight && rect.top > popoverHeight) {
+        // Open above
+        top = rect.top + window.scrollY - popoverHeight - 4;
       } else {
-        top = rect.bottom + window.scrollY + 8;
+        // Open below
+        top = rect.bottom + window.scrollY + 4;
       }
 
       setPopoverPosition({
@@ -154,9 +156,15 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
       {isOpen && createPortal(
         <div 
           className="fixed inset-0 z-50" 
-          onClick={() => setIsOpen(false)}
+          onClick={(e) => {
+            // Prevent closing when clicking inside the popover content
+            if ((e.target as HTMLElement).closest('.popover-content')) return;
+            setIsOpen(false);
+          }}
         >
-          {popoverContent}
+          <div className="popover-content">
+            {popoverContent}
+          </div>
         </div>,
         document.body
       )}
