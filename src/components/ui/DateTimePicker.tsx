@@ -25,15 +25,15 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
-  // Sync state when props change
+  // Sync state when props change, but avoid loops
   useEffect(() => {
     if (value) {
-      setCurrentDate(value);
-      setTime(format(value, 'HH:mm'));
-    } else {
-      // Reset to defaults if no value provided
-      setCurrentDate(new Date());
-      setTime('12:00');
+      const newTime = format(value, 'HH:mm');
+      // Only update if value prop actually changed compared to internal state
+      if (value.getTime() !== currentDate.getTime() || newTime !== time) {
+        setCurrentDate(value);
+        setTime(newTime);
+      }
     }
   }, [value]);
 
@@ -62,6 +62,11 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   const handleDateSelect = (date: Date) => {
     const [hours, minutes] = time.split(':').map(Number);
     const finalDate = setMinutes(setHours(date, hours), minutes);
+    
+    // Optimistically update calendar view
+    setCurrentDate(date);
+    
+    // Update parent state
     onChange(finalDate);
   };
 
