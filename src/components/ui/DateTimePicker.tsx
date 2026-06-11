@@ -65,23 +65,27 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   });
 
   const handleDateSelect = (date: Date) => {
+    // 1. Get time components from the current timeValue (buffer)
     const [hours, minutes] = timeValue.split(':').map(Number);
+    
+    // 2. Create the final date combining selected day with current buffered time
     const finalDate = setMinutes(setHours(date, hours), minutes);
     
-    // Optimistic UI update
-    setViewDate(finalDate);
-    
-    // Update parent
+    // 3. Update parent state
     onChange(finalDate);
+    
+    // 4. Update local 'viewDate' state to change the calendar display month if necessary,
+    //    but NOT the selected day, to avoid interfering with React state batching
+    //    We rely on the 'value' prop to update the visual highlighting.
   };
 
   const handleTimeChange = (newTime: string) => {
     setTimeValue(newTime);
-    if (newTime) {
-      const [hours, minutes] = newTime.split(':').map(Number);
-      const dateToUpdate = value || viewDate || new Date();
-      onChange(setMinutes(setHours(dateToUpdate, hours), minutes));
-    }
+    
+    // Update parent immediately based on the selected date (or value)
+    const dateToUpdate = value || viewDate;
+    const [hours, minutes] = newTime.split(':').map(Number);
+    onChange(setMinutes(setHours(dateToUpdate, hours), minutes));
   };
 
   const displayValue = value ? format(value, 'MMM d, yyyy HH:mm') : placeholder;
