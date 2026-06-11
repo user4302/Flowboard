@@ -24,6 +24,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
+  const [direction, setDirection] = useState<'above' | 'below'>('below');
 
   useEffect(() => {
     if (value) {
@@ -36,25 +37,15 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      // Increased popover height estimate to be safer
       const popoverHeight = 400; 
 
-      // Check if there is enough space below
-      const spaceBelow = viewportHeight - rect.bottom;
-      
-      let top;
-      if (rect.bottom + popoverHeight > viewportHeight && rect.top > popoverHeight) {
-        // Open above: bottom of popover = top of trigger bar - offset
-        // Subtracting the popoverHeight from rect.top aligns the bottom of the popover
-        // with the top of the trigger bar.
-        top = rect.top + window.scrollY - popoverHeight - 8; 
-      } else {
-        // Open below
-        top = rect.bottom + window.scrollY + 8;
-      }
+      const shouldOpenAbove = rect.bottom + popoverHeight > viewportHeight && rect.top > popoverHeight;
+      setDirection(shouldOpenAbove ? 'above' : 'below');
 
       setPopoverPosition({
-        top,
+        top: shouldOpenAbove 
+          ? rect.top + window.scrollY - popoverHeight - 8 
+          : rect.bottom + window.scrollY + 8,
         left: rect.left + window.scrollX,
       });
     }
@@ -79,69 +70,24 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
 
   const handleTimeChange = (newTime: string) => {
     setTime(newTime);
-    setTimeInteracted(true);
-    
-    // Always use a valid date for onChange, fallback to current or today
-    const dateToUpdate = value || new Date();
     
     if (newTime === '') {
       setTimeInteracted(false);
-      onChange(isStartDate ? getStartOfLocalDay(dateToUpdate) : getEndOfLocalDay(dateToUpdate));
+      if (value) {
+        onChange(isStartDate ? getStartOfLocalDay(value) : getEndOfLocalDay(value));
+      }
     } else {
-      const [hours, minutes] = newTime.split(':').map(Number);
-      onChange(setMinutes(setHours(dateToUpdate, hours), minutes));
+      setTimeInteracted(true);
+      if (value) {
+        const [hours, minutes] = newTime.split(':').map(Number);
+        onChange(setMinutes(setHours(value, hours), minutes));
+      }
     }
   };
 
   const displayValue = value 
     ? format(value, timeInteracted || (value && format(value, 'HH:mm') !== '00:00' && format(value, 'HH:mm') !== '23:59') ? 'MMM d, yyyy HH:mm' : 'MMM d, yyyy') 
     : placeholder;
-
-  const popoverContent = isOpen && (
-    <div 
-      className="fixed z-[60] bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-4 rounded-lg shadow-xl border border-slate-300 dark:border-slate-700 w-72"
-      style={{
-        top: `${popoverPosition.top}px`,
-        left: `${popoverPosition.left}px`,
-      }}
-    >
-      {/* Calendar Grid */}
-      <div className="calendar-header flex justify-between items-center mb-4">
-        <button type="button" className="hover:text-indigo-500" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>&lt;</button>
-        <span className="font-semibold">{format(currentDate, 'MMMM yyyy')}</span>
-        <button type="button" className="hover:text-indigo-500" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>&gt;</button>
-      </div>
-      <div className="calendar-grid grid grid-cols-7 gap-1 text-center">
-        {['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'].map((day, index) => (
-          <div key={`${day}-${index}`} className="text-slate-500 dark:text-slate-400 text-xs">{day}</div>
-        ))}
-        {daysInMonth.map((day, index) => (
-          <div 
-            key={`${day.toISOString()}-${index}`} 
-            className={`p-2 rounded cursor-pointer ${
-              value && day.toDateString() === value.toDateString() 
-                ? 'bg-indigo-600 text-white' 
-                : 'hover:bg-slate-200 dark:hover:bg-slate-700'
-            }`}
-            onClick={() => handleDateSelect(day)}
-          >
-            {format(day, 'd')}
-          </div>
-        ))}
-      </div>
-      
-      {/* Time Selection */}
-      <div className="time-picker mt-6 border-t border-slate-300 dark:border-slate-700 pt-4">
-        <label className="text-sm text-slate-700 dark:text-slate-400 block mb-2">Time</label>
-        <input 
-          type="time" 
-          value={time}
-          onChange={(e) => handleTimeChange(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
-        />
-      </div>
-    </div>
-  );
 
   return (
     <div className="relative w-full">
@@ -159,13 +105,54 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
         <div 
           className="fixed inset-0 z-50" 
           onClick={(e) => {
-            // Prevent closing when clicking inside the popover content
             if ((e.target as HTMLElement).closest('.popover-content')) return;
             setIsOpen(false);
           }}
         >
-          <div className="popover-content">
-            {popoverContent}
+          <div 
+            className={cn(
+              "popover-content absolute z-[60] bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-4 rounded-lg shadow-xl border border-slate-300 dark:border-slate-700 w-72"
+            )}
+            style={{
+              top: `${popoverPosition.top}px`,
+              left: `${popoverPosition.left}px`,
+            }}
+          >
+            {/* Calendar Grid */}
+            <div className="calendar-header flex justify-between items-center mb-4">
+              <button type="button" className="hover:text-indigo-500" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>&lt;</button>
+              <span className="font-semibold">{format(currentDate, 'MMMM yyyy')}</span>
+              <button type="button" className="hover:text-indigo-500" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>&gt;</button>
+            </div>
+            <div className="calendar-grid grid grid-cols-7 gap-1 text-center">
+              {['S', 'M', 'T', 'W', 'Th', 'F', 'Sa'].map((day, index) => (
+                <div key={`${day}-${index}`} className="text-slate-500 dark:text-slate-400 text-xs">{day}</div>
+              ))}
+              {daysInMonth.map((day, index) => (
+                <div 
+                  key={`${day.toISOString()}-${index}`} 
+                  className={`p-2 rounded cursor-pointer ${
+                    value && day.toDateString() === value.toDateString() 
+                      ? 'bg-indigo-600 text-white' 
+                      : 'hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                  onClick={() => handleDateSelect(day)}
+                >
+                  {format(day, 'd')}
+                </div>
+              ))}
+            </div>
+            
+            {/* Time Selection */}
+            <div className="time-picker mt-6 border-t border-slate-300 dark:border-slate-700 pt-4">
+              <label className="text-sm text-slate-700 dark:text-slate-400 block mb-2">Time</label>
+              <input 
+                type="time" 
+                value={time}
+                onChange={(e) => handleTimeChange(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+              />
+            </div>
           </div>
         </div>,
         document.body
