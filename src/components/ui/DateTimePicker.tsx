@@ -20,32 +20,18 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   const [isOpen, setIsOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(value || new Date());
   const [time, setTime] = useState(value ? format(value, 'HH:mm') : '12:00');
-  const [timeInteracted, setTimeInteracted] = useState(false);
   
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverContentRef = useRef<HTMLDivElement>(null);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
 
+  // Strictly sync state from props
   useEffect(() => {
     if (value) {
-      const currentTimeStr = format(value, 'HH:mm');
-      const newDate = new Date(value);
-      
-      // Update calendar view
-      if (newDate.toDateString() !== currentDate.toDateString()) {
-        setCurrentDate(newDate);
-      }
-      
-      // Only sync time from props if we haven't interacted with the time input
-      // or if the value changed significantly (e.g. backend sync)
-      if (!timeInteracted) {
-        if (currentTimeStr !== time) {
-          setTime(currentTimeStr);
-        }
-        setTimeInteracted(currentTimeStr !== '00:00' && currentTimeStr !== '23:59');
-      }
+      setCurrentDate(value);
+      setTime(format(value, 'HH:mm'));
     }
-  }, [value]); // Removed time, timeInteracted from dependencies to prevent loops/overwrites
+  }, [value]);
 
   useLayoutEffect(() => {
     if (isOpen && buttonRef.current && popoverContentRef.current) {
@@ -70,41 +56,24 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   });
 
   const handleDateSelect = (date: Date) => {
-    // Optimistically update calendar view
-    setCurrentDate(date);
-    
-    // Always use the selected date as the base
-    const baseDate = date; 
-
-    let finalDate = baseDate;
-    if (timeInteracted || value) {
-      const [hours, minutes] = time.split(':').map(Number);
-      finalDate = setMinutes(setHours(baseDate, hours), minutes);
-    } else {
-      finalDate = isStartDate ? getStartOfLocalDay(baseDate) : getEndOfLocalDay(baseDate);
-    }
+    const [hours, minutes] = time.split(':').map(Number);
+    const finalDate = setMinutes(setHours(date, hours), minutes);
     onChange(finalDate);
   };
 
   const handleTimeChange = (newTime: string) => {
     setTime(newTime);
-    
-    // Always use the current value or a new date if value is null
-    const dateToUpdate = value || new Date();
+    const dateToUpdate = value || currentDate || new Date();
     
     if (newTime === '') {
-      setTimeInteracted(false);
       onChange(isStartDate ? getStartOfLocalDay(dateToUpdate) : getEndOfLocalDay(dateToUpdate));
     } else {
-      setTimeInteracted(true);
       const [hours, minutes] = newTime.split(':').map(Number);
       onChange(setMinutes(setHours(dateToUpdate, hours), minutes));
     }
   };
 
-  const displayValue = value 
-    ? format(value, timeInteracted || (format(value, 'HH:mm') !== '00:00' && format(value, 'HH:mm') !== '23:59') ? 'MMM d, yyyy HH:mm' : 'MMM d, yyyy') 
-    : placeholder;
+  const displayValue = value ? format(value, 'MMM d, yyyy HH:mm') : placeholder;
 
   return (
     <div className="relative w-full">
