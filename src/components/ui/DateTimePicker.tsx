@@ -44,11 +44,12 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
       
       let top;
       if (rect.bottom + popoverHeight > viewportHeight && rect.top > popoverHeight) {
-        // Open above: bottom of popover = top of trigger bar - offset
-        // Ensure it is positioned exactly above the trigger bar
+        // Open above: Ensure bottom of popover touches top of trigger bar
+        // rect.top is relative to viewport. 
+        // We need: popoverTop + popoverHeight = rect.top + window.scrollY
         top = rect.top + window.scrollY - popoverHeight; 
       } else {
-        // Open below
+        // Open below: Top of popover = bottom of trigger bar + margin
         top = rect.bottom + window.scrollY + 4;
       }
 
