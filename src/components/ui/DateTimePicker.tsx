@@ -35,8 +35,22 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({ value, onChange,
   const togglePopover = () => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const popoverHeight = 350; // Approximate height
+
+      // Check if there is enough space below, if not, open above
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+
+      let top;
+      if (spaceBelow < popoverHeight && spaceAbove > popoverHeight) {
+        top = rect.top + window.scrollY - popoverHeight - 8;
+      } else {
+        top = rect.bottom + window.scrollY + 8;
+      }
+
       setPopoverPosition({
-        top: rect.bottom + window.scrollY + 8,
+        top,
         left: rect.left + window.scrollX,
       });
     }
